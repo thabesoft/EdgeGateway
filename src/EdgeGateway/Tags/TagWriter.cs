@@ -4,7 +4,8 @@ using FluentResults;
 
 namespace EdgeGateway.Tags;
 
-public sealed class TagWriter(IPortManager portManager, IDeviceManager deviceManager) : ITagWriter
+
+internal sealed class TagWriter(IPortManager portManager, IDeviceManager deviceManager) : ITagWriter
 {
     public ValueTask<Result> WriteAsync<T>(Tag<T> tag, T value, CancellationToken cancellationToken)
     {

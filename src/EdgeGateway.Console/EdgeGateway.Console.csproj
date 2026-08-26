@@ -10,6 +10,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\EdgeGateway.Ethernet\EdgeGateway.Ethernet.csproj" />
+	  <ProjectReference Include="..\EdgeGateway.Modbus\EdgeGateway.Modbus.csproj" />
+	  <ProjectReference Include="..\EdgeGateway.SerialPort\EdgeGateway.SerialPort.csproj" />
 	  <ProjectReference Include="..\EdgeGateway\EdgeGateway.csproj" />
 	</ItemGroup>
 

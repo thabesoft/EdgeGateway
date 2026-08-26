@@ -1,4 +1,5 @@
-﻿namespace EdgeGateway.Loader;
+﻿namespace EdgeGateway.Options.Loader;
+
 
 public record class GatewaySourceOptions
 {

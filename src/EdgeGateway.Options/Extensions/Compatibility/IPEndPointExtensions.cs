@@ -6,17 +6,11 @@ using System.Diagnostics.CodeAnalysis;
 namespace System.Net;
 #pragma warning restore IDE0130 // 命名空间与文件夹结构不匹配
 
+
 public static class Extensions
 {
     extension(IPEndPoint)
     {
-        public static IPEndPoint Parse(string value)
-        {
-            if (!TryParse(value, out var result)) throw new FormatException("无效的地址");
-            return result;
-        }
-
-
         public static bool TryParse(string? value, [NotNullWhen(true)] out IPEndPoint? result)
         {
             result = default;

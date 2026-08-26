@@ -1,7 +1,6 @@
-﻿using EdgeGateway.Dto;
-using FluentResults;
+﻿using FluentResults;
 
-namespace EdgeGateway.Serialization;
+namespace EdgeGateway.Options.Serialization;
 
 
 public interface IGatewayOptionsSerializer

@@ -4,7 +4,8 @@ using FluentResults;
 
 namespace EdgeGateway.Tags;
 
-public sealed class TagReader(IPortManager portManager, IDeviceManager deviceManager) : ITagReader
+
+internal sealed class TagReader(IPortManager portManager, IDeviceManager deviceManager) : ITagReader
 {
     public ValueTask<Result<T>> ReadAsync<T>(Tag<T> tag, CancellationToken cancellationToken)
     {

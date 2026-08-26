@@ -3,11 +3,11 @@
   "Ports": [
     {
       "Type": "SerialPort",
-      "PortName": "COM2",
+      "PortName": "COM3",
       "BaudRate": 9600,
       "Parity": "None",
       "DataBits": 8,
-      "Stopbits": 1
+      "StopBits": 1
     },
     {
       "Type": "Tcp",
@@ -17,22 +17,24 @@
   "Devices": [
     {
       "Id": "Plc1",
-      "Protocol": "Modbus-Rtu",
+      "Protocol": "ModbusRtu",
       "PortAddress": {
         "Type": "SerialPort",
         "Location": "COM2"
       },
       "Tags": [
         {
+          "Type": "Number",
           "Name": "温度",
           "Enable": true,
           "Address": {
+            "Type": "Modbus",
             "SlaveId": 1,
-            "FunctionCode": 3,
+            "Region": "Coils",
             "StartAddress": 1,
             "Quantity": 2
           },
-          "Type": "Int32",
+          "DataType": "Int32",
           "ByteOrder": "LittleEndian",
           "Unit": "°C",
           "Scale": 0.1,

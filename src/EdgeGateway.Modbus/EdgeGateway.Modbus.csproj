@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.11" />
+	  <PackageReference Include="NModbus" Version="3.0.83" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <ProjectReference Include="..\EdgeGateway.Options\EdgeGateway.Options.csproj" />
+	</ItemGroup>
+	
+</Project>

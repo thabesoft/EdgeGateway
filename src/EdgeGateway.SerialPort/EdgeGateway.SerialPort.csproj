@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.11" />
+	  <PackageReference Include="System.IO.Ports" Version="10.0.11" />
+	</ItemGroup>
+
+
+	<!--低版本兼容包-->
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+
+		<!--CSharp 程序集-->
+		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+
+		<!--新版本语法支持, 详情见项目地址 https://github.com/Sergio0694/PolySharp/-->
+		<PackageReference Include="PolySharp" Version="1.16.0" />
+
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\EdgeGateway.Options\EdgeGateway.Options.csproj" />
+	</ItemGroup>
+	
+</Project>

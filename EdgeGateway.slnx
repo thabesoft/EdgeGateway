@@ -1,8 +1,17 @@
 <Solution>
   <Folder Name="/Core/">
     <Project Path="src/EdgeGateway.Abstractions/EdgeGateway.Abstractions.csproj" />
-    <Project Path="src/EdgeGateway.Options/EdgeGateway.Options.csproj" />
     <Project Path="src/EdgeGateway/EdgeGateway.csproj" Id="f22e21ae-d2d2-4e0d-9a2a-af1e9378dd6b" />
+  </Folder>
+  <Folder Name="/Modules/">
+    <Project Path="src/EdgeGateway.Options/EdgeGateway.Options.csproj" />
+  </Folder>
+  <Folder Name="/Modules/Devices/">
+    <Project Path="src/EdgeGateway.Modbus/EdgeGateway.Modbus.csproj" />
+  </Folder>
+  <Folder Name="/Modules/Ports/">
+    <Project Path="src/EdgeGateway.Ethernet/EdgeGateway.Ethernet.csproj" />
+    <Project Path="src/EdgeGateway.SerialPort/EdgeGateway.SerialPort.csproj" />
   </Folder>
   <Project Path="src/EdgeGateway.Console/EdgeGateway.Console.csproj" />
   <Project Path="test/EdgeGateway.Tests/EdgeGateway.Tests.csproj" />

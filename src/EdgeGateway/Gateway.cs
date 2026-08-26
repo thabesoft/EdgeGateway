@@ -1,23 +1,44 @@
-﻿using EdgeGateway.Devices;
-using EdgeGateway.Logger;
+﻿using EdgeGateway.Options.Monitor;
 using EdgeGateway.Ports;
-using EdgeGateway.Tags;
 using FluentResults;
 using Microsoft.Extensions.Logging;
 
 namespace EdgeGateway;
 
 
-public sealed class Gateway(IPortManager portManager, ILogger<Gateway> logger) : IGateway
+/// <summary>
+/// 根据配置自动更新的网关
+/// </summary>
+public sealed class Gateway : IGateway
 {
+    private readonly IDisposable _optionsSubcribeDisposer;
+    private readonly IPortManager _portManager;
+    private readonly ILogger<Gateway> _logger;
+
+
     public bool IsRunning { get; private set; }
 
+
+    public Gateway(
+        IGatewayOptionsMonitor monitor,
+        IPortManager portManager,
+        ILogger<Gateway> logger)
+    {
+        _portManager = portManager;
+        _logger = logger;
+
+
+        _optionsSubcribeDisposer = monitor.PortAdded.Subscribe(x => portManager.Add(x));
+        monitor.PortRemoved.Subscribe(async x => await portManager.RemoveAsync(x.Address), CancellationToken.None);
+
+        //monitor.Port.Removed((x, ct) => portManager.RemovAsync(x.Address, ct));
+    }
 
     public async ValueTask<Result> StartAsync(CancellationToken cancellationToken = default)
     {
         var openErrors = new List<IError>();
 
-        foreach (var i in portManager.Ports.Values.ToArray())
+        foreach (var i in _portManager.Ports.Values.ToArray())
         {
             var openResult = await i.OpenAsync(cancellationToken);
             if (openResult.IsSuccess) continue;
@@ -34,7 +55,7 @@ public sealed class Gateway(IPortManager portManager, ILogger<Gateway> logger) :
     {
         var closeErrors = new List<IError>();
 
-        foreach (var i in portManager.Ports.Values.ToArray())
+        foreach (var i in _portManager.Ports.Values.ToArray())
         {
             var closeResult = await i.CloseAsync(cancellationToken);
             if (closeResult.IsSuccess) continue;
@@ -51,44 +72,12 @@ public sealed class Gateway(IPortManager portManager, ILogger<Gateway> logger) :
     {
         try
         {
+            _optionsSubcribeDisposer.Dispose();
             await StopAsync();
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "释放失败");
+            _logger.LogError(ex, "释放失败");
         }
-    }
-
-
-
-    public static GatewayContext Create(ILoggerFactory loggerFactory)
-    {
-        var deviceFactoryManager = new DeviceFactoryManager();
-        var deviceManager = new DeviceManager(deviceFactoryManager, loggerFactory.CreateLogger<DeviceManager>());
-
-        var portFactoryManager = new PortFactoryManager();
-        var portManager = new PortManager(portFactoryManager, deviceManager, loggerFactory.CreateLogger<PortManager>());
-
-        var tagReader = new TagReader(portManager, deviceManager);
-        var tagWriter = new TagWriter(portManager, deviceManager);
-
-        var gateway = new Gateway(portManager, loggerFactory.CreateLogger<Gateway>());
-
-        return new(gateway)
-        {
-            Port = portManager,
-            PortFactory = portFactoryManager,
-
-            Device = deviceManager,
-            DeviceFactory = deviceFactoryManager,
-
-            TagReader = tagReader,
-            TagWriter = tagWriter
-        };
-    }
-
-    public static GatewayContext Create(LogLevel minLevel = LogLevel.Information)
-    {
-        return Create(ConsoleLoggerFactory.FromLevel(minLevel));
     }
 }

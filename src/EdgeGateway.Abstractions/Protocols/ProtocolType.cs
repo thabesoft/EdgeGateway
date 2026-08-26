@@ -7,42 +7,43 @@ namespace EdgeGateway.Protocols;
 /// 通信协议类型
 /// </summary>
 public sealed record class ProtocolType
+#if !NETSTANDARD2_0
+    : ISpanParsable<ProtocolType>
+#endif
 {
-    public static ProtocolType ModbusRtu { get; } = Parse(nameof(ModbusRtu));
-    public static ProtocolType ModbusAscii { get; } = Parse(nameof(ModbusAscii));
-    public static ProtocolType ModbusIp { get; } = Parse(nameof(ModbusIp));
+    
 
 
 
     private readonly string _value;
     private ProtocolType(string value) => _value = value;
 
-
     /// <inheritdoc/>
-    /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="ArgumentException"></exception>
-    public static ProtocolType Parse(string value)
+    public static ProtocolType Parse(ReadOnlySpan<char> s, IFormatProvider? _)
     {
-        if (value is null) throw new ArgumentNullException(nameof(value), "协议类型不可为空");
+        var trimmed = s.Trim();
+        if (trimmed.IsWhiteSpace()) throw new ArgumentException("协议类型不可为空白", nameof(s));
 
-        var trimmed =  value.Trim();
-        if (string.IsNullOrWhiteSpace(trimmed)) throw new ArgumentException("协议类型不可为空白", nameof(value));
-
-        return new ProtocolType(trimmed);
+        return new ProtocolType(trimmed.ToString());
     }
-    public static bool TryParse(string value, [NotNullWhen(true)] out ProtocolType? protocol )
+    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? _, [MaybeNullWhen(false)] out ProtocolType result)
     {
-        protocol = null;
+        result = default;
 
-        var trimmed = value.Trim();
-        if (string.IsNullOrWhiteSpace(trimmed)) return false;
+        var trimmed = s.Trim();
+        if (trimmed.IsWhiteSpace()) return false;
 
-        protocol = new ProtocolType(trimmed);
+        result = new ProtocolType(trimmed.ToString());
         return true;
     }
 
-
-    public static implicit operator string(ProtocolType protocolType) => protocolType._value;
+    /// <inheritdoc/>
+    /// <exception cref="ArgumentException"></exception>
+    public static ProtocolType Parse(string s, IFormatProvider? provider = null)
+        => Parse(s.AsSpan(), provider);
+    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out ProtocolType result)
+        => TryParse(s.AsSpan(), provider, out result);
 
 
     public override string ToString() => _value;

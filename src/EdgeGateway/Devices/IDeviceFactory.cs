@@ -1,4 +1,5 @@
-﻿using EdgeGateway.Ports;
+﻿using EdgeGateway.Options;
+using EdgeGateway.Ports;
 using FluentResults;
 
 namespace EdgeGateway.Devices;
@@ -9,6 +10,6 @@ namespace EdgeGateway.Devices;
 /// </summary>
 public interface IDeviceFactory
 {
-    bool CanHandle(IPort port, DeviceConfig config);
-    Result<IDevice> Create(IPort port, DeviceConfig config);
+    bool CanHandle(IPort port, DeviceOptions config);
+    Result<IDevice> Create(IPort port, DeviceOptions config);
 }

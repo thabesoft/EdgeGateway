@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/Core/">
     <Project Path="src/EdgeGateway.Abstractions/EdgeGateway.Abstractions.csproj" />
+    <Project Path="src/EdgeGateway.Options/EdgeGateway.Options.csproj" />
     <Project Path="src/EdgeGateway/EdgeGateway.csproj" Id="f22e21ae-d2d2-4e0d-9a2a-af1e9378dd6b" />
   </Folder>
   <Project Path="src/EdgeGateway.Console/EdgeGateway.Console.csproj" />

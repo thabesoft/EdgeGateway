@@ -1,4 +1,5 @@
 ﻿using EdgeGateway.Data;
+using EdgeGateway.Options;
 using EdgeGateway.Ports;
 using FluentResults;
 using Microsoft.Extensions.Logging;
@@ -6,13 +7,22 @@ using Microsoft.Extensions.Logging;
 namespace EdgeGateway.Devices;
 
 
+public interface IDeviceManager
+{
+    IReadOnlyDictionary<DeviceId, IDevice> Devices { get; }
+
+
+    Result<IDevice> Add(IPort port, DeviceOptions options);
+    ValueTask<Result> RemovAsync(DeviceId id, CancellationToken cancellationToken = default);
+}
+
 public sealed class DeviceManager(IDeviceFactoryManager deviceFactoryManager, ILogger<DeviceManager> logger) : IDeviceManager
 {
     private readonly Dictionary<DeviceId, IDevice> _devices = [];
     public IReadOnlyDictionary<DeviceId, IDevice> Devices => _devices;
 
 
-    public Result<IDevice> Add(IPort port, DeviceConfig config)
+    public Result<IDevice> Add(IPort port, DeviceOptions config)
     {
         var createErrors = new List<IError>();
 

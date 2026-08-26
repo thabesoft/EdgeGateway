@@ -1,6 +1,4 @@
-﻿using FluentResults;
-using System.Data;
-using System.Text;
+﻿using System.Data;
 
 namespace EdgeGateway.Data;
 

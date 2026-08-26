@@ -1,9 +1,18 @@
 ﻿using EdgeGateway.Devices;
+using EdgeGateway.Options;
 using FluentResults;
 using Microsoft.Extensions.Logging;
 
 namespace EdgeGateway.Ports;
 
+
+public interface IPortManager
+{
+    IReadOnlyDictionary<PortAddress, IPortHandle> Ports { get; }
+
+    Result<IPortHandle> Add(IPortOptions options);
+    ValueTask<Result> RemovAsync(PortAddress address, CancellationToken cancellationToken = default);
+}
 
 public sealed class PortManager(IPortFactoryManager portFactoryManager, IDeviceManager deviceManager, ILogger<PortManager> logger) : IPortManager
 {
@@ -11,7 +20,7 @@ public sealed class PortManager(IPortFactoryManager portFactoryManager, IDeviceM
 
     public IReadOnlyDictionary<PortAddress, IPortHandle> Ports => _portHandles;
 
-    public Result<IPortHandle> Add(IPortConfig config)
+    public Result<IPortHandle> Add(IPortOptions config)
     {
         var createErrors = new List<IError>();
 

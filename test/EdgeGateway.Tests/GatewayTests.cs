@@ -1,5 +1,6 @@
 ﻿using EdgeGateway.Devices;
 using EdgeGateway.Devices.Modbus;
+using EdgeGateway.Options;
 using EdgeGateway.Ports.SerialPort;
 using EdgeGateway.Protocols;
 using EdgeGateway.Tags;
@@ -21,7 +22,7 @@ public sealed class GatewayTests
         gateway.DeviceFactory.Register(ModbusDeviceFactory.Instance);
 
         // 添加端口
-        var portConfig = SerialPortConfig.Create("COM2");
+        var portConfig = SerialPortOptions.Builder("COM2").Build();
         var addPortResult = gateway.Port.Add(portConfig);
         if (addPortResult.IsFailed) Assert.IsTrue(addPortResult.IsSuccess, addPortResult.ToString());
         // 开启
@@ -30,7 +31,7 @@ public sealed class GatewayTests
         if (openPortResult.IsFailed) Assert.IsTrue(openPortResult.IsSuccess, openPortResult.ToString());
 
         //添加设备
-        var deviceConfig = new DeviceConfig(DeviceId.FromString("温度传感器"), ProtocolType.ModbusRtu, portConfig.Address);
+        var deviceConfig = new DeviceOptions(DeviceId.FromString("温度传感器"), ProtocolType.ModbusRtu, portConfig.Address);
         var addDeviceResult = gateway.Device.Add(port, deviceConfig); // port.AddDevice(deviceConfig);
         if (addDeviceResult.IsFailed) Assert.IsTrue(addDeviceResult.IsSuccess, addDeviceResult.ToString());
         // 连接

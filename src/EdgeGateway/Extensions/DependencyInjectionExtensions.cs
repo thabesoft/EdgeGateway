@@ -1,6 +1,7 @@
 ﻿using EdgeGateway;
 using EdgeGateway.Devices;
 using EdgeGateway.Devices.Modbus;
+using EdgeGateway.Options;
 using EdgeGateway.Ports;
 using EdgeGateway.Ports.Ethernet;
 using EdgeGateway.Ports.SerialPort;
@@ -16,10 +17,8 @@ public static class DependencyInjectionExtensions
 {
     extension(IServiceCollection services)
     {
-        public void AddEdgeGateway(Action<GatewayOptions> optionsAction)
+        public void AddEdgeGateway()
         {
-            services.Configure(optionsAction);
-
             services.AddScoped<IDeviceFactoryManager, DeviceFactoryManager>();
             services.AddScoped<IDeviceManager, DeviceManager>();
 
@@ -31,23 +30,10 @@ public static class DependencyInjectionExtensions
 
             services.AddScoped<IGateway, Gateway>();
 
-            
-
             // 配置
             services.AddSingleton<IPortFactory, SerialPortFactory>();
             services.TryAddSingleton<IPortFactory, EthernetPortFactory>();
             services.TryAddSingleton<IDeviceFactory, ModbusDeviceFactory>();
-
-            // 端口
-            var serialPort_COM2 = SerialPortConfig.Create("COM2");
-            services.AddSingleton(serialPort_COM2);
-            // 设备
-            services.AddScoped(_ => DeviceConfig.Create(ProtocolType.ModbusRtu, serialPort_COM2.Address));
-        }
-
-        public void AddEdgeGateway()
-        {
-            services.AddEdgeGateway(delegate { });
         }
     }
 }

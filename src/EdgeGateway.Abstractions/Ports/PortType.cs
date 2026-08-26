@@ -6,7 +6,8 @@ namespace EdgeGateway.Ports;
 public sealed record class PortType
 {
     public static PortType SerialPort { get; } = Parse(nameof(SerialPort));
-    public static PortType Ethernet { get; } = Parse(nameof(Ethernet));
+    public static PortType Tcp { get; } = Parse(nameof(Tcp));
+    public static PortType Udp { get; } = Parse(nameof(Udp));
 
 
 

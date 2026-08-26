@@ -1,12 +1,11 @@
-﻿using FluentResults;
+﻿using EdgeGateway.Options;
+using FluentResults;
 using Microsoft.Extensions.Logging;
-using System.IO.Pipelines;
-using System.IO.Pipes;
 using System.Net.Sockets;
 
 namespace EdgeGateway.Ports.Ethernet;
 
-internal class TcpPortAdapter(EthernetPortConfig config, ILogger<TcpPortAdapter> logger) : StreamPort(config.Address)
+internal class TcpPortAdapter(EthernetPortOptions config, ILogger<TcpPortAdapter> logger) : StreamPort(config.Address)
 {
     private readonly TcpClient _tcpClient = config.Local is null ? new() : new(config.Local);
 
@@ -21,7 +20,7 @@ internal class TcpPortAdapter(EthernetPortConfig config, ILogger<TcpPortAdapter>
     protected override ValueTask<Result> CloseAsync(CancellationToken cancellationToken = default)
     {
         var result = Result.Try(_tcpClient.Close);
-        return ValueTask.FromResult(result);
+        return new ValueTask<Result>(result);
     }
     public override async ValueTask DisposeAsync()
     {
@@ -32,7 +31,7 @@ internal class TcpPortAdapter(EthernetPortConfig config, ILogger<TcpPortAdapter>
 
             _tcpClient.Dispose();
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             logger.LogError(ex, "释放失败");
         }

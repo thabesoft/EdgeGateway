@@ -12,6 +12,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\src\EdgeGateway.Options\EdgeGateway.Options.csproj" />
 		<ProjectReference Include="..\..\src\EdgeGateway\EdgeGateway.csproj" />
 	</ItemGroup>
 

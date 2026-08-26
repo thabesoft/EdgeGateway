@@ -9,10 +9,19 @@
 	
 	<ItemGroup>
 		<ProjectReference Include="..\EdgeGateway.Abstractions\EdgeGateway.Abstractions.csproj" />
+		<ProjectReference Include="..\EdgeGateway.Options\EdgeGateway.Options.csproj" />
 	</ItemGroup>
-	
-	<ItemGroup>
-	  <Folder Include="Services\" />
+
+
+	<!--低版本兼容包-->
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+
+		<!--CSharp 程序集-->
+		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+		
+		<!--Json-->
+		<PackageReference Include="System.Text.Json" Version="10.0.11" />
+
 	</ItemGroup>
 	
 </Project>

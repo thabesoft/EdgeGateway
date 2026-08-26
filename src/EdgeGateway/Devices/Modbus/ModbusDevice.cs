@@ -41,11 +41,11 @@ public sealed class ModbusDevice : IDevice
 
     public ValueTask<Result> ConnectAsync(CancellationToken cancellationToken = default)
     {
-        return ValueTask.FromResult(Result.Ok());
+        return new ValueTask<Result>(Result.Ok());
     }
     public ValueTask<Result> DisconnectAsync(CancellationToken cancellationToken = default)
     {
-        return ValueTask.FromResult(Result.Ok());
+        return new ValueTask<Result>(Result.Ok());
     }
     public ValueTask DisposeAsync()
     {

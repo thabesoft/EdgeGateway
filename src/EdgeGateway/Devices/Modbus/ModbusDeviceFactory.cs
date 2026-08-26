@@ -1,4 +1,5 @@
-﻿using EdgeGateway.Ports;
+﻿using EdgeGateway.Options;
+using EdgeGateway.Ports;
 using EdgeGateway.Protocols;
 using FluentResults;
 
@@ -11,12 +12,12 @@ public sealed class ModbusDeviceFactory : IDeviceFactory
     public static ModbusDeviceFactory Instance { get; } = new();
 
 
-    public bool CanHandle(IPort port, DeviceConfig config)
+    public bool CanHandle(IPort port, DeviceOptions config)
     {
         return config.Protocol == ProtocolType.ModbusRtu || config.Protocol == ProtocolType.ModbusAscii || config.Protocol == ProtocolType.ModbusIp;
     }
 
-    public Result<IDevice> Create(IPort port, DeviceConfig config)
+    public Result<IDevice> Create(IPort port, DeviceOptions config)
     {
         if (config.Protocol == ProtocolType.ModbusRtu)
         {

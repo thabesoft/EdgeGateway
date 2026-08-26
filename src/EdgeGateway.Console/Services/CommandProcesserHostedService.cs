@@ -35,7 +35,7 @@ internal sealed class CommandProcesserHostedService(IAppScope appScope, ILogger<
         deviceFactoryManager.Register(ModbusDeviceFactory.Instance);
 
 
-        var result = await AddPortAsync(portManager, SerialPortConfig.Create("COM2"), stoppingToken);
+        var result = await AddPortAsync(portManager, SerialPortOptions.Builder("COM2").Build(), stoppingToken);
         if (result.IsFailed) logger.LogError("端口添加失败: {msg}", result);
 
 
@@ -65,7 +65,7 @@ internal sealed class CommandProcesserHostedService(IAppScope appScope, ILogger<
     }
 
 
-    private static async ValueTask<Result> AddPortAsync(IPortManager portManager, IPortConfig portConfig, CancellationToken cancellationToken)
+    private static async ValueTask<Result> AddPortAsync(IPortManager portManager, IPortOptions portConfig, CancellationToken cancellationToken)
     {
         var addPortResult = portManager.Add(portConfig);
         if (addPortResult.IsFailed) return Result.Fail("端口添加失败").WithErrors(addPortResult.Errors);
@@ -74,7 +74,7 @@ internal sealed class CommandProcesserHostedService(IAppScope appScope, ILogger<
         var openResult = await addPortResult.Value.OpenAsync(cancellationToken);
         if (openResult.IsFailed) return Result.Fail("端口打开失败").WithErrors(openResult.Errors);
 
-        var device = DeviceConfig.Create(ProtocolType.ModbusRtu, port.Address);
+        var device = DeviceOptions.Create(ProtocolType.ModbusRtu, port.Address);
         var addResult = port.AddDevice(device);
         if (addResult.IsFailed) return Result.Fail("设备添加失败").WithErrors(addResult.Errors);
 

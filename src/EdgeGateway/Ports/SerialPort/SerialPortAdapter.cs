@@ -1,4 +1,5 @@
-﻿using FluentResults;
+﻿using EdgeGateway.Options;
+using FluentResults;
 
 namespace EdgeGateway.Ports.SerialPort;
 
@@ -6,7 +7,7 @@ namespace EdgeGateway.Ports.SerialPort;
 /// <summary>
 /// 串口设备驱动适配器
 /// </summary>
-public sealed class SerialPortAdapter(SerialPortConfig config) : StreamPort(config.Address), IBufferDiscardable
+public sealed class SerialPortAdapter(SerialPortOptions config) : StreamPort(config.Address), IBufferDiscardable
 {
     private readonly System.IO.Ports.SerialPort _serialPort = new(config.PortName, config.BaudRate, config.Parity, config.DataBits, config.StopBits);
 

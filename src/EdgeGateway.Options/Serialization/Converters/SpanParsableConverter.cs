@@ -14,7 +14,7 @@ internal sealed class SpanParsableConverter : JsonConverter<ProtocolType>
         if (string.IsNullOrWhiteSpace(str))
             throw new JsonException($"无效的 协议 值: 不能为空");
 
-        if (ProtocolType.TryParse(str, System.Globalization.CultureInfo.InvariantCulture, out var result))
+        if (ProtocolType.TryParse(str, out var result))
             return result;
 
         throw new JsonException($"无效的 协议 格式: {str}");

@@ -9,7 +9,7 @@ namespace EdgeGateway;
 /// <summary>
 /// 根据配置自动更新的网关
 /// </summary>
-public sealed class Gateway : IGateway
+public sealed class Gateway : ILifetime
 {
     private readonly IDisposable _optionsSubcribeDisposer;
     private readonly IPortManager _portManager;

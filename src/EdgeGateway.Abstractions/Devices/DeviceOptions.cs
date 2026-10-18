@@ -11,6 +11,6 @@ public sealed record class DeviceOptions(DeviceId DeviceId, ProtocolType Protoco
 {
     public static DeviceOptions Create(ProtocolType protocolType, PortAddress address)
     {
-        return new DeviceOptions(DeviceId.New(), protocolType, address);
+        return new DeviceOptions(DeviceId.Create(), protocolType, address);
     }
 }

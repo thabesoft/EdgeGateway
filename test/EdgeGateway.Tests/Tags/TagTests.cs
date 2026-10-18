@@ -20,7 +20,7 @@ public sealed class TagTests
         var portType = PortType.Parse(portTypeString);
         var portAddress = PortAddress.Create(portType, locationString);
 
-        var deviceId = DeviceId.FromString(deviceIdString);
+        var deviceId = DeviceId.Parse(deviceIdString);
 
         var tag = Tag.Create(portAddress, deviceId, dataDescriptor);
         Console.WriteLine(tag);

@@ -3,7 +3,7 @@
 namespace EdgeGateway;
 
 
-public interface IGateway : IAsyncDisposable
+public interface ILifetime : IAsyncDisposable
 {
     /// <summary>
     /// 指示网关当前是否正在运行。

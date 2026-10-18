@@ -31,7 +31,7 @@ public sealed class GatewayTests
         if (openPortResult.IsFailed) Assert.IsTrue(openPortResult.IsSuccess, openPortResult.ToString());
 
         //添加设备
-        var deviceConfig = new DeviceOptions(DeviceId.FromString("温度传感器"), ProtocolType.Modbus, portConfig.Address);
+        var deviceConfig = new DeviceOptions(DeviceId.Parse("温度传感器"), ProtocolType.Modbus, portConfig.Address);
         var addDeviceResult = gateway.Device.Add(port, deviceConfig); // port.AddDevice(deviceConfig);
         if (addDeviceResult.IsFailed) Assert.IsTrue(addDeviceResult.IsSuccess, addDeviceResult.ToString());
         // 连接

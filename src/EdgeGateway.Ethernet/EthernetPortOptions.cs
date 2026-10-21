@@ -19,9 +19,9 @@ public sealed record class EthernetPortOptions : IPortOptions
 
     /// <inheritdoc/>
     /// <exception cref="ArgumentException"></exception>
-    public static EthernetPortOptionsBuilder Builder(PortType portType, IPEndPoint remote)
+    public static EthernetPortOptionsBuilder Builder(TransportProtocol portType, IPEndPoint remote)
     {
-        if (portType == PortType.Tcp || portType == PortType.Udp)
+        if (portType == TransportProtocol.Tcp || portType == TransportProtocol.Udp)
         {
             return new EthernetPortOptionsBuilder().SetType(portType).SetRemote(remote);
         }
@@ -33,14 +33,14 @@ public sealed record class EthernetPortOptions : IPortOptions
     /// <exception cref="ArgumentException"></exception>
     public static EthernetPortOptionsBuilder Tcp(IPEndPoint remote)
     {
-        return Builder(PortType.Tcp, remote);
+        return Builder(TransportProtocol.Tcp, remote);
     }
 
     /// <inheritdoc/>
     /// <exception cref="ArgumentException"></exception>
     public static EthernetPortOptionsBuilder Udp(IPEndPoint remote)
     {
-        return Builder(PortType.Udp, remote);
+        return Builder(TransportProtocol.Udp, remote);
     }
 }
 
@@ -50,16 +50,16 @@ public sealed record class EthernetPortOptions : IPortOptions
 /// </summary>
 public sealed class EthernetPortOptionsBuilder
 {
-    private PortType? _type;
+    private TransportProtocol? _type;
     private IPEndPoint? _remote;
     private IPEndPoint? _local;
 
 
     /// <inheritdoc/>
     /// <exception cref="ArgumentException"></exception>
-    internal EthernetPortOptionsBuilder SetType(PortType value)
+    internal EthernetPortOptionsBuilder SetType(TransportProtocol value)
     {
-        if(value == PortType.Tcp || value == PortType.Udp)
+        if(value == TransportProtocol.Tcp || value == TransportProtocol.Udp)
         {
             _type = value;
         }

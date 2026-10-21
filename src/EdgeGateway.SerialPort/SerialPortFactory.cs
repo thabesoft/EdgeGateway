@@ -6,14 +6,14 @@ namespace EdgeGateway.SerialPort;
 
 internal sealed class SerialPortFactory : IPortFactory
 {
-    public bool CanHandle(IPortOptions options)
+    public bool CanCreate(IPortOptions options)
     {
-        return options is SerialPortOptions;
+        return options is SerialPortDescriptor;
     }
 
     public Result<IPort> Create(IPortOptions options)
     {
-        if (options is not SerialPortOptions serialPortConfig)
+        if (options is not SerialPortDescriptor serialPortConfig)
             return new Error($"期望 SerialPortConfig，实际为 {options.GetType().Name}");
 
         return new SerialPortAdapter(serialPortConfig);

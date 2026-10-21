@@ -5,7 +5,7 @@ namespace EdgeGateway.Options.Monitor;
 
 public interface IGatewayOptionsMonitor
 {
-    GatewayOptions? CurrentOptions { get; }
+    GatewayDescriptor? CurrentOptions { get; }
 
 
     IObservable<IPortOptions> PortAdded { get; }

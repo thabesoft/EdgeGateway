@@ -13,6 +13,8 @@
     <Project Path="src/EdgeGateway.Ethernet/EdgeGateway.Ethernet.csproj" />
     <Project Path="src/EdgeGateway.SerialPort/EdgeGateway.SerialPort.csproj" />
   </Folder>
+  <Project Path="src/EdgeGateway.Compatibility/EdgeGateway.Compatibility.csproj" Id="708c6812-6f16-4fff-ab61-0b476512348d" />
   <Project Path="src/EdgeGateway.Console/EdgeGateway.Console.csproj" />
-  <Project Path="test/EdgeGateway.Tests/EdgeGateway.Tests.csproj" />
+  <Project Path="src/EdgeGateway.Demo/EdgeGateway.Demo.csproj" />
+  <Project Path="test/EdgeGateway.Tests/EdgeGateway.UnitTests.csproj" />
 </Solution>

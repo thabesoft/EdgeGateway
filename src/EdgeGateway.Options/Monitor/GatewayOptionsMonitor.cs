@@ -85,7 +85,7 @@ internal sealed partial class GatewayOptionsMonitor : IGatewayOptionsMonitor
 
 internal sealed partial class GatewayOptionsMonitor
 {
-    public GatewayOptions? CurrentOptions { get; private set; }
+    public GatewayDescriptor? CurrentOptions { get; private set; }
 
 
     #region --Events--
@@ -101,7 +101,7 @@ internal sealed partial class GatewayOptionsMonitor
     #endregion
 
 
-    public void Publish(GatewayOptions gatewayOptions)
+    public void Publish(GatewayDescriptor gatewayOptions)
     {
         if (CurrentOptions == gatewayOptions) return;
 

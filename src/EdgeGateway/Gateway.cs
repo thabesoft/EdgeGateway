@@ -1,7 +1,7 @@
-﻿using EdgeGateway.Options.Monitor;
+﻿using EdgeGateway.Bytes;
 using EdgeGateway.Ports;
-using FluentResults;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace EdgeGateway;
 
@@ -9,75 +9,133 @@ namespace EdgeGateway;
 /// <summary>
 /// 根据配置自动更新的网关
 /// </summary>
-public sealed class Gateway : ILifetime
-{
-    private readonly IDisposable _optionsSubcribeDisposer;
-    private readonly IPortManager _portManager;
-    private readonly ILogger<Gateway> _logger;
-
-
-    public bool IsRunning { get; private set; }
-
-
-    public Gateway(
-        IGatewayOptionsMonitor monitor,
+public sealed class Gateway(
         IPortManager portManager,
-        ILogger<Gateway> logger)
+        IOptions<GatewayOptions> options,
+        ILogger<Gateway> logger
+    ) : IGateway
+{
+    public bool IsRunning { get; private set; }
+    public IReadOnlyDictionary<IChannelAddress, IPort> Ports => portManager.Ports;
+
+
+    public async ValueTask StartAsync(CancellationToken cancellationToken = default)
     {
-        _portManager = portManager;
-        _logger = logger;
+        if (IsRunning) return;
 
-
-        _optionsSubcribeDisposer = monitor.PortAdded.Subscribe(x => portManager.Add(x));
-        monitor.PortRemoved.Subscribe(async x => await portManager.RemoveAsync(x.Address), CancellationToken.None);
-
-        //monitor.Port.Removed((x, ct) => portManager.RemovAsync(x.Address, ct));
-    }
-
-    public async ValueTask<Result> StartAsync(CancellationToken cancellationToken = default)
-    {
-        var openErrors = new List<IError>();
-
-        foreach (var i in _portManager.Ports.Values.ToArray())
+        var opened = new List<IPort>();
+        try
         {
-            var openResult = await i.OpenAsync(cancellationToken);
-            if (openResult.IsSuccess) continue;
+            foreach (var handle in Ports.Values.ToArray())
+            {
+                await OpenPortHandle(handle, cancellationToken);
+            }
 
-            openErrors.Add(new Error($"{i.Address}").CausedBy(openResult.Errors));
+            IsRunning = true;
         }
-
-        IsRunning = true;
-
-        if (openErrors.Count <= 0) return Result.Ok();
-        return Result.Fail("开启失败").WithErrors(openErrors);
-    }
-    public async ValueTask<Result> StopAsync(CancellationToken cancellationToken = default)
-    {
-        var closeErrors = new List<IError>();
-
-        foreach (var i in _portManager.Ports.Values.ToArray())
+        catch
         {
-            var closeResult = await i.CloseAsync(cancellationToken);
-            if (closeResult.IsSuccess) continue;
+            await StartFailRollbackAsync(opened);
+            throw;
+        }
+    }
+    public async ValueTask StopAsync(CancellationToken cancellationToken = default)
+    {
+        if (!IsRunning) return;
 
-            closeErrors.Add(new Error($"{i.Address}").CausedBy(closeResult.Errors));
+        using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        timeoutCts.CancelAfter(options.Value.PortCloseTimeout);
+
+        var failures = new List<Exception>();
+        foreach (var port in Ports.Values.ToArray())
+        {
+            try
+            {
+                await port.CloseAsync(timeoutCts.Token);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "关闭端口 {Address} 失败", port.Descriptor.Address);
+                failures.Add(ex);
+            }
         }
 
         IsRunning = false;
-
-        if (closeErrors.Count <= 0) return Result.Ok();
-        return Result.Fail("停止失败").WithErrors(closeErrors);
+        if (failures.Count > 0) throw new AggregateException("部分端口关闭失败", failures);
     }
     public async ValueTask DisposeAsync()
     {
+        using var cts = new CancellationTokenSource(options.Value.PortCloseTimeout);
+
         try
         {
-            _optionsSubcribeDisposer.Dispose();
-            await StopAsync();
+            await StopAsync(cts.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            logger.LogWarning("停止网关超时（5s），部分端口可能未正常关闭，依赖进程退出清理");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "释放失败");
+            logger.LogError(ex, "释放网关失败");
         }
     }
+
+
+
+
+    // 失败回滚
+    private async ValueTask StartFailRollbackAsync(List<IPort> opened)
+    {
+        foreach (var port in opened)
+        {
+            try
+            {
+                using var cts = new CancellationTokenSource(options.Value.StartRollbackPortCloseTimeout);
+                await port.CloseAsync(cts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                logger.LogWarning("启动回滚：端口 {Address} 关闭超时，依赖进程退出清理", port.Descriptor.Address);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "启动回滚时端口关闭失败");
+            }
+        }
+    }
+    // 打开端口
+    private async ValueTask OpenPortHandle(IPort handle, CancellationToken cancellationToken)
+    {
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        cts.CancelAfter(options.Value.PortOpenTimeout);
+
+        try
+        {
+            await handle.OpenAsync(cts.Token);
+        }
+        catch (OperationCanceledException) when (cts.IsCancellationRequested && !cancellationToken.IsCancellationRequested)
+        {
+            throw new TimeoutException($"端口 {handle.Descriptor.Address} 打开超时");
+        }
+    }
+}
+
+
+public sealed class GatewayOptions
+{
+    /// <summary>
+    /// 启动回滚端口关闭超时时长
+    /// </summary>
+    public TimeSpan StartRollbackPortCloseTimeout { get; init; } = TimeSpan.FromSeconds(2);
+
+    /// <summary>
+    /// 开启端口超时时长
+    /// </summary>
+    public TimeSpan PortOpenTimeout { get; init; } = TimeSpan.FromSeconds(10);
+
+    /// <summary>
+    /// 关闭端口超时时长
+    /// </summary>
+    public TimeSpan PortCloseTimeout { get; init; } = TimeSpan.FromSeconds(5);
 }

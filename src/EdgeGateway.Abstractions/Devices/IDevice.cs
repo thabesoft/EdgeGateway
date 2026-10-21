@@ -1,20 +1,16 @@
-﻿using EdgeGateway.Data;
-using EdgeGateway.Ports;
-using FluentResults;
-
-namespace EdgeGateway.Devices;
+﻿namespace EdgeGateway.Devices;
 
 
-public interface IDevice :  IAsyncDisposable
+/// <summary>
+///  表示一个具有唯一标识和寻址位置的通信设备，具备可启用/禁用的生命周期
+/// </summary>
+public interface IDevice : IAsyncDisposable
 {
     DeviceId Id { get; }
-    PortAddress PortAddress { get; }
+    DeviceDescriptor Descriptor { get; }
+    bool IsEnable { get; }
 
 
-    ValueTask<Result> ConnectAsync(CancellationToken cancellationToken = default);
-    ValueTask<Result> DisconnectAsync(CancellationToken cancellationToken = default);
-
-
-    ValueTask<Result<T>> ReadAsync<T>(DataDescriptor<T> descriptor, CancellationToken cancellationToken = default);
-    ValueTask<Result> WriteAsync<T>(DataDescriptor<T> descriptor, T value, CancellationToken cancellationToken = default);
+    ValueTask EnableAsync(CancellationToken cancellationToken = default);
+    ValueTask DisableAsync(CancellationToken cancellationToken = default);
 }

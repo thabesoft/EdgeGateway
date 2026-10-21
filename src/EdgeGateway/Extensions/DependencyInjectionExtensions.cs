@@ -19,7 +19,7 @@ public static class DependencyInjectionExtensions
             services.AddScoped<ITagReader, TagReader>();
             services.AddScoped<ITagWriter, TagWriter>();
 
-            services.AddScoped<ILifetime, Gateway>();
+            services.AddScoped<IGateway, Gateway>();
             //services.AddScoped<IGateway, Gateway>();
         }
     }

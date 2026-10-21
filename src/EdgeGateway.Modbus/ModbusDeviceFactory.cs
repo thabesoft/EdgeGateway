@@ -12,7 +12,7 @@ namespace EdgeGateway.Modbus;
 internal sealed class ModbusRtuDeviceFactory : IDeviceFactory
 {
     public bool CanHandle(IPort port, IDeviceOptions options)
-        => port.Address.PortType == PortType.SerialPort && options.Protocol == ProtocolType.ModbusRtu;
+        => port.Address.PortType == TransportProtocol.SerialPort && options.Protocol == ProtocolType.Modbus;
 
     public Result<IDevice> Create(IPort port, IDeviceOptions options)
         => ModbusDevice.CreateRtu(port, options.DeviceId);
@@ -24,7 +24,7 @@ internal sealed class ModbusRtuDeviceFactory : IDeviceFactory
 internal sealed class ModbusAsciiDeviceFactory : IDeviceFactory
 {
     public bool CanHandle(IPort port, IDeviceOptions options)
-        => port.Address.PortType == PortType.SerialPort && options.Protocol == ProtocolType.ModbusAscii;
+        => port.Address.PortType == TransportProtocol.SerialPort && options.Protocol == ProtocolType.ModbusAscii;
 
     public Result<IDevice> Create(IPort port, IDeviceOptions options)
         => ModbusDevice.CreateRtu(port, options.DeviceId);
@@ -36,7 +36,7 @@ internal sealed class ModbusAsciiDeviceFactory : IDeviceFactory
 internal sealed class ModbusIpDeviceFactory : IDeviceFactory
 {
     public bool CanHandle(IPort port, IDeviceOptions options)
-        => (port.Address.PortType == PortType.Tcp || port.Address.PortType == PortType.Udp) && options.Protocol == ProtocolType.ModbusIp;
+        => (port.Address.PortType == TransportProtocol.Tcp || port.Address.PortType == TransportProtocol.Udp) && options.Protocol == ProtocolType.ModbusIp;
 
     public Result<IDevice> Create(IPort port, IDeviceOptions options)
         => ModbusDevice.CreateIp(port, options.DeviceId);

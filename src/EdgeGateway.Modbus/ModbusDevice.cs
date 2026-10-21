@@ -1,4 +1,5 @@
-﻿using EdgeGateway.Data;
+﻿using EdgeGateway.Channel;
+using EdgeGateway.Data;
 using EdgeGateway.Devices;
 using EdgeGateway.Ports;
 using FluentResults;

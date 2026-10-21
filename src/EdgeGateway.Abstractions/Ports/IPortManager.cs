@@ -1,12 +1,13 @@
-﻿using FluentResults;
+﻿using EdgeGateway.Bytes;
 
 namespace EdgeGateway.Ports;
 
 
 public interface IPortManager
 {
-    IReadOnlyDictionary<PortAddress, IPortHandle> Ports { get; }
+    IReadOnlyDictionary<IChannelAddress, IPort> Ports { get; }
 
-    Result<IPortHandle> Add(IPortOptions options);
-    ValueTask<Result> RemoveAsync(PortAddress address, CancellationToken cancellationToken = default);
+
+    IPort Add(ChannelDescriptor descriptor);
+    ValueTask RemoveAsync(IChannelAddress address, CancellationToken cancellationToken = default);
 }

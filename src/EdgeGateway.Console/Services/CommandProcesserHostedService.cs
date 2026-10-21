@@ -9,7 +9,7 @@ internal sealed class CommandProcesserHostedService(IAppScope appScope, ILogger<
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var gateway = appScope.ServiceProvider.GetRequiredService<ILifetime>();
+        var gateway = appScope.ServiceProvider.GetRequiredService<IGateway>();
         var portManager = appScope.ServiceProvider.GetRequiredService<IPortManager>();
 
         await gateway.StartAsync(stoppingToken);

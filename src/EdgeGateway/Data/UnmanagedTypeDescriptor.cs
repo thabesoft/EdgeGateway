@@ -1,4 +1,5 @@
-﻿using FluentResults;
+﻿using EdgeGateway.Codecs;
+using FluentResults;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -8,7 +9,7 @@ namespace EdgeGateway.Data;
 /// <summary>
 /// 固定长度类型描述器，适用于所有固定长度的非托管类型（如 int、float、double 等）
 /// </summary>
-public sealed class UnmanagedTypeDescriptor<T> : ITypeDescriptor<T>
+public sealed class UnmanagedTypeDescriptor<T> : ICodec<T>
     where T : unmanaged
 {
     private UnmanagedTypeDescriptor() { }
@@ -17,7 +18,7 @@ public sealed class UnmanagedTypeDescriptor<T> : ITypeDescriptor<T>
 
     public string Name { get; } = typeof(T).Name;
     public int ByteLength { get; } = Unsafe.SizeOf<T>();
-    int? ITypeDescriptor<T>.ByteLength => ByteLength;
+    int? ICodec<T>.ByteLength => ByteLength;
 
     public Result<T> Decode(ReadOnlySpan<byte> rawData)
     {

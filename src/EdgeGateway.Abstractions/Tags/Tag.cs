@@ -1,13 +1,14 @@
-﻿using EdgeGateway.Data;
+﻿using EdgeGateway.Bytes;
+using EdgeGateway.Codecs;
+using EdgeGateway.Data;
 using EdgeGateway.Devices;
-using EdgeGateway.Ports;
 
 namespace EdgeGateway.Tags;
 
 
 public record class Tag<T>
 {
-    public required PortAddress PortAddress { get; init; }
+    public required IChannelAddress PortAddress { get; init; }
     public required DeviceId DeviceId { get; init; }
     public required DataDescriptor<T> DataDescriptor { get; init; }
 
@@ -30,7 +31,7 @@ public record class Tag<T>
 
 public static class Tag
 {
-    public static Tag<T> Create<T>(PortAddress portAddress, DeviceId deviceId, DataDescriptor<T> dataDescriptor)
+    public static Tag<T> Create<T>(IChannelAddress portAddress, DeviceId deviceId, DataDescriptor<T> dataDescriptor)
     {
         return new Tag<T>()
         {
@@ -40,7 +41,7 @@ public static class Tag
         };
     }
 
-    public static Tag<T> Create<T>(PortAddress portAddress, DeviceId deviceId, IDataAddress dataAddress, ITypeDescriptor<T> typeDescriptor)
+    public static Tag<T> Create<T>(IChannelAddress portAddress, DeviceId deviceId, IDataAddress dataAddress, ICodec<T> typeDescriptor)
     {
         return new Tag<T>()
         {

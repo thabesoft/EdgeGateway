@@ -9,7 +9,7 @@ namespace EdgeGateway.Options.Loader;
 
 public interface IGatewayOptionsLoader
 {
-    ValueTask<Result<GatewayOptions>> LoadAsync(CancellationToken cancellationToken = default);
+    ValueTask<Result<GatewayDescriptor>> LoadAsync(CancellationToken cancellationToken = default);
 }
 
 internal sealed class GatewayOptionsLoader(
@@ -18,7 +18,7 @@ internal sealed class GatewayOptionsLoader(
     IEnumerable<IPortOptionsConverter> converters
     ) : IGatewayOptionsLoader
 {
-    public async ValueTask<Result<GatewayOptions>> LoadAsync(CancellationToken cancellationToken = default)
+    public async ValueTask<Result<GatewayDescriptor>> LoadAsync(CancellationToken cancellationToken = default)
     {
         var optionsFile = options.Value.Path;
         if (!File.Exists(optionsFile)) return Result.Fail($"网关配置文件不存在: [{optionsFile}]");
@@ -29,7 +29,7 @@ internal sealed class GatewayOptionsLoader(
         if (result.IsFailed) return Result.Fail("网关配置文件反序列化失败").WithErrors(result.Errors);
 
 
-        return Result.Try(() => new GatewayOptions()
+        return Result.Try(() => new GatewayDescriptor()
         {
             Ports = [.. result.Value.Ports.Select(Map)],
             Devices = [.. result.Value.Devices.Select(Map)]
@@ -44,12 +44,12 @@ internal sealed class GatewayOptionsLoader(
     }
 
     // 设备 Dto -> Options
-    private static DeviceOptions Map(DeviceOptionsDto dto)
+    private static DeviceDescriptor Map(DeviceOptionsDto dto)
     {
         var protocolType = dto.Protocol;
         var portType = dto.PortAddress.Type;
         var portAddress = PortAddress.Create(portType, dto.PortAddress.Location);
 
-        return DeviceOptions.Create(protocolType, portAddress);
+        return DeviceDescriptor.Create(protocolType, portAddress);
     }
 }

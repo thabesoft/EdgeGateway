@@ -6,8 +6,12 @@ namespace EdgeGateway.Protocols;
 /// <summary>
 /// 通信协议类型
 /// </summary>
-public readonly record struct ProtocolType
+public sealed record class ProtocolType
 {
+    public static ProtocolType Modbus { get; } = Parse(nameof(Modbus));
+
+
+
     private readonly string _value;
     private ProtocolType(string value) => _value = value;
 

@@ -8,9 +8,9 @@ namespace EdgeGateway.Ethernet;
 
 internal sealed class TcpPortFactory(ILoggerFactory loggerFactory) : IPortFactory
 {
-    public bool CanHandle(IPortOptions config)
+    public bool CanCreate(IPortOptions config)
     {
-        return config is EthernetPortOptions && config.Address.PortType == PortType.Tcp;
+        return config is EthernetPortOptions && config.Address.PortType == TransportProtocol.Tcp;
     }
 
     public Result<IPort> Create(IPortOptions config)

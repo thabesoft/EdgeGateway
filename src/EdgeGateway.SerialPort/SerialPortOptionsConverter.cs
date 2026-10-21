@@ -18,7 +18,7 @@ internal sealed class SerialPortOptionsConverter : IPortOptionsConverter
         if (source is not SerialPortOptionsDto dto)
             throw new NotSupportedException($"不支持的配置类型: {source.GetType().Name}");
 
-        return SerialPortOptions.Builder(dto.PortName)
+        return SerialPortDescriptor.Builder(dto.PortName)
               .SetParity(dto.Parity)
               .SetBaudRate(dto.BaudRate)
               .SetStopBits(dto.StopBits)

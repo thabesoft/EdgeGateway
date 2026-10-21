@@ -1,15 +1,16 @@
-﻿using FluentResults;
+﻿using EdgeGateway.Codecs;
+using FluentResults;
 
 namespace EdgeGateway.Data;
 
-public sealed record class NumberTypeDescriptor<T> : ITypeDescriptor<T>
+public sealed record class NumberTypeDescriptor<T> : ICodec<T>
 #if NETSTANDARD2_0
     where T : unmanaged
 #else
     where T : unmanaged, System.Numerics.INumber<T>
 #endif
 {
-    private static readonly ITypeDescriptor<T> _typeDescriptor = UnmanagedTypeDescriptor<T>.Instance;
+    private static readonly ICodec<T> _typeDescriptor = UnmanagedTypeDescriptor<T>.Instance;
 
     public string Name => _typeDescriptor.Name;
     public int? ByteLength => _typeDescriptor.ByteLength;

@@ -14,7 +14,7 @@ public sealed record class PortAddressDto
     /// 类型
     /// </summary>
     [JsonConverter(typeof(PortTypeConverter))]
-    public required PortType Type { get; init; }
+    public required TransportProtocol Type { get; init; }
 
     /// <summary>
     /// 地址

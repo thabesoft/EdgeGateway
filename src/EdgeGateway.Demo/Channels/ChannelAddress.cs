@@ -1,7 +1,7 @@
 ﻿namespace EdgeGateway.Channels;
 
 
-public sealed record class  ChannelAddress : IEquatable<ChannelAddress>
+public sealed record class ChannelAddress : IEquatable<ChannelAddress>
 {
     public required ConnectionType Connection { get; init; }
     public required string Endpoint { get; init; }

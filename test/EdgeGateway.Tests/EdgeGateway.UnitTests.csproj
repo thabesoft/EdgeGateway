@@ -1,4 +1,4 @@
-﻿<Project Sdk="MSTest.Sdk/4.0.2">
+﻿<Project Sdk="MSTest.Sdk/4.3.3">
 
 	<PropertyGroup>
 
@@ -12,23 +12,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\src\EdgeGateway.Demo\EdgeGateway.Demo.csproj" />
+		<PackageReference Include="Moq" Version="4.21.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Update="Microsoft.Testing.Extensions.CodeCoverage" Version="18.10.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <PackageReference Update="Microsoft.Testing.Extensions.TrxReport" Version="2.3.3" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <PackageReference Update="MSTest.TestAdapter" Version="4.3.3" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <PackageReference Update="MSTest.TestFramework" Version="4.3.3" />
+		<ProjectReference Include="..\..\src\EdgeGateway.Demo\EdgeGateway.Demo.csproj" />
 	</ItemGroup>
 
 </Project>

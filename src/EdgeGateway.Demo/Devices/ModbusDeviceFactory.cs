@@ -24,7 +24,7 @@ public sealed class ModbusDeviceFactory(IModbusFactory modbusFactory) : IDeviceF
         if (!Enum.IsDefined(modbus.FrameFormat))
             throw new ArgumentOutOfRangeException(nameof(descriptor));
 
-        var streamSource = new StreamResourceAdpter(byteChannel);
+        var streamSource = new StreamResourceAdapter(byteChannel);
         var modbusMaster = modbus.FrameFormat switch
         {
             ModbusFrameFormat.Rtu => modbusFactory.CreateRtuMaster(streamSource),

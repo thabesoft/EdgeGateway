@@ -3,7 +3,7 @@ using NModbus.IO;
 
 namespace EdgeGateway.Devices;
 
-public class StreamResourceAdpter(IByteChannel byteChannel) : IStreamResource
+public sealed class StreamResourceAdapter(IByteChannel byteChannel) : IStreamResource
 {
     public int InfiniteTimeout { get; set; } = 1000;
     public int ReadTimeout { get; set; } = 1000;

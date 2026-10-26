@@ -9,8 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Net;
 
-Console.WriteLine("Hello, World!");
-
 
 var app = Host.CreateDefaultBuilder(args)
     .ConfigureServices(x => x

@@ -1,7 +1,8 @@
-using EdgeGateway.Channels;
+using EdgeGateway.Byte;
+using EdgeGateway.Modbus.Device;
 using Moq;
 
-namespace EdgeGateway.Devices;
+namespace EdgeGateway.Device;
 
 
 [TestClass]
@@ -10,7 +11,7 @@ public class StreamResourceAdpterTests
     [TestMethod]
     public void Read_UsesOffsetAndCount()
     {
-        var mockChannel = new Mock<IByteChannel>();
+        var mockChannel = new Mock<IByteStream>();
         mockChannel
             .Setup(x => x.ReadAsync(It.IsAny<Memory<byte>>(), It.IsAny<CancellationToken>()))
             .Returns((Memory<byte> buffer, CancellationToken _) =>
@@ -36,7 +37,7 @@ public class StreamResourceAdpterTests
     [TestMethod]
     public void Read_Timeout_ThrowsTimeoutException()
     {
-        var mockChannel = new Mock<IByteChannel>();
+        var mockChannel = new Mock<IByteStream>();
         mockChannel
             .Setup(x => x.ReadAsync(It.IsAny<Memory<byte>>(), It.IsAny<CancellationToken>()))
             .Returns(async (Memory<byte> _, CancellationToken ct) =>
@@ -54,7 +55,7 @@ public class StreamResourceAdpterTests
     [TestMethod]
     public void Write_UsesOffsetAndCount()
     {
-        var mockChannel = new Mock<IByteChannel>();
+        var mockChannel = new Mock<IByteStream>();
         mockChannel
             .Setup(x => x.WriteAsync(It.IsAny<ReadOnlyMemory<byte>>(), It.IsAny<CancellationToken>()))
             .Returns(ValueTask.CompletedTask);

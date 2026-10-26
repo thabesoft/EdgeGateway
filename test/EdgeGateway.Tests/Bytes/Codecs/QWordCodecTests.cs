@@ -1,4 +1,4 @@
-﻿namespace EdgeGateway.Bytes.Codecs;
+﻿namespace EdgeGateway.Byte.Codecs;
 
 
 [TestClass]

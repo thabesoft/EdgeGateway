@@ -1,23 +1,34 @@
 ﻿using EdgeGateway;
-using EdgeGateway.Bytes.Codecs;
-using EdgeGateway.Channels;
-using EdgeGateway.Devices;
-using EdgeGateway.Ports;
-using EdgeGateway.Tags;
-using NModbus;
+using EdgeGateway.Byte.Codecs;
+using EdgeGateway.Ethernet;
+using EdgeGateway.Modbus;
+using EdgeGateway.Modbus.Tag;
+using EdgeGateway.Port;
+using EdgeGateway.Serial;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System.Net;
 
 Console.WriteLine("Hello, World!");
 
 
-var portFactory = new PortFactory(
-    channelFactories: [new SerialChannelFactory(), new TcpChannelFactory(), new UdpChannelFactory()],
-    deviceFactories: [new ModbusDeviceFactory(new ModbusFactory())]);
-await using var gateway = new Gateway(portFactory);
+var app = Host.CreateDefaultBuilder(args)
+    .ConfigureServices(x => x
+        .AddEdgeGateway()
+        .AddSerial()
+        .AddEthernet()
+        .AddModbus()
+        )
+    .Build();
 
-var serialPort = gateway.AddPort(SerialChannelDescriptor.Create("Com2"));
-var tcpPort = gateway.AddPort(IpChannelDescriptor.Tcp(IPAddress.Parse("192.168.1.12"), 80));
-var udpPort = gateway.AddPort(IpChannelDescriptor.Udp(IPAddress.Parse("192.168.1.12"), 80));
+var services = app.Services;
+var gateway = services.GetRequiredService<IGateway>();
+
+
+
+var serialPort = gateway.AddPort(ChannelPortDescriptor.From(SerialChannelDescriptor.Create("Com2")));
+var tcpPort = gateway.AddPort(ChannelPortDescriptor.From(IpChannelDescriptor.Tcp(IPAddress.Parse("192.168.1.12"), 80)));
+var udpPort = gateway.AddPort(ChannelPortDescriptor.From(IpChannelDescriptor.Udp(IPAddress.Parse("192.168.1.12"), 80)));
 
 var device1 = serialPort.AddDevice(ModbusDeviceDescriptor.Rtu);
 var device2 = tcpPort.AddDevice(ModbusDeviceDescriptor.Tcp);

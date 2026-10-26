@@ -7,18 +7,14 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.13" />
-		<PackageReference Include="NModbus" Version="3.0.83" />
-		<PackageReference Include="System.IO.Ports" Version="10.0.13" />
 	</ItemGroup>
-
+	
 	<ItemGroup>
-		<ProjectReference Include="..\EdgeGateway.Compatibility\EdgeGateway.Compatibility.csproj" />
-	</ItemGroup>
-
-	<!--测试内部可见-->
-	<ItemGroup>
-		<InternalsVisibleTo Include="EdgeGateway.UnitTests"></InternalsVisibleTo>
-		<InternalsVisibleTo Include="EdgeGateway.IntegrationTests"></InternalsVisibleTo>
+	  <ProjectReference Include="..\EdgeGateway.Abstractions\EdgeGateway.Abstractions.csproj" />
+	  <ProjectReference Include="..\EdgeGateway.Ethernet\EdgeGateway.Ethernet.csproj" />
+	  <ProjectReference Include="..\EdgeGateway.Modbus\EdgeGateway.Modbus.csproj" />
+	  <ProjectReference Include="..\EdgeGateway.Serial\EdgeGateway.Serial.csproj" />
+	  <ProjectReference Include="..\EdgeGateway\EdgeGateway.csproj" />
 	</ItemGroup>
 
 </Project>

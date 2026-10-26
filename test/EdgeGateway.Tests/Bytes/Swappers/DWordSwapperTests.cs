@@ -1,4 +1,4 @@
-﻿namespace EdgeGateway.Bytes.Swappers;
+﻿namespace EdgeGateway.Byte.Swappers;
 
 
 [TestClass]

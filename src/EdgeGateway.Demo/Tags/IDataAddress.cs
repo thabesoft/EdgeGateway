@@ -1,4 +1,0 @@
-﻿namespace EdgeGateway.Tags;
-
-
-public interface IDataAddress : IEquatable<IDataAddress>;

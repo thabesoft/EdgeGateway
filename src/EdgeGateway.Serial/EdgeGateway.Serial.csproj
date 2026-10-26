@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<ProjectReference Include="..\EdgeGateway.Abstractions\EdgeGateway.Abstractions.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="System.IO.Ports" Version="10.0.13" />
+	</ItemGroup>
+
+	<!--测试内部可见-->
+	<ItemGroup>
+		<InternalsVisibleTo Include="EdgeGateway.UnitTests"></InternalsVisibleTo>
+		<InternalsVisibleTo Include="EdgeGateway.IntegrationTests"></InternalsVisibleTo>
+	</ItemGroup>
+
+</Project>

@@ -1,10 +1,12 @@
-using EdgeGateway.Bytes.Codecs;
-using EdgeGateway.Tags;
+using EdgeGateway.Byte.Codecs;
+using EdgeGateway.Modbus.Device;
+using EdgeGateway.Modbus.Tag;
+using EdgeGateway.Tag;
 using Moq;
 using NModbus;
 using System.Collections;
 
-namespace EdgeGateway.Devices;
+namespace EdgeGateway.Device;
 
 
 [TestClass]

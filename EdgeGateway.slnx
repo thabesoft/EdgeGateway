@@ -1,20 +1,8 @@
 <Solution>
-  <Folder Name="/Core/">
-    <Project Path="src/EdgeGateway.Abstractions/EdgeGateway.Abstractions.csproj" />
-    <Project Path="src/EdgeGateway/EdgeGateway.csproj" Id="f22e21ae-d2d2-4e0d-9a2a-af1e9378dd6b" />
-  </Folder>
-  <Folder Name="/Modules/">
-    <Project Path="src/EdgeGateway.Options/EdgeGateway.Options.csproj" />
-  </Folder>
-  <Folder Name="/Modules/Devices/">
-    <Project Path="src/EdgeGateway.Modbus/EdgeGateway.Modbus.csproj" />
-  </Folder>
-  <Folder Name="/Modules/Ports/">
-    <Project Path="src/EdgeGateway.Ethernet/EdgeGateway.Ethernet.csproj" />
-    <Project Path="src/EdgeGateway.SerialPort/EdgeGateway.SerialPort.csproj" />
+  <Folder Name="/Tests/">
+    <Project Path="test/EdgeGateway.IntegrationTests/EdgeGateway.IntegrationTests.csproj" Id="861f1cea-1f75-45c5-b940-1c2408bc5670" />
+    <Project Path="test/EdgeGateway.Tests/EdgeGateway.UnitTests.csproj" />
   </Folder>
   <Project Path="src/EdgeGateway.Compatibility/EdgeGateway.Compatibility.csproj" Id="708c6812-6f16-4fff-ab61-0b476512348d" />
-  <Project Path="src/EdgeGateway.Console/EdgeGateway.Console.csproj" />
   <Project Path="src/EdgeGateway.Demo/EdgeGateway.Demo.csproj" />
-  <Project Path="test/EdgeGateway.Tests/EdgeGateway.UnitTests.csproj" />
 </Solution>

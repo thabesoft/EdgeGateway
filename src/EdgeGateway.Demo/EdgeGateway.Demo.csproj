@@ -11,12 +11,14 @@
 		<PackageReference Include="System.IO.Ports" Version="10.0.13" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\EdgeGateway.Compatibility\EdgeGateway.Compatibility.csproj" />
+	</ItemGroup>
+
 	<!--测试内部可见-->
 	<ItemGroup>
 		<InternalsVisibleTo Include="EdgeGateway.UnitTests"></InternalsVisibleTo>
-	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\EdgeGateway.Compatibility\EdgeGateway.Compatibility.csproj" />
+		<InternalsVisibleTo Include="EdgeGateway.IntegrationTests"></InternalsVisibleTo>
 	</ItemGroup>
 
 </Project>

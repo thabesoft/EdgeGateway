@@ -4,7 +4,7 @@
 	<PropertyGroup>
 
 		<!--版本-->
-		<TargetFrameworks>netstandard2.0;net8.0;net10.0;net11.0</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net11.0</TargetFrameworks>
 		<LangVersion>preview</LangVersion>
 
 		<!--特性-->
@@ -14,10 +14,10 @@
 	</PropertyGroup>
 
 
-	<!--.net8 Aot-->
-	<!--<PropertyGroup Condition="'$(TargetFramework)' == 'net8.0'">-->
+	<!-- Aot-->
 	<!--<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(TargetFrameworkVersion)', 'net8.0'))">-->
-	<PropertyGroup Condition="'$(TargetFramework)' == 'net8.0' OR '$(TargetFramework)' == 'net10.0'">
+	<!--<PropertyGroup Condition="'$(TargetFramework)' == 'net8.0' OR '$(TargetFramework)' == 'net10.0'">-->
+	<PropertyGroup Condition="'$(TargetFramework)' == 'net11.0'">
 
 		<!-- 开启 AOT 发布 -->
 		<PublishAot>true</PublishAot>

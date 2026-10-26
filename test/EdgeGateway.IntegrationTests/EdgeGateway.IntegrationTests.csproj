@@ -1,0 +1,15 @@
+﻿<Project Sdk="MSTest.Sdk/4.3.3">
+
+	<PropertyGroup>
+		<RootNamespace>EdgeGateway</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\EdgeGateway.Demo\EdgeGateway.Demo.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="NModbus" Version="3.0.83" />
+	</ItemGroup>
+
+</Project>

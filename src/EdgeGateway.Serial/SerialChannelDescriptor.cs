@@ -15,9 +15,12 @@ public sealed record class SerialChannelDescriptor : IChannelDescriptor
 
     private SerialChannelDescriptor() { }
 
-    public static SerialChannelDescriptor Create(string portName)
+    /// <inheritdoc/>
+    /// <param name="serialPortName">串口名称</param>
+    /// <exception cref="ArgumentException"></exception>
+    public static SerialChannelDescriptor Create(string serialPortName)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(portName);
-        return new() { PortName = portName };
+        ArgumentException.ThrowIfNullOrWhiteSpace(serialPortName);
+        return new() { PortName = serialPortName };
     }
 }

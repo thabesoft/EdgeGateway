@@ -7,16 +7,18 @@ public interface IDevice : ITagReader, ITagWriter
 {
     DeviceId Id { get; }
     bool IsEnabled { get; }
+    ProtocolType ProtocolType { get; }
 
 
     ValueTask EnableAsync(CancellationToken ct = default);
     ValueTask DisableAsync(CancellationToken ct = default);
 }
 
-public abstract class DeviceBase : IDevice
+public abstract class DeviceBase(ProtocolType protocolType) : IDevice
 {
     public DeviceId Id { get; init; } = DeviceId.Create();
     public bool IsEnabled { get; private set; } = true;
+    public ProtocolType ProtocolType => protocolType;
 
 
     public ValueTask EnableAsync(CancellationToken ct = default)

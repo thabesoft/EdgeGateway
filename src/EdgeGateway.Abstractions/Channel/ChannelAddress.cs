@@ -3,7 +3,7 @@
 
 public sealed record class ChannelAddress : IEquatable<ChannelAddress>
 {
-    public required ConnectionType Connection { get; init; }
+    public required ConnectionType ConnectionType { get; init; }
     public required string Endpoint { get; init; }
 
 
@@ -13,14 +13,14 @@ public sealed record class ChannelAddress : IEquatable<ChannelAddress>
     public bool Equals(ChannelAddress? other)
     {
         if (other is null) return false;
-        if (other.Connection != Connection) return false;
+        if (other.ConnectionType != ConnectionType) return false;
 
         return string.Equals(other?.Endpoint, Endpoint, StringComparison.OrdinalIgnoreCase);
     }
     public override int GetHashCode()
     {
         HashCode hashCode = new();
-        hashCode.Add(Connection);
+        hashCode.Add(ConnectionType);
         hashCode.Add(StringComparer.OrdinalIgnoreCase.GetHashCode(Endpoint));
 
         return hashCode.ToHashCode();
@@ -28,7 +28,7 @@ public sealed record class ChannelAddress : IEquatable<ChannelAddress>
 
     public override string ToString()
     {
-        return $"{Connection}/{Endpoint}";
+        return $"{ConnectionType}/{Endpoint}";
     }
 
 
@@ -41,6 +41,6 @@ public sealed record class ChannelAddress : IEquatable<ChannelAddress>
         ArgumentException.ThrowIfNullOrWhiteSpace(endpoint);
 
 
-        return new() { Connection = connectionType, Endpoint = endpoint.Trim() };
+        return new() { ConnectionType = connectionType, Endpoint = endpoint.Trim() };
     }
 }

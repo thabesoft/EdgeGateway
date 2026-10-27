@@ -3,6 +3,7 @@ using System.Net.Sockets;
 
 namespace EdgeGateway.Ethernet.Channel;
 
+
 internal sealed class TcpChannel(IpChannelDescriptor descriptor) : IChannel
 {
     private readonly TcpClient _tcpClient = new();

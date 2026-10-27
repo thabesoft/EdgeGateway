@@ -1,7 +1,6 @@
 ﻿using EdgeGateway.Byte;
 using EdgeGateway.Device;
 using NModbus;
-using NModbus.IO;
 
 namespace EdgeGateway.Modbus.Device;
 

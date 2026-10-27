@@ -15,10 +15,16 @@ internal sealed class ChannelPort : IPort
     public PortId Id { get; }
     public bool IsOpen { get; private set; }
 
+    public ConnectionType ConnectionType { get; }
+    public IReadOnlyDictionary<DeviceId, IDevice> Devices => _devices.AsReadOnly();
+
+
 
     private ChannelPort(IChannel channel, IEnumerable<IDeviceFactory> deviceFactories)
     {
         _channel = channel;
+        ConnectionType = _channel.Address.ConnectionType;
+
         Id = PortId.Parse(channel.Address.ToString());
         _deviceFactories = [.. deviceFactories];
     }

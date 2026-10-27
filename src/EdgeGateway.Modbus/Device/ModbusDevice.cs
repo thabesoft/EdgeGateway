@@ -8,7 +8,7 @@ using System.Buffers.Binary;
 namespace EdgeGateway.Modbus.Device;
 
 
-internal sealed class ModbusDevice(IModbusMaster master) : DeviceBase
+internal sealed class ModbusDevice(IModbusMaster master) : DeviceBase(ProtocolType.Modbus)
 {
     protected override async ValueTask<T> ReadTagAsync<T>(ITag<T> tag, CancellationToken cancellationToken = default)
     {

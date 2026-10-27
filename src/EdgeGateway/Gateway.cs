@@ -7,6 +7,8 @@ namespace EdgeGateway;
 internal sealed class Gateway(IPortFactory portFactory) : IGateway
 {
     private readonly ConcurrentDictionary<PortId, IPort> _ports = [];
+    public IReadOnlyDictionary<PortId, IPort> Ports => _ports.AsReadOnly();
+
 
 
     public async ValueTask StartAsync(CancellationToken cancellationToken = default)

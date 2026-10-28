@@ -5,7 +5,6 @@ public interface IByteReader
     ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default);
 }
 
-
 public static class ByteReaderExtensions
 {
     extension(IByteReader reader)

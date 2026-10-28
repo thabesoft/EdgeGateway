@@ -1,4 +1,6 @@
-﻿namespace EdgeGateway.Tag;
+﻿using EdgeGateway.Tag;
+
+namespace EdgeGateway.Device;
 
 public interface ITagWriter
 {

@@ -5,7 +5,7 @@ using System.IO.Ports;
 namespace EdgeGateway.Serial.Channel;
 
 
-internal sealed class SerialChannel(SerialChannelDescriptor descriptor) : IByteChannel, IReadBufferDiscardable
+internal sealed class SerialChannel(SerialChannelDescriptor descriptor) : IChannel, IReadBufferDiscardable
 {
     private readonly SerialPort _serialPort = new(
         portName: descriptor.PortName,

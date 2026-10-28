@@ -3,4 +3,4 @@
 namespace EdgeGateway;
 
 
-public interface IGateway : IGatewayLifecycle, IPortManager, IAsyncDisposable;
+public interface IGateway : ILifecycle, IPortManager, IAsyncDisposable;

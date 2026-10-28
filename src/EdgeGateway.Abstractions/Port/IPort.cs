@@ -4,20 +4,8 @@ using EdgeGateway.Device;
 namespace EdgeGateway.Port;
 
 
-public interface IPort : IAsyncDisposable
+public interface IPort : IPortLifecycle, IDeviceManager, IAsyncDisposable
 {
     PortId Id { get; }
-    bool IsOpen { get; }
     ConnectionType ConnectionType { get; }
-
-
-
-    ValueTask OpenAsync(CancellationToken cancellationToken = default);
-    ValueTask CloseAsync(CancellationToken cancellationToken = default);
-
-
-
-    IReadOnlyDictionary<DeviceId, IDevice> Devices { get; }
-    IDevice AddDevice(IDeviceDescriptor descriptor);
-    void RemoveDevice(DeviceId id);
 }

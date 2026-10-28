@@ -1,4 +1,4 @@
-﻿using EdgeGateway.Config;
+﻿using EdgeGateway.Configs;
 using EdgeGateway.Ethernet;
 using System.Net;
 
@@ -11,19 +11,25 @@ public static class ConfigBuilderExtensions
 {
     extension(PortConfigBuilder portConfigBuilder)
     {
+        public PortConfigBuilder Ethernet(IpConnectionType type, IPAddress address, int port)
+        {
+            var builder = IpChannelDescriptor.Builder()
+                .Address(address)
+                .Port(port)
+                .Connection(type);
+
+            return portConfigBuilder.SetDescriptor(builder.Build());
+        }
+
+
         /// <summary>
         /// 使用 Tcp 通道
         /// </summary>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public PortConfigBuilder Tcp(IPAddress address, int port)
-        {
-            var builder = IpChannelDescriptor.Builder()
-                .Address(address, port)
-                .Tcp();
+        public PortConfigBuilder Tcp(IPAddress address, int port) =>
+            portConfigBuilder.Ethernet(IpConnectionType.Tcp, address, port);
 
-            return portConfigBuilder.SetDescriptor(builder.Build());
-        }
         /// <summary>
         /// 使用 Tcp 通道
         /// </summary>
@@ -32,20 +38,19 @@ public static class ConfigBuilderExtensions
         public PortConfigBuilder Tcp(string address, int port) =>
             portConfigBuilder.Tcp(IPAddress.Parse(address), port);
 
+        public PortConfigBuilder Tcp(IPEndPoint iPEndPoint) =>
+            portConfigBuilder.Tcp(iPEndPoint.Address, iPEndPoint.Port);
+
+
 
         /// <summary>
         /// 使用 Udp 通道
         /// </summary>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public PortConfigBuilder Udp(IPAddress address, int port)
-        {
-            var builder = IpChannelDescriptor.Builder()
-               .Address(address, port)
-               .Udp();
+        public PortConfigBuilder Udp(IPAddress address, int port) =>
+            portConfigBuilder.Ethernet(IpConnectionType.Udp, address, port);
 
-            return portConfigBuilder.SetDescriptor(builder.Build());
-        }
         /// <summary>
         /// 使用 Udp 通道
         /// </summary>
@@ -53,5 +58,8 @@ public static class ConfigBuilderExtensions
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public PortConfigBuilder Udp(string address, int port) =>
             portConfigBuilder.Udp(IPAddress.Parse(address), port);
+
+        public PortConfigBuilder Udp(IPEndPoint iPEndPoint) =>
+            portConfigBuilder.Udp(iPEndPoint.Address, iPEndPoint.Port);
     }
 }

@@ -5,7 +5,7 @@ using System.IO.Ports;
 namespace EdgeGateway.Serial.Channel;
 
 
-internal sealed class SerialChannel(SerialChannelDescriptor descriptor) : IChannel, IReadBufferDiscardable
+internal sealed class SerialChannel(SerialChannelDescriptor descriptor) : IByteChannel, IReadBufferDiscardable
 {
     private readonly SerialPort _serialPort = new(
         portName: descriptor.PortName,
@@ -14,7 +14,9 @@ internal sealed class SerialChannel(SerialChannelDescriptor descriptor) : IChann
         dataBits: descriptor.DataBits,
         stopBits: descriptor.StopBits);
 
-    public ChannelAddress Address { get; } = ChannelAddress.Create(ConnectionType.Serial, descriptor.PortName);
+
+    public ChannelAddress Address { get; } = descriptor.Address;
+    public bool IsOpen => _serialPort.IsOpen;
 
 
     public ValueTask OpenAsync(CancellationToken cancellationToken = default)
@@ -38,7 +40,7 @@ internal sealed class SerialChannel(SerialChannelDescriptor descriptor) : IChann
     {
         return _serialPort.BaseStream.WriteAsync(data, cancellationToken);
     }
-    public void Discard()
+    public void DiscardInputBuffer()
     {
         _serialPort.DiscardInBuffer();
     }

@@ -1,16 +1,6 @@
 ﻿using EdgeGateway.Device;
 
-namespace EdgeGateway.Config;
-
-public sealed record class DeviceConfig
-{
-    public required IDeviceDescriptor Descriptor { get; init; }
-
-
-    internal DeviceConfig() { }
-    public static DeviceConfigBuilder Builder() => new();
-}
-
+namespace EdgeGateway.Configs;
 
 public sealed record class DeviceConfigBuilder
 {
@@ -25,10 +15,10 @@ public sealed record class DeviceConfigBuilder
         return this;
     }
 
+
     public DeviceConfig Build()
     {
         ArgumentNullException.ThrowIfNull(_descriptor);
-
 
         return new()
         {

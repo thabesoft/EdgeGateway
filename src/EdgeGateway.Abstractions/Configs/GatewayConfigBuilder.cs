@@ -1,14 +1,4 @@
-﻿namespace EdgeGateway.Config;
-
-
-public sealed record class GatewayConfig
-{
-    public required IReadOnlyList<PortConfig> Ports { get; init; }
-
-
-    internal GatewayConfig() { }
-    public static GatewayConfigBuilder Builder() => new();
-}
+﻿namespace EdgeGateway.Configs;
 
 public sealed class GatewayConfigBuilder
 {

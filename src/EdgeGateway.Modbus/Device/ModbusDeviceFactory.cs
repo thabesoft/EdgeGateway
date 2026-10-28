@@ -1,6 +1,7 @@
 ﻿using EdgeGateway.Byte;
 using EdgeGateway.Device;
 using NModbus;
+using NModbus.IO;
 
 namespace EdgeGateway.Modbus.Device;
 
@@ -9,8 +10,9 @@ internal sealed class ModbusDeviceFactory(IModbusFactory modbusFactory) : IDevic
 {
     public bool CanCreate(IDeviceDescriptor descriptor)
     {
-        return descriptor is ModbusDeviceDescriptor modbus;
+        return descriptor is ModbusDeviceDescriptor;
     }
+
     public IDevice Create(IDeviceDescriptor descriptor, IByteStream byteChannel)
     {
         ArgumentNullException.ThrowIfNull(descriptor);
@@ -22,15 +24,25 @@ internal sealed class ModbusDeviceFactory(IModbusFactory modbusFactory) : IDevic
         if (!Enum.IsDefined(modbus.FrameFormat))
             throw new ArgumentOutOfRangeException(nameof(descriptor));
 
-        var streamSource = new StreamResourceAdapter(byteChannel);
-        var modbusMaster = modbus.FrameFormat switch
+
+        // 构建
+        var streamResource = new StreamResourceAdapter(byteChannel);
+        var tagProtocol = CreateModbusTagProtocol(modbus.FrameFormat, streamResource);
+
+        return new ModbusDevice(tagProtocol, null!);
+    }
+
+
+    private ModbusTagProtocol CreateModbusTagProtocol(ModbusFrameFormat modbusFrame, IStreamResource streamResource)
+    {
+        var modbusMaster = modbusFrame switch
         {
-            ModbusFrameFormat.Rtu => modbusFactory.CreateRtuMaster(streamSource),
-            ModbusFrameFormat.Ascii => modbusFactory.CreateAsciiMaster(streamSource),
-            ModbusFrameFormat.Ip => modbusFactory.CreateIpMaster(streamSource),
+            ModbusFrameFormat.Rtu => modbusFactory.CreateRtuMaster(streamResource),
+            ModbusFrameFormat.Ascii => modbusFactory.CreateAsciiMaster(streamResource),
+            ModbusFrameFormat.Ip => modbusFactory.CreateIpMaster(streamResource),
             _ => throw new InvalidOperationException(),
         };
 
-        return new ModbusDevice(modbusMaster);
+        return new ModbusTagProtocol(modbusMaster);
     }
 }

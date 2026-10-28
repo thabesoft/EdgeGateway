@@ -1,3 +1,6 @@
 ﻿namespace EdgeGateway.Channel;
 
-public interface IChannelDescriptor;
+public interface IChannelDescriptor
+{
+    ChannelAddress Address { get; }
+}

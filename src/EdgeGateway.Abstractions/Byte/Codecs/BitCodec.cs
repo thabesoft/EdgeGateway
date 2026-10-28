@@ -67,6 +67,9 @@ public sealed class BitCodec : IByteCodec<BitArray>
         }
         return bits;
     }
+
+    int IByteCodec.Encode(object value, Span<byte> buffer) => Encode((BitArray)value, buffer);
+    object IByteCodec.Decode(ReadOnlySpan<byte> raw) => Decode(raw);
 }
 
 public static class BitPacker

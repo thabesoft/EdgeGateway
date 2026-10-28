@@ -6,5 +6,5 @@ namespace EdgeGateway.Device;
 public interface IDeviceFactory
 {
     bool CanCreate(IDeviceDescriptor descriptor);
-    IDevice Create(IDeviceDescriptor descriptor, IByteStream byteChannel);
+    IDevice Create(IDeviceDescriptor descriptor, IByteStream byteStream);
 }

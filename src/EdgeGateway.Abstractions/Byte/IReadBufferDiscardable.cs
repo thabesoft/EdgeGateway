@@ -2,5 +2,5 @@
 
 public interface IReadBufferDiscardable
 {
-    void Discard();
+    void DiscardInputBuffer();
 }

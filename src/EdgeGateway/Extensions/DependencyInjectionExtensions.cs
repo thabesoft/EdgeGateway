@@ -1,4 +1,4 @@
-﻿using EdgeGateway.Config;
+﻿using EdgeGateway.Configs;
 using EdgeGateway.Port;
 using Microsoft.Extensions.DependencyInjection;
 

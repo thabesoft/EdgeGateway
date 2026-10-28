@@ -37,4 +37,7 @@ public sealed class WordCodec : IByteCodec<ushort>
 
         return (ushort)((cache[0] << 8) | cache[1]);
     }
+
+    int IByteCodec.Encode(object value, Span<byte> buffer) => Encode((ushort)value, buffer);
+    object IByteCodec.Decode(ReadOnlySpan<byte> raw) => Decode(raw);
 }

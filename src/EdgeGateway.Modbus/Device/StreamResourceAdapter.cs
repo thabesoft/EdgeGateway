@@ -42,7 +42,7 @@ internal sealed class StreamResourceAdapter(IByteStream byteChannel) : IStreamRe
 
     public void DiscardInBuffer()
     {
-        (byteChannel as IReadBufferDiscardable)?.Discard();
+        (byteChannel as IReadBufferDiscardable)?.DiscardInputBuffer();
     }
 
     public void Dispose()

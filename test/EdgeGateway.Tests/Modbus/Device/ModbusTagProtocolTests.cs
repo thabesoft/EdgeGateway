@@ -1,16 +1,14 @@
 using EdgeGateway.Byte.Codecs;
-using EdgeGateway.Modbus.Device;
 using EdgeGateway.Modbus.Tag;
-using EdgeGateway.Tag;
 using Moq;
 using NModbus;
 using System.Collections;
 
-namespace EdgeGateway.Device;
+namespace EdgeGateway.Modbus.Device;
 
 
 [TestClass]
-public class ModbusDeviceTests
+public class ModbusTagProtocolTests
 {
     [TestMethod]
     [DataRow(true)]
@@ -21,7 +19,7 @@ public class ModbusDeviceTests
         mockMaster.Setup(x => x.ReadCoilsAsync(It.IsAny<byte>(), It.IsAny<ushort>(), It.IsAny<ushort>()))
             .ReturnsAsync([value]);
 
-        var device = new ModbusDevice(mockMaster.Object);
+        var device = new ModbusTagProtocol(mockMaster.Object);
         var readResult = await device.ReadAsync(ModbusTag.Coil(0x01, 0x02), TestContext.CancellationToken);
 
         Assert.AreEqual(value, readResult);
@@ -37,7 +35,7 @@ public class ModbusDeviceTests
         mockMaster.Setup(x => x.ReadCoilsAsync(It.IsAny<byte>(), It.IsAny<ushort>(), It.IsAny<ushort>()))
             .ReturnsAsync([a, b, c, d]);
 
-        var device = new ModbusDevice(mockMaster.Object);
+        var device = new ModbusTagProtocol(mockMaster.Object);
         var readResult = await device.ReadAsync(ModbusTag.Coils(0x01, 0x02, 4), TestContext.CancellationToken);
 
         bool[] expected = [a, b, c, d];
@@ -55,7 +53,7 @@ public class ModbusDeviceTests
         mockMaster.Setup(x => x.ReadHoldingRegistersAsync(It.IsAny<byte>(), It.IsAny<ushort>(), It.IsAny<ushort>()))
             .ReturnsAsync([value]);
 
-        var device = new ModbusDevice(mockMaster.Object);
+        var device = new ModbusTagProtocol(mockMaster.Object);
         var readResult = await device.ReadAsync(ModbusTag.HoldingRegister(0x01, 0x02, WordCodec.BigEndian), TestContext.CancellationToken);
 
         Assert.AreEqual(value, readResult);
@@ -74,7 +72,7 @@ public class ModbusDeviceTests
         mockMaster.Setup(x => x.ReadHoldingRegistersAsync(It.IsAny<byte>(), It.IsAny<ushort>(), It.IsAny<ushort>()))
             .ReturnsAsync([(ushort)(value >> 16), (ushort)(value & 0xFFFF)]);
 
-        var device = new ModbusDevice(mockMaster.Object);
+        var device = new ModbusTagProtocol(mockMaster.Object);
         var readResult = await device.ReadAsync(ModbusTag.HoldingRegister(0x01, 0x02, DWordCodec.BigEndian), TestContext.CancellationToken);
 
         Assert.AreEqual(value, readResult);
@@ -95,7 +93,7 @@ public class ModbusDeviceTests
         mockMaster.Setup(x => x.ReadHoldingRegistersAsync(It.IsAny<byte>(), It.IsAny<ushort>(), It.IsAny<ushort>()))
             .ReturnsAsync([(ushort)(value >> 48), (ushort)(value >> 32), (ushort)(value >> 16), (ushort)(value & 0xFFFF)]);
 
-        var device = new ModbusDevice(mockMaster.Object);
+        var device = new ModbusTagProtocol(mockMaster.Object);
         var readResult = await device.ReadAsync(
             ModbusTag.HoldingRegister(0x01, 0x02, QWordCodec.BigEndian),
             TestContext.CancellationToken);
@@ -116,7 +114,7 @@ public class ModbusDeviceTests
         mockMaster.Setup(x => x.WriteSingleCoilAsync(It.IsAny<byte>(), It.IsAny<ushort>(), It.IsAny<bool>()))
             .Returns(Task.CompletedTask);
 
-        var device = new ModbusDevice(mockMaster.Object);
+        var device = new ModbusTagProtocol(mockMaster.Object);
         await device.WriteAsync(ModbusTag.Coil(0x01, 0x02), value, TestContext.CancellationToken);
 
         mockMaster.Verify(x => x.WriteSingleCoilAsync(0x01, 0x02, value), Times.Once);
@@ -131,7 +129,7 @@ public class ModbusDeviceTests
             .Returns(Task.CompletedTask);
 
         var bits = new BitArray([true, false, true, false]);   // 4 个线圈
-        var device = new ModbusDevice(mockMaster.Object);
+        var device = new ModbusTagProtocol(mockMaster.Object);
 
         await device.WriteAsync(
             ModbusTag.Coils(0x01, 0x02, quantity: 4),
@@ -163,7 +161,7 @@ public class ModbusDeviceTests
                 It.IsAny<byte>(), It.IsAny<ushort>(), It.IsAny<ushort>()))
             .Returns(Task.CompletedTask);
 
-        var device = new ModbusDevice(mockMaster.Object);
+        var device = new ModbusTagProtocol(mockMaster.Object);
         await device.WriteAsync(
             ModbusTag.HoldingRegister(0x01, 0x02, WordCodec.BigEndian),
             value,
@@ -185,7 +183,7 @@ public class ModbusDeviceTests
                 It.IsAny<byte>(), It.IsAny<ushort>(), It.IsAny<ushort[]>()))
             .Returns(Task.CompletedTask);
 
-        var device = new ModbusDevice(mockMaster.Object);
+        var device = new ModbusTagProtocol(mockMaster.Object);
         await device.WriteAsync(
             ModbusTag.HoldingRegister(0x01, 0x02, DWordCodec.BigEndian),
             value,
@@ -214,7 +212,7 @@ public class ModbusDeviceTests
                 It.IsAny<byte>(), It.IsAny<ushort>(), It.IsAny<ushort[]>()))
             .Returns(Task.CompletedTask);
 
-        var device = new ModbusDevice(mockMaster.Object);
+        var device = new ModbusTagProtocol(mockMaster.Object);
         await device.WriteAsync(
             ModbusTag.HoldingRegister(0x01, 0x02, QWordCodec.BigEndian),
             value,

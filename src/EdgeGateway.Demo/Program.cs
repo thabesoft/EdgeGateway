@@ -1,28 +1,30 @@
 ﻿using EdgeGateway;
-using EdgeGateway.Config;
-using Microsoft.Extensions.DependencyInjection;
+using EdgeGateway.Configs;
 using Microsoft.Extensions.Hosting;
 
 
-var config = GatewayConfig.Builder()
-    .AddPort(port => port
-        .Tcp("192.168.0.1", 8086)
-        .AddModbusTcpDevice())
-    .AddPort(port => port
-        .Udp("192.168.1.12", 8086)
-        .AddModbusAsciiDevice())
-    .AddPort(p => p
-        .Serial("COM1")
-        .AddModbusRtuDevice())
-    .Build();
+var builder = GatewayConfig.Builder();
+
+
+builder.AddPort(port => port
+    .Tcp("192.168.0.1", 8086)
+    .AddModbusIpDevice());
+
+builder.AddPort(port => port
+    .Udp("192.168.1.12", 8086)
+    .AddModbusAsciiDevice());
+
+builder.AddPort(p => p
+    .Serial("COM3")
+    .AddModbusRtuDevice());
+
 
 await Host.CreateDefaultBuilder(args)
     .ConfigureServices(x => x
-        .AddEdgeGateway(config)
+        .AddEdgeGateway(builder.Build())
         .AddSerial()
         .AddEthernet()
         .AddModbus()
-        .AddHostedService<GatewayHostedService>()
-        .AddHostedService<LaunchedService>()
+        .AddDemo()
         )
     .RunConsoleAsync();

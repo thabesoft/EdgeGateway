@@ -11,6 +11,9 @@ public static class DependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {
+        /// <summary>
+        /// 添加 Modbus 模块
+        /// </summary>
         public IServiceCollection AddModbus()
         {
             descriptors.AddSingleton<IDeviceFactory, ModbusDeviceFactory>();

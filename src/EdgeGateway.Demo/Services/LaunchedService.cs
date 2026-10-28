@@ -4,7 +4,7 @@ using EdgeGateway.Device;
 using EdgeGateway.Modbus.Tag;
 using Microsoft.Extensions.Hosting;
 
-namespace EdgeGateway;
+namespace EdgeGateway.Services;
 
 
 internal sealed class LaunchedService(IGateway gateway) : IHostedService
@@ -16,12 +16,14 @@ internal sealed class LaunchedService(IGateway gateway) : IHostedService
         var device = gateway.Ports
             .Where(x => x.Value.ConnectionType == ConnectionType.Serial)
             .SelectMany(x => x.Value.Devices.Values)
+            .OfType<ITagDevice>()
             .FirstOrDefault(x => x.ProtocolType == ProtocolType.Modbus);
+        ArgumentNullException.ThrowIfNull(device);
 
 
-        var value = await device.ReadAsync(tag);
+        var value = await device.ReadAsync(tag, cancellationToken);
         Console.WriteLine(value);
-        await device.WriteAsync(tag, value + 1);
+        await device.WriteAsync(tag, value + 1, cancellationToken);
 
     }
 

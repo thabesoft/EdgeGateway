@@ -7,16 +7,24 @@ internal sealed class UdpChannel(IpChannelDescriptor descriptor) : IChannel
 {
     private readonly UdpClient _udpClient = new();
 
-    public ChannelAddress Address { get; } = ChannelAddress.Create(ConnectionType.Tcp, $"{descriptor.IPAddress}:{descriptor.Port}");
+
+    public ChannelAddress Address { get; } = descriptor.Address;
+    public bool IsOpen { get; private set; }
 
 
     public ValueTask OpenAsync(CancellationToken cancellationToken = default)
     {
+        if (IsOpen) return ValueTask.CompletedTask;
+        IsOpen = true;
+
         _udpClient.Connect(descriptor.IPAddress, descriptor.Port);
         return ValueTask.CompletedTask;
     }
     public ValueTask CloseAsync(CancellationToken cancellationToken = default)
     {
+        if (!IsOpen) return ValueTask.CompletedTask;
+        IsOpen = false;
+
         _udpClient.Close();
         return ValueTask.CompletedTask;
     }

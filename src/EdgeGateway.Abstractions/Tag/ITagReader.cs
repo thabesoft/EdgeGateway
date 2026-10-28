@@ -2,5 +2,6 @@
 
 public interface ITagReader
 {
-    ValueTask<T> ReadAsync<T>(ITag<T> tag, CancellationToken cancellationToken = default);
+    ValueTask<T> ReadAsync<T>(ITag<T> tag, CancellationToken cancellationToken = default)
+        where T : notnull;
 }

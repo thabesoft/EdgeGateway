@@ -32,6 +32,10 @@ public sealed class BoolCodec : IByteCodec<bool>
         return (raw[0] & (1 << _bitOffset)) != 0;
     }
 
+    int IByteCodec.Encode(object value, Span<byte> buffer) => Encode((bool)value, buffer);
+    object IByteCodec.Decode(ReadOnlySpan<byte> raw) => Decode(raw);
+
+
 
     public static BoolCodec BitOffset(int bitOffset)
     {

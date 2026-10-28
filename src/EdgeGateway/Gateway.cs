@@ -10,9 +10,14 @@ internal sealed class Gateway(IPortFactory portFactory) : IGateway
     public IReadOnlyDictionary<PortId, IPort> Ports => _ports.AsReadOnly();
 
 
+    public bool IsRunning { get; private set; }
 
     public async ValueTask StartAsync(CancellationToken cancellationToken = default)
     {
+        if (IsRunning) return;
+        IsRunning = true;
+
+
         foreach (var i in _ports.Values)
         {
             if (i.IsOpen) continue;
@@ -21,6 +26,9 @@ internal sealed class Gateway(IPortFactory portFactory) : IGateway
     }
     public async ValueTask StopAsync(CancellationToken cancellationToken = default)
     {
+        if (!IsRunning) return;
+        IsRunning = false;
+
         foreach (var i in _ports.Values)
         {
             if (!i.IsOpen) continue;

@@ -35,4 +35,7 @@ public sealed class QWordCodec(QWordSwapper qwordSwapper) : IByteCodec<ulong>
 
         return BinaryPrimitives.ReadUInt64BigEndian(cache);
     }
+
+    int IByteCodec.Encode(object value, Span<byte> buffer) => Encode((ulong)value, buffer);
+    object IByteCodec.Decode(ReadOnlySpan<byte> raw) => Decode(raw);
 }

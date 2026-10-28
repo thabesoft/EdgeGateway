@@ -11,6 +11,9 @@ public static class DependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {
+        /// <summary>
+        /// 添加串口模块
+        /// </summary>
         public IServiceCollection AddSerial()
         {
             descriptors.AddSingleton<IChannelFactory, SerialChannelFactory>();

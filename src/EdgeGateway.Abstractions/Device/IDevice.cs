@@ -3,51 +3,10 @@
 namespace EdgeGateway.Device;
 
 
-public interface IDevice : ITagReader, ITagWriter
+public interface IDevice : IDeviceLifecycle
 {
     DeviceId Id { get; }
-    bool IsEnabled { get; }
     ProtocolType ProtocolType { get; }
-
-
-    ValueTask EnableAsync(CancellationToken ct = default);
-    ValueTask DisableAsync(CancellationToken ct = default);
 }
 
-public abstract class DeviceBase(ProtocolType protocolType) : IDevice
-{
-    public DeviceId Id { get; init; } = DeviceId.Create();
-    public bool IsEnabled { get; private set; } = true;
-    public ProtocolType ProtocolType => protocolType;
-
-
-    public ValueTask EnableAsync(CancellationToken ct = default)
-    {
-        IsEnabled = true;
-        return ValueTask.CompletedTask;
-    }
-    public ValueTask DisableAsync(CancellationToken ct = default)
-    {
-        IsEnabled = false;
-        return ValueTask.CompletedTask;
-    }
-
-
-    public ValueTask<T> ReadAsync<T>(ITag<T> tag, CancellationToken cancellationToken = default)
-    {
-        if (!IsEnabled)
-            throw new InvalidOperationException("设备未启用");
-
-        return ReadTagAsync(tag, cancellationToken);
-    }
-    public ValueTask WriteAsync<T>(ITag<T> tag, T value, CancellationToken cancellationToken = default)
-    {
-        if (!IsEnabled)
-            throw new InvalidOperationException("设备未启用");
-
-        return WriteTagAsync(tag, value, cancellationToken);
-    }
-
-    protected abstract ValueTask<T> ReadTagAsync<T>(ITag<T> tag, CancellationToken cancellationToken);
-    protected abstract ValueTask WriteTagAsync<T>(ITag<T> tag, T value, CancellationToken cancellationToken);
-}
+public interface ITagDevice : IDevice, ITagReader, ITagWriter;

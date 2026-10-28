@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace EdgeGateway;
+namespace EdgeGateway.Services;
 
 
 internal sealed class GatewayHostedService(IGateway gateway, ILogger<GatewayHostedService> logger)

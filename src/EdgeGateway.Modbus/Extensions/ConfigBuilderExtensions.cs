@@ -1,4 +1,4 @@
-﻿using EdgeGateway.Config;
+﻿using EdgeGateway.Configs;
 using EdgeGateway.Modbus;
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
@@ -10,44 +10,47 @@ public static class ConfigBuilderExtensions
 {
     extension(PortConfigBuilder portConfigBuilder)
     {
-        public PortConfigBuilder AddModbusRtuDevice()
+        public PortConfigBuilder AddModbusDevice(ModbusFrameFormat frameFormat)
         {
             var builder = DeviceConfig.Builder()
-                .ModbusRtu();
+                .Modbus(frameFormat);
 
             return portConfigBuilder.AddDevice(builder.Build());
         }
 
-        public PortConfigBuilder AddModbusAsciiDevice()
-        {
-            var builder = DeviceConfig.Builder()
-                .ModbusAscii();
+        public PortConfigBuilder AddModbusRtuDevice() =>
+            portConfigBuilder.AddModbusDevice(ModbusFrameFormat.Rtu);
 
-            return portConfigBuilder.AddDevice(builder.Build());
-        }
+        public PortConfigBuilder AddModbusAsciiDevice() =>
+            portConfigBuilder.AddModbusDevice(ModbusFrameFormat.Ascii);
 
-        public PortConfigBuilder AddModbusTcpDevice()
-        {
-            var builder = DeviceConfig.Builder()
-                .ModbusTcp();
-
-            return portConfigBuilder.AddDevice(builder.Build());
-        }
+        public PortConfigBuilder AddModbusIpDevice() =>
+            portConfigBuilder.AddModbusDevice(ModbusFrameFormat.Ip);
     }
 
     extension(DeviceConfigBuilder deviceConfigBuilder)
     {
-        public DeviceConfigBuilder ModbusAscii()
+        public DeviceConfigBuilder Modbus(ModbusFrameFormat frameFormat)
         {
-            return deviceConfigBuilder.SetDescriptor(ModbusDeviceDescriptor.Ascii);
+            if (frameFormat == ModbusFrameFormat.Rtu)
+                return deviceConfigBuilder.ModbusRtu();
+
+            if (frameFormat == ModbusFrameFormat.Ascii)
+                return deviceConfigBuilder.ModbusAscii();
+
+            if (frameFormat == ModbusFrameFormat.Ip)
+                return deviceConfigBuilder.ModbusTcp();
+
+
+            throw new ArgumentOutOfRangeException(nameof(frameFormat));
         }
-        public DeviceConfigBuilder ModbusRtu()
-        {
-            return deviceConfigBuilder.SetDescriptor(ModbusDeviceDescriptor.Rtu);
-        }
-        public DeviceConfigBuilder ModbusTcp()
-        {
-            return deviceConfigBuilder.SetDescriptor(ModbusDeviceDescriptor.Tcp);
-        }
+
+
+        public DeviceConfigBuilder ModbusAscii() =>
+            deviceConfigBuilder.SetDescriptor(ModbusDeviceDescriptor.Ascii);
+        public DeviceConfigBuilder ModbusRtu() =>
+            deviceConfigBuilder.SetDescriptor(ModbusDeviceDescriptor.Rtu);
+        public DeviceConfigBuilder ModbusTcp() =>
+            deviceConfigBuilder.SetDescriptor(ModbusDeviceDescriptor.Ip);
     }
 }

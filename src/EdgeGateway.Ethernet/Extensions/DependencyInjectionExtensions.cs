@@ -11,6 +11,9 @@ public static class DependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {
+        /// <summary>
+        /// 添加以太网模块
+        /// </summary>
         public IServiceCollection AddEthernet()
         {
             descriptors.AddSingleton<IChannelFactory, TcpChannelFactory>();

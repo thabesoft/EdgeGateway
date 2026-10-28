@@ -24,14 +24,9 @@ public sealed record class ModbusDeviceDescriptor : IDeviceDescriptor
         Connection = ConnectionType.Serial,
         FrameFormat = ModbusFrameFormat.Ascii
     };
-    public static ModbusDeviceDescriptor Tcp { get; } = new()
+    public static ModbusDeviceDescriptor Ip { get; } = new()
     {
-        Connection = ConnectionType.Tcp,
-        FrameFormat = ModbusFrameFormat.Ip
-    };
-    public static ModbusDeviceDescriptor Udp { get; } = new()
-    {
-        Connection = ConnectionType.Udp,
+        Connection = ConnectionType.Ip,
         FrameFormat = ModbusFrameFormat.Ip
     };
 }

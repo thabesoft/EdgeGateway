@@ -4,5 +4,3 @@ public interface IByteSwapper
 {
     void Swap(Span<byte> bytes);
 }
-
-

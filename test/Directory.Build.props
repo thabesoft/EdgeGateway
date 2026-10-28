@@ -3,11 +3,7 @@
 	<!-- See https://aka.ms/dotnet/msbuild/customize for more details on customizing your build -->
 	<PropertyGroup>
 
-		<!--版本-->
-		<TargetFrameworks>net462;net11.0</TargetFrameworks>
 		<LangVersion>preview</LangVersion>
-
-		<!--特性-->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 

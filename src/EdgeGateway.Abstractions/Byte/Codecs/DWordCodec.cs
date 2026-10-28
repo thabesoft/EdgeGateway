@@ -43,4 +43,7 @@ public sealed class DWordCodec : IByteCodec<uint>
 
         return BinaryPrimitives.ReadUInt32BigEndian(cache);
     }
+
+    int IByteCodec.Encode(object value, Span<byte> buffer) => Encode((uint)value, buffer);
+    object IByteCodec.Decode(ReadOnlySpan<byte> raw) => Decode(raw);
 }

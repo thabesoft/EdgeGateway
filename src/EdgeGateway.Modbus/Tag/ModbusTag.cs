@@ -6,11 +6,15 @@ namespace EdgeGateway.Modbus.Tag;
 
 
 public sealed class ModbusTag<T> : ITag<T>
+    where T : notnull
 {
     public required ModbusDataAddress Address { get; init; }
     public required IByteCodec<T> Codec { get; init; }
 
-    IDataAddress ITag<T>.Address => Address;
+
+    IDataAddress ITag.Address => Address;
+    IByteCodec ITag.Codec => Codec;
+
 
     internal ModbusTag() { }
 }

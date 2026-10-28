@@ -1,14 +1,17 @@
-﻿using EdgeGateway.Channel;
+﻿using EdgeGateway.Byte;
+using EdgeGateway.Channel;
 using System.Net.Sockets;
 
 namespace EdgeGateway.Ethernet.Channel;
 
 
-internal sealed class TcpChannel(IpChannelDescriptor descriptor) : IChannel
+internal sealed class TcpChannel(IpChannelDescriptor descriptor) : IChannel, IByteStream
 {
     private readonly TcpClient _tcpClient = new();
 
-    public ChannelAddress Address { get; } = ChannelAddress.Create(ConnectionType.Tcp, $"{descriptor.IPAddress}:{descriptor.Port}");
+
+    public ChannelAddress Address { get; } = descriptor.Address;
+    public bool IsOpen => _tcpClient.Connected;
 
 
     public async ValueTask OpenAsync(CancellationToken cancellationToken = default)

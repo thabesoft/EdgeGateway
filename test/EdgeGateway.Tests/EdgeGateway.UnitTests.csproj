@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<RootNamespace>EdgeGateway</RootNamespace>
+		<TargetFrameworks>net462;net11.0</TargetFrameworks>
 	</PropertyGroup>
 
 	<ItemGroup>

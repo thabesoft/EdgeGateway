@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	
+
 	<ItemGroup>
 		<ProjectReference Include="..\EdgeGateway.Abstractions\EdgeGateway.Abstractions.csproj" />
 	</ItemGroup>
@@ -13,5 +13,5 @@
 		<InternalsVisibleTo Include="EdgeGateway.UnitTests"></InternalsVisibleTo>
 		<InternalsVisibleTo Include="EdgeGateway.IntegrationTests"></InternalsVisibleTo>
 	</ItemGroup>
-	
+
 </Project>

@@ -1,10 +1,6 @@
 ﻿<Project Sdk="MSTest.Sdk/4.3.3">
 
 	<ItemGroup>
-		<PackageReference Include="NModbus" Version="3.0.83" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\..\src\EdgeGateway.Ethernet\EdgeGateway.Ethernet.csproj" />
 		<ProjectReference Include="..\..\src\EdgeGateway.Modbus\EdgeGateway.Modbus.csproj" />
 		<ProjectReference Include="..\..\src\EdgeGateway.Serial\EdgeGateway.Serial.csproj" />

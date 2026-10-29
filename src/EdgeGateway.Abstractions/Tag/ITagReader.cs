@@ -1,6 +1,4 @@
-﻿using EdgeGateway.Tag;
-
-namespace EdgeGateway.Device;
+﻿namespace EdgeGateway.Tag;
 
 public interface ITagReader
 {

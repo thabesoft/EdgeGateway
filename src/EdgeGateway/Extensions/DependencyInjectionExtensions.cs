@@ -1,4 +1,5 @@
 ﻿using EdgeGateway.Configs;
+using EdgeGateway.Device;
 using EdgeGateway.Port;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,19 +12,24 @@ public static class DependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {
-        public IServiceCollection AddEdgeGateway()
+        private void AddServices()
         {
             descriptors.AddSingleton<IPortFactory, PortFactory>();
-            descriptors.AddSingleton<IGateway, Gateway>();
+            descriptors.AddSingleton<IDeviceFactory, DefaultDeviceFactory>();
+        }
 
-            return descriptors;
+
+        public IServiceCollection AddEdgeGateway()
+        {
+            descriptors.AddServices();
+            return descriptors.AddSingleton<IGateway, Gateway>();
         }
 
 
         public IServiceCollection AddEdgeGateway(GatewayConfig config)
         {
-            descriptors.AddSingleton<IPortFactory, PortFactory>();
-            descriptors.AddSingleton<IGateway>(sp =>
+            descriptors.AddServices();
+            return descriptors.AddSingleton<IGateway>(sp =>
             {
                 var gateway = new Gateway(sp.GetRequiredService<IPortFactory>());
 
@@ -36,15 +42,14 @@ public static class DependencyInjectionExtensions
 
                 return gateway;
             });
-
-            return descriptors;
         }
 
         public IServiceCollection AddEdgeGateway(Action<GatewayConfigBuilder> configAction)
         {
+            descriptors.AddServices();
+
             var builder = new GatewayConfigBuilder();
             configAction.Invoke(builder);
-
             return descriptors.AddEdgeGateway(builder.Build());
         }
     }

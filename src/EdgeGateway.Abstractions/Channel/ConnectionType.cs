@@ -6,5 +6,5 @@
 public enum ConnectionType
 {
     Serial,
-    Ip
+    Ethernet
 }

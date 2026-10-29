@@ -1,9 +1,9 @@
-﻿using EdgeGateway.Tag;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 
-namespace EdgeGateway.Device.Polling;
+namespace EdgeGateway.Tag.Polling;
 
-public sealed class PollingScheduler(ITagReader tagReader) : IPollingScheduler, IDisposable
+
+internal sealed class PollingScheduler(ITagReader tagReader) : IPollingScheduler, IDisposable
 {
     private readonly ConcurrentDictionary<ITag, Context> _context = [];
     public IReadOnlyDictionary<ITag, ITagMonitor> Monitors => _context.ToDictionary(k => k.Key, v => v.Value.Monitor);

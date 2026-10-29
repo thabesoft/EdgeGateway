@@ -1,4 +1,5 @@
 ﻿using EdgeGateway.Device;
+using EdgeGateway.Protocol;
 
 namespace EdgeGateway.Configs;
 
@@ -14,6 +15,12 @@ public sealed record class DeviceConfigBuilder
         _descriptor = descriptor;
         return this;
     }
+    public DeviceConfigBuilder Ethernet(IProtocolDescriptor protocolDescriptor) =>
+        SetDescriptor(DeviceDescriptor.Ethernet(protocolDescriptor));
+
+    public DeviceConfigBuilder Serial(IProtocolDescriptor protocolDescriptor) =>
+        SetDescriptor(DeviceDescriptor.Serial(protocolDescriptor));
+
 
 
     public DeviceConfig Build()

@@ -47,10 +47,10 @@ public static class ConfigBuilderExtensions
 
 
         public DeviceConfigBuilder ModbusAscii() =>
-            deviceConfigBuilder.SetDescriptor(ModbusDeviceDescriptor.Ascii);
+            deviceConfigBuilder.Serial(ModbusProtocolDescriptor.Ascii);
         public DeviceConfigBuilder ModbusRtu() =>
-            deviceConfigBuilder.SetDescriptor(ModbusDeviceDescriptor.Rtu);
+            deviceConfigBuilder.Serial(ModbusProtocolDescriptor.Rtu);
         public DeviceConfigBuilder ModbusTcp() =>
-            deviceConfigBuilder.SetDescriptor(ModbusDeviceDescriptor.Ip);
+            deviceConfigBuilder.Ethernet(ModbusProtocolDescriptor.Ip);
     }
 }

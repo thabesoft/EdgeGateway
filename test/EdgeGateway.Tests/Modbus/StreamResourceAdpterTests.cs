@@ -1,7 +1,8 @@
 using EdgeGateway.Byte;
+using EdgeGateway.Modbus.Byte;
 using Moq;
 
-namespace EdgeGateway.Modbus.Device;
+namespace EdgeGateway.Modbus;
 
 
 [TestClass]

@@ -7,12 +7,12 @@ namespace EdgeGateway.Modbus.Device;
 
 
 [TestClass]
-public sealed class ModbusTagProtocolTests
+public sealed class ModbusTagReaderTests
 {
     private ScopeSerialPortModbusSlaveNetwork _scopeSlaveNetwork = null!;
     private IModbusSlave _slave1 = null!;
 
-    private ScopeSerialPortModbusTagProtocol _scopeTagProtocol = null!;
+    private ScopeSerialPortModbusTagReader _scopeTagProtocol = null!;
 
 
 
@@ -47,7 +47,7 @@ public sealed class ModbusTagProtocolTests
     {
         _slave1.DataStore.CoilDiscretes.WritePoints(address, [value]);
 
-        var result = await _scopeTagProtocol.TagProtocol.ReadAsync(ModbusTag.Coil(_slave1.UnitId, address), TestContext.CancellationToken);
+        var result = await _scopeTagProtocol.TagReader.ReadAsync(ModbusTag.Coil(_slave1.UnitId, address), TestContext.CancellationToken);
         Assert.AreEqual(value, result);
     }
 
@@ -58,7 +58,7 @@ public sealed class ModbusTagProtocolTests
     {
         _slave1.DataStore.CoilDiscretes.WritePoints(address, [v1, v2, v3]);
 
-        var result = await _scopeTagProtocol.TagProtocol.ReadAsync(ModbusTag.Coils(_slave1.UnitId, address, 3), TestContext.CancellationToken);
+        var result = await _scopeTagProtocol.TagReader.ReadAsync(ModbusTag.Coils(_slave1.UnitId, address, 3), TestContext.CancellationToken);
 
         Assert.AreSequenceEqual(new BitArray([v1, v2, v3]), result);
     }
@@ -71,7 +71,7 @@ public sealed class ModbusTagProtocolTests
 
         _slave1.DataStore.HoldingRegisters.WritePoints(address, [value]);
 
-        var result = await _scopeTagProtocol.TagProtocol.ReadAsync(ModbusTag.HoldingRegister(_slave1.UnitId, address, codec), TestContext.CancellationToken);
+        var result = await _scopeTagProtocol.TagReader.ReadAsync(ModbusTag.HoldingRegister(_slave1.UnitId, address, codec), TestContext.CancellationToken);
 
         Assert.AreEqual(value, result);
     }

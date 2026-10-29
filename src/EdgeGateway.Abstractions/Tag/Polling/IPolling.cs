@@ -1,4 +1,4 @@
-﻿namespace EdgeGateway.Device.Polling;
+﻿namespace EdgeGateway.Tag.Polling;
 
 
 public interface IPollingTrigger : ILifecycle, IAsyncDisposable

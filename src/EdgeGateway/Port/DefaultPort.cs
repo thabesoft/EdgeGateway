@@ -5,7 +5,7 @@ using System.Collections.Concurrent;
 namespace EdgeGateway.Port;
 
 
-internal sealed class ChannelPort : IPort
+internal sealed class DefaultPort : IPort
 {
     private readonly IChannel _channel;
     private readonly IDeviceFactory[] _deviceFactories;
@@ -20,7 +20,7 @@ internal sealed class ChannelPort : IPort
 
 
 
-    private ChannelPort(IChannel channel, IEnumerable<IDeviceFactory> deviceFactories)
+    private DefaultPort(IChannel channel, IEnumerable<IDeviceFactory> deviceFactories)
     {
         _channel = channel;
         ConnectionType = _channel.Address.ConnectionType;
@@ -73,7 +73,7 @@ internal sealed class ChannelPort : IPort
 
 
 
-    public static ChannelPort Create(IChannelFactory channelFactory, IChannelDescriptor channelDescriptor, IEnumerable<IDeviceFactory> deviceFactories)
+    public static DefaultPort Create(IChannelFactory channelFactory, IChannelDescriptor channelDescriptor, IEnumerable<IDeviceFactory> deviceFactories)
     {
         var channel = channelFactory.Create(channelDescriptor);
         return new(channel, deviceFactories);

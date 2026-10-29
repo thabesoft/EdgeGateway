@@ -22,6 +22,6 @@ internal sealed class PortFactory(
         var channelFactory = channelFactories.FirstOrDefault(x => x.CanCreate(channelPort.ChannelDescriptor)) ??
             throw new InvalidOperationException();
 
-        return ChannelPort.Create(channelFactory, channelPort.ChannelDescriptor, deviceFactories);
+        return DefaultPort.Create(channelFactory, channelPort.ChannelDescriptor, deviceFactories);
     }
 }

@@ -1,12 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Collections.Concurrent;
-using System.Timers;
 
-namespace EdgeGateway.Device.Polling;
+namespace EdgeGateway.Tag.Polling;
 
 
-public sealed class FixedIntervalTrigger : Lifecycle, IPollingTrigger
+internal sealed class FixedIntervalTrigger : Lifecycle, IPollingTrigger
 {
     private readonly ILogger _logger;
     private readonly TimeProvider _timeProvider;
@@ -118,10 +117,4 @@ public sealed class FixedIntervalTrigger : Lifecycle, IPollingTrigger
         }
         catch (Exception ex) { _logger.LogError(ex, "tick 执行异常"); }
     }
-}
-
-
-public sealed class Disposer(Action disposeAction) : IDisposable
-{
-    public void Dispose() => disposeAction.Invoke();
 }

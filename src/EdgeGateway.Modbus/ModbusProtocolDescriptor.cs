@@ -1,32 +1,32 @@
 ﻿using EdgeGateway.Channel;
-using EdgeGateway.Device;
+using EdgeGateway.Protocol;
 
 namespace EdgeGateway.Modbus;
 
 
-public sealed record class ModbusDeviceDescriptor : IDeviceDescriptor
+public sealed class ModbusProtocolDescriptor : IProtocolDescriptor
 {
-    public ProtocolType Protocol { get; } = ProtocolType.Modbus;
+    public ProtocolType Type { get; } = ProtocolType.Modbus;
     public required ConnectionType Connection { get; init; }
     public required ModbusFrameFormat FrameFormat { get; init; }
 
-    private ModbusDeviceDescriptor() { }
+    private ModbusProtocolDescriptor() { }
 
 
 
-    public static ModbusDeviceDescriptor Rtu { get; } = new()
+    public static ModbusProtocolDescriptor Rtu { get; } = new()
     {
         Connection = ConnectionType.Serial,
         FrameFormat = ModbusFrameFormat.Rtu
     };
-    public static ModbusDeviceDescriptor Ascii { get; } = new()
+    public static ModbusProtocolDescriptor Ascii { get; } = new()
     {
         Connection = ConnectionType.Serial,
         FrameFormat = ModbusFrameFormat.Ascii
     };
-    public static ModbusDeviceDescriptor Ip { get; } = new()
+    public static ModbusProtocolDescriptor Ip { get; } = new()
     {
-        Connection = ConnectionType.Ip,
+        Connection = ConnectionType.Ethernet,
         FrameFormat = ModbusFrameFormat.Ip
     };
 }

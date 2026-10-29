@@ -1,19 +1,20 @@
-﻿using EdgeGateway.Modbus.Device;
+﻿using EdgeGateway.Modbus.Tag;
 using EdgeGateway.Serial;
 using NModbus;
 
 namespace EdgeGateway.Modbus;
 
-public sealed class ScopeSerialPortModbusTagProtocol : ScopeSerialPort
+public sealed class ScopeSerialPortModbusTagWriter : ScopeSerialPort
 {
     private readonly IModbusMaster _master;
-    internal ModbusTagProtocol TagProtocol { get; }
+
+    internal ModbusTagWriter TagWriter { get; }
 
 
-    public ScopeSerialPortModbusTagProtocol(SerialPortDescriptor descriptor) : base(descriptor)
+    public ScopeSerialPortModbusTagWriter(SerialPortDescriptor descriptor) : base(descriptor)
     {
         _master = ModbusFactory.CreateRtuMaster(new SerialPortStreamResourceWapper(SerialPort));
-        TagProtocol = new(_master);
+        TagWriter = new(_master);
     }
 
     public override ValueTask DisposeAsync()

@@ -1,10 +1,10 @@
-﻿namespace EdgeGateway.Device;
+﻿using EdgeGateway.Protocol;
+
+namespace EdgeGateway.Device;
 
 
-public interface IDevice : ITagReader, IDeviceLifecycle, IAsyncDisposable
+public interface IDevice : IDeviceLifecycle, IAsyncDisposable
 {
     DeviceId Id { get; }
     ProtocolType ProtocolType { get; }
 }
-
-public interface IWritableDevice : IDevice, ITagWriter;

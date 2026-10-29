@@ -1,7 +1,4 @@
-﻿using EdgeGateway.Tag;
-using System.Collections.Concurrent;
-
-namespace EdgeGateway.Device.Polling;
+﻿namespace EdgeGateway.Tag.Polling;
 
 
 public interface IPollingScheduler

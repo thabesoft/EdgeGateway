@@ -80,13 +80,12 @@ public sealed class IpChannelDescriptorBuilder
     {
         ArgumentNullException.ThrowIfNull(_iPAddress);
 
-
         return new()
         {
             Connection = _connectionType,
             IPAddress = _iPAddress,
             Port = _port,
-            Address = ChannelAddress.Create(ConnectionType.Ip, $"{_iPAddress}:{_port}")
+            Address = ChannelAddress.Create(ConnectionType.Ethernet, $"{_iPAddress}:{_port}")
         };
     }
 }

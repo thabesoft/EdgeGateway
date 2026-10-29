@@ -4,13 +4,14 @@
     <Project Path="src/EdgeGateway.Compatibility/EdgeGateway.Compatibility.csproj" Id="708c6812-6f16-4fff-ab61-0b476512348d" />
     <Project Path="src/EdgeGateway/EdgeGateway.csproj" Id="281c23f7-8a53-4f1c-b41e-7f06a7892373" />
   </Folder>
-  <Folder Name="/Modules/">
-    <Project Path="src/EdgeGateway.Mitsubishi/EdgeGateway.Mitsubishi.csproj" Id="274375c8-ff68-4c02-b4a3-59deb87c0e49" />
-    <Project Path="src/EdgeGateway.Modbus/EdgeGateway.Modbus.csproj" Id="46b694ef-1a71-4cda-a6b3-e93906a3047f" />
-  </Folder>
+  <Folder Name="/Modules/" />
   <Folder Name="/Modules/Connections/">
     <Project Path="src/EdgeGateway.Ethernet/EdgeGateway.Ethernet.csproj" Id="9293874d-7505-40a5-b5fc-1f88aa38a405" />
     <Project Path="src/EdgeGateway.Serial/EdgeGateway.Serial.csproj" Id="7f4865ff-6e31-4577-89ad-3073834fd687" />
+  </Folder>
+  <Folder Name="/Modules/Protocol/">
+    <Project Path="src/EdgeGateway.Mitsubishi/EdgeGateway.Mitsubishi.csproj" Id="274375c8-ff68-4c02-b4a3-59deb87c0e49" />
+    <Project Path="src/EdgeGateway.Modbus/EdgeGateway.Modbus.csproj" Id="46b694ef-1a71-4cda-a6b3-e93906a3047f" />
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="test/EdgeGateway.IntegrationTests/EdgeGateway.IntegrationTests.csproj" Id="861f1cea-1f75-45c5-b940-1c2408bc5670" />

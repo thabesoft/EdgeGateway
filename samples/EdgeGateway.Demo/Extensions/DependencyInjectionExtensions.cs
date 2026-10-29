@@ -13,8 +13,6 @@ public static class DependencyInjectionExtensions
         public IServiceCollection AddDemo()
         {
             descriptors.AddHostedService<GatewayHostedService>();
-            descriptors.AddHostedService<LaunchedService>();
-
             return descriptors;
         }
     }

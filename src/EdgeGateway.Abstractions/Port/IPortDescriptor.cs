@@ -2,16 +2,19 @@
 
 namespace EdgeGateway.Port;
 
-public interface IPortDescriptor;
 
+public interface IPortDescriptor
+{
+    IChannelDescriptor ChannelDescriptor { get; }
+}
 
-public sealed record class ChannelPortDescriptor : IPortDescriptor
+public sealed record class PortDescriptor : IPortDescriptor
 {
     public required IChannelDescriptor ChannelDescriptor { get; init; }
 
 
-    private ChannelPortDescriptor() { }
-    public static ChannelPortDescriptor From(IChannelDescriptor channelDescriptor)
+    private PortDescriptor() { }
+    public static PortDescriptor From(IChannelDescriptor channelDescriptor)
     {
         ArgumentNullException.ThrowIfNull(channelDescriptor);
         return new() { ChannelDescriptor = channelDescriptor };

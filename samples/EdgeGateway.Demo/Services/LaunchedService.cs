@@ -16,7 +16,7 @@ internal sealed class LaunchedService(IGateway gateway) : IHostedService
         var device = gateway.Ports
             .Where(x => x.Value.ConnectionType == ConnectionType.Serial)
             .SelectMany(x => x.Value.Devices.Values)
-            .OfType<ITagDevice>()
+            .OfType<IWritableDevice>()
             .FirstOrDefault(x => x.ProtocolType == ProtocolType.Modbus);
         ArgumentNullException.ThrowIfNull(device);
 

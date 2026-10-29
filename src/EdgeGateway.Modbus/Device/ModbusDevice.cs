@@ -1,15 +1,11 @@
-﻿using EdgeGateway.Byte.Codecs;
-using EdgeGateway.Device;
+﻿using EdgeGateway.Device;
 using EdgeGateway.Device.Polling;
-using EdgeGateway.Modbus.Tag;
 using EdgeGateway.Tag;
-using NModbus;
-using System.Buffers.Binary;
 
 namespace EdgeGateway.Modbus.Device;
 
 
-internal sealed class ModbusDevice(ModbusTagProtocol tagStream, IPollingScheduler pollingScheduler) : ITagDevice
+internal sealed class ModbusDevice(ModbusTagProtocol tagStream, IPollingScheduler pollingScheduler) : IWritableDevice
 {
     public DeviceId Id { get; init; } = DeviceId.Create();
     public ProtocolType ProtocolType => ProtocolType.Modbus;
@@ -54,5 +50,10 @@ internal sealed class ModbusDevice(ModbusTagProtocol tagStream, IPollingSchedule
     {
         if (IsEnabled) return;
         throw new InvalidOperationException("设备已禁用");
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        return ValueTask.CompletedTask;
     }
 }

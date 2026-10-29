@@ -4,19 +4,19 @@ using EdgeGateway.Device;
 namespace EdgeGateway.Port;
 
 
-internal sealed class ChannelPortFactory(
+internal sealed class PortFactory(
         IEnumerable<IChannelFactory> channelFactories,
         IEnumerable<IDeviceFactory> deviceFactories
     ) : IPortFactory
 {
     public bool CanCreate(IPortDescriptor descriptor)
     {
-        return descriptor is ChannelPortDescriptor;
+        return descriptor is PortDescriptor;
     }
 
     public IPort Create(IPortDescriptor descriptor)
     {
-        if (descriptor is not ChannelPortDescriptor channelPort)
+        if (descriptor is not PortDescriptor channelPort)
             throw new InvalidOperationException();
 
         var channelFactory = channelFactories.FirstOrDefault(x => x.CanCreate(channelPort.ChannelDescriptor)) ??

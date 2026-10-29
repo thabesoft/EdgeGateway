@@ -32,13 +32,24 @@ internal sealed class ChannelPort : IPort
 
     public async ValueTask OpenAsync(CancellationToken cancellationToken = default)
     {
-        await _channel.OpenAsync(cancellationToken);
+        if (IsOpen) return;
         IsOpen = true;
+
+        await _channel.OpenAsync(cancellationToken);
+
+        foreach (var i in _devices.Values)
+            await i.EnableAsync(cancellationToken);
     }
 
     public async ValueTask CloseAsync(CancellationToken cancellationToken = default)
     {
+        if (!IsOpen) return;
         IsOpen = false;
+
+
+        foreach (var i in _devices.Values)
+            await i.DisableAsync(cancellationToken);
+
         await _channel.CloseAsync(cancellationToken);
     }
 
@@ -52,9 +63,12 @@ internal sealed class ChannelPort : IPort
         var device = factory.Create(descriptor, _channel);
         return _devices[device.Id] = device;
     }
-    public void RemoveDevice(DeviceId id)
+    public async ValueTask RemoveDeviceAsync(DeviceId id, CancellationToken cancellationToken)
     {
-        _devices.TryRemove(id, out var _);
+        if (!_devices.TryRemove(id, out var device))
+            return;
+
+        await device.DisableAsync(cancellationToken);
     }
 
 

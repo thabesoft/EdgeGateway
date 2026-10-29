@@ -13,7 +13,7 @@ public static class DependencyInjectionExtensions
     {
         public IServiceCollection AddEdgeGateway()
         {
-            descriptors.AddSingleton<IPortFactory, ChannelPortFactory>();
+            descriptors.AddSingleton<IPortFactory, PortFactory>();
             descriptors.AddSingleton<IGateway, Gateway>();
 
             return descriptors;
@@ -22,7 +22,7 @@ public static class DependencyInjectionExtensions
 
         public IServiceCollection AddEdgeGateway(GatewayConfig config)
         {
-            descriptors.AddSingleton<IPortFactory, ChannelPortFactory>();
+            descriptors.AddSingleton<IPortFactory, PortFactory>();
             descriptors.AddSingleton<IGateway>(sp =>
             {
                 var gateway = new Gateway(sp.GetRequiredService<IPortFactory>());

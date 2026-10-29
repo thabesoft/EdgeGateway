@@ -4,6 +4,6 @@ public interface IDeviceLifecycle
 {
     bool IsEnabled { get; }
 
-    ValueTask EnableAsync(CancellationToken ct = default);
-    ValueTask DisableAsync(CancellationToken ct = default);
+    ValueTask EnableAsync(CancellationToken cancellationToken = default);
+    ValueTask DisableAsync(CancellationToken cancellationToken = default);
 }

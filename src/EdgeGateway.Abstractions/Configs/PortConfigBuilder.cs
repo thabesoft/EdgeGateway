@@ -21,7 +21,7 @@ public sealed class PortConfigBuilder
     {
         ArgumentNullException.ThrowIfNull(channelDescriptor);
 
-        _descriptor = ChannelPortDescriptor.From(channelDescriptor);
+        _descriptor = PortDescriptor.From(channelDescriptor);
         return this;
     }
 

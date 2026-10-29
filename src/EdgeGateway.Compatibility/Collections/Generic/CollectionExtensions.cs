@@ -2,9 +2,9 @@
 
 using System.Collections.ObjectModel;
 
-namespace System;
+namespace System.Collections.Generic;
 
-public static class CollectionExtensions
+public static class ReadOnlyDictionaryExtensions
 {
     extension<TKey, TValue>(IDictionary<TKey, TValue> dictionary)
         where TKey : notnull

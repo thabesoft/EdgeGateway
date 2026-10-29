@@ -1,10 +1,5 @@
 ﻿<Project Sdk="MSTest.Sdk/4.3.3">
 
-	<PropertyGroup>
-		<RootNamespace>EdgeGateway</RootNamespace>
-		<TargetFramework>net11.0</TargetFramework>
-	</PropertyGroup>
-
 	<ItemGroup>
 		<PackageReference Include="NModbus" Version="3.0.83" />
 	</ItemGroup>

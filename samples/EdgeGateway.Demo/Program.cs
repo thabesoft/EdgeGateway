@@ -3,8 +3,8 @@ using EdgeGateway.Configs;
 using Microsoft.Extensions.Hosting;
 
 
-var builder = GatewayConfig.Builder();
 
+var builder = GatewayConfig.Builder();
 
 builder.AddPort(port => port
     .Tcp("192.168.0.1", 8086)

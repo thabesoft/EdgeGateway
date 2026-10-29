@@ -7,20 +7,18 @@
 	<!--低版本兼容包-->
 	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
 
-		<!--ValueTask-->
-		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.13" />
-
 		<!--Span, Memory-->
 		<PackageReference Include="System.Memory" Version="4.6.3" />
-
-		<!--新版本语法支持, 详情见项目地址 https://github.com/Sergio0694/PolySharp/-->
-		<PackageReference Include="PolySharp" Version="1.16.0" />
-
+		<!--TimeProvider-->
+		<PackageReference Include="Microsoft.Bcl.TimeProvider" Version="10.0.14" />
+		<!--ValueTask-->
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.14" />
 		<!--HashCode-->
 		<PackageReference Include="Microsoft.Bcl.HashCode" Version="6.0.0" />
 
-		<!--ThrowIf 系列方法-->
-		<PackageReference Include="NetEvolve.Arguments" Version="3.4.37" />
+
+		<!--新版本语法支持, 详情见项目地址 https://github.com/Sergio0694/PolySharp/-->
+		<PackageReference Include="PolySharp" Version="1.16.0" />
 
 	</ItemGroup>
 

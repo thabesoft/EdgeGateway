@@ -1,13 +1,10 @@
-<Project>
+           <Project>
 
 	<!-- See https://aka.ms/dotnet/msbuild/customize for more details on customizing your build -->
 	<PropertyGroup>
 
-		<!--版本-->
-		<TargetFrameworks>netstandard2.0;net11.0</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net8.0;net10.0;net11.0</TargetFrameworks>
 		<LangVersion>preview</LangVersion>
-
-		<!--特性-->
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 
@@ -15,9 +12,7 @@
 
 
 	<!-- Aot-->
-	<!--<PropertyGroup Condition="$([MSBuild]::VersionGreaterThanOrEquals('$(TargetFrameworkVersion)', 'net8.0'))">-->
-	<!--<PropertyGroup Condition="'$(TargetFramework)' == 'net8.0' OR '$(TargetFramework)' == 'net10.0'">-->
-	<PropertyGroup Condition="'$(TargetFramework)' == 'net11.0'">
+	<PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
 
 		<!-- 开启 AOT 发布 -->
 		<PublishAot>true</PublishAot>

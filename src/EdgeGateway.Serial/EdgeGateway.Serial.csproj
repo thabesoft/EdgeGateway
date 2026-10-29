@@ -5,7 +5,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="System.IO.Ports" Version="10.0.13" />
+		<PackageReference Include="System.IO.Ports" Version="10.0.13" PrivateAssets="all"/>
 	</ItemGroup>
 
 	<!--测试内部可见-->

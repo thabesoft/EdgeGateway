@@ -2,7 +2,7 @@
 
 namespace System;
 
-public static class EnumExtensions
+public static class EnumPolyfills
 {
     extension(Enum)
     {

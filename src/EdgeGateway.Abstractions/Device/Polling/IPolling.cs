@@ -1,9 +1,10 @@
-﻿using System.Collections.Concurrent;
-
-namespace EdgeGateway.Device.Polling;
+﻿namespace EdgeGateway.Device.Polling;
 
 
 public interface IPollingTrigger : ILifecycle, IAsyncDisposable
 {
-    IDisposable Subscribe(Func<CancellationToken, ValueTask> onTick);
+    IDisposable Subscribe(PollingTriggerOnTickHandler onTick);
 }
+
+
+public delegate ValueTask PollingTriggerOnTickHandler(CancellationToken cancellationToken = default);

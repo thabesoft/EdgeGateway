@@ -20,7 +20,6 @@ internal sealed class Gateway(IPortFactory portFactory) : IGateway
 
         foreach (var i in _ports.Values)
         {
-            if (i.IsOpen) continue;
             await i.OpenAsync(cancellationToken);
         }
     }
@@ -31,7 +30,6 @@ internal sealed class Gateway(IPortFactory portFactory) : IGateway
 
         foreach (var i in _ports.Values)
         {
-            if (!i.IsOpen) continue;
             await i.CloseAsync(cancellationToken);
         }
     }

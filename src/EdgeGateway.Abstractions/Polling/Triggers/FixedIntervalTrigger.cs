@@ -2,10 +2,10 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Collections.Concurrent;
 
-namespace EdgeGateway.Tag.Polling;
+namespace EdgeGateway.Polling.Triggers;
 
 
-internal sealed class FixedIntervalTrigger : Lifecycle, IPollingTrigger
+public sealed class FixedIntervalTrigger : Lifecycle, IPollingTrigger
 {
     private readonly ILogger _logger;
     private readonly TimeProvider _timeProvider;

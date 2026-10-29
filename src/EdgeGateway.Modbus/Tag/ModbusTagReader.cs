@@ -1,6 +1,4 @@
-﻿using EdgeGateway.Byte;
-using EdgeGateway.Byte.Codecs;
-using EdgeGateway.Protocol;
+﻿using EdgeGateway.Byte.Codecs;
 using EdgeGateway.Tag;
 using NModbus;
 

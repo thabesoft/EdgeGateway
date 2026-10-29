@@ -1,36 +1,21 @@
-﻿using System.Collections.Concurrent;
+﻿using EdgeGateway.Polling.Triggers;
+using EdgeGateway.Tag;
+using System.Collections.Concurrent;
 
-namespace EdgeGateway.Tag.Polling;
+namespace EdgeGateway.Polling;
 
 
-internal sealed class PollingScheduler(ITagReader tagReader) : IPollingScheduler, IDisposable
+internal sealed class PollingScheduler(ITagReader tagReader) : Lifecycle, IPollingScheduler
 {
     private readonly ConcurrentDictionary<ITag, Context> _context = [];
     public IReadOnlyDictionary<ITag, ITagMonitor> Monitors => _context.ToDictionary(k => k.Key, v => v.Value.Monitor);
 
 
 
-    public async ValueTask StartAsync(CancellationToken cancellationToken = default)
-    {
-        foreach (var context in _context)
-        {
-            await context.Value.Trigger.StartAsync(cancellationToken);
-        }
-    }
-
-    public async ValueTask StopAsync(CancellationToken cancellationToken = default)
-    {
-        foreach (var context in _context)
-        {
-            await context.Value.Trigger.StopAsync(cancellationToken);
-        }
-    }
-
-
     public ITagMonitor<T> Register<T>(ITag<T> tag, IPollingTrigger pollingTrigger) where T : notnull
     {
         var monitor = new TagMonitor<T>(tag);
-        var disposer =  pollingTrigger.Subscribe(async ct =>
+        var disposer = pollingTrigger.Subscribe(async ct =>
         {
             var value = await tagReader.ReadAsync(tag, ct);
             monitor.Update(value);
@@ -43,7 +28,6 @@ internal sealed class PollingScheduler(ITagReader tagReader) : IPollingScheduler
         };
         return monitor;
     }
-
     public void Unregister<T>(ITag<T> tag) where T : notnull
     {
         if (!_context.TryRemove(tag, out var context))
@@ -52,7 +36,23 @@ internal sealed class PollingScheduler(ITagReader tagReader) : IPollingScheduler
         context.Dispose();
     }
 
-    public void Dispose()
+
+    protected override async ValueTask OnStartAsync(CancellationToken cancellationToken)
+    {
+        foreach (var context in _context)
+        {
+            await context.Value.Trigger.StartAsync(cancellationToken);
+        }
+    }
+
+    protected override async ValueTask OnStopAsync(CancellationToken cancellationToken)
+    {
+        foreach (var context in _context)
+        {
+            await context.Value.Trigger.StopAsync(cancellationToken);
+        }
+    }
+    protected override ValueTask OnDisposeAsync()
     {
         var contexts = _context.Values.ToArray();
         _context.Clear();
@@ -61,6 +61,8 @@ internal sealed class PollingScheduler(ITagReader tagReader) : IPollingScheduler
         {
             i.Dispose();
         }
+
+        return ValueTask.CompletedTask;
     }
 
     private class Context(IDisposable disposer) : IDisposable

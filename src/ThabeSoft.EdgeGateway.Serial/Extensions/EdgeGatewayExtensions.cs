@@ -10,7 +10,7 @@ namespace ThabeSoft.EdgeGateway;
 #pragma warning restore IDE0130 // 命名空间与文件夹结构不匹配
 
 
-public static class ConfigBuilderExtensions
+public static class EdgeGatewayExtensions
 {
     extension(PortConfigBuilder portConfigBuilder)
     {
@@ -43,6 +43,16 @@ public static class ConfigBuilderExtensions
 
     extension(IPortManager portManager)
     {
+        public IPort AddSerialPort(string portName, int baudRate = 9600, Parity parity = Parity.None, int dataBits = 8, StopBits stopBits = StopBits.One)
+        {
+            return portManager.AddSerialPort(x => x
+                .PortName(portName)
+                .BaudRate(baudRate)
+                .Parity(parity)
+                .DataBits(dataBits)
+                .StopBits(stopBits));
+        }
+
         public IPort AddSerialPort(Action<SerialChannelDescriptorBuilder> buildAction)
         {
             var builder = new SerialChannelDescriptorBuilder();

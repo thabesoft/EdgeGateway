@@ -1,13 +1,15 @@
-﻿using ThabeSoft.EdgeGateway.Configs;
+﻿using System.Net;
+using System.Net.Sockets;
+using ThabeSoft.EdgeGateway.Configs;
 using ThabeSoft.EdgeGateway.Ethernet;
-using System.Net;
+using ThabeSoft.EdgeGateway.Port;
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
 namespace ThabeSoft.EdgeGateway;
 #pragma warning restore IDE0130 // 命名空间与文件夹结构不匹配
 
 
-public static class ConfigBuilderExtensions
+public static class EdgeGatewayExtensions
 {
     extension(PortConfigBuilder portConfigBuilder)
     {
@@ -61,5 +63,57 @@ public static class ConfigBuilderExtensions
 
         public PortConfigBuilder Udp(IPEndPoint iPEndPoint) =>
             portConfigBuilder.Udp(iPEndPoint.Address, iPEndPoint.Port);
+    }
+
+
+    extension(IPortManager portManager)
+    {
+        public IPort AddTcpPort(IPEndPoint iPEndPoint)
+        {
+            return portManager.AddIpPort(x => x
+                .Address(iPEndPoint)
+                .Tcp());
+        }
+        public IPort AddTcpPort(IPAddress address, int? port = null)
+        {
+            return portManager.AddIpPort(x => x
+                .Address(address)
+                .Port(port ?? GetFreePort())
+                .Tcp());
+        }
+        public IPort AddTcpPort(string address, int? port = null) =>
+            portManager.AddTcpPort(IPAddress.Parse(address), port);
+
+
+        public IPort AddUdpPort(IPAddress address, int? port = null)
+        {
+            return portManager.AddIpPort(x => x
+                .Address(address)
+                .Port(port ?? GetFreePort())
+                .Udp());
+        }
+        public IPort AddUdpPort(string address, int? port = null) =>
+            portManager.AddUdpPort(IPAddress.Parse(address), port);
+
+
+        public IPort AddIpPort(Action<IpChannelDescriptorBuilder> buildAction)
+        {
+            var builder = new IpChannelDescriptorBuilder();
+            buildAction.Invoke(builder);
+
+            return portManager.AddPort(builder.Build());
+        }
+    }
+
+
+
+    private static int GetFreePort()
+    {
+        var listener = new TcpListener(IPAddress.Loopback, 0);
+        listener.Start();
+        var freePort = ((IPEndPoint)listener.LocalEndpoint).Port;
+        listener.Stop();
+        
+        return freePort;
     }
 }

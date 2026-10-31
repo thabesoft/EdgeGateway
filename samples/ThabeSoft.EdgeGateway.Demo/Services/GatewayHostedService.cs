@@ -4,11 +4,10 @@ using ThabeSoft.EdgeGateway.Polling.Triggers;
 using ThabeSoft.EdgeGateway.Tag;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System.IO.Ports;
 using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway;
 
-namespace EdgeGateway.Demo.Services;
+namespace ThabeSoft.EdgeGateway.Demo.Services;
 
 
 internal sealed class GatewayHostedService(IGateway gateway, ILogger<GatewayHostedService> logger)
@@ -38,12 +37,7 @@ internal sealed class GatewayHostedService(IGateway gateway, ILogger<GatewayHost
 
     private async ValueTask OnInit(CancellationToken cancellationToken)
     {
-        var port = gateway.AddSerialPort(x => x
-            .PortName("COM2")
-            .BaudRate(9600)
-            .Parity(Parity.None)
-            .DataBits(8)
-            .StopBits(StopBits.One));
+        var port = gateway.AddSerialPort("COM2");
 
         var device = port.AddDevice(DeviceDescriptor.Serial(ModbusProtocolDescriptor.Rtu));
         var tagName = TagName.From("温度");

@@ -1,10 +1,14 @@
 ﻿using System.IO.Ports;
 
-namespace EdgeGateway.Demo.Options;
+namespace ThabeSoft.EdgeGateway.Simulator;
 
-public sealed class SerialPortSlaveHostedServiceOptions
+public sealed class ModbusSerialSimulatorOptions : ModbusSimulatorOptions
 {
-    public TimeSpan TickInterval { get; set; } = TimeSpan.FromMilliseconds(100);
+    public required SerialPortOptions SerialPortOptions { get; set; }
+}
+
+public sealed class SerialPortOptions
+{
     public required string PortName { get; set; }
     public int BaudRate { get; set; } = 9600;
     public Parity Parity { get; set; } = Parity.None;

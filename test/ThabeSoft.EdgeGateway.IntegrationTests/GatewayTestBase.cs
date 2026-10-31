@@ -11,7 +11,7 @@ public class GatewayTestBase
 
 
     [TestInitialize]
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         var descriptors = new ServiceCollection();
         descriptors.AddLogging();
@@ -22,11 +22,14 @@ public class GatewayTestBase
         Gateway = Services.GetRequiredService<IGateway>();
 
         await Gateway.StartAsync(TestContext.CancellationToken);
+        await OnInitializeAsync(TestContext.CancellationToken);
     }
 
     [TestCleanup]
-    public async Task CleanupAsync()
+    public async ValueTask CleanupAsync()
     {
+        await OnCleanupAsync();
+
         if (Services is IAsyncDisposable asyncDisposable)
         {
             await asyncDisposable.DisposeAsync();
@@ -36,6 +39,11 @@ public class GatewayTestBase
             disposable.Dispose();
         }
     }
+
+    protected virtual ValueTask OnInitializeAsync(CancellationToken cancellationToken) =>
+        ValueTask.CompletedTask;
+    protected virtual ValueTask OnCleanupAsync() =>
+        ValueTask.CompletedTask;
 
     protected virtual void OnConfigureServices(ServiceCollection descriptors) { }
 }

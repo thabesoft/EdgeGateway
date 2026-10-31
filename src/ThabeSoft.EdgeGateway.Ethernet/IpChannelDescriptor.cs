@@ -75,6 +75,17 @@ public sealed class IpChannelDescriptorBuilder
         return this;
     }
 
+    public IpChannelDescriptorBuilder Address(IPEndPoint iPEndPoint)
+    {
+        ArgumentNullException.ThrowIfNull(iPEndPoint);
+
+        _iPAddress = iPEndPoint.Address;
+        _port = iPEndPoint.Port;
+
+        return this;
+    }
+
+
 
     public IpChannelDescriptor Build()
     {

@@ -1,12 +1,12 @@
-           <Project>
+<Project>
 
 	<!-- See https://aka.ms/dotnet/msbuild/customize for more details on customizing your build -->
 	<PropertyGroup>
 
 		<TargetFrameworks>netstandard2.0;net8.0;net10.0;net11.0</TargetFrameworks>
-		<LangVersion>preview</LangVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<LangVersion>preview</LangVersion>
 
 	</PropertyGroup>
 

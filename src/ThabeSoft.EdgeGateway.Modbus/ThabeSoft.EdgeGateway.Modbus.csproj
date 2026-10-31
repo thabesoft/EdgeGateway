@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Abstractions\ThabeSoft.EdgeGateway.Abstractions.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="NModbus" Version="3.0.83" />
+	</ItemGroup>
+
+	<!--测试内部可见-->
+	<ItemGroup>
+		<InternalsVisibleTo Include="ThabeSoft.EdgeGateway.UnitTests"></InternalsVisibleTo>
+		<InternalsVisibleTo Include="ThabeSoft.EdgeGateway.IntegrationTests"></InternalsVisibleTo>
+	</ItemGroup>
+
+</Project>

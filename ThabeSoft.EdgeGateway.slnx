@@ -1,0 +1,21 @@
+<Solution>
+  <Folder Name="/Core/">
+    <Project Path="src/ThabeSoft.EdgeGateway.Abstractions/ThabeSoft.EdgeGateway.Abstractions.csproj" Id="2c45d842-15d4-4141-a034-745e2f81d658" />
+    <Project Path="src/ThabeSoft.EdgeGateway.Compatibility/ThabeSoft.EdgeGateway.Compatibility.csproj" Id="708c6812-6f16-4fff-ab61-0b476512348d" />
+    <Project Path="src/ThabeSoft.EdgeGateway.Core/ThabeSoft.EdgeGateway.Core.csproj" Id="281c23f7-8a53-4f1c-b41e-7f06a7892373" />
+  </Folder>
+  <Folder Name="/Modules/" />
+  <Folder Name="/Modules/Connections/">
+    <Project Path="src/ThabeSoft.EdgeGateway.Ethernet/ThabeSoft.EdgeGateway.Ethernet.csproj" Id="9293874d-7505-40a5-b5fc-1f88aa38a405" />
+    <Project Path="src/ThabeSoft.EdgeGateway.Serial/ThabeSoft.EdgeGateway.Serial.csproj" Id="7f4865ff-6e31-4577-89ad-3073834fd687" />
+  </Folder>
+  <Folder Name="/Modules/Protocol/">
+    <Project Path="src/ThabeSoft.EdgeGateway.Mitsubishi/ThabeSoft.EdgeGateway.Mitsubishi.csproj" Id="274375c8-ff68-4c02-b4a3-59deb87c0e49" />
+    <Project Path="src/ThabeSoft.EdgeGateway.Modbus/ThabeSoft.EdgeGateway.Modbus.csproj" Id="46b694ef-1a71-4cda-a6b3-e93906a3047f" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="test/ThabeSoft.EdgeGateway.IntegrationTests/ThabeSoft.EdgeGateway.IntegrationTests.csproj" Id="861f1cea-1f75-45c5-b940-1c2408bc5670" />
+    <Project Path="test/ThabeSoft.EdgeGateway.Tests/ThabeSoft.EdgeGateway.UnitTests.csproj" />
+  </Folder>
+  <Project Path="src/ThabeSoft.EdgeGateway.Demo/ThabeSoft.EdgeGateway.Demo.csproj" />
+</Solution>

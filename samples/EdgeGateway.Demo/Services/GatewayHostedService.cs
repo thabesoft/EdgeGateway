@@ -1,4 +1,5 @@
-﻿using EdgeGateway.Modbus.Tag;
+﻿using EdgeGateway.Byte.Codecs;
+using EdgeGateway.Modbus.Tag;
 using EdgeGateway.Polling;
 using EdgeGateway.Polling.Triggers;
 using Microsoft.Extensions.Hosting;
@@ -17,10 +18,16 @@ internal sealed class GatewayHostedService(IGateway gateway, ILogger<GatewayHost
             .FirstOrDefault();
 
 
-        var tag = ModbusTag.Coil(1, 100);
-        var monitor = a.Register(tag, new FixedIntervalTrigger(TimeSpan.FromSeconds(1)));
-        monitor.Updated += x => 
-            Console.WriteLine($"更新了{x}");
+        var tagx = ModbusTag.HoldingRegister(1, 0, WordCodec.BigEndian);
+        var tagy = ModbusTag.HoldingRegister(1, 1, WordCodec.BigEndian);
+
+        var monitorx = a.Register(tagx, new FixedIntervalTrigger(TimeSpan.FromSeconds(1)));
+        monitorx.Updated += x => 
+            Console.WriteLine($"更新了X: {x}");
+
+        var monitory = a.Register(tagy, new FixedIntervalTrigger(TimeSpan.FromSeconds(1)));
+        monitory.Updated += y =>
+            Console.WriteLine($"更新了X: {y}");
 
 
 

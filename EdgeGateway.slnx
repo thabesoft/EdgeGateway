@@ -4,6 +4,9 @@
     <Project Path="src/EdgeGateway.Compatibility/EdgeGateway.Compatibility.csproj" Id="708c6812-6f16-4fff-ab61-0b476512348d" />
     <Project Path="src/EdgeGateway/EdgeGateway.csproj" Id="281c23f7-8a53-4f1c-b41e-7f06a7892373" />
   </Folder>
+  <Folder Name="/Demo/">
+    <Project Path="samples/EdgeGateway.Demo/EdgeGateway.Demo.csproj" />
+  </Folder>
   <Folder Name="/Modules/" />
   <Folder Name="/Modules/Connections/">
     <Project Path="src/EdgeGateway.Ethernet/EdgeGateway.Ethernet.csproj" Id="9293874d-7505-40a5-b5fc-1f88aa38a405" />
@@ -17,5 +20,4 @@
     <Project Path="test/EdgeGateway.IntegrationTests/EdgeGateway.IntegrationTests.csproj" Id="861f1cea-1f75-45c5-b940-1c2408bc5670" />
     <Project Path="test/EdgeGateway.Tests/EdgeGateway.UnitTests.csproj" />
   </Folder>
-  <Project Path="samples/EdgeGateway.Demo/EdgeGateway.Demo.csproj" />
 </Solution>

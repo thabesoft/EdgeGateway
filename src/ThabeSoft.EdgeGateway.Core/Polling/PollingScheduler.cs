@@ -1,8 +1,8 @@
-﻿using EdgeGateway.Polling.Triggers;
-using EdgeGateway.Tag;
+﻿using ThabeSoft.EdgeGateway.Polling.Triggers;
+using ThabeSoft.EdgeGateway.Tag;
 using System.Collections.Concurrent;
 
-namespace EdgeGateway.Polling;
+namespace ThabeSoft.EdgeGateway.Polling;
 
 
 internal sealed class PollingScheduler(ITagReader tagReader) : Lifecycle, IPollingScheduler

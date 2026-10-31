@@ -1,6 +1,6 @@
-﻿using EdgeGateway.Port;
+﻿using ThabeSoft.EdgeGateway.Port;
 
-namespace EdgeGateway.Configs;
+namespace ThabeSoft.EdgeGateway.Configs;
 
 
 public sealed record class PortConfig

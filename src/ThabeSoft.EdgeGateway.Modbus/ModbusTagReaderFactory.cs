@@ -1,6 +1,6 @@
-﻿using EdgeGateway.Byte;
-using EdgeGateway.Protocol;
-using EdgeGateway.Tag;
+﻿using ThabeSoft.EdgeGateway.Byte;
+using ThabeSoft.EdgeGateway.Protocol;
+using ThabeSoft.EdgeGateway.Tag;
 using NModbus;
 
 namespace ThabeSoft.EdgeGateway.Modbus;

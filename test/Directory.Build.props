@@ -4,7 +4,6 @@
 	<PropertyGroup>
 
 		<TargetFramework>net11.0</TargetFramework>
-		<RootNamespace>EdgeGateway</RootNamespace>
 		<LangVersion>preview</LangVersion>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>

@@ -1,6 +1,6 @@
-﻿using EdgeGateway.Channel;
+﻿using ThabeSoft.EdgeGateway.Channel;
 
-namespace EdgeGateway.Serial.Channel;
+namespace ThabeSoft.EdgeGateway.Serial.Channel;
 
 
 internal sealed class SerialChannelFactory : IChannelFactory

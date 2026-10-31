@@ -1,8 +1,8 @@
-﻿using EdgeGateway.Channel;
-using EdgeGateway.Device;
+﻿using ThabeSoft.EdgeGateway.Channel;
+using ThabeSoft.EdgeGateway.Device;
 using System.Collections.Concurrent;
 
-namespace EdgeGateway.Port;
+namespace ThabeSoft.EdgeGateway.Port;
 
 
 internal sealed class DefaultPort : IPort

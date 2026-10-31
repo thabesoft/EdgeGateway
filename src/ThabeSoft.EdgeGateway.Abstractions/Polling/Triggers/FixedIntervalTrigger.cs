@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Collections.Concurrent;
 
-namespace EdgeGateway.Polling.Triggers;
+namespace ThabeSoft.EdgeGateway.Polling.Triggers;
 
 
 public sealed class FixedIntervalTrigger : Lifecycle, IPollingTrigger

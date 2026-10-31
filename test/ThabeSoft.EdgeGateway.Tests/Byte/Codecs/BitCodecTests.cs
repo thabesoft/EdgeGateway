@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace EdgeGateway.Byte.Codecs;
+namespace ThabeSoft.EdgeGateway.Byte.Codecs;
 
 
 [TestClass]

@@ -1,7 +1,7 @@
-﻿using EdgeGateway.Byte;
-using EdgeGateway.Protocol;
+﻿using ThabeSoft.EdgeGateway.Byte;
+using ThabeSoft.EdgeGateway.Protocol;
 
-namespace EdgeGateway.Tag;
+namespace ThabeSoft.EdgeGateway.Tag;
 
 
 public interface ITagReaderFactory

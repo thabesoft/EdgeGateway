@@ -1,8 +1,8 @@
-﻿using EdgeGateway.Byte;
-using EdgeGateway.Channel;
+﻿using ThabeSoft.EdgeGateway.Byte;
+using ThabeSoft.EdgeGateway.Channel;
 using System.Net.Sockets;
 
-namespace EdgeGateway.Ethernet.Channel;
+namespace ThabeSoft.EdgeGateway.Ethernet.Channel;
 
 
 internal sealed class TcpChannel(IpChannelDescriptor descriptor) : IChannel, IByteStream

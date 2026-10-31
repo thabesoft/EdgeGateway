@@ -1,7 +1,7 @@
-﻿using EdgeGateway.Byte.Swappers;
+﻿using ThabeSoft.EdgeGateway.Byte.Swappers;
 using System.Buffers.Binary;
 
-namespace EdgeGateway.Byte.Codecs;
+namespace ThabeSoft.EdgeGateway.Byte.Codecs;
 
 
 public sealed class QWordCodec(QWordSwapper qwordSwapper) : IByteCodec<ulong>

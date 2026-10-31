@@ -1,7 +1,7 @@
-﻿using EdgeGateway.Channel;
+﻿using ThabeSoft.EdgeGateway.Channel;
 using System.Net;
 
-namespace EdgeGateway.Ethernet;
+namespace ThabeSoft.EdgeGateway.Ethernet;
 
 
 public sealed record IpChannelDescriptor : IChannelDescriptor

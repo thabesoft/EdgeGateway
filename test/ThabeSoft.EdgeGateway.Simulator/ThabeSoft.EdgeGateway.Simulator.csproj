@@ -1,0 +1,8 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.13" />
+		<PackageReference Include="NModbus.Serial" Version="3.0.83" />
+	</ItemGroup>
+
+</Project>

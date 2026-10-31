@@ -1,7 +1,7 @@
-﻿using EdgeGateway.Channel;
-using EdgeGateway.Protocol;
+﻿using ThabeSoft.EdgeGateway.Channel;
+using ThabeSoft.EdgeGateway.Protocol;
 
-namespace EdgeGateway.Device;
+namespace ThabeSoft.EdgeGateway.Device;
 
 
 public interface IDeviceDescriptor

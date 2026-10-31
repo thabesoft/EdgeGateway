@@ -1,4 +1,4 @@
-﻿namespace EdgeGateway.Tag;
+﻿namespace ThabeSoft.EdgeGateway.Tag;
 
 
 /// <summary>

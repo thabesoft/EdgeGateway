@@ -1,4 +1,4 @@
-﻿namespace EdgeGateway.Channel;
+﻿namespace ThabeSoft.EdgeGateway.Channel;
 
 /// <summary>
 /// 连接类型

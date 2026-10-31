@@ -1,4 +1,4 @@
-﻿namespace EdgeGateway.Protocol;
+﻿namespace ThabeSoft.EdgeGateway.Protocol;
 
 
 /// <summary>

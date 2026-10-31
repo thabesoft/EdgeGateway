@@ -1,6 +1,6 @@
-﻿using EdgeGateway.Channel;
+﻿using ThabeSoft.EdgeGateway.Channel;
 
-namespace EdgeGateway.Ethernet.Channel;
+namespace ThabeSoft.EdgeGateway.Ethernet.Channel;
 
 internal sealed class TcpChannelFactory : IChannelFactory
 {

@@ -1,4 +1,4 @@
-﻿namespace EdgeGateway.Device;
+﻿namespace ThabeSoft.EdgeGateway.Device;
 
 public interface IDeviceLifecycle
 {

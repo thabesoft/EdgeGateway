@@ -1,7 +1,7 @@
-﻿using EdgeGateway.Polling;
-using EdgeGateway.Protocol;
+﻿using ThabeSoft.EdgeGateway.Polling;
+using ThabeSoft.EdgeGateway.Protocol;
 
-namespace EdgeGateway.Device;
+namespace ThabeSoft.EdgeGateway.Device;
 
 
 public interface IDevice : IDeviceLifecycle, IPollingManager, IAsyncDisposable

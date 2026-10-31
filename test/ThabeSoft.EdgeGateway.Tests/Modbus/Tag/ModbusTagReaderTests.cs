@@ -1,4 +1,4 @@
-using EdgeGateway.Byte.Codecs;
+using ThabeSoft.EdgeGateway.Byte.Codecs;
 using Moq;
 using NModbus;
 using ThabeSoft.EdgeGateway.Modbus;

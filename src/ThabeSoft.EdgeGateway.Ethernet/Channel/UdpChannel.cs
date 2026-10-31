@@ -1,7 +1,7 @@
-﻿using EdgeGateway.Channel;
+﻿using ThabeSoft.EdgeGateway.Channel;
 using System.Net.Sockets;
 
-namespace EdgeGateway.Ethernet.Channel;
+namespace ThabeSoft.EdgeGateway.Ethernet.Channel;
 
 internal sealed class UdpChannel(IpChannelDescriptor descriptor) : IChannel
 {

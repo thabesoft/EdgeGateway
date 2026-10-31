@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace EdgeGateway;
+namespace ThabeSoft.EdgeGateway;
 
 
 public interface ILifecycle

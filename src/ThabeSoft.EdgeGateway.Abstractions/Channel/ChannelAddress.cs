@@ -1,4 +1,4 @@
-﻿namespace EdgeGateway.Channel;
+﻿namespace ThabeSoft.EdgeGateway.Channel;
 
 
 public sealed record class ChannelAddress : IEquatable<ChannelAddress>

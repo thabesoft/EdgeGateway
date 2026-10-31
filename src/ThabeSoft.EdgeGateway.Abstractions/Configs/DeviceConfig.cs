@@ -1,6 +1,6 @@
-﻿using EdgeGateway.Device;
+﻿using ThabeSoft.EdgeGateway.Device;
 
-namespace EdgeGateway.Configs;
+namespace ThabeSoft.EdgeGateway.Configs;
 
 public sealed record class DeviceConfig
 {

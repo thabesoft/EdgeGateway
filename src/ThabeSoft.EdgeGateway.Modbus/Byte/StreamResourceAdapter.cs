@@ -1,7 +1,7 @@
-﻿using EdgeGateway.Byte;
+﻿using ThabeSoft.EdgeGateway.Byte;
 using NModbus.IO;
 
-namespace EdgeGateway.Modbus.Byte;
+namespace ThabeSoft.EdgeGateway.Modbus.Byte;
 
 internal sealed class StreamResourceAdapter(IByteStream byteChannel) : IStreamResource
 {

@@ -1,6 +1,6 @@
 ﻿using System.Buffers.Binary;
 
-namespace EdgeGateway.Byte.Codecs;
+namespace ThabeSoft.EdgeGateway.Byte.Codecs;
 
 public static class ByteCodecExtensions
 {

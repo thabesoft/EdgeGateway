@@ -1,6 +1,6 @@
-﻿using EdgeGateway.Byte.Codecs;
+﻿using ThabeSoft.EdgeGateway.Byte.Codecs;
 
-namespace EdgeGateway.Tag;
+namespace ThabeSoft.EdgeGateway.Tag;
 
 
 public interface ITag<T> : ITag

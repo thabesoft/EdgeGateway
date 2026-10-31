@@ -1,6 +1,6 @@
-﻿using EdgeGateway.Byte;
+﻿using ThabeSoft.EdgeGateway.Byte;
 
-namespace EdgeGateway.Device;
+namespace ThabeSoft.EdgeGateway.Device;
 
 
 public interface IDeviceFactory

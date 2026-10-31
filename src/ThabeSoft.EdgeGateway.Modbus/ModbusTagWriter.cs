@@ -1,4 +1,4 @@
-﻿using EdgeGateway.Tag;
+﻿using ThabeSoft.EdgeGateway.Tag;
 using NModbus;
 using System.Buffers.Binary;
 

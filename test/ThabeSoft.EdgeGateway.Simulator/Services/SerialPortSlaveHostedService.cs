@@ -1,4 +1,4 @@
-﻿using EdgeGateway.Options;
+﻿using EdgeGateway.Demo.Options;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -6,7 +6,7 @@ using NModbus;
 using NModbus.Serial;
 using System.IO.Ports;
 
-namespace EdgeGateway.Services;
+namespace ThabeSoft.EdgeGateway.Simulator.Services;
 
 
 

@@ -1,9 +1,9 @@
-﻿//using EdgeGateway.Byte.Codecs;
-//using EdgeGateway.Device;
-//using EdgeGateway.Tag;
+﻿//using ThabeSoft.EdgeGateway.Byte.Codecs;
+//using ThabeSoft.EdgeGateway.Device;
+//using ThabeSoft.EdgeGateway.Tag;
 //using System.Buffers.Binary;
 
-//namespace EdgeGateway.Mitsubishi.Device;
+//namespace ThabeSoft.EdgeGateway.Mitsubishi.Device;
 
 
 //internal sealed class MitsubishiTagProtocol(IModbusMaster master) : ITagReader, ITagWriter

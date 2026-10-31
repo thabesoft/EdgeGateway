@@ -35,4 +35,9 @@
 
 	</PropertyGroup>
 
+	<!--测试内部可见-->
+	<ItemGroup>
+		<InternalsVisibleTo Include="ThabeSoft.EdgeGateway.UnitTests"></InternalsVisibleTo>
+	</ItemGroup>
+
 </Project>

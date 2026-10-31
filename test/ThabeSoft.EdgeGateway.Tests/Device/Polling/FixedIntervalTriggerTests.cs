@@ -1,7 +1,7 @@
-using EdgeGateway.Polling.Triggers;
+using ThabeSoft.EdgeGateway.Polling.Triggers;
 using Microsoft.Extensions.Time.Testing;
 
-namespace EdgeGateway.Device.Polling;
+namespace ThabeSoft.EdgeGateway.Device.Polling;
 
 
 [TestClass]

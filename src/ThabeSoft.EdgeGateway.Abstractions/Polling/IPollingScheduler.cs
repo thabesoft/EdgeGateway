@@ -1,7 +1,7 @@
-﻿using EdgeGateway.Polling.Triggers;
-using EdgeGateway.Tag;
+﻿using ThabeSoft.EdgeGateway.Polling.Triggers;
+using ThabeSoft.EdgeGateway.Tag;
 
-namespace EdgeGateway.Polling;
+namespace ThabeSoft.EdgeGateway.Polling;
 
 
 public interface IPollingManager

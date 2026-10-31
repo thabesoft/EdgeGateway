@@ -1,4 +1,4 @@
-﻿namespace EdgeGateway.Channel;
+﻿namespace ThabeSoft.EdgeGateway.Channel;
 
 public interface IChannelLifecycle
 {

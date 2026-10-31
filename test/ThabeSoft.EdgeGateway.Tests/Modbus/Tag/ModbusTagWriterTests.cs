@@ -1,10 +1,10 @@
-using EdgeGateway.Byte.Codecs;
+using ThabeSoft.EdgeGateway.Byte.Codecs;
 using Moq;
 using NModbus;
 using System.Collections;
 using ThabeSoft.EdgeGateway.Modbus;
 
-namespace EdgeGateway.Modbus.Tag;
+namespace ThabeSoft.EdgeGateway.Modbus.Tag;
 
 
 [TestClass]

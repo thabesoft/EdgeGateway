@@ -5,6 +5,7 @@
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Modbus\ThabeSoft.EdgeGateway.Modbus.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Serial\ThabeSoft.EdgeGateway.Serial.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Core\ThabeSoft.EdgeGateway.Core.csproj" />
+		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Simulator\ThabeSoft.EdgeGateway.Simulator.csproj" />
 	</ItemGroup>
 
 </Project>

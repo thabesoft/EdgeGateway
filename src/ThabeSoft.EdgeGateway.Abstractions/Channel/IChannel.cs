@@ -1,6 +1,6 @@
-﻿using EdgeGateway.Byte;
+﻿using ThabeSoft.EdgeGateway.Byte;
 
-namespace EdgeGateway.Channel;
+namespace ThabeSoft.EdgeGateway.Channel;
 
 
 public interface IChannel : IChannelLifecycle, IByteStream, IAsyncDisposable

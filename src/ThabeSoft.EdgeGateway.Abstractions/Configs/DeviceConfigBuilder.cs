@@ -1,9 +1,9 @@
-﻿using EdgeGateway.Device;
-using EdgeGateway.Polling.Triggers;
-using EdgeGateway.Protocol;
-using EdgeGateway.Tag;
+﻿using ThabeSoft.EdgeGateway.Device;
+using ThabeSoft.EdgeGateway.Polling.Triggers;
+using ThabeSoft.EdgeGateway.Protocol;
+using ThabeSoft.EdgeGateway.Tag;
 
-namespace EdgeGateway.Configs;
+namespace ThabeSoft.EdgeGateway.Configs;
 
 public sealed record class DeviceConfigBuilder
 {

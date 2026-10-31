@@ -1,7 +1,7 @@
-﻿using EdgeGateway.Port;
+﻿using ThabeSoft.EdgeGateway.Port;
 using System.Collections.Concurrent;
 
-namespace EdgeGateway;
+namespace ThabeSoft.EdgeGateway;
 
 
 internal sealed class Gateway(IPortFactory portFactory) : IGateway

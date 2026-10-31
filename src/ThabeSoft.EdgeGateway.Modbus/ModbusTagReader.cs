@@ -1,5 +1,5 @@
-﻿using EdgeGateway.Byte.Codecs;
-using EdgeGateway.Tag;
+﻿using ThabeSoft.EdgeGateway.Byte.Codecs;
+using ThabeSoft.EdgeGateway.Tag;
 using NModbus;
 
 namespace ThabeSoft.EdgeGateway.Modbus;

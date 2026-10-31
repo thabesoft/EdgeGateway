@@ -1,6 +1,6 @@
 ﻿using System.IO.Ports;
 
-namespace EdgeGateway.Options;
+namespace EdgeGateway.Demo.Options;
 
 public sealed class SerialPortSlaveHostedServiceOptions
 {

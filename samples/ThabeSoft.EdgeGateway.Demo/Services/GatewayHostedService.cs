@@ -1,13 +1,14 @@
-﻿using EdgeGateway.Byte.Codecs;
-using EdgeGateway.Device;
-using EdgeGateway.Polling.Triggers;
-using EdgeGateway.Tag;
+﻿using ThabeSoft.EdgeGateway.Byte.Codecs;
+using ThabeSoft.EdgeGateway.Device;
+using ThabeSoft.EdgeGateway.Polling.Triggers;
+using ThabeSoft.EdgeGateway.Tag;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.IO.Ports;
 using ThabeSoft.EdgeGateway.Modbus;
+using ThabeSoft.EdgeGateway;
 
-namespace EdgeGateway.Services;
+namespace EdgeGateway.Demo.Services;
 
 
 internal sealed class GatewayHostedService(IGateway gateway, ILogger<GatewayHostedService> logger)

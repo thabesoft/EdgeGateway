@@ -1,8 +1,8 @@
-﻿using EdgeGateway.Byte;
-using EdgeGateway.Polling;
-using EdgeGateway.Tag;
+﻿using ThabeSoft.EdgeGateway.Byte;
+using ThabeSoft.EdgeGateway.Polling;
+using ThabeSoft.EdgeGateway.Tag;
 
-namespace EdgeGateway.Device;
+namespace ThabeSoft.EdgeGateway.Device;
 
 
 internal sealed class DefaultDeviceFactory(

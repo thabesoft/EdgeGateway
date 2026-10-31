@@ -1,6 +1,6 @@
-﻿using EdgeGateway.Port;
+﻿using ThabeSoft.EdgeGateway.Port;
 
-namespace EdgeGateway;
+namespace ThabeSoft.EdgeGateway;
 
 
 public interface IGateway : ILifecycle, IPortManager, IAsyncDisposable;

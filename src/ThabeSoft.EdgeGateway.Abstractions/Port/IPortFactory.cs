@@ -1,4 +1,4 @@
-﻿namespace EdgeGateway.Port;
+﻿namespace ThabeSoft.EdgeGateway.Port;
 
 
 public interface IPortFactory

@@ -1,4 +1,4 @@
-﻿namespace EdgeGateway.Polling.Triggers;
+﻿namespace ThabeSoft.EdgeGateway.Polling.Triggers;
 
 
 public interface IPollingTrigger : ILifecycle, IAsyncDisposable

@@ -1,4 +1,4 @@
-﻿namespace EdgeGateway.Byte.Codecs;
+﻿namespace ThabeSoft.EdgeGateway.Byte.Codecs;
 
 
 public interface IByteCodec<T> : IByteCodec

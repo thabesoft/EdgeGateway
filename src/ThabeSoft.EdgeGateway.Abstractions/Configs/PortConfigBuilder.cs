@@ -1,7 +1,7 @@
-﻿using EdgeGateway.Channel;
-using EdgeGateway.Port;
+﻿using ThabeSoft.EdgeGateway.Channel;
+using ThabeSoft.EdgeGateway.Port;
 
-namespace EdgeGateway.Configs;
+namespace ThabeSoft.EdgeGateway.Configs;
 
 
 public sealed class PortConfigBuilder

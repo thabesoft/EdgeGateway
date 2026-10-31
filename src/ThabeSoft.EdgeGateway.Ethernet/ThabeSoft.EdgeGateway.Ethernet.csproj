@@ -1,13 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
-    <ProjectReference Include="..\ThabeSoft.EdgeGateway.Abstractions\ThabeSoft.EdgeGateway.Abstractions.csproj" />
-  </ItemGroup>
-
-	<!--测试内部可见-->
 	<ItemGroup>
-		<InternalsVisibleTo Include="ThabeSoft.EdgeGateway.UnitTests"></InternalsVisibleTo>
-		<InternalsVisibleTo Include="ThabeSoft.EdgeGateway.IntegrationTests"></InternalsVisibleTo>
+		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Abstractions\ThabeSoft.EdgeGateway.Abstractions.csproj" />
 	</ItemGroup>
 
 </Project>

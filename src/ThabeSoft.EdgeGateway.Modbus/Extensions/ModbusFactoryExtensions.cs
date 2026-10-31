@@ -1,5 +1,5 @@
-﻿using EdgeGateway.Byte;
-using EdgeGateway.Modbus.Byte;
+﻿using ThabeSoft.EdgeGateway.Byte;
+using ThabeSoft.EdgeGateway.Modbus.Byte;
 using NModbus.IO;
 using ThabeSoft.EdgeGateway.Modbus;
 

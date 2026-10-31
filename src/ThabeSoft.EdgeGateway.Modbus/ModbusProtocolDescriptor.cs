@@ -1,5 +1,5 @@
-﻿using EdgeGateway.Channel;
-using EdgeGateway.Protocol;
+﻿using ThabeSoft.EdgeGateway.Channel;
+using ThabeSoft.EdgeGateway.Protocol;
 
 namespace ThabeSoft.EdgeGateway.Modbus;
 

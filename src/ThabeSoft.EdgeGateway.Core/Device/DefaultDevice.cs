@@ -1,9 +1,9 @@
-﻿using EdgeGateway.Polling;
-using EdgeGateway.Polling.Triggers;
-using EdgeGateway.Protocol;
-using EdgeGateway.Tag;
+﻿using ThabeSoft.EdgeGateway.Polling;
+using ThabeSoft.EdgeGateway.Polling.Triggers;
+using ThabeSoft.EdgeGateway.Protocol;
+using ThabeSoft.EdgeGateway.Tag;
 
-namespace EdgeGateway.Device;
+namespace ThabeSoft.EdgeGateway.Device;
 
 
 internal sealed class DefaultDevice(IPollingScheduler pollingScheduler) : IDevice

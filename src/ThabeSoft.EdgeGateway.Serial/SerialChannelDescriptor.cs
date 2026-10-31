@@ -1,7 +1,7 @@
-﻿using EdgeGateway.Channel;
+﻿using ThabeSoft.EdgeGateway.Channel;
 using System.IO.Ports;
 
-namespace EdgeGateway.Serial;
+namespace ThabeSoft.EdgeGateway.Serial;
 
 
 public sealed record class SerialChannelDescriptor : IChannelDescriptor

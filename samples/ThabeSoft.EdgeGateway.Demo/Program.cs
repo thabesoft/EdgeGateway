@@ -1,5 +1,5 @@
-﻿using EdgeGateway;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
+using ThabeSoft.EdgeGateway;
 
 
 await Host.CreateDefaultBuilder(args)

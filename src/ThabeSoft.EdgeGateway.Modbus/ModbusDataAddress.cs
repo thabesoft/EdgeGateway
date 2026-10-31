@@ -1,4 +1,4 @@
-﻿using EdgeGateway.Tag;
+﻿using ThabeSoft.EdgeGateway.Tag;
 
 namespace ThabeSoft.EdgeGateway.Modbus;
 

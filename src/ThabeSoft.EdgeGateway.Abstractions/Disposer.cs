@@ -1,4 +1,4 @@
-﻿namespace EdgeGateway;
+﻿namespace ThabeSoft.EdgeGateway;
 
 public sealed class Disposer(Action disposeAction) : IDisposable
 {

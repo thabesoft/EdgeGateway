@@ -1,4 +1,4 @@
-﻿namespace EdgeGateway.Configs;
+﻿namespace ThabeSoft.EdgeGateway.Configs;
 
 
 public sealed record class GatewayConfig

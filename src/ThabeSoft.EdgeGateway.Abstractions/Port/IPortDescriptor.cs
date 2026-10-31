@@ -1,6 +1,6 @@
-﻿using EdgeGateway.Channel;
+﻿using ThabeSoft.EdgeGateway.Channel;
 
-namespace EdgeGateway.Port;
+namespace ThabeSoft.EdgeGateway.Port;
 
 
 public interface IPortDescriptor

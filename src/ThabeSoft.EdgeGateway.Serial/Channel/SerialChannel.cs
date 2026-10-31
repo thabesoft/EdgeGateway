@@ -1,8 +1,8 @@
-﻿using EdgeGateway.Byte;
-using EdgeGateway.Channel;
+﻿using ThabeSoft.EdgeGateway.Byte;
+using ThabeSoft.EdgeGateway.Channel;
 using System.IO.Ports;
 
-namespace EdgeGateway.Serial.Channel;
+namespace ThabeSoft.EdgeGateway.Serial.Channel;
 
 
 internal sealed class SerialChannel(SerialChannelDescriptor descriptor) : IChannel, IReadBufferDiscardable

@@ -1,4 +1,4 @@
-﻿namespace EdgeGateway.Byte.Swappers;
+﻿namespace ThabeSoft.EdgeGateway.Byte.Swappers;
 
 public interface IByteSwapper
 {

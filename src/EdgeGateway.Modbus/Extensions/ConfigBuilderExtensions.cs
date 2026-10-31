@@ -21,6 +21,10 @@ public static class ConfigBuilderExtensions
         public PortConfigBuilder AddModbusRtuDevice() =>
             portConfigBuilder.AddModbusDevice(ModbusFrameFormat.Rtu);
 
+        public PortConfigBuilder AddModbusRtuDevice(Action<DeviceConfigBuilder> buildAction) =>
+            portConfigBuilder.AddModbusDevice(ModbusFrameFormat.Rtu);
+
+
         public PortConfigBuilder AddModbusAsciiDevice() =>
             portConfigBuilder.AddModbusDevice(ModbusFrameFormat.Ascii);
 

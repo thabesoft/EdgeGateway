@@ -1,5 +1,7 @@
 ﻿using EdgeGateway.Device;
+using EdgeGateway.Polling.Triggers;
 using EdgeGateway.Protocol;
+using EdgeGateway.Tag;
 
 namespace EdgeGateway.Configs;
 
@@ -20,7 +22,6 @@ public sealed record class DeviceConfigBuilder
 
     public DeviceConfigBuilder Serial(IProtocolDescriptor protocolDescriptor) =>
         SetDescriptor(DeviceDescriptor.Serial(protocolDescriptor));
-
 
 
     public DeviceConfig Build()

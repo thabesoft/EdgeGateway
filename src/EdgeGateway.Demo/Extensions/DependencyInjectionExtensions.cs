@@ -1,5 +1,5 @@
-﻿using EdgeGateway.Services;
-using EdgeGateway.Services.ModbusSlave;
+﻿using EdgeGateway.Options;
+using EdgeGateway.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
@@ -13,8 +13,10 @@ public static class DependencyInjectionExtensions
     {
         public IServiceCollection AddDemo()
         {
-            // 模拟从站
-            descriptors.AddHostedService<ModbusSalveBackgroundService>();
+            // 启动从站
+            descriptors.Configure<SerialPortSlaveHostedServiceOptions>(x => x.PortName = "COM3");
+            descriptors.AddHostedService<SerialPortSlaveHostedService>();
+
 
             // 启动网关
             return descriptors.AddHostedService<GatewayHostedService>();

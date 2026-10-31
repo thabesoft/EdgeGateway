@@ -1,4 +1,4 @@
-using EdgeGateway.Tag.Polling;
+using EdgeGateway.Polling.Triggers;
 using Microsoft.Extensions.Time.Testing;
 
 namespace EdgeGateway.Device.Polling;

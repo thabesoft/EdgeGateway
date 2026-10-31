@@ -6,12 +6,12 @@ using EdgeGateway.Tag;
 namespace EdgeGateway.Device;
 
 
-internal sealed class DefaultDevice(IPollingScheduler pollingScheduler) : IDevice, IPollingManager
+internal sealed class DefaultDevice(IPollingScheduler pollingScheduler) : IDevice
 {
     public required DeviceId Id { get; init; }
     public required ProtocolType ProtocolType { get; init; }
     public bool IsEnabled { get; private set; }
-    public IReadOnlyDictionary<ITag, ITagMonitor> Monitors => pollingScheduler.Monitors;
+    public IReadOnlyDictionary<TagName, ITagMonitor> Monitors => pollingScheduler.Monitors;
 
 
     public async ValueTask EnableAsync(CancellationToken cancellationToken = default)
@@ -25,10 +25,10 @@ internal sealed class DefaultDevice(IPollingScheduler pollingScheduler) : IDevic
         await pollingScheduler.StopAsync(cancellationToken);
     }
 
-    public ITagMonitor<T> Register<T>(ITag<T> tag, IPollingTrigger pollingTrigger) where T : notnull =>
-        pollingScheduler.Register(tag, pollingTrigger);
-    public void Unregister<T>(ITag<T> tag) where T : notnull =>
-        pollingScheduler.Unregister(tag);
+    public ITagMonitor<T> Register<T>(TagName tagName, ITag<T> tag, IPollingTrigger pollingTrigger) where T : notnull =>
+        pollingScheduler.Register(tagName, tag, pollingTrigger);
+    public void Unregister(TagName tagName) =>
+        pollingScheduler.Unregister(tagName);
 
 
     public ValueTask DisposeAsync()

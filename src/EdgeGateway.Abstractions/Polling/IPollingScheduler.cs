@@ -6,10 +6,10 @@ namespace EdgeGateway.Polling;
 
 public interface IPollingManager
 {
-    IReadOnlyDictionary<ITag, ITagMonitor> Monitors { get; }
+    IReadOnlyDictionary<TagName, ITagMonitor> Monitors { get; }
 
-    ITagMonitor<T> Register<T>(ITag<T> tag, IPollingTrigger pollingTrigger) where T : notnull;
-    void Unregister<T>(ITag<T> tag) where T : notnull;
+    ITagMonitor<T> Register<T>(TagName tagName, ITag<T> tag, IPollingTrigger pollingTrigger) where T : notnull;
+    void Unregister(TagName tagName);
 }
 
 public interface IPollingScheduler : IPollingManager, ILifecycle;

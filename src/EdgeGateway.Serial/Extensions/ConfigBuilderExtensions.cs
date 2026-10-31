@@ -1,5 +1,8 @@
-﻿using EdgeGateway.Configs;
+﻿using EdgeGateway.Channel;
+using EdgeGateway.Configs;
+using EdgeGateway.Port;
 using EdgeGateway.Serial;
+using EdgeGateway.Serial.Channel;
 using System.IO.Ports;
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
@@ -35,6 +38,17 @@ public static class ConfigBuilderExtensions
                 .Parity(parity)
                 .DataBits(dataBits)
                 .StopBits(stopBits));
+        }
+    }
+
+    extension(IPortManager portManager)
+    {
+        public IPort AddSerialPort(Action<SerialChannelDescriptorBuilder> buildAction)
+        {
+            var builder = new SerialChannelDescriptorBuilder();
+            buildAction.Invoke(builder);
+
+            return portManager.AddPort(builder.Build());
         }
     }
 }

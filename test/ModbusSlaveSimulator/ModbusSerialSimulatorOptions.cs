@@ -1,6 +1,6 @@
 ﻿using System.IO.Ports;
 
-namespace ThabeSoft.EdgeGateway.Simulator;
+namespace ThabeSoft.ModbusSimulator;
 
 public sealed class ModbusSerialSimulatorOptions : ModbusSimulatorOptions
 {

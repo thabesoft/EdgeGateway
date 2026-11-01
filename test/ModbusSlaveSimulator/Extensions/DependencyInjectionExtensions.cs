@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NModbus;
-using ThabeSoft.EdgeGateway.Simulator;
+using ThabeSoft.ModbusSimulator;
 
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
@@ -14,8 +13,6 @@ public static class DependencyInjectionExtensions
     {
         public IServiceCollection AddModbusRtuSimulator(Action<ModbusSerialSimulatorOptions> optionsAction)
         {
-            descriptors.AddSingleton<IModbusFactory, ModbusFactory>();
-
             descriptors.Configure(optionsAction);
             descriptors.AddSingleton<ModbusRtuSimulator>();
 
@@ -27,8 +24,6 @@ public static class DependencyInjectionExtensions
 
         public IServiceCollection AddModbusIpSimulator(Action<ModbusIpSimulatorOptions> optionsAction)
         {
-            descriptors.AddSingleton<IModbusFactory, ModbusFactory>();
-
             descriptors.Configure(optionsAction);
             descriptors.AddSingleton<ModbusIpSimulator>();
 

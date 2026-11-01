@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Simulator;
+﻿namespace ThabeSoft.ModbusSimulator;
 
 public class ModbusSimulatorOptions
 {

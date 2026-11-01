@@ -4,7 +4,7 @@ using NModbus;
 using System.Net;
 using System.Net.Sockets;
 
-namespace ThabeSoft.EdgeGateway.Simulator;
+namespace ThabeSoft.ModbusSimulator;
 
 
 public interface IModbusIpSimulator : IModbusSimulator

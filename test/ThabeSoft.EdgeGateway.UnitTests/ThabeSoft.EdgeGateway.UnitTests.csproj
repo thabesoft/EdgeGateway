@@ -1,4 +1,4 @@
-﻿<Project Sdk="MSTest.Sdk/4.3.3">
+﻿<Project Sdk="MSTest.Sdk/4.5.2">
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" Version="10.11.0" />

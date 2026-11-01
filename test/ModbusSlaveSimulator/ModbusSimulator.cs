@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using NModbus;
 
-namespace ThabeSoft.EdgeGateway.Simulator;
+namespace ThabeSoft.ModbusSimulator;
 
 internal abstract class ModbusSimulator : IModbusSimulator, IAsyncDisposable
 {
@@ -12,7 +12,7 @@ internal abstract class ModbusSimulator : IModbusSimulator, IAsyncDisposable
     private readonly IModbusSlaveNetwork _slaveNetwork;
     private readonly IModbusSlave _slave;
 
-    public byte SlaveId => _slave.UnitId;
+    public byte UnitId => _slave.UnitId;
 
 
     protected ModbusSimulator(IModbusFactory modbusFactory, byte unitId, ILogger logger)

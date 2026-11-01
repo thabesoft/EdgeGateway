@@ -4,7 +4,7 @@ using NModbus;
 using NModbus.Serial;
 using System.IO.Ports;
 
-namespace ThabeSoft.EdgeGateway.Simulator;
+namespace ThabeSoft.ModbusSimulator;
 
 public interface IModbusSerialSimulator : IModbusSimulator
 {

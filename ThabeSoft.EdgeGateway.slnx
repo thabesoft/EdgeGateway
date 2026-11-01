@@ -4,10 +4,6 @@
     <Project Path="src/ThabeSoft.EdgeGateway.Compatibility/ThabeSoft.EdgeGateway.Compatibility.csproj" Id="708c6812-6f16-4fff-ab61-0b476512348d" />
     <Project Path="src/ThabeSoft.EdgeGateway.Core/ThabeSoft.EdgeGateway.Core.csproj" Id="281c23f7-8a53-4f1c-b41e-7f06a7892373" />
   </Folder>
-  <Folder Name="/Demo/">
-    <Project Path="samples/ThabeSoft.EdgeGateway.Demo/ThabeSoft.EdgeGateway.Demo.csproj" />
-    <Project Path="test/ThabeSoft.EdgeGateway.Simulator/ThabeSoft.EdgeGateway.Simulator.csproj" Id="b46e9261-4427-4359-a2e6-cb73d8862235" />
-  </Folder>
   <Folder Name="/Modules/" />
   <Folder Name="/Modules/Connections/">
     <Project Path="src/ThabeSoft.EdgeGateway.Ethernet/ThabeSoft.EdgeGateway.Ethernet.csproj" Id="9293874d-7505-40a5-b5fc-1f88aa38a405" />
@@ -19,6 +15,9 @@
   </Folder>
   <Folder Name="/Test/">
     <Project Path="test/ThabeSoft.EdgeGateway.IntegrationTests/ThabeSoft.EdgeGateway.IntegrationTests.csproj" Id="861f1cea-1f75-45c5-b940-1c2408bc5670" />
-    <Project Path="test/ThabeSoft.EdgeGateway.Tests/ThabeSoft.EdgeGateway.UnitTests.csproj" />
+    <Project Path="test/ThabeSoft.EdgeGateway.UnitTests/ThabeSoft.EdgeGateway.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/Test/SlaveSimulators/">
+    <Project Path="test/ModbusSlaveSimulator/ModbusSlaveSimulator.csproj" />
   </Folder>
 </Solution>

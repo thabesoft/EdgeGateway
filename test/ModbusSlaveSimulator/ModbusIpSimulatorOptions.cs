@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace ThabeSoft.EdgeGateway.Simulator;
+namespace ThabeSoft.ModbusSimulator;
 
 public sealed class ModbusIpSimulatorOptions : ModbusSimulatorOptions
 {

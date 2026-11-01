@@ -1,11 +1,17 @@
-﻿<Project Sdk="MSTest.Sdk/4.3.3">
+﻿<Project Sdk="MSTest.Sdk/4.5.2">
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.14" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.14" />
+		<PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" Version="10.11.0" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Ethernet\ThabeSoft.EdgeGateway.Ethernet.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Modbus\ThabeSoft.EdgeGateway.Modbus.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Serial\ThabeSoft.EdgeGateway.Serial.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Core\ThabeSoft.EdgeGateway.Core.csproj" />
-		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Simulator\ThabeSoft.EdgeGateway.Simulator.csproj" />
+		<ProjectReference Include="..\ModbusSlaveSimulator\ModbusSlaveSimulator.csproj" />
 	</ItemGroup>
 
 </Project>

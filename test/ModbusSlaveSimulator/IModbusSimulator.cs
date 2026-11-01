@@ -1,9 +1,9 @@
-﻿namespace ThabeSoft.EdgeGateway.Simulator;
+﻿namespace ThabeSoft.ModbusSimulator;
 
 
 public interface IModbusSimulator
 {
-    byte SlaveId { get; }
+    byte UnitId { get; }
 
     Task StartAsync(CancellationToken cancellationToken = default);
     Task StopAsync(CancellationToken cancellationToken = default);

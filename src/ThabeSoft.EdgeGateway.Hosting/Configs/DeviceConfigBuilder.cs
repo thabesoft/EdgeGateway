@@ -1,7 +1,4 @@
 ﻿using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Polling.Triggers;
-using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.EdgeGateway.Tags;
 
 namespace ThabeSoft.EdgeGateway.Configs;
 
@@ -17,12 +14,6 @@ public sealed record class DeviceConfigBuilder
         _descriptor = descriptor;
         return this;
     }
-    public DeviceConfigBuilder Ethernet(IProtocolDescriptor protocolDescriptor) =>
-        SetDescriptor(DeviceDescriptor.Ethernet(protocolDescriptor));
-
-    public DeviceConfigBuilder Serial(IProtocolDescriptor protocolDescriptor) =>
-        SetDescriptor(DeviceDescriptor.Serial(protocolDescriptor));
-
 
     public DeviceConfig Build()
     {

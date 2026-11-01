@@ -43,4 +43,8 @@ public sealed record class ChannelAddress : IEquatable<ChannelAddress>
 
         return new() { ConnectionType = connectionType, Endpoint = endpoint.Trim() };
     }
+    public static ChannelAddress Serial(string endpoint) =>
+        Create(ConnectionType.Serial, endpoint);
+    public static ChannelAddress Ethernet(string endpoint) =>
+        Create(ConnectionType.Ethernet, endpoint);
 }

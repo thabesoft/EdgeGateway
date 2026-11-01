@@ -1,40 +1,28 @@
-﻿using ThabeSoft.EdgeGateway.Channels;
-using ThabeSoft.EdgeGateway.Protocols;
+﻿using ThabeSoft.EdgeGateway.Protocols;
 
 namespace ThabeSoft.EdgeGateway.Devices;
 
 
 public interface IDeviceDescriptor
 {
+    DeviceId Id { get; }
     IProtocolDescriptor Protocol { get; }
-    ConnectionType Connection { get; }
 }
 
 public sealed class DeviceDescriptor : IDeviceDescriptor
 {
+    public required DeviceId Id { get; init; }
     public required IProtocolDescriptor Protocol { get; init; }
-    public required ConnectionType Connection { get; init; }
 
 
-    public static DeviceDescriptor Ethernet(IProtocolDescriptor protocolDescriptor)
+    internal DeviceDescriptor() { }
+    public static DeviceDescriptor Create(DeviceId deviceId, IProtocolDescriptor protocolDescriptor)
     {
+        ArgumentNullException.ThrowIfNull(deviceId);
         ArgumentNullException.ThrowIfNull(protocolDescriptor);
 
-        return new()
-        {
-            Connection = ConnectionType.Ethernet,
-            Protocol = protocolDescriptor
-        };
+        return new() { Id = deviceId, Protocol = protocolDescriptor };
     }
-
-    public static DeviceDescriptor Serial(IProtocolDescriptor protocolDescriptor)
-    {
-        ArgumentNullException.ThrowIfNull(protocolDescriptor);
-
-        return new()
-        {
-            Connection = ConnectionType.Serial,
-            Protocol = protocolDescriptor
-        };
-    }
+    public static DeviceDescriptor Create(IProtocolDescriptor protocolDescriptor) =>
+        Create(DeviceId.Create(), protocolDescriptor);
 }

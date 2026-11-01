@@ -1,5 +1,4 @@
-﻿using ThabeSoft.EdgeGateway.Configs;
-using ThabeSoft.EdgeGateway.Devices;
+﻿using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ports;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,45 +11,11 @@ public static class DependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {
-        private void AddServices()
+        public IServiceCollection AddEdgeGateway()
         {
             descriptors.AddSingleton<IPortFactory, PortFactory>();
             descriptors.AddSingleton<IDeviceFactory, DefaultDeviceFactory>();
-        }
-
-
-        public IServiceCollection AddEdgeGateway()
-        {
-            descriptors.AddServices();
             return descriptors.AddSingleton<IGateway, Gateway>();
-        }
-
-
-        public IServiceCollection AddEdgeGateway(GatewayConfig config)
-        {
-            descriptors.AddServices();
-            return descriptors.AddSingleton<IGateway>(sp =>
-            {
-                var gateway = new Gateway(sp.GetRequiredService<IPortFactory>());
-
-                foreach (var portConfig in config.Ports)
-                {
-                    var port = gateway.AddPort(portConfig.Descriptor);
-                    foreach (var deviceConfig in portConfig.Devices)
-                        _ = port.AddDevice(deviceConfig.Descriptor);
-                }
-
-                return gateway;
-            });
-        }
-
-        public IServiceCollection AddEdgeGateway(Action<GatewayConfigBuilder> configAction)
-        {
-            descriptors.AddServices();
-
-            var builder = new GatewayConfigBuilder();
-            configAction.Invoke(builder);
-            return descriptors.AddEdgeGateway(builder.Build());
         }
     }
 }

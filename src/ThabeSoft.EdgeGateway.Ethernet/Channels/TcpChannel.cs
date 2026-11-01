@@ -4,12 +4,13 @@ using ThabeSoft.EdgeGateway.IO;
 namespace ThabeSoft.EdgeGateway.Channels;
 
 
-internal sealed class TcpChannel(IpChannelDescriptor descriptor) : IChannel, IByteStream
+internal sealed class TcpChannel(IpChannelDescriptor descriptor) : IChannel
 {
     private readonly TcpClient _tcpClient = new();
 
 
-    public ChannelAddress Address { get; } = descriptor.Address;
+    public ChannelId Id { get; } = descriptor.Id;
+    public ChannelAddress Address { get; } = ChannelAddress.Ethernet(descriptor.IPEndPoint.ToString());
     public bool IsOpen => _tcpClient.Connected;
 
 

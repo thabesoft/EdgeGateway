@@ -3,6 +3,7 @@
     <Project Path="src/ThabeSoft.EdgeGateway.Abstractions/ThabeSoft.EdgeGateway.Abstractions.csproj" Id="2c45d842-15d4-4141-a034-745e2f81d658" />
     <Project Path="src/ThabeSoft.EdgeGateway.Compatibility/ThabeSoft.EdgeGateway.Compatibility.csproj" Id="708c6812-6f16-4fff-ab61-0b476512348d" />
     <Project Path="src/ThabeSoft.EdgeGateway.Core/ThabeSoft.EdgeGateway.Core.csproj" Id="281c23f7-8a53-4f1c-b41e-7f06a7892373" />
+    <Project Path="src/ThabeSoft.EdgeGateway.Hosting/ThabeSoft.EdgeGateway.Hosting.csproj" Id="a701ff69-84dc-448e-bb87-1e1ce8bbea41" />
   </Folder>
   <Folder Name="/Modules/" />
   <Folder Name="/Modules/Connections/">

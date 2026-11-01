@@ -18,5 +18,8 @@ public static class DependencyInjectionExtensions
 
             return descriptors;
         }
+
+        public IServiceCollection AddEdgeGatewayHost() =>
+            descriptors.AddEdgeGatewayHost(new GatewayConfig() { Ports = [] });
     }
 }

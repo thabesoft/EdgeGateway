@@ -1,7 +1,6 @@
-using ThabeSoft.EdgeGateway.Polling.Triggers;
 using Microsoft.Extensions.Time.Testing;
 
-namespace ThabeSoft.EdgeGateway.Polling;
+namespace ThabeSoft.EdgeGateway.Triggers;
 
 
 [TestClass]

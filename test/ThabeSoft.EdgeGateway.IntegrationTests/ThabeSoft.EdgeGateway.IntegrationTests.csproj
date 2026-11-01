@@ -8,6 +8,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Ethernet\ThabeSoft.EdgeGateway.Ethernet.csproj" />
+		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Hosting\ThabeSoft.EdgeGateway.Hosting.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Modbus\ThabeSoft.EdgeGateway.Modbus.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Serial\ThabeSoft.EdgeGateway.Serial.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Core\ThabeSoft.EdgeGateway.Core.csproj" />

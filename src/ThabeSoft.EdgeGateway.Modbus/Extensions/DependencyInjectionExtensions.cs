@@ -17,8 +17,7 @@ public static class DependencyInjectionExtensions
         public IServiceCollection AddModbus()
         {
             descriptors.AddSingleton<IModbusFactory, ModbusFactory>();
-            descriptors.AddSingleton<ITagReaderFactory, ModbusTagReaderFactory>();
-            descriptors.AddSingleton<ITagWriterFactory, ModbusTagWriterFactory>();
+            descriptors.AddSingleton<ITagAccessorFactory, ModbusTagAccessorFactory>();
             return descriptors;
         }
     }

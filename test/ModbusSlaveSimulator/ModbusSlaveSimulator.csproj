@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+	<PropertyGroup>
+		<RootNamespace>ModbusSlaveSimulator</RootNamespace>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<PackageReference Include="NModbus.Serial" Version="3.0.83" />
 	</ItemGroup>

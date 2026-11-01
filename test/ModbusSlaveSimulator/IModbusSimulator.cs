@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.ModbusSimulator;
+﻿namespace ModbusSlaveSimulator;
 
 
 public interface IModbusSimulator

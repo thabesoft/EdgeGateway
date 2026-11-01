@@ -4,7 +4,7 @@ using NModbus;
 using System.Net;
 using System.Net.Sockets;
 
-namespace ThabeSoft.ModbusSimulator;
+namespace ModbusSlaveSimulator;
 
 
 public interface IModbusIpSimulator : IModbusSimulator
@@ -17,10 +17,9 @@ internal sealed class ModbusIpSimulator(
         IModbusFactory modbusFactory,
         IOptions<ModbusIpSimulatorOptions> options,
         ILogger<ModbusIpSimulator> logger
-    ) : ModbusSimulator(modbusFactory, options.Value.UnitId, logger), IModbusIpSimulator
+    ) : ModbusSimulatorBase(modbusFactory, options.Value.UnitId, logger), IModbusIpSimulator
 {
     private TcpListener? _tcpListener;
-
     public IPEndPoint IPEndPoint => (IPEndPoint)_tcpListener!.LocalEndpoint;
 
     protected override IModbusSlaveNetwork GetModbusSlaveNetwork(IModbusFactory modbusFactory)
@@ -28,21 +27,19 @@ internal sealed class ModbusIpSimulator(
         _tcpListener = new(options.Value.IPEndPoint);
         return modbusFactory.CreateSlaveNetwork(_tcpListener);
     }
-
-    public override async Task StartAsync(CancellationToken cancellationToken)
+    protected override ValueTask OnStartAsync(CancellationToken cancellationToken)
     {
         _tcpListener?.Start();
-        await base.StartAsync(cancellationToken);
+        return ValueTask.CompletedTask;
     }
-
-    public override async Task StopAsync(CancellationToken cancellationToken)
+    protected override ValueTask OnStopAsync(CancellationToken cancellationToken)
     {
         _tcpListener?.Stop();
-        await base.StopAsync(cancellationToken);
+        return ValueTask.CompletedTask;
     }
-    public override ValueTask DisposeAsync()
+    protected override ValueTask OnDisposeAsync()
     {
         _tcpListener?.Dispose();
-        return base.DisposeAsync();
+        return ValueTask.CompletedTask;
     }
 }

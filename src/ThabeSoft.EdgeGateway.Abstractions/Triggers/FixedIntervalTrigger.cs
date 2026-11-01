@@ -1,13 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Collections.Concurrent;
+using ThabeSoft.EdgeGateway.Lifecycles;
 
-namespace ThabeSoft.EdgeGateway.Polling.Triggers;
+namespace ThabeSoft.EdgeGateway.Triggers;
 
 
-public sealed class FixedIntervalTrigger : Lifecycle, IPollingTrigger
+public sealed class FixedIntervalTrigger : ConcurrentLifecycleBase, IStartableTrigger
 {
-    private readonly ILogger _logger;
+    private readonly ILogger<FixedIntervalTrigger> _logger;
     private readonly TimeProvider _timeProvider;
 
 
@@ -16,11 +17,11 @@ public sealed class FixedIntervalTrigger : Lifecycle, IPollingTrigger
     private CancellationTokenSource _tickTaskCts = new();
     private Task? _loopTask;
 
-    private readonly ConcurrentDictionary<PollingTriggerOnTickHandler, bool> _callbacks = [];
+    private readonly ConcurrentDictionary<TriggerHandler, bool> _callbacks = [];
 
 
 
-    public FixedIntervalTrigger(TimeSpan interval, TimeProvider timeProvider, ILogger logger)
+    public FixedIntervalTrigger(TimeSpan interval, TimeProvider timeProvider, ILogger<FixedIntervalTrigger> logger)
     {
         if (interval <= TimeSpan.Zero && interval != Timeout.InfiniteTimeSpan)
             throw new ArgumentOutOfRangeException(nameof(interval));
@@ -30,15 +31,15 @@ public sealed class FixedIntervalTrigger : Lifecycle, IPollingTrigger
 
 
         _interval = interval;
-        _logger = logger ?? NullLogger.Instance;
+        _logger = logger ?? NullLogger<FixedIntervalTrigger>.Instance;
         _timeProvider = timeProvider ?? TimeProvider.System;
     }
-    public FixedIntervalTrigger(TimeSpan interval, TimeProvider timeProvider) : this(interval, timeProvider, NullLogger.Instance) { }
-    public FixedIntervalTrigger(TimeSpan interval) : this(interval, TimeProvider.System, NullLogger.Instance) { }
+    public FixedIntervalTrigger(TimeSpan interval, TimeProvider timeProvider) : this(interval, timeProvider, NullLogger<FixedIntervalTrigger>.Instance) { }
+    public FixedIntervalTrigger(TimeSpan interval) : this(interval, TimeProvider.System, NullLogger<FixedIntervalTrigger>.Instance) { }
 
 
 
-    public IDisposable Subscribe(PollingTriggerOnTickHandler onTick)
+    public IDisposable Subscribe(TriggerHandler onTick)
     {
         ObjectDisposedException.ThrowIf(IsDisposed, this);
 

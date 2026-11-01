@@ -1,4 +1,5 @@
-﻿using ThabeSoft.EdgeGateway.Ports;
+﻿using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Ports;
 
 namespace ThabeSoft.EdgeGateway;
 

@@ -1,5 +1,6 @@
 ﻿using ThabeSoft.EdgeGateway.Ports;
 using System.Collections.Concurrent;
+using ThabeSoft.EdgeGateway.Lifecycles;
 
 namespace ThabeSoft.EdgeGateway;
 
@@ -11,6 +12,8 @@ internal sealed class Gateway(IPortFactory portFactory) : IGateway
 
 
     public bool IsRunning { get; private set; }
+    public LifecycleState State => throw new NotImplementedException();
+
 
     public async ValueTask StartAsync(CancellationToken cancellationToken = default)
     {

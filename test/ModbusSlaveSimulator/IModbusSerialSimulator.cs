@@ -4,7 +4,7 @@ using NModbus;
 using NModbus.Serial;
 using System.IO.Ports;
 
-namespace ThabeSoft.ModbusSimulator;
+namespace ModbusSlaveSimulator;
 
 public interface IModbusSerialSimulator : IModbusSimulator
 {
@@ -15,7 +15,7 @@ internal sealed class ModbusRtuSimulator(
         IModbusFactory modbusFactory,
         IOptions<ModbusSerialSimulatorOptions> options,
         ILogger<ModbusRtuSimulator> logger
-    ) : ModbusSimulator(modbusFactory, options.Value.UnitId, logger), IModbusSerialSimulator
+    ) : ModbusSimulatorBase(modbusFactory, options.Value.UnitId, logger), IModbusSerialSimulator
 {
     private SerialPort? _serialPort;
     public SerialPortOptions SerialPortOptions => options.Value.SerialPortOptions;
@@ -32,22 +32,20 @@ internal sealed class ModbusRtuSimulator(
 
         return modbusFactory.CreateRtuSlaveNetwork(new SerialPortAdapter(_serialPort));
     }
-
-    public override async Task StartAsync(CancellationToken cancellationToken)
+    protected override ValueTask OnStartAsync(CancellationToken cancellationToken)
     {
         _serialPort?.Open();
-        await base.StartAsync(cancellationToken);
+        return ValueTask.CompletedTask;
     }
-
-    public override async Task StopAsync(CancellationToken cancellationToken)
+    protected override ValueTask OnStopAsync(CancellationToken cancellationToken)
     {
         _serialPort?.Close();
-        await base.StopAsync(cancellationToken);
+        return ValueTask.CompletedTask;
     }
-    public override ValueTask DisposeAsync()
+    protected override ValueTask OnDisposeAsync()
     {
         _serialPort?.Dispose();
-        return base.DisposeAsync();
+        return ValueTask.CompletedTask;
     }
 }
 

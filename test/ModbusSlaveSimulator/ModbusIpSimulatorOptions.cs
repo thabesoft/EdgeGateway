@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace ThabeSoft.ModbusSimulator;
+namespace ModbusSlaveSimulator;
 
 public sealed class ModbusIpSimulatorOptions : ModbusSimulatorOptions
 {

@@ -1,35 +1,39 @@
 ﻿using Microsoft.Extensions.Logging;
 using NModbus;
 
-namespace ThabeSoft.ModbusSimulator;
+namespace ModbusSlaveSimulator;
 
-internal abstract class ModbusSimulator : IModbusSimulator, IAsyncDisposable
+internal abstract class ModbusSimulatorBase : IModbusSimulator, IAsyncDisposable
 {
     private readonly ILogger _logger;
     private readonly CancellationTokenSource _internalTaskCts = new();
+    private readonly IModbusFactory _modbusFactory;
 
     private Task? _slaveNetworkTask;
-    private readonly IModbusSlaveNetwork _slaveNetwork;
+    private IModbusSlaveNetwork? _slaveNetwork;
     private readonly IModbusSlave _slave;
 
     public byte UnitId => _slave.UnitId;
 
 
-    protected ModbusSimulator(IModbusFactory modbusFactory, byte unitId, ILogger logger)
+    protected ModbusSimulatorBase(IModbusFactory modbusFactory, byte unitId, ILogger logger)
     {
+        _modbusFactory = modbusFactory;
         _logger = logger;
 
-        _slaveNetwork = GetModbusSlaveNetwork(modbusFactory);
-
         _slave = modbusFactory.CreateSlave(unitId);
-        _slaveNetwork.AddSlave(_slave);
     }
 
     protected abstract IModbusSlaveNetwork GetModbusSlaveNetwork(IModbusFactory modbusFactory);
 
 
-    public virtual async Task StartAsync(CancellationToken cancellationToken)
+    public async Task StartAsync(CancellationToken cancellationToken)
     {
+        _slaveNetwork = GetModbusSlaveNetwork(_modbusFactory);
+        _slaveNetwork.AddSlave(_slave);
+
+        await OnStartAsync(cancellationToken);
+
         _slaveNetworkTask = Task.Run(async () =>
         {
             _logger.LogInformation("从站已经开始监听");
@@ -37,9 +41,10 @@ internal abstract class ModbusSimulator : IModbusSimulator, IAsyncDisposable
 
         }, _internalTaskCts.Token);
     }
-    public virtual async Task StopAsync(CancellationToken cancellationToken)
+    public async Task StopAsync(CancellationToken cancellationToken)
     {
         await _internalTaskCts.CancelAsync();
+        await OnStopAsync(cancellationToken);
 
         if (_slaveNetworkTask is not null)
         {
@@ -48,12 +53,23 @@ internal abstract class ModbusSimulator : IModbusSimulator, IAsyncDisposable
 
             _logger.LogInformation("从站监听已关闭");
         }
+
+        _slaveNetwork?.Dispose();
     }
-    public virtual ValueTask DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
         _internalTaskCts.Dispose();
-        return ValueTask.CompletedTask;
+        await OnDisposeAsync();
     }
+
+
+    protected virtual ValueTask OnStartAsync(CancellationToken cancellationToken) =>
+        ValueTask.CompletedTask;
+
+    protected virtual ValueTask OnStopAsync(CancellationToken cancellationToken) =>
+        ValueTask.CompletedTask;
+    protected virtual ValueTask OnDisposeAsync() =>
+        ValueTask.CompletedTask;
 
 
 

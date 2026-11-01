@@ -1,0 +1,82 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:EdgeGateway.App.ViewModels"
+             mc:Ignorable="d"
+             Height="500"
+             x:DataType="vm:AddPortViewModel"
+             x:Class="EdgeGateway.App.Views.AddPortView">
+
+
+    <TabControl DockPanel.Dock="Top">
+
+        <!--以太网-->
+        <TabItem Header="以太网" IsSelected="{Binding IsSelectedIpFrom}">
+            <StackPanel Spacing="15" Margin="10">
+                <!-- IP 地址 -->
+                <StackPanel Spacing="5">
+                    <TextBlock Text="IP 地址" FontWeight="SemiBold" />
+                    <TextBox Text="{Binding IpForm.Address}"
+                             PlaceholderText="例如: 127.0.0.1" />
+                </StackPanel>
+
+                <!-- 端口号 -->
+                <StackPanel Spacing="5">
+                    <TextBlock Text="端口号" FontWeight="SemiBold" />
+                    <NumericUpDown Value="{Binding IpForm.Port}"
+                                   Minimum="1" Maximum="65535"
+                                   FormatString="0" />
+                </StackPanel>
+
+                <!-- 连接类型 -->
+                <StackPanel Spacing="5">
+                    <TextBlock Text="连接类型" FontWeight="SemiBold" />
+                    <ComboBox ItemsSource="{Binding IpForm.ConnectionTypeOptions}" SelectedItem="{Binding IpForm.ConnectionType}"></ComboBox>
+                </StackPanel>
+            </StackPanel>
+        </TabItem>
+
+        <TabItem Header="串口" IsSelected="{Binding IsSelectedSerialFrom}">
+            <StackPanel Spacing="15" Margin="10">
+                <!-- IP 地址 -->
+                <StackPanel Spacing="5">
+                    <TextBlock Text="端口名称" FontWeight="SemiBold" />
+                    <TextBox Text="{Binding SerialForm.PortName}"
+                             PlaceholderText="例如: COM1" />
+                </StackPanel>
+
+                <!-- 端口号 -->
+                <StackPanel Spacing="5">
+                    <TextBlock Text="波特率" FontWeight="SemiBold" />
+                    <NumericUpDown Value="{Binding SerialForm.BaudRate}"
+                                   Minimum="1" Maximum="65535"
+                                   FormatString="0" />
+                </StackPanel>
+
+                <!-- 校验模式 -->
+                <StackPanel Spacing="5">
+                    <TextBlock Text="校验模式" FontWeight="SemiBold" />
+                    <ComboBox ItemsSource="{Binding SerialForm.ParitysOptions}" SelectedItem="{Binding SerialForm.Parity}"></ComboBox>
+                </StackPanel>
+
+                <!-- 数据位 -->
+                <StackPanel Spacing="5">
+                    <TextBlock Text="数据位" FontWeight="SemiBold" />
+                    <NumericUpDown Value="{Binding SerialForm.DataBits}"
+                                   Minimum="5" Maximum="8"
+                                   FormatString="0" />
+                </StackPanel>
+
+                <!-- 停止位 -->
+                <StackPanel Spacing="5">
+                    <TextBlock Text="停止位" FontWeight="SemiBold" />
+                    <ComboBox ItemsSource="{Binding SerialForm.StopBitsOptions}" SelectedItem="{Binding SerialForm.StopBits}"></ComboBox>
+                </StackPanel>
+
+            </StackPanel>
+        </TabItem>
+
+    </TabControl>
+
+</UserControl>

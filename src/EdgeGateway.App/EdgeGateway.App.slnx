@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/ThabeSoft.EdgeGateway/">
+    <Project Path="../ThabeSoft.EdgeGateway/src/ThabeSoft.EdgeGateway.Abstractions/ThabeSoft.EdgeGateway.Abstractions.csproj" />
+    <Project Path="../ThabeSoft.EdgeGateway/src/ThabeSoft.EdgeGateway.Core/ThabeSoft.EdgeGateway.Core.csproj" />
+    <Project Path="../ThabeSoft.EdgeGateway/src/ThabeSoft.EdgeGateway.Ethernet/ThabeSoft.EdgeGateway.Ethernet.csproj" />
+    <Project Path="../ThabeSoft.EdgeGateway/src/ThabeSoft.EdgeGateway.Hosting/ThabeSoft.EdgeGateway.Hosting.csproj" />
+    <Project Path="../ThabeSoft.EdgeGateway/src/ThabeSoft.EdgeGateway.Modbus/ThabeSoft.EdgeGateway.Modbus.csproj" />
+    <Project Path="../ThabeSoft.EdgeGateway/src/ThabeSoft.EdgeGateway.Serial/ThabeSoft.EdgeGateway.Serial.csproj" />
+  </Folder>
+  <Project Path="src/EdgeGateway.App.Browser/EdgeGateway.App.Browser.csproj" />
+  <Project Path="src/EdgeGateway.App.Desktop/EdgeGateway.App.Desktop.csproj" />
+  <Project Path="src/EdgeGateway.App/EdgeGateway.App.csproj" />
+</Solution>

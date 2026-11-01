@@ -1,0 +1,35 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:vm="using:EdgeGateway.App.ViewModels"
+             x:Class="EdgeGateway.App.Views.PortView"
+             x:DataType="vm:PortViewModel">
+    <DockPanel>
+
+        <!--顶部工具栏-->
+        <DockPanel  DockPanel.Dock="Top">
+
+            <Button DockPanel.Dock="Right" Classes="primary" Command="{Binding AddPortCommand}">添加</Button>
+
+            <TextBox MinWidth="250" PlaceholderText="搜索" DockPanel.Dock="Left"></TextBox>
+            <Button DockPanel.Dock="Left">筛选</Button>
+
+        </DockPanel>
+
+        <!--端口列表-->
+        <DataGrid ItemsSource="{Binding Ports}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserResizeColumns="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="端口 ID" Binding="{Binding Id}" Width="*"/>
+                <DataGridTextColumn Header="连接类型" Binding="{Binding ConnectionType}" Width="2*"/>
+                <DataGridTextColumn Header="设备数" Binding="{Binding DeviceCount}" Width="80"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+    </DockPanel>
+
+</UserControl>

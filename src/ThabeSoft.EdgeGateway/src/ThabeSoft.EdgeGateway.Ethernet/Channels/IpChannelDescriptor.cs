@@ -35,6 +35,9 @@ public sealed record IpChannelDescriptor : IChannelDescriptor
             Port = iPEndPoint.Port
         };
     }
+    public static IpChannelDescriptor Create(IpConnectionType connectionType, IPEndPoint iPEndPoint) =>
+        Create(ChannelId.Create(), connectionType, iPEndPoint);
+
 
     public static IpChannelDescriptor Tcp(ChannelId id, IPEndPoint iPEndPoint) =>
         Create(id, IpConnectionType.Tcp, iPEndPoint);

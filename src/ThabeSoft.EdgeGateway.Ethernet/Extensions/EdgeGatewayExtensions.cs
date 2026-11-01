@@ -1,13 +1,12 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using ThabeSoft.EdgeGateway.Channels;
 using ThabeSoft.EdgeGateway.Configs;
-using ThabeSoft.EdgeGateway.Ethernet;
-using ThabeSoft.EdgeGateway.Port;
+using ThabeSoft.EdgeGateway.Ports;
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
 namespace ThabeSoft.EdgeGateway;
 #pragma warning restore IDE0130 // 命名空间与文件夹结构不匹配
-
 
 public static class EdgeGatewayExtensions
 {

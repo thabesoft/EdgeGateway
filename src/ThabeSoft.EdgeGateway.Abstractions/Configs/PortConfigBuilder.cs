@@ -1,5 +1,5 @@
-﻿using ThabeSoft.EdgeGateway.Channel;
-using ThabeSoft.EdgeGateway.Port;
+﻿using ThabeSoft.EdgeGateway.Channels;
+using ThabeSoft.EdgeGateway.Ports;
 
 namespace ThabeSoft.EdgeGateway.Configs;
 

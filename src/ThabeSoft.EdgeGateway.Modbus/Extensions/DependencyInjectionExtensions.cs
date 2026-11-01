@@ -1,7 +1,6 @@
-﻿using ThabeSoft.EdgeGateway.Tag;
+﻿using ThabeSoft.EdgeGateway.Tags;
 using Microsoft.Extensions.DependencyInjection;
 using NModbus;
-using ThabeSoft.EdgeGateway.Modbus;
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
 namespace ThabeSoft.EdgeGateway;

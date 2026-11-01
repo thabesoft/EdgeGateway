@@ -1,7 +1,7 @@
-﻿using ThabeSoft.EdgeGateway.Device;
+﻿using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Polling.Triggers;
-using ThabeSoft.EdgeGateway.Protocol;
-using ThabeSoft.EdgeGateway.Tag;
+using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Tags;
 
 namespace ThabeSoft.EdgeGateway.Configs;
 

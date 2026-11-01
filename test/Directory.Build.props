@@ -8,6 +8,8 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 
+		<RootNamespace>ThabeSoft.EdgeGateway</RootNamespace>
+
 	</PropertyGroup>
 
 </Project>

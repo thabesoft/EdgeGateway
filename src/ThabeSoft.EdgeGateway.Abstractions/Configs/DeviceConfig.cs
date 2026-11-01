@@ -1,4 +1,4 @@
-﻿using ThabeSoft.EdgeGateway.Device;
+﻿using ThabeSoft.EdgeGateway.Devices;
 
 namespace ThabeSoft.EdgeGateway.Configs;
 

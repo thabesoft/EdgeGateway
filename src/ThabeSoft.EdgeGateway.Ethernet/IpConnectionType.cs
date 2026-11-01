@@ -1,5 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Ethernet;
-
+﻿namespace ThabeSoft.EdgeGateway;
 
 public enum IpConnectionType
 {

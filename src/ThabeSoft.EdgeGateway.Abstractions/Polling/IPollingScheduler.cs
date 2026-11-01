@@ -1,5 +1,5 @@
 ﻿using ThabeSoft.EdgeGateway.Polling.Triggers;
-using ThabeSoft.EdgeGateway.Tag;
+using ThabeSoft.EdgeGateway.Tags;
 
 namespace ThabeSoft.EdgeGateway.Polling;
 

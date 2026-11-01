@@ -1,6 +1,6 @@
 ﻿using ThabeSoft.EdgeGateway.Configs;
-using ThabeSoft.EdgeGateway.Device;
-using ThabeSoft.EdgeGateway.Port;
+using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Ports;
 using Microsoft.Extensions.DependencyInjection;
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配

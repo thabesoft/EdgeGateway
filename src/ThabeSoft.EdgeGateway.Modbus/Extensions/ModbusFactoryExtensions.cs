@@ -1,7 +1,6 @@
-﻿using ThabeSoft.EdgeGateway.Byte;
-using ThabeSoft.EdgeGateway.Modbus.Byte;
-using NModbus.IO;
-using ThabeSoft.EdgeGateway.Modbus;
+﻿using NModbus.IO;
+using ThabeSoft.EdgeGateway.IO;
+using ThabeSoft.EdgeGateway.Protocols;
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
 namespace NModbus;
@@ -32,7 +31,7 @@ internal static class ModbusFactoryExtensions
         {
             ArgumentNullException.ThrowIfNull(byteStream);
 
-            var streamResource = new StreamResourceAdapter(byteStream);
+            var streamResource = new NModbusStreamAdapter(byteStream);
             return factory.Create(modbusFrame, streamResource);
         }
     }

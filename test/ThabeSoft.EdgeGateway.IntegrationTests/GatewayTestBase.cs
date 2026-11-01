@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ThabeSoft.EdgeGateway.IntegrationTests;
+namespace ThabeSoft.EdgeGateway;
 
 public class GatewayTestBase
 {

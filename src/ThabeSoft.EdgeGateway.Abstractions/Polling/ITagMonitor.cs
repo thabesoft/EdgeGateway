@@ -1,4 +1,4 @@
-﻿using ThabeSoft.EdgeGateway.Tag;
+﻿using ThabeSoft.EdgeGateway.Tags;
 
 namespace ThabeSoft.EdgeGateway.Polling;
 

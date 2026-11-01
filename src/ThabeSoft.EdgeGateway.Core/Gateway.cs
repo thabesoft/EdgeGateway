@@ -1,4 +1,4 @@
-﻿using ThabeSoft.EdgeGateway.Port;
+﻿using ThabeSoft.EdgeGateway.Ports;
 using System.Collections.Concurrent;
 
 namespace ThabeSoft.EdgeGateway;

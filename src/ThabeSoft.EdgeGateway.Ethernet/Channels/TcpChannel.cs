@@ -1,5 +1,4 @@
 ﻿using System.Net.Sockets;
-using ThabeSoft.EdgeGateway.IO;
 
 namespace ThabeSoft.EdgeGateway.Channels;
 
@@ -10,7 +9,7 @@ internal sealed class TcpChannel(IpChannelDescriptor descriptor) : IChannel
 
 
     public ChannelId Id { get; } = descriptor.Id;
-    public ChannelAddress Address { get; } = ChannelAddress.Ethernet(descriptor.IPEndPoint.ToString());
+    public ChannelAddress Address { get; } = ChannelAddress.Ethernet(descriptor.IPEndPoint);
     public bool IsOpen => _tcpClient.Connected;
 
 

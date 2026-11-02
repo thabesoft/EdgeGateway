@@ -20,7 +20,7 @@ public sealed record class DeviceId
 
     /// <inheritdoc/>
     /// <exception cref="ArgumentException"></exception>
-    public static DeviceId Parse(string value)
+    public static DeviceId From(string value)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value);
         return new(value.Trim());

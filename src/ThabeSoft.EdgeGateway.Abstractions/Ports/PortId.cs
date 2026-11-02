@@ -20,7 +20,7 @@ public sealed record class PortId
 
     /// <inheritdoc/>
     /// <exception cref="ArgumentException"></exception>
-    public static PortId Parse(string value)
+    public static PortId From(string value)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value);
         return new(value.Trim());

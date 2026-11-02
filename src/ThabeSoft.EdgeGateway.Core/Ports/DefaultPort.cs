@@ -15,7 +15,7 @@ internal sealed class DefaultPort : IPort
     public PortId Id { get; }
     public bool IsOpen { get; private set; }
 
-    public ConnectionType ConnectionType { get; }
+    public ChannelAddress ChannelAddress { get; }
     public IReadOnlyDictionary<DeviceId, IDevice> Devices => _devices.AsReadOnly();
 
 
@@ -23,9 +23,9 @@ internal sealed class DefaultPort : IPort
     private DefaultPort(IChannel channel, IEnumerable<IDeviceFactory> deviceFactories)
     {
         _channel = channel;
-        ConnectionType = _channel.Address.ConnectionType;
+        ChannelAddress = _channel.Address;
 
-        Id = PortId.Parse(channel.Address.ToString());
+        Id = PortId.From(channel.Address.ToString());
         _deviceFactories = [.. deviceFactories];
     }
 

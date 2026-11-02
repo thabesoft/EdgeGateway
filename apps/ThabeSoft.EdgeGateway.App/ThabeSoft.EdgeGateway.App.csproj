@@ -30,5 +30,9 @@
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Modbus\ThabeSoft.EdgeGateway.Modbus.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Serial\ThabeSoft.EdgeGateway.Serial.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="ViewModels\" />
+	</ItemGroup>
 	
 </Project>

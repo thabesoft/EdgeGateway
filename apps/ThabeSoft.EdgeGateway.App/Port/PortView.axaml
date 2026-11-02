@@ -2,68 +2,79 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:local="using:ThabeSoft.EdgeGateway.App.Port"
+             d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ThabeSoft.EdgeGateway.App.Port.PortView"
              x:DataType="local:PortViewModel">
-    <DockPanel>
 
-        <!--顶部工具栏-->
-        <DockPanel Margin="0 0 0 10"  DockPanel.Dock="Top">
+    <Grid ColumnDefinitions="250,Auto,3*">
 
-            <Button DockPanel.Dock="Right" Classes="primary" Command="{Binding AddPortCommand}">添加</Button>
+        <!--导航栏-->
+        <ScrollViewer Background="#f0f0f0"  Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
 
-            <TextBox MinWidth="250" PlaceholderText="搜索" DockPanel.Dock="Left"></TextBox>
-            <Button DockPanel.Dock="Left">筛选</Button>
+            <DockPanel>
 
-        </DockPanel>
+                <!--功能按钮-->
+                <DockPanel DockPanel.Dock="Top">
 
-        <!--端口列表-->
-        <DataGrid ItemsSource="{Binding Ports}"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True"
-                  CanUserResizeColumns="True">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="端口 ID" Binding="{Binding Id}" Width="Auto"/>
-                <DataGridTextColumn Header="连接类型" Binding="{Binding ConnectionType}" Width="Auto"/>
+                    <Button Command="{Binding AddPortCommand}">添加端口</Button>
+                    
+                </DockPanel>
 
-                <!--设备-->
-                <DataGridTemplateColumn Header="设备" Width="Auto">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <!-- 用一个 Button 伪装成普通的文本，去掉边框和背景 -->
-                            <Button Background="Transparent"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Stretch"
-                                    HorizontalContentAlignment="Center"
-                                    VerticalContentAlignment="Center"
-                                    BorderThickness="0"
-                                    Padding="0"
-                                    Cursor="Hand"
-                                    Command="{Binding OpenDeviceCommand}"
-                                    Content="{Binding DeviceCount}">
-                            </Button>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                <!--导航内容-->
+                <TreeView ItemsSource="{Binding Ports}">
 
-                <!--操作-->
-                <DataGridTemplateColumn Header="操作" Width="Auto">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Spacing="5">
-                                <Button IsVisible="{Binding !IsOpen}" Command="{Binding OpenCommand}">开启</Button>
-                                <Button IsVisible="{Binding IsOpen}" Command="{Binding CloseCommand}">关闭</Button>
-                                <Separator Height="20" Width="1"></Separator>
-                                <Button Command="{Binding RemoveCommand}">删除</Button>
+                    <TreeView.DataTemplates>
+
+                        <!--标头模板-->
+                        <TreeDataTemplate DataType="local:PortSummaryViewModel" ItemsSource="{Binding Devices}">
+                            <StackPanel Height="30" Orientation="Horizontal" Spacing="5" TreeViewItem.IsExpanded="{Binding IsExpanded,Mode=TwoWay }" >
+
+                                <Border VerticalAlignment="Center"
+                                        CornerRadius="3"
+                                        Background="Green"
+                                        Padding="5 2">
+                                    <TextBlock VerticalAlignment="Center"
+                                               Foreground="White" FontSize="12" FontWeight="Bold" Text="{Binding ChannelAddress.ConnectionType}"/>
+                                </Border>
+
+                                <TextBlock Text="{Binding DisplayName}"
+                                           VerticalAlignment="Center"
+                                           FontWeight="Bold" />
+
+                                <TextBlock Text="{Binding ChannelAddress.Endpoint}"
+                                           VerticalAlignment="Center"
+                                           FontSize="12"
+                                           FontWeight="Light" />
+
+                            </StackPanel>
+                        </TreeDataTemplate>
+
+                        <!--元素模板-->
+                        <DataTemplate DataType="local:DeviceSummaryViewModel">
+                            <StackPanel Orientation="Horizontal" Spacing="5">
+
+                                <Border CornerRadius="3" Background="Green" Padding="5 2" VerticalAlignment="Stretch">
+                                    <TextBlock VerticalAlignment="Center" TextAlignment="Center" Foreground="White" FontSize="12" FontWeight="Bold" Text="{Binding ProtocolType}"/>
+                                </Border>
+
+                                <TextBlock VerticalAlignment="Center" Text="{Binding DisplayName}"/>
+
                             </StackPanel>
                         </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
 
-        </DataGrid>
+                    </TreeView.DataTemplates>
 
-    </DockPanel>
+                </TreeView>
+            </DockPanel>
+        </ScrollViewer>
+
+        <GridSplitter Grid.Column="1"
+                      Background="Gray"
+                      ResizeDirection="Columns" />
+
+        <ContentControl Grid.Column="2" Content="123"></ContentControl>
+
+    </Grid>
 
 </UserControl>

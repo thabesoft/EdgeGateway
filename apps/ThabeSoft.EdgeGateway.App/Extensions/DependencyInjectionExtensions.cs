@@ -4,7 +4,10 @@ using ThabeSoft.EdgeGateway.App.Dialog;
 using ThabeSoft.EdgeGateway.App.Navigation;
 using ThabeSoft.EdgeGateway.App.Port;
 using ThabeSoft.EdgeGateway.App.Port.Device;
+using ThabeSoft.EdgeGateway.App.Services;
 using ThabeSoft.EdgeGateway.App.Shell;
+using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Ports;
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
 namespace Microsoft.Extensions.DependencyInjection;
@@ -38,13 +41,30 @@ public static class DependencyInjectionExtensions
             descriptors.AddTransient<AddPortViewModel>();
             descriptors.AddSingleton(ViewMapping.Create<AddPortViewModel, AddPortView>());
 
+            descriptors.AddSingleton(sp =>
+                new PortSummaryViewModelFactory(port =>
+                    ActivatorUtilities.CreateInstance<PortSummaryViewModel>(sp, port)));
+            descriptors.AddSingleton(sp =>
+                new DeviceSummaryViewModelFactory(device =>
+                    ActivatorUtilities.CreateInstance<DeviceSummaryViewModel>(sp, device)));
+
             // Device
             descriptors.AddTransient<DeviceViewModel>();
             descriptors.AddSingleton(ViewMapping.Create<DeviceViewModel, DeviceView>());
 
+            // AliasServices
+            descriptors.AddAliasService<DeviceId>();
+            descriptors.AddAliasService<PortId>();
 
 
             return descriptors;
+        }
+
+
+        public IServiceCollection AddAliasService<TId>()
+            where TId : IEquatable<TId>
+        {
+            return descriptors.AddSingleton<IAliasService<TId>, AliasService<TId>>();
         }
     }
 }

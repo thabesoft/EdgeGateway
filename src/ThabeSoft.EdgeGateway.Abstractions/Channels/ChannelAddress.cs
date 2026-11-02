@@ -1,4 +1,6 @@
-﻿namespace ThabeSoft.EdgeGateway.Channels;
+﻿using System.Net;
+
+namespace ThabeSoft.EdgeGateway.Channels;
 
 
 public sealed record class ChannelAddress : IEquatable<ChannelAddress>
@@ -33,7 +35,7 @@ public sealed record class ChannelAddress : IEquatable<ChannelAddress>
 
 
 
-    public static ChannelAddress Create(ConnectionType connectionType, string endpoint)
+    private static ChannelAddress Create(ConnectionType connectionType, string endpoint)
     {
         if (!Enum.IsDefined(connectionType))
             throw new ArgumentOutOfRangeException(nameof(connectionType));
@@ -43,8 +45,8 @@ public sealed record class ChannelAddress : IEquatable<ChannelAddress>
 
         return new() { ConnectionType = connectionType, Endpoint = endpoint.Trim() };
     }
-    public static ChannelAddress Serial(string endpoint) =>
-        Create(ConnectionType.Serial, endpoint);
-    public static ChannelAddress Ethernet(string endpoint) =>
-        Create(ConnectionType.Ethernet, endpoint);
+    public static ChannelAddress Serial(string portName) =>
+        Create(ConnectionType.Serial, portName);
+    public static ChannelAddress Ethernet(IPEndPoint endpoint) =>
+        Create(ConnectionType.Ethernet, endpoint.ToString());
 }

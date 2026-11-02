@@ -1,31 +1,43 @@
 ﻿using Avalonia.Collections;
+using Avalonia.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using ThabeSoft.EdgeGateway.App.Dialog;
+using ThabeSoft.EdgeGateway.App.Mocks;
 using ThabeSoft.EdgeGateway.App.Navigation;
-using ThabeSoft.EdgeGateway.App.Port.Device;
+using ThabeSoft.EdgeGateway.App.Services;
 using ThabeSoft.EdgeGateway.Channels;
+using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ports;
+using ThabeSoft.EdgeGateway.Protocols;
 
 namespace ThabeSoft.EdgeGateway.App.Port;
+
 
 public partial class PortViewModel : ViewModelBase, IRecipient<PortRemovedMessage>
 {
     private readonly IDialogService _dialogService;
-    private readonly INavigationService _navigationService;
+    private readonly PortSummaryViewModelFactory _portSummaryViewModelFactory;
     private readonly IGateway _gateway;
 
-    public PortViewModel(IDialogService dialogService, INavigationService navigationService, IGateway gateway)
+
+    public PortViewModel(IDialogService dialogService, IGateway gateway, PortSummaryViewModelFactory portSummaryViewModelFactory)
     {
         _gateway = gateway;
         _dialogService = dialogService;
-        _navigationService = navigationService;
+        _portSummaryViewModelFactory = portSummaryViewModelFactory;
 
         WeakReferenceMessenger.Default.Register(this);
     }
 
-    public AvaloniaList<PortItemViewModel> Ports { get; } = [];
+    internal PortViewModel() : this(NullDialogService.Instance, NullGateway.Instance, _ => new()) { }
+
+
+
+    public AvaloniaList<PortSummaryViewModel> Ports { get; init; } = [];
 
 
     [RelayCommand]
@@ -47,7 +59,7 @@ public partial class PortViewModel : ViewModelBase, IRecipient<PortRemovedMessag
                 var ipChannelDescriptor = IpChannelDescriptor.Create(content.IpForm.ConnectionType, iPEndPoint);
 
                 var port = _gateway.AddPort(ipChannelDescriptor);
-                AddPortViewModel(port);
+                AddPortSummaryViewModel(port);
             }
             else if (content.IsSelectedSerialFrom)
             {
@@ -55,7 +67,7 @@ public partial class PortViewModel : ViewModelBase, IRecipient<PortRemovedMessag
                 var serialChannelDescriptor = SerialChannelDescriptor.Create(from.PortName, from.BaudRate, from.Parity, from.DataBits, from.StopBits);
 
                 var port = _gateway.AddPort(serialChannelDescriptor);
-                AddPortViewModel(port);
+                AddPortSummaryViewModel(port);
             }
 
             _dialogService.Close(dialogContent);
@@ -67,9 +79,10 @@ public partial class PortViewModel : ViewModelBase, IRecipient<PortRemovedMessag
     }
 
 
-    private void AddPortViewModel(IPort port)
+    private void AddPortSummaryViewModel(IPort port)
     {
-        Ports.Add(new PortItemViewModel(port, _gateway, _navigationService));
+        var vm = _portSummaryViewModelFactory(port);
+        Ports.Add(vm);
     }
     void IRecipient<PortRemovedMessage>.Receive(PortRemovedMessage message)
     {
@@ -80,39 +93,92 @@ public partial class PortViewModel : ViewModelBase, IRecipient<PortRemovedMessag
     }
 }
 
-public sealed partial class PortItemViewModel(IPort port, IGateway gateway, INavigationService navigationService) : ViewModelBase
+
+public sealed partial class PortSummaryViewModel : ViewModelBase
 {
-    public PortId Id => port.Id;
-    public ConnectionType ConnectionType => port.ConnectionType;
-    public bool IsOpen => port.IsOpen;
-    public int DeviceCount => port.Devices.Count;
+    private readonly IPort _port;
+    private readonly IAliasService<PortId> _portAliasService;
+    private readonly DeviceSummaryViewModelFactory _deviceSummaryViewModelFactory;
 
 
-    [RelayCommand]
-    private async Task OpenAsync()
+    public PortSummaryViewModel(IPort port, IAliasService<PortId> portAliasService, DeviceSummaryViewModelFactory deviceSummaryViewModelFactory)
     {
-        await port.OpenAsync();
-        OnPropertyChanged(nameof(IsOpen));
+        _port = port;
+        _portAliasService = portAliasService;
+        _deviceSummaryViewModelFactory = deviceSummaryViewModelFactory;
+
+        Sync();
+        SyncDevices();
     }
+    internal PortSummaryViewModel() : this(NullPort.Instance, AliasService<PortId>.Instance, _ => new()) { }
 
-    [RelayCommand]
-    private async Task CloseAsync()
+
+    public PortId Id => _port.Id;
+    public AvaloniaList<DeviceSummaryViewModel> Devices { get; init; } = [];
+
+
+    [ObservableProperty]
+    public partial string DisplayName { get; set; } = null!;
+
+    [ObservableProperty]
+    public partial ChannelAddress ChannelAddress { get; set; } = null!;
+
+    [ObservableProperty]
+    public partial bool IsOpen { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsExpanded { get; set; } = true;
+
+
+
+    public void Sync()
     {
-        await port.CloseAsync();
-        OnPropertyChanged(nameof(IsOpen));
+        IsOpen = _port.IsOpen;
+        ChannelAddress = _port.ChannelAddress;
+        DisplayName = _portAliasService.Get(Id) ?? ChannelAddress.ToString();
     }
-
-    [RelayCommand]
-    private async Task RemoveAsync()
+    public void SyncDevices()
     {
-        await gateway.RemovePortAsync(Id);
-        WeakReferenceMessenger.Default.Send(new PortRemovedMessage(Id));
-    }
-
-    [RelayCommand]
-    private async Task OpenDeviceAsync()
-    {
-        var deviceViewModel = new DeviceViewModel(port);
-        navigationService.Navigate(deviceViewModel);
+        Devices.Clear();
+        Devices.AddRange(_port.Devices.Values
+            .Select(device => _deviceSummaryViewModelFactory(device)));
     }
 }
+public delegate PortSummaryViewModel PortSummaryViewModelFactory(IPort port);
+
+
+public sealed partial class DeviceSummaryViewModel : ViewModelBase
+{
+    private readonly IDevice _device;
+    private readonly IAliasService<DeviceId> _aliasService;
+
+    public DeviceSummaryViewModel(IDevice device, IAliasService<DeviceId> deviceAliasService)
+    {
+        _device = device;
+        _aliasService = deviceAliasService;
+
+        Sync();
+    }
+    internal DeviceSummaryViewModel() : this(NullDevice.Instance, AliasService<DeviceId>.Instance) { }
+
+
+    public DeviceId Id => _device.Id;
+
+    [ObservableProperty]
+    public partial string DisplayName { get; set; } = null!;
+
+    [ObservableProperty]
+    public partial bool IsEnabled { get; set; }
+
+    [ObservableProperty]
+    public partial ProtocolType ProtocolType { get; set; }
+
+
+    public void Sync()
+    {
+        IsEnabled = _device.IsEnabled;
+        ProtocolType = _device.ProtocolType;
+        DisplayName = _aliasService.Get(Id) ?? $"{ProtocolType}{Id.ToString()[^4..]}";
+    }
+}
+public delegate DeviceSummaryViewModel DeviceSummaryViewModelFactory(IDevice device);

@@ -12,7 +12,7 @@ using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
 
-namespace ThabeSoft.EdgeGateway.App.ViewModels.Port;
+namespace ThabeSoft.EdgeGateway.App.ViewModels;
 
 
 public partial class PortViewModel : ViewModelBase, IRecipient<PortRemovedMessage>

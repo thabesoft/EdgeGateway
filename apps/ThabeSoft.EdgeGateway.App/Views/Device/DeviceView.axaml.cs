@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace ThabeSoft.EdgeGateway.App.Views.Device;
+namespace ThabeSoft.EdgeGateway.App.Views;
 
 public partial class DeviceView : UserControl
 {

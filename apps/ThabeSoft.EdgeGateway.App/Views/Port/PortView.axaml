@@ -2,9 +2,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="using:ThabeSoft.EdgeGateway.App.ViewModels.Port"
+             xmlns:vm="using:ThabeSoft.EdgeGateway.App.ViewModels"
              d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="ThabeSoft.EdgeGateway.App.Views.Port.PortView"
+             x:Class="ThabeSoft.EdgeGateway.App.Views.PortView"
              x:DataType="vm:PortViewModel">
 
     <Grid ColumnDefinitions="250,Auto,3*">

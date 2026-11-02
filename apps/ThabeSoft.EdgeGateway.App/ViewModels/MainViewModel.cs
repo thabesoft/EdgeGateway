@@ -8,4 +8,5 @@ public partial class MainViewModel(
         ILogger<MainViewModel> logger
     ) : ViewModelBase
 {
+
 }

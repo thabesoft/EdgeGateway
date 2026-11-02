@@ -2,11 +2,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="using:ThabeSoft.EdgeGateway.App.ViewModels.Port"
+             xmlns:vm="using:ThabeSoft.EdgeGateway.App.ViewModels"
              mc:Ignorable="d"
              Height="500"
              x:DataType="vm:AddPortViewModel"
-             x:Class="ThabeSoft.EdgeGateway.App.Views.Port.AddPortView">
+             x:Class="ThabeSoft.EdgeGateway.App.Views.AddPortView">
 
 
     <TabControl DockPanel.Dock="Top">

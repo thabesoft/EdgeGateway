@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.App.ViewModels.Dashboard;
+﻿namespace ThabeSoft.EdgeGateway.App.ViewModels;
 
 public partial class DashboardViewModel : ViewModelBase
 {

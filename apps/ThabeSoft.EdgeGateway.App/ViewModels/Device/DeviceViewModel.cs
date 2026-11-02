@@ -6,7 +6,7 @@ using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
 
-namespace ThabeSoft.EdgeGateway.App.ViewModels.Device;
+namespace ThabeSoft.EdgeGateway.App.ViewModels;
 
 
 public partial class DeviceViewModel : ViewModelBase, IRecipient<DeviceRemovedMessage>

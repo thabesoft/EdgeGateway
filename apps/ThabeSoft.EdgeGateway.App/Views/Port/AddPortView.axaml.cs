@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace ThabeSoft.EdgeGateway.App.Views.Port;
+namespace ThabeSoft.EdgeGateway.App.Views;
 
 public partial class AddPortView : UserControl
 {

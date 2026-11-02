@@ -1,10 +1,10 @@
 using Avalonia.Controls;
 using System.Net;
-using ThabeSoft.EdgeGateway.App.ViewModels.Port;
+using ThabeSoft.EdgeGateway.App.ViewModels;
 using ThabeSoft.EdgeGateway.Channels;
 using ThabeSoft.EdgeGateway.Protocols;
 
-namespace ThabeSoft.EdgeGateway.App.Views.Port;
+namespace ThabeSoft.EdgeGateway.App.Views;
 
 public partial class PortView : UserControl
 {

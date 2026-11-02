@@ -3,11 +3,7 @@ using ThabeSoft.EdgeGateway.App.DataTmpleates;
 using ThabeSoft.EdgeGateway.App.Models;
 using ThabeSoft.EdgeGateway.App.Services;
 using ThabeSoft.EdgeGateway.App.ViewModels;
-using ThabeSoft.EdgeGateway.App.ViewModels.Dashboard;
-using ThabeSoft.EdgeGateway.App.ViewModels.Device;
-using ThabeSoft.EdgeGateway.App.ViewModels.Port;
-using ThabeSoft.EdgeGateway.App.Views.Device;
-using ThabeSoft.EdgeGateway.App.Views.Port;
+using ThabeSoft.EdgeGateway.App.Views;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ports;
 

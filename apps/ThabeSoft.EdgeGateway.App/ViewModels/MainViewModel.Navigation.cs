@@ -3,8 +3,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.App.Services;
-using ThabeSoft.EdgeGateway.App.ViewModels.Dashboard;
-using ThabeSoft.EdgeGateway.App.ViewModels.Port;
 
 namespace ThabeSoft.EdgeGateway.App.ViewModels;
 

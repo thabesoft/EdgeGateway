@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.App.Services;
+using ThabeSoft.EdgeGateway.App.ViewModels.Dashboard;
 
 namespace ThabeSoft.EdgeGateway.App.ViewModels;
 
@@ -14,8 +15,8 @@ public partial class MainViewModel : INavigationService
     public partial NavigationMenuItem? SelectedMenu { get; set; }
     public AvaloniaList<NavigationMenuItem> Menus { get; } =
     [
-        NavigationMenuItem.Create<DashboardViewModel>("主页"),
-        NavigationMenuItem.Create<PortViewModel>("端口设置"),
+        NavigationMenuItem.Create<DashboardPageViewModel>("主页"),
+        NavigationMenuItem.Create<PortPageViewModel>("端口设置"),
     ];
 
 

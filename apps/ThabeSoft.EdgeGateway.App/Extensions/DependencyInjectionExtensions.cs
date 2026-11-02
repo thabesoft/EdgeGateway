@@ -3,6 +3,7 @@ using ThabeSoft.EdgeGateway.App.DataTmpleates;
 using ThabeSoft.EdgeGateway.App.Models;
 using ThabeSoft.EdgeGateway.App.Services;
 using ThabeSoft.EdgeGateway.App.ViewModels;
+using ThabeSoft.EdgeGateway.App.ViewModels.Dashboard;
 using ThabeSoft.EdgeGateway.App.Views;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ports;
@@ -51,32 +52,39 @@ public static class DependencyInjectionExtensions
 
         private void AddViewModels()
         {
+            // Core
+            descriptors.AddSingleton<GatewayViewModel>();
+
+            descriptors.AddSingleton(sp =>
+               new PortViewModelFactory(port =>
+                   ActivatorUtilities.CreateInstance<PortViewModel>(sp, port)));
+            descriptors.AddSingleton(sp =>
+                new DeviceViewModelFactory(device =>
+                    ActivatorUtilities.CreateInstance<DeviceViewModel>(sp, device)));
+
+
+
             // Shell
             descriptors.AddSingleton<MainWindowViewModel>();
             descriptors.AddSingleton<MainViewModel>();
 
 
             // Dashboard
-            descriptors.AddSingleton<DashboardViewModel>();
+            descriptors.AddSingleton<DashboardPageViewModel>();
 
 
             // Port
-            descriptors.AddSingleton<PortViewModel>();
-            descriptors.AddViewMapping<PortViewModel, PortView>();
+            descriptors.AddSingleton<PortPageViewModel>();
+            descriptors.AddViewMapping<PortPageViewModel, PortPage>();
 
             descriptors.AddTransient<AddPortViewModel>();
             descriptors.AddViewMapping<AddPortViewModel, AddPortView>();
 
-            descriptors.AddSingleton(sp =>
-               new PortSummaryViewModelFactory(port =>
-                   ActivatorUtilities.CreateInstance<PortSummaryViewModel>(sp, port)));
-            descriptors.AddSingleton(sp =>
-                new DeviceSummaryViewModelFactory(device =>
-                    ActivatorUtilities.CreateInstance<DeviceSummaryViewModel>(sp, device)));
+            
 
 
             descriptors.AddTransient<DeviceViewModel>();
-            descriptors.AddSingleton(ViewMapping.Create<DeviceViewModel, DeviceView>());
+            descriptors.AddSingleton(ViewMapping.Create<DeviceViewModel, DevicePage>());
         }
     }
 }

@@ -5,37 +5,10 @@ using ThabeSoft.EdgeGateway.Lifecycles;
 namespace ThabeSoft.EdgeGateway;
 
 
-internal sealed class Gateway(IPortFactory portFactory) : IGateway
+internal sealed class Gateway(IPortFactory portFactory) : ResilientLifecycleBase, IGateway
 {
     private readonly ConcurrentDictionary<PortId, IPort> _ports = [];
     public IReadOnlyDictionary<PortId, IPort> Ports => _ports.AsReadOnly();
-
-
-    public bool IsRunning { get; private set; }
-    public LifecycleState State => throw new NotImplementedException();
-
-
-    public async ValueTask StartAsync(CancellationToken cancellationToken = default)
-    {
-        if (IsRunning) return;
-        IsRunning = true;
-
-
-        foreach (var i in _ports.Values)
-        {
-            await i.OpenAsync(cancellationToken);
-        }
-    }
-    public async ValueTask StopAsync(CancellationToken cancellationToken = default)
-    {
-        if (!IsRunning) return;
-        IsRunning = false;
-
-        foreach (var i in _ports.Values)
-        {
-            await i.CloseAsync(cancellationToken);
-        }
-    }
 
 
 
@@ -52,9 +25,37 @@ internal sealed class Gateway(IPortFactory portFactory) : IGateway
     }
 
 
-    public async ValueTask DisposeAsync()
+    protected override async ValueTask OnStartAsync(CancellationToken cancellationToken)
     {
-        foreach(var i in _ports.Values)
+        foreach (var i in _ports.Values)
+        {
+            try
+            {
+                await i.OpenAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+    }
+    protected override async ValueTask OnStopAsync(CancellationToken cancellationToken)
+    {
+        foreach (var i in _ports.Values)
+        {
+            try
+            {
+                await i.CloseAsync(cancellationToken);
+            }
+            catch
+            {
+
+            }
+        }
+    }
+    protected override async ValueTask OnDisposeAsync()
+    {
+        foreach (var i in _ports.Values)
         {
             await i.DisposeAsync();
         }

@@ -3,7 +3,7 @@ using System.IO.Ports;
 
 namespace ThabeSoft.EdgeGateway.App.ViewModels;
 
-internal sealed partial class AddSerialPortForm : ViewModelBase
+internal sealed partial class SerialPortFormViewModel : ViewModelBase
 {
     public Parity[] ParitysOptions { get; } = [Parity.None, Parity.Odd, Parity.Even, Parity.Mark, Parity.Space];
     public StopBits[] StopBitsOptions { get; } = [StopBits.One, StopBits.OnePointFive, StopBits.Two];

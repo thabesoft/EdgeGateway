@@ -14,8 +14,7 @@ internal sealed class SerialChannel(SerialChannelDescriptor descriptor) : IChann
         stopBits: descriptor.StopBits);
 
 
-    public ChannelId Id { get; } = descriptor.Id;
-    public ChannelAddress Address { get; } = ChannelAddress.Serial(descriptor.PortName);
+    public ChannelAddress Address { get; } = descriptor.Address;
     public bool IsOpen => _serialPort.IsOpen;
 
 

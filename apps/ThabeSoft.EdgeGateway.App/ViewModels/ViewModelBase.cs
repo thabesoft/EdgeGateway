@@ -2,4 +2,7 @@
 
 namespace ThabeSoft.EdgeGateway.App.ViewModels;
 
-public abstract class ViewModelBase : ObservableObject;
+public abstract class ViewModelBase : ObservableObject
+{
+
+}

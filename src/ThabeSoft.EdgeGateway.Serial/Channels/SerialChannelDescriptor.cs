@@ -5,9 +5,7 @@ namespace ThabeSoft.EdgeGateway.Channels;
 
 public sealed record class SerialChannelDescriptor : IChannelDescriptor
 {
-    public ConnectionType ConnectionType => ConnectionType.Serial;
-
-    public required ChannelId Id { get; init; }
+    public required ChannelAddress Address { get; init; }
     public required string PortName { get; init; }
     public required int BaudRate { get; init; }
     public required int DataBits { get; init; }
@@ -16,10 +14,9 @@ public sealed record class SerialChannelDescriptor : IChannelDescriptor
 
 
     internal SerialChannelDescriptor() { }
-    public static SerialChannelDescriptor Create(ChannelId id, string portName, int baudRate = 9600, Parity parity = Parity.None, int dataBits = 8, StopBits stopBits = StopBits.One)
+    public static SerialChannelDescriptor Create(string portName, int baudRate = 9600, Parity parity = Parity.None, int dataBits = 8, StopBits stopBits = StopBits.One)
     {
-        ArgumentNullException.ThrowIfNull(id);
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(portName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(portName);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(baudRate);
 
         if (!Enum.IsDefined(parity))
@@ -32,7 +29,7 @@ public sealed record class SerialChannelDescriptor : IChannelDescriptor
 
         return new()
         {
-            Id = id,
+            Address = ChannelAddress.Serial(portName),
             PortName = portName,
             BaudRate = baudRate,
             Parity = parity,
@@ -40,7 +37,4 @@ public sealed record class SerialChannelDescriptor : IChannelDescriptor
             StopBits = stopBits
         };
     }
-
-    public static SerialChannelDescriptor Create(string portName, int baudRate = 9600, Parity parity = Parity.None, int dataBits = 8, StopBits stopBits = StopBits.One) =>
-        Create(ChannelId.Create(), portName, baudRate, parity, dataBits, stopBits);
 }

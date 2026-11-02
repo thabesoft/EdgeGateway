@@ -7,8 +7,7 @@ internal sealed class UdpChannel(IpChannelDescriptor descriptor) : IChannel
     private readonly UdpClient _udpClient = new();
 
 
-    public ChannelId Id { get; } = descriptor.Id;
-    public ChannelAddress Address { get; } = ChannelAddress.Ethernet(descriptor.IPEndPoint);
+    public ChannelAddress Address { get; } = descriptor.Address;
     public bool IsOpen { get; private set; }
 
 

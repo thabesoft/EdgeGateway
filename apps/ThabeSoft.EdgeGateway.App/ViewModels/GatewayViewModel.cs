@@ -1,0 +1,133 @@
+﻿using Avalonia.Collections;
+using Avalonia.Controls;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using ThabeSoft.EdgeGateway.App.Mocks;
+using ThabeSoft.EdgeGateway.Channels;
+using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Ports;
+using ThabeSoft.EdgeGateway.Protocols;
+
+namespace ThabeSoft.EdgeGateway.App.ViewModels;
+
+
+internal sealed partial class GatewayViewModel(IGateway gateway, PortViewModelFactory portViewModelFactory) : ViewModelBase
+{
+    private readonly AvaloniaList<PortViewModel> _ports = [.. gateway.Ports.Values.Select(port =>
+        portViewModelFactory(port))];
+
+    internal GatewayViewModel() : this(NullGateway.Instance, _ => new(NullPort.Instance, _ => new(NullDevice.Instance)))
+    {
+        if (!Design.IsDesignMode) return;
+
+        _ports.Add(new(NullPort.Instance, _ => new(NullDevice.Instance)) { });
+
+    }
+
+
+    [ObservableProperty]
+    public partial bool IsRunning { get; private set; } = gateway.State == LifecycleState.Running;
+    public ICollection<PortViewModel> Ports => _ports;
+
+
+
+
+
+
+    [RelayCommand]
+    private async Task StartAsync()
+    {
+        await gateway.StartAsync();
+        IsRunning = gateway.State == LifecycleState.Running;
+    }
+
+    [RelayCommand]
+    private async Task StopAsync()
+    {
+        await gateway.StopAsync();
+        IsRunning = gateway.State == LifecycleState.Stopped;
+    }
+
+
+    [RelayCommand]
+    private void AddPort(IChannelDescriptor channelDescriptor)
+    {
+        var port = gateway.AddPort(channelDescriptor);
+        var portVm = portViewModelFactory(port);
+
+        _ports.Add(portVm);
+    }
+
+    [RelayCommand]
+    private async Task RemovePortAsync(PortId portId)
+    {
+        await gateway.RemovePortAsync(portId);
+        var portVm = _ports.FirstOrDefault(x => x.Id == portId);
+        if (portVm is null) return;
+
+        _ports.Remove(portVm);
+    }
+}
+
+
+internal delegate PortViewModel PortViewModelFactory(IPort port);
+internal sealed partial class PortViewModel(IPort port, DeviceViewModelFactory deviceViewModelFactory) : ViewModelBase
+{
+    private readonly AvaloniaList<DeviceViewModel> _devices = [.. port.Devices.Values.Select(device =>
+        deviceViewModelFactory(device))];
+
+
+    public PortId Id => port.Id;
+    public ICollection<DeviceViewModel> Devices => _devices;
+    public ChannelAddress ChannelAddress => port.ChannelAddress;
+
+
+    [ObservableProperty]
+    public partial bool IsOpen { get; set; } = port.IsOpen;
+
+
+    [RelayCommand]
+    private async Task OpenAsync()
+    {
+        await port.OpenAsync();
+        IsOpen = port.IsOpen;
+    }
+
+    [RelayCommand]
+    private async Task CloseAsync()
+    {
+        await port.CloseAsync();
+        IsOpen = port.IsOpen;
+    }
+}
+
+
+internal delegate DeviceViewModel DeviceViewModelFactory(IDevice device);
+internal sealed partial class DeviceViewModel(IDevice device) : ViewModelBase
+{
+    public DeviceId Id => device.Id;
+    public ProtocolType ProtocolType => device.ProtocolType;
+
+
+    [ObservableProperty]
+    public partial bool DisplayName { get; set; }
+
+    [ObservableProperty]
+    public partial bool IsEnabled { get; set; } = device.IsEnabled;
+
+
+    [RelayCommand]
+    private async Task EnableAsync()
+    {
+        await device.EnableAsync();
+        IsEnabled = device.IsEnabled;
+    }
+
+    [RelayCommand]
+    private async Task DisableAsync()
+    {
+        await device.DisableAsync();
+        IsEnabled = device.IsEnabled;
+    }
+}

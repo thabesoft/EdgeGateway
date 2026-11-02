@@ -4,6 +4,7 @@
 /// <summary>
 /// 通道的唯一标识符
 /// </summary>
+[Obsolete("通道无需唯一标识符, 相同的地址就是一个, 请使用ChannelAddress")]
 public sealed record class ChannelId
 {
     private readonly string _value;

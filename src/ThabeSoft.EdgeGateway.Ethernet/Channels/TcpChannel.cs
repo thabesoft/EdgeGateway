@@ -8,8 +8,7 @@ internal sealed class TcpChannel(IpChannelDescriptor descriptor) : IChannel
     private readonly TcpClient _tcpClient = new();
 
 
-    public ChannelId Id { get; } = descriptor.Id;
-    public ChannelAddress Address { get; } = ChannelAddress.Ethernet(descriptor.IPEndPoint);
+    public ChannelAddress Address { get; } = descriptor.Address;
     public bool IsOpen => _tcpClient.Connected;
 
 

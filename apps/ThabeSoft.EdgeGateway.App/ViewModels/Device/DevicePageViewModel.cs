@@ -9,11 +9,11 @@ using ThabeSoft.EdgeGateway.Protocols;
 namespace ThabeSoft.EdgeGateway.App.ViewModels;
 
 
-public partial class DeviceViewModel : ViewModelBase, IRecipient<DeviceRemovedMessage>
+public partial class DevicePageViewModel : ViewModelBase, IRecipient<DeviceRemovedMessage>
 {
     private readonly IPort _port;
 
-    public DeviceViewModel(IPort port)
+    public DevicePageViewModel(IPort port)
     {
         _port = port;
         WeakReferenceMessenger.Default.Register(this);

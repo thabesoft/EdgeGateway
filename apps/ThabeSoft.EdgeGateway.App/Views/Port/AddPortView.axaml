@@ -4,7 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:ThabeSoft.EdgeGateway.App.ViewModels"
              mc:Ignorable="d"
-             Height="500"
+             MinHeight="150"
+             Height="420"
+             MinWidth="200"
              x:DataType="vm:AddPortViewModel"
              x:Class="ThabeSoft.EdgeGateway.App.Views.AddPortView">
 
@@ -38,43 +40,45 @@
         </TabItem>
 
         <TabItem Header="串口" IsSelected="{Binding IsSelectedSerialFrom}">
-            <StackPanel Spacing="15" Margin="10">
-                <!-- IP 地址 -->
-                <StackPanel Spacing="5">
-                    <TextBlock Text="端口名称" FontWeight="SemiBold" />
-                    <TextBox Text="{Binding SerialForm.PortName}"
-                             PlaceholderText="例如: COM1" />
-                </StackPanel>
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                <StackPanel Spacing="15" Margin="10">
+                    <!-- IP 地址 -->
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="端口名称" FontWeight="SemiBold" />
+                        <TextBox Text="{Binding SerialForm.PortName}"
+                                 PlaceholderText="例如: COM1" />
+                    </StackPanel>
 
-                <!-- 端口号 -->
-                <StackPanel Spacing="5">
-                    <TextBlock Text="波特率" FontWeight="SemiBold" />
-                    <NumericUpDown Value="{Binding SerialForm.BaudRate}"
-                                   Minimum="1" Maximum="65535"
-                                   FormatString="0" />
-                </StackPanel>
+                    <!-- 端口号 -->
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="波特率" FontWeight="SemiBold" />
+                        <NumericUpDown Value="{Binding SerialForm.BaudRate}"
+                                       Minimum="1" Maximum="65535"
+                                       FormatString="0" />
+                    </StackPanel>
 
-                <!-- 校验模式 -->
-                <StackPanel Spacing="5">
-                    <TextBlock Text="校验模式" FontWeight="SemiBold" />
-                    <ComboBox ItemsSource="{Binding SerialForm.ParitysOptions}" SelectedItem="{Binding SerialForm.Parity}"></ComboBox>
-                </StackPanel>
+                    <!-- 校验模式 -->
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="校验模式" FontWeight="SemiBold" />
+                        <ComboBox ItemsSource="{Binding SerialForm.ParitysOptions}" SelectedItem="{Binding SerialForm.Parity}"></ComboBox>
+                    </StackPanel>
 
-                <!-- 数据位 -->
-                <StackPanel Spacing="5">
-                    <TextBlock Text="数据位" FontWeight="SemiBold" />
-                    <NumericUpDown Value="{Binding SerialForm.DataBits}"
-                                   Minimum="5" Maximum="8"
-                                   FormatString="0" />
-                </StackPanel>
+                    <!-- 数据位 -->
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="数据位" FontWeight="SemiBold" />
+                        <NumericUpDown Value="{Binding SerialForm.DataBits}"
+                                       Minimum="5" Maximum="8"
+                                       FormatString="0" />
+                    </StackPanel>
 
-                <!-- 停止位 -->
-                <StackPanel Spacing="5">
-                    <TextBlock Text="停止位" FontWeight="SemiBold" />
-                    <ComboBox ItemsSource="{Binding SerialForm.StopBitsOptions}" SelectedItem="{Binding SerialForm.StopBits}"></ComboBox>
-                </StackPanel>
+                    <!-- 停止位 -->
+                    <StackPanel Spacing="5">
+                        <TextBlock Text="停止位" FontWeight="SemiBold" />
+                        <ComboBox ItemsSource="{Binding SerialForm.StopBitsOptions}" SelectedItem="{Binding SerialForm.StopBits}"></ComboBox>
+                    </StackPanel>
 
-            </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
         </TabItem>
 
     </TabControl>

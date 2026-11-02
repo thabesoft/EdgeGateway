@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:ThabeSoft.EdgeGateway.App.ViewModels"
              d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="ThabeSoft.EdgeGateway.App.Views.PortView"
-             x:DataType="vm:PortViewModel">
+             x:Class="ThabeSoft.EdgeGateway.App.Views.PortPage"
+             x:DataType="vm:PortPageViewModel">
 
     <Grid ColumnDefinitions="250,Auto,3*">
 
@@ -18,29 +18,25 @@
                 <DockPanel DockPanel.Dock="Top">
 
                     <Button Command="{Binding AddPortCommand}">添加端口</Button>
-                    
+
                 </DockPanel>
 
                 <!--导航内容-->
-                <TreeView ItemsSource="{Binding Ports}">
+                <TreeView ItemsSource="{Binding Gateway.Ports}">
 
                     <TreeView.DataTemplates>
 
                         <!--标头模板-->
-                        <TreeDataTemplate DataType="vm:PortSummaryViewModel" ItemsSource="{Binding Devices}">
-                            <StackPanel Height="30" Orientation="Horizontal" Spacing="5" TreeViewItem.IsExpanded="{Binding IsExpanded,Mode=TwoWay }" >
+                        <TreeDataTemplate DataType="vm:PortViewModel" ItemsSource="{Binding Devices}">
+                            <StackPanel Height="30" Orientation="Horizontal" Spacing="5" >
 
                                 <Border VerticalAlignment="Center"
                                         CornerRadius="3"
                                         Background="Green"
                                         Padding="5 2">
                                     <TextBlock VerticalAlignment="Center"
-                                               Foreground="White" FontSize="12" FontWeight="Bold" Text="{Binding ChannelAddress.ConnectionType}"/>
+                                               Foreground="White" FontSize="12" FontWeight="Bold" Text="{Binding  ChannelAddress.ConnectionType}"/>
                                 </Border>
-
-                                <TextBlock Text="{Binding DisplayName}"
-                                           VerticalAlignment="Center"
-                                           FontWeight="Bold" />
 
                                 <TextBlock Text="{Binding ChannelAddress.Endpoint}"
                                            VerticalAlignment="Center"
@@ -51,7 +47,7 @@
                         </TreeDataTemplate>
 
                         <!--元素模板-->
-                        <DataTemplate DataType="vm:DeviceSummaryViewModel">
+                        <DataTemplate DataType="vm:DeviceViewModel">
                             <StackPanel Orientation="Horizontal" Spacing="5">
 
                                 <Border CornerRadius="3" Background="Green" Padding="5 2" VerticalAlignment="Stretch">

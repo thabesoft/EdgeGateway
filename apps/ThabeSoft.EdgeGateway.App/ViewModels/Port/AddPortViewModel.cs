@@ -1,12 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using ThabeSoft.EdgeGateway.Channels;
 
 namespace ThabeSoft.EdgeGateway.App.ViewModels;
 
 
 internal sealed partial class AddPortViewModel : ViewModelBase
 {
-    public AddIpPortForm IpForm { get; } = new();
-    public AddSerialPortForm SerialForm { get; } = new();
+    public IpPortFormViewModel IpForm { get; } = new();
+    public SerialPortFormViewModel SerialForm { get; } = new();
 
 
     [ObservableProperty]
@@ -14,4 +15,10 @@ internal sealed partial class AddPortViewModel : ViewModelBase
 
     [ObservableProperty]
     public partial bool IsSelectedSerialFrom { get; set; }
+
+
+    public IChannelDescriptor Build()
+    {
+        return null!;
+    }
 }

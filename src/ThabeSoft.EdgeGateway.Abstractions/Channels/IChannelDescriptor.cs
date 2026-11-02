@@ -2,6 +2,5 @@
 
 public interface IChannelDescriptor
 {
-    ChannelId Id { get; }
-    ConnectionType ConnectionType { get; }
+    ChannelAddress Address { get; }
 }

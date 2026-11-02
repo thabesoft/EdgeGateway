@@ -1,4 +1,5 @@
-﻿using ThabeSoft.EdgeGateway.App.Navigation;
+﻿using ThabeSoft.EdgeGateway.App.Services;
+using ThabeSoft.EdgeGateway.App.ViewModels;
 
 namespace ThabeSoft.EdgeGateway.App.Mocks;
 

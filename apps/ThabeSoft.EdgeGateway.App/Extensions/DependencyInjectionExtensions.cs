@@ -1,11 +1,13 @@
-﻿using ThabeSoft.EdgeGateway.App;
-using ThabeSoft.EdgeGateway.App.Dashboard;
-using ThabeSoft.EdgeGateway.App.Dialog;
-using ThabeSoft.EdgeGateway.App.Navigation;
-using ThabeSoft.EdgeGateway.App.Port;
-using ThabeSoft.EdgeGateway.App.Port.Device;
+﻿using Avalonia;
+using ThabeSoft.EdgeGateway.App.DataTmpleates;
+using ThabeSoft.EdgeGateway.App.Models;
 using ThabeSoft.EdgeGateway.App.Services;
-using ThabeSoft.EdgeGateway.App.Shell;
+using ThabeSoft.EdgeGateway.App.ViewModels;
+using ThabeSoft.EdgeGateway.App.ViewModels.Dashboard;
+using ThabeSoft.EdgeGateway.App.ViewModels.Device;
+using ThabeSoft.EdgeGateway.App.ViewModels.Port;
+using ThabeSoft.EdgeGateway.App.Views.Device;
+using ThabeSoft.EdgeGateway.App.Views.Port;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ports;
 
@@ -20,42 +22,19 @@ public static class DependencyInjectionExtensions
     {
         public IServiceCollection AddEdgeGatewayApp()
         {
-            // Shell
-            descriptors.AddSingleton<MainWindowViewModel>();
-            descriptors.AddSingleton<ViewModelTmpleate>();
-
-            descriptors.AddSingleton<MainViewModel>();
-            descriptors.AddSingleton<INavigationService>(sp => sp.GetRequiredService<MainViewModel>());
-            descriptors.AddSingleton<IDialogService>(sp => sp.GetRequiredService<MainViewModel>());
-            descriptors.AddSingleton(ViewMapping.Create<MainViewModel, MainView>());
-
-
-            // Dashboard
-            descriptors.AddSingleton<DashboardViewModel>();
-
-
-            // Port
-            descriptors.AddSingleton<PortViewModel>();
-            descriptors.AddSingleton(ViewMapping.Create<PortViewModel, PortView>());
-
-            descriptors.AddTransient<AddPortViewModel>();
-            descriptors.AddSingleton(ViewMapping.Create<AddPortViewModel, AddPortView>());
-
-            descriptors.AddSingleton(sp =>
-                new PortSummaryViewModelFactory(port =>
-                    ActivatorUtilities.CreateInstance<PortSummaryViewModel>(sp, port)));
-            descriptors.AddSingleton(sp =>
-                new DeviceSummaryViewModelFactory(device =>
-                    ActivatorUtilities.CreateInstance<DeviceSummaryViewModel>(sp, device)));
-
-            // Device
-            descriptors.AddTransient<DeviceViewModel>();
-            descriptors.AddSingleton(ViewMapping.Create<DeviceViewModel, DeviceView>());
+            // DataTemplates
+            descriptors.AddSingleton<ViewModelDataTmpleate>();
 
             // AliasServices
             descriptors.AddAliasService<DeviceId>();
             descriptors.AddAliasService<PortId>();
 
+            // Services
+            descriptors.AddSingleton<INavigationService>(sp => sp.GetRequiredService<MainViewModel>());
+            descriptors.AddSingleton<IDialogService>(sp => sp.GetRequiredService<MainViewModel>());
+
+
+            descriptors.AddViewModels();
 
             return descriptors;
         }
@@ -65,6 +44,43 @@ public static class DependencyInjectionExtensions
             where TId : IEquatable<TId>
         {
             return descriptors.AddSingleton<IAliasService<TId>, AliasService<TId>>();
+        }
+        public IServiceCollection AddViewMapping<TViewModel, TView>()
+            where TViewModel : ViewModelBase
+            where TView : IDataContextProvider, new()
+        {
+            return descriptors.AddSingleton(ViewMapping.Create<TViewModel, TView>());
+        }
+
+
+        private void AddViewModels()
+        {
+            // Shell
+            descriptors.AddSingleton<MainWindowViewModel>();
+            descriptors.AddSingleton<MainViewModel>();
+
+
+            // Dashboard
+            descriptors.AddSingleton<DashboardViewModel>();
+
+
+            // Port
+            descriptors.AddSingleton<PortViewModel>();
+            descriptors.AddViewMapping<PortViewModel, PortView>();
+
+            descriptors.AddTransient<AddPortViewModel>();
+            descriptors.AddViewMapping<AddPortViewModel, AddPortView>();
+
+            descriptors.AddSingleton(sp =>
+               new PortSummaryViewModelFactory(port =>
+                   ActivatorUtilities.CreateInstance<PortSummaryViewModel>(sp, port)));
+            descriptors.AddSingleton(sp =>
+                new DeviceSummaryViewModelFactory(device =>
+                    ActivatorUtilities.CreateInstance<DeviceSummaryViewModel>(sp, device)));
+
+
+            descriptors.AddTransient<DeviceViewModel>();
+            descriptors.AddSingleton(ViewMapping.Create<DeviceViewModel, DeviceView>());
         }
     }
 }

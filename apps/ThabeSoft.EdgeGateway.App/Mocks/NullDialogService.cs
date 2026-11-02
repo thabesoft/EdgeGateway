@@ -1,4 +1,5 @@
-﻿using ThabeSoft.EdgeGateway.App.Dialog;
+﻿using ThabeSoft.EdgeGateway.App.Models;
+using ThabeSoft.EdgeGateway.App.Services;
 
 namespace ThabeSoft.EdgeGateway.App.Mocks;
 

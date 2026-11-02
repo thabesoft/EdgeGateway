@@ -2,11 +2,12 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using ThabeSoft.EdgeGateway.App.Navigation;
-using ThabeSoft.EdgeGateway.App.Shell;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using ThabeSoft.EdgeGateway.App.DataTmpleates;
+using ThabeSoft.EdgeGateway.App.ViewModels;
+using ThabeSoft.EdgeGateway.App.Views;
 
 namespace ThabeSoft.EdgeGateway.App;
 
@@ -46,7 +47,7 @@ public class App : Application
         if (!Design.IsDesignMode)
             _host.Start();
 
-        DataTemplates.Add(Services.GetRequiredService<ViewModelTmpleate>());
+        DataTemplates.Add(Services.GetRequiredService<ViewModelDataTmpleate>());
 
         InitializeMainView();
         base.OnFrameworkInitializationCompleted();

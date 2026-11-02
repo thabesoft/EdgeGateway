@@ -1,0 +1,79 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:local="using:ThabeSoft.EdgeGateway.App.Port.Device"
+             x:Class="ThabeSoft.EdgeGateway.App.DeviceView"
+             x:DataType="local:DeviceViewModel">
+
+    <DockPanel>
+
+        <!--顶部工具栏-->
+        <DockPanel Margin="0 0 0 10"  DockPanel.Dock="Top">
+
+            <!--创建按钮-->
+            <DropDownButton DockPanel.Dock="Right" Content="添加设备" Classes="primary">
+                <DropDownButton.Flyout>
+                    <MenuFlyout Placement="BottomEdgeAlignedRight">
+                        <MenuItem Header="Modbus-Ip" Command="{Binding AddModbusIpDeviceCommand}" />
+                        <MenuItem Header="Modbus-Rtu" Command="{Binding AddModbusRtuDeviceCommand}" />
+                        <MenuItem Header="Modbus-Ascii" Command="{Binding AddModbusAsciiDeviceCommand}" />
+                    </MenuFlyout>
+                </DropDownButton.Flyout>
+            </DropDownButton>
+
+            <TextBox MinWidth="250" PlaceholderText="搜索" DockPanel.Dock="Left"></TextBox>
+            <Button DockPanel.Dock="Left">筛选</Button>
+
+        </DockPanel>
+
+        <!--端口列表-->
+        <DataGrid ItemsSource="{Binding Devices}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  CanUserResizeColumns="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="设备 ID" Binding="{Binding Id}" Width="Auto"/>
+                <DataGridTextColumn Header="协议类型" Binding="{Binding ProtocolType}" Width="Auto"/>
+
+                <!--数据点-->
+                <DataGridTemplateColumn Header="数据点" Width="Auto">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <!-- 用一个 Button 伪装成普通的文本，去掉边框和背景 -->
+                            <Button Background="Transparent"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    HorizontalContentAlignment="Center"
+                                    VerticalContentAlignment="Center"
+                                    BorderThickness="0"
+                                    Padding="0"
+                                    Cursor="Hand"
+                                    Command="{Binding OpenMonitorCommand}"
+                                    Content="{Binding MonitorsCount}">
+                            </Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <!--操作-->
+                <DataGridTemplateColumn Header="操作" Width="Auto">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Spacing="5">
+                                <Button IsVisible="{Binding !IsEnabled}" Command="{Binding EnableCommand}">启用</Button>
+                                <Button IsVisible="{Binding IsEnabled}" Command="{Binding DisposeCommand}">禁用</Button>
+                                <Separator Height="20" Width="1"></Separator>
+                                <Button Command="{Binding RemoveCommand}">删除</Button>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+
+        </DataGrid>
+
+    </DockPanel>
+
+</UserControl>

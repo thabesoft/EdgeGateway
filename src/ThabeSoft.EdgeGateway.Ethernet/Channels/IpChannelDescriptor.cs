@@ -1,5 +1,5 @@
-﻿using System.Net;
-using ThabeSoft.EdgeGateway.Ports;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Net;
 
 namespace ThabeSoft.EdgeGateway.Channels;
 
@@ -17,13 +17,10 @@ public sealed record IpChannelDescriptor : IChannelDescriptor
 
 
     internal IpChannelDescriptor() { }
-    public static IpChannelDescriptorBuilder Builder() => new();
-
-
     public static IpChannelDescriptor Create(IpConnectionType connectionType, IPEndPoint iPEndPoint)
     {
-        if (connectionType is not (IpConnectionType.Tcp or IpConnectionType.Udp))
-            throw new ArgumentOutOfRangeException(nameof(connectionType), $"不支持的Ip连接方式: {connectionType}");
+        if (!ValidateConnectionType(connectionType, out var errorMessage))
+            throw new ArgumentOutOfRangeException(nameof(connectionType), errorMessage);
 
         ArgumentNullException.ThrowIfNull(iPEndPoint);
         ArgumentNullException.ThrowIfNull(iPEndPoint.Address);
@@ -40,72 +37,46 @@ public sealed record IpChannelDescriptor : IChannelDescriptor
         Create(IpConnectionType.Tcp, iPEndPoint);
     public static IpChannelDescriptor Udp(IPEndPoint iPEndPoint) =>
         Create(IpConnectionType.Udp, iPEndPoint);
-}
 
 
-public sealed record IpChannelDescriptorBuilder
-{
-    private IPAddress? _address;
-    private int? _port;
-    private IpConnectionType? _connectionType;
 
 
-    public IpChannelDescriptorBuilder Address(IPAddress address)
+    public static bool ValidateIp(string ipString, [NotNullWhen(false)] out string? errorMessage)
     {
-        if (address is null)
-            throw new ArgumentException("IP 地址不可为空", nameof(address));
+        if (string.IsNullOrWhiteSpace(ipString))
+        {
+            errorMessage = "请输入Ip";
+            return false;
+        }
 
-        _address = address;
-        return this;
+        if (!IPAddress.TryParse(ipString, out var address))
+        {
+            errorMessage = "格式不正确，例如：192.168.1.10";
+            return false;
+        }
+
+        errorMessage = null;
+        return true;
     }
-
-    public IpChannelDescriptorBuilder Address(string addressString)
-    {
-        if (string.IsNullOrWhiteSpace(addressString))
-            throw new ArgumentException("IP 地址不可为空", nameof(addressString));
-
-        if (!IPAddress.TryParse(addressString, out var address))
-            throw new FormatException("Ip 地址格式错误");
-
-        return Address(address);
-    }
-
-    public IpChannelDescriptorBuilder Port(int port)
+    public static bool ValidatePort(int port, [NotNullWhen(false)] out string? errorMessage)
     {
         if (port is < IPEndPoint.MinPort or > IPEndPoint.MaxPort)
-            throw new ArgumentOutOfRangeException(nameof(port), $"端口号超出范围 [{IPEndPoint.MinPort}~{IPEndPoint.MaxPort}]");
+        {
+            errorMessage = $"端口号超出范围, 应该在 [{IPEndPoint.MinPort}~{IPEndPoint.MaxPort}] 之中";
+            return false;
+        }
 
-        _port = port;
-        return this;
+        errorMessage = null;
+        return true;
     }
-
-
-    public IpChannelDescriptorBuilder ConnectionType(IpConnectionType type)
+    public static bool ValidateConnectionType(IpConnectionType type, [NotNullWhen(false)] out string? errorMessage)
     {
         if (!Enum.IsDefined(type))
-            throw new ArgumentOutOfRangeException(nameof(type), "不支持的连接方式");
-
-        _connectionType = type;
-        return this;
-    }
-
-    public IpChannelDescriptor Build()
-    {
-        if (_address is null)
-            throw new InvalidOperationException("未设置 [Ip地址]");
-
-        if (_port is null)
-            throw new InvalidOperationException("未设置 [端口]");
-
-        if (_connectionType is null)
-            throw new InvalidOperationException("未设置 [连接类型]");
-
-        return new()
         {
-            ConnectionType = _connectionType.Value,
-            Port = _port.Value,
-            IPAddress = _address,
-            Address = ChannelAddress.Ethernet(new(_address, _port.Value))
-        };
+            errorMessage = $"不支持的连接方式, 仅支持 [{IpConnectionType.Tcp}, {IpConnectionType.Udp}]";
+            return false;
+        }
+        errorMessage = null;
+        return true;
     }
 }

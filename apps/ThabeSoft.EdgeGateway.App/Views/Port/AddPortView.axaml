@@ -3,13 +3,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:ThabeSoft.EdgeGateway.App.ViewModels"
+             xmlns:local="using:EdgeGateway.App"
              mc:Ignorable="d"
              MinHeight="150"
              Height="420"
              MinWidth="200"
              x:DataType="vm:AddPortViewModel"
              x:Class="ThabeSoft.EdgeGateway.App.Views.AddPortView">
-
 
     <TabControl DockPanel.Dock="Top">
 
@@ -19,7 +19,7 @@
                 <!-- IP 地址 -->
                 <StackPanel Spacing="5">
                     <TextBlock Text="IP 地址" FontWeight="SemiBold" />
-                    <TextBox Text="{Binding IpForm.Address}"
+                    <TextBox Text="{Binding IpForm.Ip}"
                              PlaceholderText="例如: 127.0.0.1" />
                 </StackPanel>
 
@@ -42,19 +42,25 @@
         <TabItem Header="串口" IsSelected="{Binding IsSelectedSerialFrom}">
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                 <StackPanel Spacing="15" Margin="10">
-                    <!-- IP 地址 -->
+
+                    <!-- 串口名称 -->
                     <StackPanel Spacing="5">
-                        <TextBlock Text="端口名称" FontWeight="SemiBold" />
-                        <TextBox Text="{Binding SerialForm.PortName}"
-                                 PlaceholderText="例如: COM1" />
+                        <TextBlock Text="串口名称" FontWeight="SemiBold" />
+                        <ComboBox IsEditable="True"
+                                  Text="{Binding SerialForm.PortName, Mode=TwoWay}"
+                                  ItemsSource="{Binding SerialForm.PortNameOptions}"
+                                  PlaceholderText="选择或输入"
+                                  HorizontalAlignment="Stretch" />
                     </StackPanel>
 
-                    <!-- 端口号 -->
+                    <!-- 波特率 -->
                     <StackPanel Spacing="5">
                         <TextBlock Text="波特率" FontWeight="SemiBold" />
-                        <NumericUpDown Value="{Binding SerialForm.BaudRate}"
-                                       Minimum="1" Maximum="65535"
-                                       FormatString="0" />
+                        <ComboBox IsEditable="True"
+                                  Text="{Binding SerialForm.BaudRate, Converter={x:Static vm:SerialPortFormViewModel.BaudRateStringConverter}}"
+                                  ItemsSource="{Binding SerialForm.BaudRatesOptions}"
+                                  PlaceholderText="选择或输入"
+                                  HorizontalAlignment="Stretch" />
                     </StackPanel>
 
                     <!-- 校验模式 -->

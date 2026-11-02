@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.Net;
 using ThabeSoft.EdgeGateway.Channels;
 
 namespace ThabeSoft.EdgeGateway.App.ViewModels;
@@ -10,34 +11,35 @@ internal sealed partial class IpPortFormViewModel : ViewModelBase
 
 
     [ObservableProperty]
-    public partial string Address { get; set; } = string.Empty;
+    public partial string Ip { get; set; } = string.Empty;
 
     [ObservableProperty]
-    public partial int Port { get; set; } = 0;
+    public partial int? Port { get; set; } = 0;
 
     [ObservableProperty]
     public partial IpConnectionType ConnectionType { get; set; } = IpConnectionType.Tcp;
-}
 
 
-internal sealed partial class IpChannelDescriptorViewModel : ObservableValidator
-{
-    private readonly IpChannelDescriptorBuilder builder = new();
-
-
-    [ObservableProperty]
-    public partial string Address { get; set; } = string.Empty;
-
-
-
-    partial void OnAddressChanged(string value)
+    partial void OnIpChanged(string value)
     {
-        builder.Address(Address);
+        IpChannelDescriptor.ValidateIp(value, out var errorMessage);
+        TrySetPropertyError(nameof(Ip), errorMessage);
     }
+    partial void OnPortChanged(int? value)
+    {
+        IpChannelDescriptor.ValidatePort(value ?? 0, out var errorMessage);
+        TrySetPropertyError(nameof(Port), errorMessage);
+    }
+    partial void OnConnectionTypeChanged(IpConnectionType value)
+    {
+        IpChannelDescriptor.ValidateConnectionType(value, out var errorMessage);
+        TrySetPropertyError(nameof(ConnectionType), errorMessage);
+    }
+
 
 
     public IpChannelDescriptor Build()
     {
-        return builder.Build();
+        return IpChannelDescriptor.Create(ConnectionType, new(IPAddress.Parse(Ip), Port ?? 0));
     }
 }

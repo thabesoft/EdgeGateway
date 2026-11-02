@@ -19,6 +19,9 @@ internal sealed partial class AddPortViewModel : ViewModelBase
 
     public IChannelDescriptor Build()
     {
-        return null!;
+        if (IsSelectedIpFrom) return IpForm.Build();
+        if (IsSelectedSerialFrom) return SerialForm.Build();
+
+        throw new InvalidOperationException("无法构建");
     }
 }

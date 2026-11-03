@@ -7,7 +7,7 @@ namespace ThabeSoft.EdgeGateway.Channels;
 public sealed record IpChannelDescriptor : IChannelDescriptor
 {
     public required ChannelAddress Address { get; init; }
-    public required IpConnectionType ConnectionType { get; init; }
+    public required IpTransportType TransportType { get; init; }
     public required IPAddress IPAddress { get; init; }
     public required int Port { get; init; }
 
@@ -17,10 +17,10 @@ public sealed record IpChannelDescriptor : IChannelDescriptor
 
 
     internal IpChannelDescriptor() { }
-    public static IpChannelDescriptor Create(IpConnectionType connectionType, IPEndPoint iPEndPoint)
+    public static IpChannelDescriptor Create(IpTransportType transportType, IPEndPoint iPEndPoint)
     {
-        if (!ValidateConnectionType(connectionType, out var errorMessage))
-            throw new ArgumentOutOfRangeException(nameof(connectionType), errorMessage);
+        if (!ValidateTransportType(transportType, out var errorMessage))
+            throw new ArgumentOutOfRangeException(nameof(transportType), errorMessage);
 
         ArgumentNullException.ThrowIfNull(iPEndPoint);
         ArgumentNullException.ThrowIfNull(iPEndPoint.Address);
@@ -28,15 +28,15 @@ public sealed record IpChannelDescriptor : IChannelDescriptor
         return new()
         {
             Address = ChannelAddress.Ethernet(iPEndPoint),
-            ConnectionType = connectionType,
+            TransportType = transportType,
             IPAddress = iPEndPoint.Address,
             Port = iPEndPoint.Port
         };
     }
     public static IpChannelDescriptor Tcp(IPEndPoint iPEndPoint) =>
-        Create(IpConnectionType.Tcp, iPEndPoint);
+        Create(IpTransportType.Tcp, iPEndPoint);
     public static IpChannelDescriptor Udp(IPEndPoint iPEndPoint) =>
-        Create(IpConnectionType.Udp, iPEndPoint);
+        Create(IpTransportType.Udp, iPEndPoint);
 
 
 
@@ -69,11 +69,11 @@ public sealed record IpChannelDescriptor : IChannelDescriptor
         errorMessage = null;
         return true;
     }
-    public static bool ValidateConnectionType(IpConnectionType type, [NotNullWhen(false)] out string? errorMessage)
+    public static bool ValidateTransportType(IpTransportType type, [NotNullWhen(false)] out string? errorMessage)
     {
         if (!Enum.IsDefined(type))
         {
-            errorMessage = $"不支持的连接方式, 仅支持 [{IpConnectionType.Tcp}, {IpConnectionType.Udp}]";
+            errorMessage = $"不支持的传输方式, 仅支持 [{IpTransportType.Tcp}, {IpTransportType.Udp}]";
             return false;
         }
         errorMessage = null;

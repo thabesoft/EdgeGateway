@@ -2,7 +2,6 @@
 
 namespace ThabeSoft.EdgeGateway.Ports;
 
-
 public interface IPortManager
 {
     IReadOnlyDictionary<PortId, IPort> Ports { get; }
@@ -16,10 +15,19 @@ public static class PortManagerExtensions
 {
     extension(IPortManager portManager)
     {
+        public IPort AddPort(PortId portId, IChannelDescriptor channelDescriptor)
+        {
+            ArgumentNullException.ThrowIfNull(portId);
+            ArgumentNullException.ThrowIfNull(channelDescriptor);
+
+            return portManager.AddPort(PortDescriptor.Create(portId, channelDescriptor));
+        }
+
         public IPort AddPort(IChannelDescriptor channelDescriptor)
         {
             ArgumentNullException.ThrowIfNull(channelDescriptor);
-            return portManager.AddPort(PortDescriptor.From(channelDescriptor));
+
+            return portManager.AddPort(PortDescriptor.Create(channelDescriptor));
         }
     }
 }

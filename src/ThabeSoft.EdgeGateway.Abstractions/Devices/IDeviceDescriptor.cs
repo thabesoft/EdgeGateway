@@ -5,13 +5,13 @@ namespace ThabeSoft.EdgeGateway.Devices;
 
 public interface IDeviceDescriptor
 {
-    DeviceId Id { get; }
+    DeviceId DeviceId { get; }
     IProtocolDescriptor Protocol { get; }
 }
 
 public sealed class DeviceDescriptor : IDeviceDescriptor
 {
-    public required DeviceId Id { get; init; }
+    public required DeviceId DeviceId { get; init; }
     public required IProtocolDescriptor Protocol { get; init; }
 
 
@@ -21,7 +21,7 @@ public sealed class DeviceDescriptor : IDeviceDescriptor
         ArgumentNullException.ThrowIfNull(deviceId);
         ArgumentNullException.ThrowIfNull(protocolDescriptor);
 
-        return new() { Id = deviceId, Protocol = protocolDescriptor };
+        return new() { DeviceId = deviceId, Protocol = protocolDescriptor };
     }
     public static DeviceDescriptor Create(IProtocolDescriptor protocolDescriptor) =>
         Create(DeviceId.Create(), protocolDescriptor);

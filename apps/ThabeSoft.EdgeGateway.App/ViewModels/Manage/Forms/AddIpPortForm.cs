@@ -7,7 +7,7 @@ namespace ThabeSoft.EdgeGateway.App.ViewModels;
 
 internal sealed partial class IpPortFormViewModel : ViewModelBase
 {
-    public IpConnectionType[] ConnectionTypeOptions { get; } = [IpConnectionType.Tcp, IpConnectionType.Udp];
+    public IpTransportType[] ConnectionTypeOptions { get; } = [IpTransportType.Tcp, IpTransportType.Udp];
 
 
     [ObservableProperty]
@@ -17,7 +17,7 @@ internal sealed partial class IpPortFormViewModel : ViewModelBase
     public partial int? Port { get; set; } = 0;
 
     [ObservableProperty]
-    public partial IpConnectionType ConnectionType { get; set; } = IpConnectionType.Tcp;
+    public partial IpTransportType ConnectionType { get; set; } = IpTransportType.Tcp;
 
 
     partial void OnIpChanged(string value)
@@ -30,9 +30,9 @@ internal sealed partial class IpPortFormViewModel : ViewModelBase
         IpChannelDescriptor.ValidatePort(value ?? 0, out var errorMessage);
         TrySetPropertyError(nameof(Port), errorMessage);
     }
-    partial void OnConnectionTypeChanged(IpConnectionType value)
+    partial void OnConnectionTypeChanged(IpTransportType value)
     {
-        IpChannelDescriptor.ValidateConnectionType(value, out var errorMessage);
+        IpChannelDescriptor.ValidateTransportType(value, out var errorMessage);
         TrySetPropertyError(nameof(ConnectionType), errorMessage);
     }
 

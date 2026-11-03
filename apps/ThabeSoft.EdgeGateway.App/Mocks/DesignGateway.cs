@@ -93,7 +93,7 @@ public sealed class DesignDevice(IDeviceDescriptor deviceDescriptor) : IDevice
     private readonly Dictionary<TagName, ITagMonitor> _monitors = [];
 
 
-    public DeviceId Id => deviceDescriptor.Id;
+    public DeviceId Id => deviceDescriptor.DeviceId;
     public ProtocolType ProtocolType => deviceDescriptor.Protocol.Type;
     public bool IsEnabled { get; private set; }
     public IReadOnlyDictionary<TagName, ITagMonitor> Monitors => _monitors.AsReadOnly();

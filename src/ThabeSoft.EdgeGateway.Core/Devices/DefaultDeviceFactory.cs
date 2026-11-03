@@ -37,7 +37,7 @@ internal sealed class DefaultDeviceFactory(
 
         return new Device(tagAccessor, logger)
         {
-            Id = descriptor.Id,
+            Id = descriptor.DeviceId,
             ProtocolType = descriptor.Protocol.Type
         };
     }

@@ -41,11 +41,11 @@ internal sealed partial class GatewayViewModel(IGateway gateway, PortViewModelFa
 
 
     [RelayCommand]
-    private void AddPort(IChannelDescriptor channelDescriptor)
+    private void AddPort(IPortDescriptor portDescriptor)
     {
-        if (channelDescriptor is null) return;
+        if (portDescriptor is null) return;
 
-        var port = gateway.AddPort(channelDescriptor);
+        var port = gateway.AddPort(portDescriptor);
         var portVm = portViewModelFactory(port);
 
         _ports.Add(portVm);
@@ -75,6 +75,7 @@ internal sealed partial class PortViewModel(IPort port, DeviceViewModelFactory d
     public PortId Id => port.Id;
     public ICollection<DeviceViewModel> Devices => _devices;
     public ChannelAddress ChannelAddress => port.ChannelAddress;
+
 
 
     [ObservableProperty]

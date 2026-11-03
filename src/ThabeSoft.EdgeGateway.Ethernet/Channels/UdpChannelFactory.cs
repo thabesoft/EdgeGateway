@@ -4,12 +4,12 @@ internal sealed class UdpChannelFactory : IChannelFactory
 {
     public bool CanCreate(IChannelDescriptor descriptor)
     {
-        return descriptor is IpChannelDescriptor ip && ip.ConnectionType == IpConnectionType.Udp;
+        return descriptor is IpChannelDescriptor ip && ip.TransportType == IpTransportType.Udp;
     }
 
     public IChannel Create(IChannelDescriptor descriptor)
     {
-        if (descriptor is not IpChannelDescriptor ip || ip.ConnectionType != IpConnectionType.Udp)
+        if (descriptor is not IpChannelDescriptor ip || ip.TransportType != IpTransportType.Udp)
             throw new InvalidOperationException();
 
         return new UdpChannel(ip);

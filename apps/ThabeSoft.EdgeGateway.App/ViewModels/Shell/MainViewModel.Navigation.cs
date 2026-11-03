@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.App.Services;
-using ThabeSoft.EdgeGateway.App.ViewModels.Dashboard;
 
 namespace ThabeSoft.EdgeGateway.App.ViewModels;
 
@@ -13,11 +12,8 @@ public partial class MainViewModel : INavigationService
 {
     [ObservableProperty]
     public partial NavigationMenuItem? SelectedMenu { get; set; }
-    public AvaloniaList<NavigationMenuItem> Menus { get; } =
-    [
-        NavigationMenuItem.Create<DashboardPageViewModel>("主页"),
-        NavigationMenuItem.Create<ManageViewModel>("端口设置"),
-    ];
+
+    public AvaloniaList<NavigationMenuItem> Menus { get; }
 
 
     [ObservableProperty]
@@ -26,10 +22,10 @@ public partial class MainViewModel : INavigationService
 
     public void Navigate(Type type)
     {
-        var content = services.GetRequiredService(type) as ViewModelBase;
+        var content = _services.GetRequiredService(type) as ViewModelBase;
         if(content is null)
         {
-            logger.LogError("导航失败, 无法获取内容实例: {Type}", type.FullName);
+            _logger.LogError("导航失败, 无法获取内容实例: {Type}", type.FullName);
             return;
         }
 
@@ -39,6 +35,8 @@ public partial class MainViewModel : INavigationService
     {
         if (Content?.Equals(vm) == true) return;
         Content = vm;
+
+        _logger.LogDebug("已导航至: [{Name}]", vm.GetType());
     }
 
     partial void OnSelectedMenuChanged(NavigationMenuItem? value)

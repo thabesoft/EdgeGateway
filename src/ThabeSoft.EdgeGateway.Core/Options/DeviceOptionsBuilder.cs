@@ -1,13 +1,14 @@
 ﻿using ThabeSoft.EdgeGateway.Devices;
 
-namespace ThabeSoft.EdgeGateway.Configs;
+namespace ThabeSoft.EdgeGateway.Options;
 
-public sealed record class DeviceConfigBuilder
+
+public sealed record class DeviceOptionsBuilder : IDeviceOptionsBuilder
 {
     private IDeviceDescriptor? _descriptor;
 
 
-    public DeviceConfigBuilder SetDescriptor(IDeviceDescriptor descriptor)
+    public IDeviceOptionsBuilder SetDescriptor(IDeviceDescriptor descriptor)
     {
         ArgumentNullException.ThrowIfNull(descriptor);
 
@@ -15,7 +16,7 @@ public sealed record class DeviceConfigBuilder
         return this;
     }
 
-    public DeviceConfig Build()
+    public DeviceOptions Build()
     {
         ArgumentNullException.ThrowIfNull(_descriptor);
 

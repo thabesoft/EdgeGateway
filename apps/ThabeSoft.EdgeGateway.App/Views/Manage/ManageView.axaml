@@ -3,14 +3,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:ThabeSoft.EdgeGateway.App.ViewModels"
-             
+
              x:Class="ThabeSoft.EdgeGateway.App.Views.ManageView"
              x:DataType="vm:ManageViewModel">
 
     <Grid ColumnDefinitions="250,Auto,3*">
 
         <!--导航栏-->
-        <ScrollViewer Background="#f0f0f0"  Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+        <ScrollViewer  Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
 
             <DockPanel>
 
@@ -23,8 +23,13 @@
 
                 </DockPanel>
 
-                <!--导航内容-->
-                <TreeView ItemsSource="{Binding Gateway.Ports}" SelectedItem="{Binding SelectedPort}">
+                <TreeView ItemsSource="{Binding Gateway.Ports}" SelectedItem="{Binding SelectedItem}">
+
+                    <TreeView.Styles>
+                        <Style Selector="TreeViewItem[DataContext=DeviceViewModel]">
+                            <Setter Property="IsSelected" Value="False" />
+                        </Style>
+                    </TreeView.Styles>
 
                     <TreeView.DataTemplates>
 
@@ -71,6 +76,7 @@
 
         <!--分界线-->
         <GridSplitter Grid.Column="1"
+                      Margin="5 0"
                       Background="Gray"
                       ResizeDirection="Columns" />
 
@@ -90,15 +96,16 @@
                             Content="关闭"
                             Command="{Binding SelectedPort.CloseCommand}" />
 
-                    <Button IsVisible="{Binding SelectedPort.IsOpen}"
-                            Content="删除"
+                    <Separator Height="20" Width="1"></Separator>
+
+                    <Button Content="删除"
                             Command="{Binding Gateway.RemovePortCommand}"
-                            CommandParameter="{Binding SelectedPort.Id}" />
+                            CommandParameter="{Binding SelectedPort.ChannelAddress}" />
 
                 </StackPanel>
 
                 <DockPanel>
-                    <TextBlock Text="{Binding SelectedPort.ChannelAddress}"></TextBlock>
+                    <TextBlock VerticalAlignment="Center" Text="{Binding SelectedPort.ChannelAddress}"></TextBlock>
                 </DockPanel>
 
             </DockPanel>
@@ -146,8 +153,7 @@
                                         <Button IsVisible="{Binding !IsEnabled}" Command="{Binding EnableCommand}">启用</Button>
                                         <Button IsVisible="{Binding IsEnabled}" Command="{Binding DisableCommand}">禁用</Button>
                                         <Separator Height="20" Width="1"></Separator>
-                                        <Button
-                                            Command="{Binding $parent[UserControl].DataContext.SelectedPort.RemoveDeviceCommand}"
+                                        <Button Command="{Binding $parent[UserControl].DataContext.SelectedPort.RemoveDeviceCommand}"
                                             CommandParameter="{Binding Id}"
                                             Content="删除" />
                                     </StackPanel>

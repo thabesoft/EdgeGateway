@@ -52,12 +52,12 @@ internal sealed partial class GatewayViewModel(IGateway gateway, PortViewModelFa
     }
 
     [RelayCommand]
-    private async Task RemovePortAsync(PortId portId)
+    private async Task RemovePortAsync(ChannelAddress  channelAddress)
     {
-        if (portId is null) return;
+        if (channelAddress is null) return;
 
-        await gateway.RemovePortAsync(portId);
-        var portVm = _ports.FirstOrDefault(x => x.Id == portId);
+        await gateway.RemovePortAsync(channelAddress);
+        var portVm = _ports.FirstOrDefault(x => x.ChannelAddress == channelAddress);
         if (portVm is null) return;
 
         _ports.Remove(portVm);
@@ -72,7 +72,6 @@ internal sealed partial class PortViewModel(IPort port, DeviceViewModelFactory d
         deviceViewModelFactory(device))];
 
 
-    public PortId Id => port.Id;
     public ICollection<DeviceViewModel> Devices => _devices;
     public ChannelAddress ChannelAddress => port.ChannelAddress;
 

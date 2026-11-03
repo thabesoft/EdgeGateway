@@ -1,7 +1,7 @@
-﻿using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Ports;
+﻿using ThabeSoft.EdgeGateway.Channels;
+using ThabeSoft.EdgeGateway.Devices;
 
 namespace ThabeSoft.EdgeGateway.App.Messages;
 
 
-public sealed record class DeviceRemovedMessage(PortId PortId, DeviceId DeviceId);
+public sealed record class DeviceRemovedMessage(ChannelAddress ChannelAddress, DeviceId DeviceId);

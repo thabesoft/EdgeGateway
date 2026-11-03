@@ -1,15 +1,17 @@
-﻿using ThabeSoft.EdgeGateway.Ports;
+﻿using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
+using ThabeSoft.EdgeGateway.Channels;
 using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Options;
+using ThabeSoft.EdgeGateway.Ports;
 
 namespace ThabeSoft.EdgeGateway;
 
 
-internal sealed class Gateway(IPortFactory portFactory) : ResilientLifecycleBase, IGateway
+internal sealed class Gateway(IPortFactory portFactory, ILogger<Gateway> logger) : ResilientLifecycleBase, IGateway
 {
-    private readonly ConcurrentDictionary<PortId, IPort> _ports = [];
-    public IReadOnlyDictionary<PortId, IPort> Ports => _ports.AsReadOnly();
-
+    private readonly ConcurrentDictionary<ChannelAddress, IPort> _ports = [];
+    public IReadOnlyDictionary<ChannelAddress, IPort> Ports => _ports.AsReadOnly();
 
 
     public IPort AddPort(IPortDescriptor descriptor)
@@ -17,51 +19,69 @@ internal sealed class Gateway(IPortFactory portFactory) : ResilientLifecycleBase
         ArgumentNullException.ThrowIfNull(descriptor);
 
         var port = portFactory.Create(descriptor);
-        return _ports[port.Id] = port;
+        return _ports[port.ChannelAddress] = port;
     }
 
-    public async ValueTask RemovePortAsync(PortId id, CancellationToken cancellationToken = default)
+    public async ValueTask RemovePortAsync(ChannelAddress channelAddress, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(id);
+        ArgumentNullException.ThrowIfNull(channelAddress);
 
-        if (!_ports.TryRemove(id, out var port)) return;
+        if (!_ports.TryRemove(channelAddress, out var port)) return;
         await port.CloseAsync(cancellationToken);
     }
 
 
     protected override async ValueTask OnStartAsync(CancellationToken cancellationToken)
     {
-        foreach (var i in _ports.Values)
+        List<Exception> exceptions = [];
+
+        foreach (var port in _ports.Values)
         {
             try
             {
-                await i.OpenAsync(cancellationToken);
+                await port.OpenAsync(cancellationToken);
             }
             catch (Exception ex)
             {
-
+                exceptions.Add(ex);
             }
         }
+
+        if (exceptions.Count == 0) return;
+        throw new AggregateException("部分端口开启失败", exceptions);
     }
     protected override async ValueTask OnStopAsync(CancellationToken cancellationToken)
     {
-        foreach (var i in _ports.Values)
+        List<Exception> exceptions = [];
+
+        foreach (var port in _ports.Values)
         {
             try
             {
-                await i.CloseAsync(cancellationToken);
+                await port.CloseAsync(cancellationToken);
             }
-            catch
+            catch (Exception ex)
             {
-
+                exceptions.Add(ex);
             }
         }
+
+        if (exceptions.Count == 0) return;
+        throw new AggregateException("部分端口关闭失败", exceptions);
     }
+
     protected override async ValueTask OnDisposeAsync()
     {
-        foreach (var i in _ports.Values)
+        foreach (var port in _ports.Values)
         {
-            await i.DisposeAsync();
+            try
+            {
+                await port.DisposeAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "端口释放失败");
+            }
         }
     }
 }

@@ -5,28 +5,25 @@ using System.Collections.Concurrent;
 namespace ThabeSoft.EdgeGateway.Ports;
 
 
-internal sealed class DefaultPort : IPort
+internal sealed class Port : IPort
 {
     private readonly IChannel _channel;
     private readonly IDeviceFactory[] _deviceFactories;
     private readonly ConcurrentDictionary<DeviceId, IDevice> _devices = [];
 
 
-    public PortId Id { get; }
     public bool IsOpen { get; private set; }
-
     public ChannelAddress ChannelAddress { get; }
     public IReadOnlyDictionary<DeviceId, IDevice> Devices => _devices.AsReadOnly();
 
 
 
-    private DefaultPort(IChannel channel, IEnumerable<IDeviceFactory> deviceFactories)
+    private Port(IChannel channel, IEnumerable<IDeviceFactory> deviceFactories)
     {
         _channel = channel;
-        ChannelAddress = _channel.Address;
-
-        Id = PortId.From(channel.Address.ToString());
         _deviceFactories = [.. deviceFactories];
+        
+        ChannelAddress = _channel.Address;
     }
 
 
@@ -73,7 +70,7 @@ internal sealed class DefaultPort : IPort
 
 
 
-    public static DefaultPort Create(IChannelFactory channelFactory, IChannelDescriptor channelDescriptor, IEnumerable<IDeviceFactory> deviceFactories)
+    public static Port Create(IChannelFactory channelFactory, IChannelDescriptor channelDescriptor, IEnumerable<IDeviceFactory> deviceFactories)
     {
         var channel = channelFactory.Create(channelDescriptor);
         return new(channel, deviceFactories);

@@ -82,13 +82,13 @@ public sealed partial class DeviceItemViewModel(IDevice device, IPort port) : Vi
     private async Task RemoveAsync()
     {
         await port.RemoveDeviceAsync(Id);
-        WeakReferenceMessenger.Default.Send(new DeviceRemovedMessage(port.Id, Id));
+        WeakReferenceMessenger.Default.Send(new DeviceRemovedMessage(port.ChannelAddress, Id));
     }
 
     [RelayCommand]
     private async Task OpenMonitorAsync()
     {
         await port.RemoveDeviceAsync(Id);
-        WeakReferenceMessenger.Default.Send(new DeviceRemovedMessage(port.Id, Id));
+        WeakReferenceMessenger.Default.Send(new DeviceRemovedMessage(port.ChannelAddress, Id));
     }
 }

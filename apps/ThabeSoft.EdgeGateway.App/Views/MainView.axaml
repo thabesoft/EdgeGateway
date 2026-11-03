@@ -43,7 +43,7 @@
             </DockPanel>
 
             <!--内容-->
-            <ContentControl Content="{Binding SelectedMenu.Target}" Margin="20"></ContentControl>
+            <ContentControl Content="{Binding SelectedMenu.Target}" Margin="5"></ContentControl>
 
         </DockPanel>
 

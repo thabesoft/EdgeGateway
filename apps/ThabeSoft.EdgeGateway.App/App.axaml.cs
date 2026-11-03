@@ -1,5 +1,4 @@
 ﻿using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,14 +18,7 @@ public class App : Application
     public App(Action<IHostBuilder> buildAction)
     {
         var builder = Host.CreateDefaultBuilder()
-            .ConfigureLogging((_, builder) => builder.SetMinimumLevel(LogLevel.Trace))
-            .ConfigureServices(x => x
-                .AddEdgeGateway()
-                .AddSerial()
-                .AddEthernet()
-                .AddModbus()
-                .AddEdgeGatewayHost()
-                .AddEdgeGatewayApp());
+            .UseEdgeGatewayApp();
 
         buildAction?.Invoke(builder);
         _host = builder.Build();
@@ -44,13 +36,10 @@ public class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        if (!Design.IsDesignMode)
-            _host.Start();
-
         DataTemplates.Add(Services.GetRequiredService<ViewModelDataTmpleate>());
-
         InitializeMainView();
-        base.OnFrameworkInitializationCompleted();
+
+        _host.Start();
     }
 
     private void InitializeMainView()
@@ -59,7 +48,19 @@ public class App : Application
         {
             var mainWindowViewModel = Services.GetRequiredService<MainWindowViewModel>();
             desktop.MainWindow = new MainWindow { DataContext = mainWindowViewModel };
-            desktop.Exit += delegate { _host.StopAsync().GetAwaiter().GetResult(); };
+            desktop.Exit += async delegate
+            {
+                using var cts = new CancellationTokenSource(3000);
+                try
+                {
+                    await _host.StopAsync(cts.Token);
+                }
+                catch (Exception ex)
+                {
+                    var logger = Services.GetRequiredService<ILogger<App>>();
+                    logger.LogError(ex, "关闭失败");
+                }
+            };
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {

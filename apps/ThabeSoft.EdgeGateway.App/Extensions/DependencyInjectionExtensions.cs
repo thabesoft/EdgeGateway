@@ -1,8 +1,12 @@
 ﻿using Avalonia;
+using Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System.Net;
 using ThabeSoft.EdgeGateway.App.DataTmpleates;
+using ThabeSoft.EdgeGateway.App.Designs;
 using ThabeSoft.EdgeGateway.App.Models;
 using ThabeSoft.EdgeGateway.App.Services;
 using ThabeSoft.EdgeGateway.App.ViewModels;
@@ -19,23 +23,39 @@ public static class DependencyInjectionExtensions
 {
     extension(IHostBuilder builder)
     {
-        public IHostBuilder UseEdgeGatewayApp(Action<GatewayOptionsBuilder>? buildAction = null)
+        public IHostBuilder UseEdgeGatewayApp()
         {
             builder.ConfigureLogging((_, builder) => builder
                 .SetMinimumLevel(LogLevel.Trace));
 
-            builder.ConfigureServices(services => services
-                .AddEdgeGateway(gateway =>
-                {
+            builder.ConfigureServices(services =>
+            {
 #if DEBUG
-                    gateway.AddSerialPort("COM2", portBuildAction: x => x.AddModbusIpDevice());
+                services.AddEdgeGateway(gateway =>
+                {
+                    gateway.AddSerialPort("COM2", portBuildAction: x => x
+                        .AddModbusRtuDevice(DeviceId.From("Serial_Rtu_Device"))
+                        .AddModbusAsciiDevice(DeviceId.From("Serial_Ascii_Device")));
+
+                    gateway.AddTcpPort(IPAddress.Loopback, 1, x => x
+                        .AddModbusIpDevice(DeviceId.From("Ip_Tcp_Device")));
+
+                    gateway.AddUdpPort(IPAddress.Loopback, 2, x => x
+                        .AddModbusIpDevice(DeviceId.From("Ip_Udp_Device")));
 #endif
-                    buildAction?.Invoke(gateway);
                 })
-                .AddSerial()
-                .AddEthernet()
-                .AddModbus()
-                .AddApp());
+                .AddApp();
+
+                if (Design.IsDesignMode || true)
+                {
+                    services.AddSingleton<IGateway, DesignGateway>();
+                    return;
+                }
+
+                services.AddSerial();
+                services.AddEthernet();
+                services.AddModbus();
+            });
 
             return builder;
         }

@@ -1,11 +1,13 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:sukiUi="clr-namespace:SukiUI;assembly=SukiUI"
              x:Class="ThabeSoft.EdgeGateway.App.App"
              RequestedThemeVariant="Default">
 
     <Application.Styles>
         <FluentTheme />
         <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+        <sukiUi:SukiTheme Locale="zh-CN" ThemeColor="Blue"  />
     </Application.Styles>
 
 </Application>

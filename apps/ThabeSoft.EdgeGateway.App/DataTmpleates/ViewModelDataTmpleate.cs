@@ -15,7 +15,7 @@ internal sealed class ViewModelDataTmpleate(
     ) : IDataTemplate
 {
     // Key: ViewModel  Value:View
-    private readonly FrozenDictionary<Type, Type> _mappings = viewMappings.ToFrozenDictionary(k => k.ViewModel, v => v.View);
+    private readonly FrozenDictionary<Type, Type> _mappings = viewMappings.DistinctBy(x => x.ViewModel).ToFrozenDictionary(k => k.ViewModel, v => v.View);
 
     public bool Match(object? data)
     {
@@ -27,7 +27,7 @@ internal sealed class ViewModelDataTmpleate(
 
     public Control? Build(object? param)
     {
-        if(param is ViewModelBase viewModel)
+        if (param is ViewModelBase viewModel)
         {
             return Build(viewModel);
         }

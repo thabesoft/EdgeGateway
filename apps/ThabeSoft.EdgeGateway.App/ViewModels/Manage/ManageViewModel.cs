@@ -1,5 +1,4 @@
-﻿using Avalonia.Logging;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.App.Models;
@@ -14,12 +13,7 @@ internal partial class ManageViewModel(IDialogService dialogService, GatewayView
 
 
     [ObservableProperty]
-    public partial object? SelectedItem { get; set; }
-
-    [ObservableProperty]
-    public partial PortViewModel? SelectedPort { get; private set; }
-    [ObservableProperty]
-    public partial DeviceViewModel? SelectedDevice { get; private set; }
+    public partial PortViewModel? SelectedPort { get; set; } = gatewayViewModel.Ports.FirstOrDefault();
 
 
 
@@ -49,20 +43,36 @@ internal partial class ManageViewModel(IDialogService dialogService, GatewayView
         }
     }
 
-    partial void OnSelectedItemChanged(object? value)
+    [RelayCommand]
+    private async Task RemoveSelectedPortAsync()
     {
-        if (value is PortViewModel portVm)
-        {
-            SelectedPort = portVm;
-            SelectedDevice = null;
-            return;
-        }
+        if (SelectedPort is null) return;
 
-        if (value is DeviceViewModel deviceVm)
+        var nextItem = GetNextItem([.. Gateway.Ports], SelectedPort);
+        await Gateway.RemovePortCommand.ExecuteAsync(SelectedPort.ChannelAddress);
+        SelectedPort = nextItem;
+
+
+        static PortViewModel? GetNextItem(PortViewModel[] items, PortViewModel item)
         {
-            SelectedItem = null;
-            SelectedDevice = deviceVm;
-            return;
+            for (int i = 0; i < items.Length; i++)
+            {
+                if (items[i]?.Equals(item) != true) continue;
+
+                // 后面还有一个元素
+                if (i + 1 < items.Length)
+                    return items[i + 1];
+
+                // 当前是最后一个元素, 尝试获取前一个
+                if (i + 1 >= items.Length && i >= 2)
+                    return items[i - 2];
+
+                // 前后都没有元素
+                return default;
+            }
+
+            // 集中中不存在指定目标, 最后一个
+            return items.LastOrDefault();
         }
     }
 }

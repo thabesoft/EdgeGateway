@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:suki="https://github.com/kikipoulet/SukiUI"
              xmlns:vm="using:ThabeSoft.EdgeGateway.App.ViewModels"
              xmlns:m="using:ThabeSoft.EdgeGateway.App.Models"
              xmlns:dialog="using:ThabeSoft.EdgeGateway.App.Dialog"
@@ -59,7 +60,7 @@
 
                     <!--标题-->
                     <TextBlock DockPanel.Dock="Top" FontWeight="Bold" TextAlignment="Center" Text="{Binding Dialog.Title}" Margin="0 10"></TextBlock>
-                    
+
                     <!--按钮-->
                     <ItemsControl HorizontalAlignment="Center" DockPanel.Dock="Bottom" ItemsSource="{Binding Dialog.Buttons}">
                         <ItemsControl.ItemsPanel>
@@ -82,6 +83,34 @@
                 </DockPanel>
             </Border>
         </Panel>
+
+        <!--新版本页面-->
+        <suki:SukiSideMenu IsSearchEnabled="True">
+            <suki:SukiSideMenu.Items>
+
+                <suki:SukiSideMenuItem Header="主页" Classes="Compact">
+                    <suki:SukiSideMenuItem.Icon>
+                        <!-- Icon -->
+                    </suki:SukiSideMenuItem.Icon>
+
+                    <suki:SukiSideMenuItem.PageContent>
+                        <ContentControl Content="{Binding SelectedMenu.Target}" Margin="5"></ContentControl>
+                    </suki:SukiSideMenuItem.PageContent>
+
+                </suki:SukiSideMenuItem>
+
+                <!-- 其他页面 -->
+
+            </suki:SukiSideMenu.Items>
+
+            <suki:SukiSideMenu.HeaderContent>
+                <!-- Header Content -->
+            </suki:SukiSideMenu.HeaderContent>
+
+            <suki:SukiSideMenu.FooterContent>
+                <!-- Footer Content -->
+            </suki:SukiSideMenu.FooterContent>
+        </suki:SukiSideMenu>
 
     </Panel>
 

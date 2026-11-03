@@ -18,7 +18,7 @@ internal sealed partial class GatewayViewModel(IGateway gateway, PortViewModelFa
 
     [ObservableProperty]
     public partial bool IsRunning { get; private set; } = gateway.State == LifecycleState.Running;
-    public ICollection<PortViewModel> Ports => _ports;
+    public IReadOnlyList<PortViewModel> Ports => _ports;
 
 
 
@@ -52,7 +52,7 @@ internal sealed partial class GatewayViewModel(IGateway gateway, PortViewModelFa
     }
 
     [RelayCommand]
-    private async Task RemovePortAsync(ChannelAddress  channelAddress)
+    private async Task RemovePortAsync(ChannelAddress channelAddress)
     {
         if (channelAddress is null) return;
 

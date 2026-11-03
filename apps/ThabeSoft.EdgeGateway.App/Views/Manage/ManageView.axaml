@@ -3,7 +3,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:ThabeSoft.EdgeGateway.App.ViewModels"
-
              x:Class="ThabeSoft.EdgeGateway.App.Views.ManageView"
              x:DataType="vm:ManageViewModel">
 
@@ -23,26 +22,19 @@
 
                 </DockPanel>
 
-                <TreeView ItemsSource="{Binding Gateway.Ports}" SelectedItem="{Binding SelectedItem}">
+                <ListBox ItemsSource="{Binding Gateway.Ports}" SelectedItem="{Binding SelectedPort}">
 
-                    <TreeView.Styles>
-                        <Style Selector="TreeViewItem[DataContext=DeviceViewModel]">
-                            <Setter Property="IsSelected" Value="False" />
-                        </Style>
-                    </TreeView.Styles>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
 
-                    <TreeView.DataTemplates>
-
-                        <!--标头模板-->
-                        <TreeDataTemplate DataType="vm:PortViewModel" ItemsSource="{Binding Devices}" >
-                            <StackPanel Height="30" Orientation="Horizontal" Spacing="5" >
+                            <StackPanel Orientation="Horizontal" Spacing="5" >
 
                                 <Border VerticalAlignment="Center"
                                         CornerRadius="3"
                                         Background="Green"
                                         Padding="5 2">
                                     <TextBlock VerticalAlignment="Center"
-                                               Foreground="White" FontSize="12" FontWeight="Bold" Text="{Binding  ChannelAddress.ConnectionType}"/>
+                                               Foreground="White" FontSize="12" FontWeight="Bold" Text="{Binding ChannelAddress.ConnectionType}"/>
                                 </Border>
 
                                 <TextBlock Text="{Binding ChannelAddress.Endpoint}"
@@ -51,24 +43,11 @@
                                            FontWeight="Light" />
 
                             </StackPanel>
-                        </TreeDataTemplate>
 
-                        <!--元素模板-->
-                        <DataTemplate DataType="vm:DeviceViewModel">
-                            <StackPanel Orientation="Horizontal" Spacing="5">
-
-                                <Border CornerRadius="3" Background="Green" Padding="5 2" VerticalAlignment="Stretch">
-                                    <TextBlock VerticalAlignment="Center" TextAlignment="Center" Foreground="White" FontSize="12" FontWeight="Bold" Text="{Binding ProtocolType}"/>
-                                </Border>
-
-                                <TextBlock VerticalAlignment="Center" Text="{Binding DisplayName}"/>
-
-                            </StackPanel>
                         </DataTemplate>
+                    </ListBox.ItemTemplate>
 
-                    </TreeView.DataTemplates>
-
-                </TreeView>
+                </ListBox>
 
             </DockPanel>
 
@@ -99,8 +78,7 @@
                     <Separator Height="20" Width="1"></Separator>
 
                     <Button Content="删除"
-                            Command="{Binding Gateway.RemovePortCommand}"
-                            CommandParameter="{Binding SelectedPort.ChannelAddress}" />
+                            Command="{Binding RemoveSelectedPortCommand}" />
 
                 </StackPanel>
 
@@ -154,8 +132,8 @@
                                         <Button IsVisible="{Binding IsEnabled}" Command="{Binding DisableCommand}">禁用</Button>
                                         <Separator Height="20" Width="1"></Separator>
                                         <Button Command="{Binding $parent[UserControl].DataContext.SelectedPort.RemoveDeviceCommand}"
-                                            CommandParameter="{Binding Id}"
-                                            Content="删除" />
+                                                CommandParameter="{Binding Id}"
+                                                Content="删除" />
                                     </StackPanel>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>

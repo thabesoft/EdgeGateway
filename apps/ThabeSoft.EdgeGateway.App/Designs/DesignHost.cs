@@ -3,9 +3,6 @@ using Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System.Net;
-using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Options;
 
 namespace ThabeSoft.EdgeGateway.App.Designs;
 
@@ -24,24 +21,7 @@ internal static class DesignHost
         var builder = Host.CreateDefaultBuilder()
             .ConfigureLogging((_, builder) =>
                 builder.ClearProviders().AddDebug().SetMinimumLevel(LogLevel.Trace))
-            .ConfigureServices(services =>
-            {
-                services.AddEdgeGateway(gateway =>
-                {
-                    gateway.AddSerialPort("COM2", portBuildAction: x => x
-                        .AddModbusRtuDevice(DeviceId.From("Serial_Rtu_Device"))
-                        .AddModbusAsciiDevice(DeviceId.From("Serial_Ascii_Device")));
-
-                    gateway.AddTcpPort(IPAddress.Loopback, 1, x => x
-                        .AddModbusIpDevice(DeviceId.From("Ip_Tcp_Device")));
-
-                    gateway.AddUdpPort(IPAddress.Loopback, 2, x => x
-                        .AddModbusIpDevice(DeviceId.From("Ip_Udp_Device")));
-                });
-                services.AddSingleton<IGateway, DesignGateway>();
-
-                services.AddApp();
-            });
+            .UseEdgeGatewayApp();
 
         _host = builder.Build();
         _services = _host.Services;

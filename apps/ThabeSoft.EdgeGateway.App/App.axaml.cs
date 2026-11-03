@@ -1,19 +1,19 @@
 ﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using ThabeSoft.EdgeGateway.App.DataTmpleates;
-using ThabeSoft.EdgeGateway.App.ViewModels;
-using ThabeSoft.EdgeGateway.App.Views;
+using SukiUI.Controls;
+using SukiUI.Dialogs;
+using SukiUI.Enums;
+using ThabeSoft.EdgeGateway.App.Common;
 
 namespace ThabeSoft.EdgeGateway.App;
 
 public class App : Application
 {
     private readonly IHost _host;
-
 
     public App(Action<IHostBuilder> buildAction)
     {
@@ -36,36 +36,33 @@ public class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        DataTemplates.Add(Services.GetRequiredService<ViewModelDataTmpleate>());
-        InitializeMainView();
-
-        _host.Start();
-    }
-
-    private void InitializeMainView()
-    {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var mainWindowViewModel = Services.GetRequiredService<MainWindowViewModel>();
-            desktop.MainWindow = new MainWindow { DataContext = mainWindowViewModel };
-            desktop.Exit += async delegate
+            var viewFactory = Services.GetRequiredService<ViewFactory>();
+            var viewLocator = Services.GetRequiredService<ViewLocator>();
+
+            DataTemplates.Add(viewLocator);
+            desktop.MainWindow = viewFactory.CreateView<MainWindowViewModel>() as Window;
+        }
+        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleView)
+        {
+            var p = new Panel();
+            p.Children.Add(new SukiBackground() { Style = SukiBackgroundStyle.Bubble });
+            var dialogManager = new SukiDialogManager();
+
+            singleView.MainView = new SukiMainHost()
             {
-                using var cts = new CancellationTokenSource(3000);
-                try
-                {
-                    await _host.StopAsync(cts.Token);
-                }
-                catch (Exception ex)
-                {
-                    var logger = Services.GetRequiredService<ILogger<App>>();
-                    logger.LogError(ex, "关闭失败");
-                }
+                Hosts = [
+                    new SukiDialogHost
+                    {
+                        Manager = dialogManager
+                    }
+                ],
+                Content = p
             };
         }
-        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
-        {
-            var mainViewModel = Services.GetRequiredService<MainViewModel>();
-            singleViewPlatform.MainView = new MainView { DataContext = mainViewModel };
-        }
+
+        _host.Start();
+        base.OnFrameworkInitializationCompleted();
     }
 }

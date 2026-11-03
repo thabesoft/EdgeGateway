@@ -19,8 +19,15 @@
 		
 		
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+		
+		
+		<PackageReference Include="Material.Icons" Version="3.0.2" />
+		
+		
+		<PackageReference Include="Material.Icons.Avalonia" Version="3.0.2" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.14" />
 		<PackageReference Include="SukiUI" Version="7.0.1" />
+		<PackageReference Include="SukiUI.Dock" Version="7.0.1" />
 
 	</ItemGroup>
 
@@ -32,11 +39,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Views\Device\DevicePage.axaml.cs">
-	    <DependentUpon>DevicePage.axaml</DependentUpon>
-	  </Compile>
-	  <Compile Update="Views\Manage\ManageView.axaml.cs">
-	    <DependentUpon>ManageView.axaml</DependentUpon>
+	  <Compile Update="Features\Topology\TopologyView.axaml.cs">
+	    <DependentUpon>TopologyView.axaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 	

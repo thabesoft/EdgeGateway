@@ -8,6 +8,7 @@
         <FluentTheme />
         <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
         <sukiUi:SukiTheme Locale="zh-CN" ThemeColor="Blue"  />
+        <StyleInclude Source="avares://SukiUI.Dock/Index.axaml" />
     </Application.Styles>
 
 </Application>

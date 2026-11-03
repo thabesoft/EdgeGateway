@@ -1,16 +1,17 @@
-﻿using Avalonia;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using SukiUI.Dialogs;
+using SukiUI.Toasts;
 using System.Net;
-using ThabeSoft.EdgeGateway.App.DataTmpleates;
+using ThabeSoft.EdgeGateway.App;
+using ThabeSoft.EdgeGateway.App.Common;
 using ThabeSoft.EdgeGateway.App.Designs;
-using ThabeSoft.EdgeGateway.App.Models;
+using ThabeSoft.EdgeGateway.App.Features.Dashboard;
+using ThabeSoft.EdgeGateway.App.Features.Topology;
 using ThabeSoft.EdgeGateway.App.Services;
 using ThabeSoft.EdgeGateway.App.ViewModels;
-using ThabeSoft.EdgeGateway.App.Views;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Options;
 
@@ -67,18 +68,21 @@ public static class DependencyInjectionExtensions
         /// <summary>
         /// 添加视图模块
         /// </summary>
-        /// <returns></returns>
         public IServiceCollection AddApp()
         {
-            // DataTemplates
-            descriptors.AddSingleton<ViewModelDataTmpleate>();
-
-            // AliasServices
-            descriptors.AddAliasService<DeviceId>();
-
             // Services
-            descriptors.AddSingleton<INavigationService>(sp => sp.GetRequiredService<MainViewModel>());
-            descriptors.AddSingleton<IDialogService>(sp => sp.GetRequiredService<MainViewModel>());
+            descriptors.AddSingleton<ClipboardService>();
+            descriptors.AddSingleton<PageNavigationService>();
+
+            descriptors.AddSingleton<ISukiToastManager, SukiToastManager>();
+            descriptors.AddSingleton<ISukiDialogManager, SukiDialogManager>();
+
+
+            // Views
+            descriptors.AddSingleton<ViewLocator>();
+            descriptors.AddSingleton<ViewFactory>();
+
+
 
             // Core
             descriptors.AddSingleton<GatewayViewModel>();
@@ -91,32 +95,16 @@ public static class DependencyInjectionExtensions
                     ActivatorUtilities.CreateInstance<DeviceViewModel>(sp, device)));
 
             // Shell
-            descriptors.AddSingleton<MainWindowViewModel>();
-            descriptors.AddSingleton<MainViewModel>();
+            descriptors.AddViewMapping<MainWindow, MainWindowViewModel>(ServiceLifetime.Singleton);
 
-            // Dashboard
-            descriptors.AddSingleton<DashboardPageViewModel>();
+            // Pages
+            descriptors.AddViewMapping<DashboardView, DashboardViewModel>(ServiceLifetime.Singleton);
 
-            // Manage
-            descriptors.AddMvvmPair<ManageViewModel, ManageView>(ServiceLifetime.Singleton);
-            descriptors.AddMvvmPair<AddPortViewModel, AddPortView>(ServiceLifetime.Transient);
+
+            descriptors.AddViewMapping<TopologyView, TopologyViewModel>(ServiceLifetime.Singleton);
+            descriptors.AddViewMapping<AddPortView, AddPortViewModel>(ServiceLifetime.Transient);
 
             return descriptors;
-        }
-
-
-        public IServiceCollection AddAliasService<TId>()
-            where TId : IEquatable<TId>
-        {
-            return descriptors.AddSingleton<IAliasService<TId>, AliasService<TId>>();
-        }
-
-        private void AddMvvmPair<TViewModel, TView>(ServiceLifetime serviceLifetime)
-            where TViewModel : ViewModelBase
-            where TView : IDataContextProvider, new()
-        {
-            descriptors.Add(ServiceDescriptor.Describe(typeof(TViewModel), typeof(TViewModel), serviceLifetime));
-            descriptors.AddSingleton(ViewMapping.Create<TViewModel, TView>());
         }
     }
 }

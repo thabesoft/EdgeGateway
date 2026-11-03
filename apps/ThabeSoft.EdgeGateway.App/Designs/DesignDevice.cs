@@ -31,7 +31,7 @@ public sealed class DesignDevice(IDeviceDescriptor deviceDescriptor) : IDevice
 
     public ITagMonitor<T> Register<T>(TagName tagName, ITag<T> tag, ITrigger trigger) where T : notnull
     {
-        var monitor = new DesignlTagMonitor<T>(tagName, tag);
+        var monitor = new DesignTagMonitor<T>(tagName, tag);
         _monitors[tagName] = monitor;
         return monitor;
     }

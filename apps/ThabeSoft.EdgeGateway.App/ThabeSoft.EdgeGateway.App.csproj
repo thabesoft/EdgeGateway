@@ -35,8 +35,8 @@
 	  <Compile Update="Views\Device\DevicePage.axaml.cs">
 	    <DependentUpon>DevicePage.axaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\Port\PortPage.axaml.cs">
-	    <DependentUpon>PortPage.axaml</DependentUpon>
+	  <Compile Update="Views\Manage\ManageView.axaml.cs">
+	    <DependentUpon>ManageView.axaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 	

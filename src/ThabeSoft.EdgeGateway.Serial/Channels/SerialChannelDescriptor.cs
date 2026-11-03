@@ -70,8 +70,6 @@ public sealed record class SerialChannelDescriptor : IChannelDescriptor
         errorMessage = null;
         return true;
     }
-
-
     public static int[] StandardBaudRates { get; } = [1200, 2400, 4800, 9600, 14400, 19200, 38400, 57600, 115200, 128000, 256000];
     public static bool ValidateBaudRate(int? baudRate, [NotNullWhen(false)] out string? errorMessage)
     {
@@ -96,7 +94,6 @@ public sealed record class SerialChannelDescriptor : IChannelDescriptor
         errorMessage = null;
         return true;
     }
-
     public static bool ValidateParity(Parity parity, [NotNullWhen(false)] out string? errorMessage)
     {
         if (parity is not (Parity.None or Parity.Odd or Parity.Even or Parity.Mark or Parity.Space))
@@ -108,7 +105,6 @@ public sealed record class SerialChannelDescriptor : IChannelDescriptor
         errorMessage = null;
         return true;
     }
-
     public static bool ValidateDataBits(int dataBits, [NotNullWhen(false)] out string? errorMessage)
     {
         if (dataBits is < 5 or > 8)
@@ -120,7 +116,6 @@ public sealed record class SerialChannelDescriptor : IChannelDescriptor
         errorMessage = null;
         return true;
     }
-
     public static bool ValidateStopBits(StopBits stopBits, [NotNullWhen(false)] out string? errorMessage)
     {
         if (stopBits is not (StopBits.One or StopBits.OnePointFive or StopBits.Two))

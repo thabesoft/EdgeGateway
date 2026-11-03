@@ -72,19 +72,18 @@ public static class DependencyInjectionExtensions
             // Dashboard
             descriptors.AddSingleton<DashboardPageViewModel>();
 
-
-            // Port
-            descriptors.AddSingleton<PortPageViewModel>();
-            descriptors.AddViewMapping<PortPageViewModel, PortPage>();
-
-            descriptors.AddTransient<AddPortViewModel>();
-            descriptors.AddViewMapping<AddPortViewModel, AddPortView>();
-
-            
+            // Manage
+            descriptors.AddMvvmPair<ManageViewModel, ManageView>(ServiceLifetime.Singleton);
+            descriptors.AddMvvmPair<AddPortViewModel, AddPortView>(ServiceLifetime.Transient);
+        }
 
 
-            descriptors.AddTransient<DeviceViewModel>();
-            descriptors.AddSingleton(ViewMapping.Create<DeviceViewModel, DevicePage>());
+        private void AddMvvmPair<TViewModel, TView>(ServiceLifetime serviceLifetime)
+            where TViewModel : ViewModelBase
+            where TView : IDataContextProvider, new()
+        {
+            descriptors.Add(ServiceDescriptor.Describe(typeof(TViewModel), typeof(TViewModel), serviceLifetime));
+            descriptors.AddSingleton(ViewMapping.Create<TViewModel, TView>());
         }
     }
 }

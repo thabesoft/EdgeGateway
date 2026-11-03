@@ -16,7 +16,7 @@ public partial class MainViewModel : INavigationService
     public AvaloniaList<NavigationMenuItem> Menus { get; } =
     [
         NavigationMenuItem.Create<DashboardPageViewModel>("主页"),
-        NavigationMenuItem.Create<PortPageViewModel>("端口设置"),
+        NavigationMenuItem.Create<ManageViewModel>("端口设置"),
     ];
 
 

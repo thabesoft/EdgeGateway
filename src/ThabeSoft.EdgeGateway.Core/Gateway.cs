@@ -14,12 +14,16 @@ internal sealed class Gateway(IPortFactory portFactory) : ResilientLifecycleBase
 
     public IPort AddPort(IPortDescriptor descriptor)
     {
+        ArgumentNullException.ThrowIfNull(descriptor);
+
         var port = portFactory.Create(descriptor);
         return _ports[port.Id] = port;
     }
 
     public async ValueTask RemovePortAsync(PortId id, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(id);
+
         if (!_ports.TryRemove(id, out var port)) return;
         await port.CloseAsync(cancellationToken);
     }

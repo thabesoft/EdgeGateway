@@ -1,9 +1,7 @@
 ﻿using Avalonia.Data.Converters;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.IO.Ports;
-using System.Net;
 using ThabeSoft.EdgeGateway.Channels;
-using ThabeSoft.EdgeGateway.Ports;
 
 namespace ThabeSoft.EdgeGateway.App.ViewModels;
 

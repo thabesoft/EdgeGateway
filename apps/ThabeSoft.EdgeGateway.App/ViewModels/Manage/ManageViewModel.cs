@@ -1,20 +1,22 @@
-﻿using CommunityToolkit.Mvvm.Input;
-using ThabeSoft.EdgeGateway.App.Mocks;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using ThabeSoft.EdgeGateway.App.Models;
 using ThabeSoft.EdgeGateway.App.Services;
 
 namespace ThabeSoft.EdgeGateway.App.ViewModels;
 
 
-internal partial class PortPageViewModel(IDialogService dialogService, GatewayViewModel gatewayViewModel) : ViewModelBase
+internal partial class ManageViewModel(IDialogService dialogService, GatewayViewModel gatewayViewModel) : ViewModelBase
 {
     public GatewayViewModel Gateway => gatewayViewModel;
 
-    public PortPageViewModel() : this(NullDialogService.Instance, new()) { }
+    [ObservableProperty]
+    public partial PortViewModel? SelectedPort { get; private set; }
+
 
 
     [RelayCommand]
-    private void AddPort()
+    private void ShowAddPortDialog()
     {
         var content = new AddPortViewModel();
         DialogContent dialogContent = null!;

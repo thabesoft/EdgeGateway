@@ -1,8 +1,6 @@
 ﻿using Avalonia.Collections;
-using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ThabeSoft.EdgeGateway.App.Mocks;
 using ThabeSoft.EdgeGateway.Channels;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
@@ -16,14 +14,6 @@ internal sealed partial class GatewayViewModel(IGateway gateway, PortViewModelFa
 {
     private readonly AvaloniaList<PortViewModel> _ports = [.. gateway.Ports.Values.Select(port =>
         portViewModelFactory(port))];
-
-    internal GatewayViewModel() : this(NullGateway.Instance, _ => new(NullPort.Instance, _ => new(NullDevice.Instance)))
-    {
-        if (!Design.IsDesignMode) return;
-
-        _ports.Add(new(NullPort.Instance, _ => new(NullDevice.Instance)) { });
-
-    }
 
 
     [ObservableProperty]
@@ -53,6 +43,8 @@ internal sealed partial class GatewayViewModel(IGateway gateway, PortViewModelFa
     [RelayCommand]
     private void AddPort(IChannelDescriptor channelDescriptor)
     {
+        if (channelDescriptor is null) return;
+
         var port = gateway.AddPort(channelDescriptor);
         var portVm = portViewModelFactory(port);
 
@@ -62,6 +54,8 @@ internal sealed partial class GatewayViewModel(IGateway gateway, PortViewModelFa
     [RelayCommand]
     private async Task RemovePortAsync(PortId portId)
     {
+        if (portId is null) return;
+
         await gateway.RemovePortAsync(portId);
         var portVm = _ports.FirstOrDefault(x => x.Id == portId);
         if (portVm is null) return;
@@ -99,6 +93,35 @@ internal sealed partial class PortViewModel(IPort port, DeviceViewModelFactory d
     {
         await port.CloseAsync();
         IsOpen = port.IsOpen;
+    }
+
+    [RelayCommand]
+    private void AddDevice(IDeviceDescriptor deviceDescriptor)
+    {
+        var device = port.AddDevice(deviceDescriptor);
+        var deviceVm = deviceViewModelFactory(device);
+
+        _devices.Add(deviceVm);
+    }
+
+    [RelayCommand]
+    private void AddDeviceFromProtocol(IProtocolDescriptor protocolDescriptor)
+    {
+        var device = port.AddDevice(protocolDescriptor);
+        var deviceVm = deviceViewModelFactory(device);
+
+        _devices.Add(deviceVm);
+    }
+
+
+    [RelayCommand]
+    private async Task RemoveDeviceAsync(DeviceId deviceId)
+    {
+        await port.RemoveDeviceAsync(deviceId);
+        var deviceVm = _devices.FirstOrDefault(x => x.Id == deviceId);
+        if (deviceVm is null) return;
+
+        _devices.Remove(deviceVm);
     }
 }
 

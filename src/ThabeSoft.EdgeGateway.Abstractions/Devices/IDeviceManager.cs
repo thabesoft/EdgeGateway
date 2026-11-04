@@ -6,7 +6,7 @@ public interface IDeviceManager
 {
     IReadOnlyDictionary<DeviceId, IDevice> Devices { get; }
 
-    IDevice AddDevice(IDeviceDescriptor descriptor);
+    IDevice AddDevice(DeviceDescriptor descriptor);
     ValueTask RemoveDeviceAsync(DeviceId id, CancellationToken cancellationToken = default);
 }
 

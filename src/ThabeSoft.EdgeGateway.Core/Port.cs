@@ -30,7 +30,7 @@ internal sealed class Port(
         StopAsync(cancellationToken);
 
 
-    public IDevice AddDevice(IDeviceDescriptor descriptor)
+    public IDevice AddDevice(DeviceDescriptor descriptor)
     {
         ArgumentNullException.ThrowIfNull(descriptor);
 
@@ -69,5 +69,5 @@ internal sealed class Port(
 }
 
 internal delegate ITransportConnection TransportFactoryHandler();
-internal delegate IDevice DeviceFactoryHandler(IDeviceDescriptor descriptor, ITransportConnection transport, IDeviceManager manager);
+internal delegate IDevice DeviceFactoryHandler(DeviceDescriptor descriptor, ITransportConnection transport, IDeviceManager manager);
 internal delegate ValueTask PortDisposedHandler(ConnectionEndpoint endpoint);

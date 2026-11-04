@@ -8,7 +8,7 @@ namespace ThabeSoft.EdgeGateway.Options;
 
 public interface IDeviceOptionsBuilder
 {
-    IDeviceOptionsBuilder SetDescriptor(IDeviceDescriptor descriptor);
+    IDeviceOptionsBuilder SetDescriptor(DeviceDescriptor descriptor);
     IDeviceOptionsBuilder AddTag<T>(Action<ITagOptionsBuilder<T>> buildAction) where T : notnull;
 }
 

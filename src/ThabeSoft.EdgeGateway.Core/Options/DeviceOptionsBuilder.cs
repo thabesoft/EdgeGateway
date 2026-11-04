@@ -6,11 +6,11 @@ namespace ThabeSoft.EdgeGateway.Options;
 
 internal sealed class DeviceOptionsBuilder : IDeviceOptionsBuilder
 {
-    private IDeviceDescriptor? _descriptor;
+    private DeviceDescriptor? _descriptor;
     private readonly Dictionary<TagId, ITagOptions> _tags = [];
 
 
-    public IDeviceOptionsBuilder SetDescriptor(IDeviceDescriptor descriptor)
+    public IDeviceOptionsBuilder SetDescriptor(DeviceDescriptor descriptor)
     {
         ArgumentNullException.ThrowIfNull(descriptor);
 
@@ -56,6 +56,6 @@ public static class DeviceOptionsBuilderExtensions
 
 internal sealed record class DeviceOptions
 {
-    public required IDeviceDescriptor Descriptor { get; init; }
+    public required DeviceDescriptor Descriptor { get; init; }
     public required IReadOnlyList<ITagOptions> Tags { get; init; }
 }

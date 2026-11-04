@@ -3,13 +3,7 @@
 namespace ThabeSoft.EdgeGateway.Devices;
 
 
-public interface IDeviceDescriptor
-{
-    DeviceId DeviceId { get; }
-    IProtocolDescriptor Protocol { get; }
-}
-
-public sealed class DeviceDescriptor : IDeviceDescriptor
+public sealed class DeviceDescriptor
 {
     public required DeviceId DeviceId { get; init; }
     public required IProtocolDescriptor Protocol { get; init; }

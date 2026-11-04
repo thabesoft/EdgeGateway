@@ -7,7 +7,7 @@ using ThabeSoft.EdgeGateway.Triggers;
 
 namespace ThabeSoft.EdgeGateway.App.Designs;
 
-public sealed class DesignDevice(IDeviceDescriptor deviceDescriptor, DesignPort port) : IDevice
+public sealed class DesignDevice(DeviceDescriptor deviceDescriptor, DesignPort port) : IDevice
 {
     private readonly ConcurrentDictionary<TagId, ITagMonitor> _monitors = [];
 

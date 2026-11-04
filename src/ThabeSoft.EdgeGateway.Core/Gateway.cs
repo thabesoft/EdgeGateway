@@ -105,7 +105,7 @@ internal sealed class PortFactory(TransportFactory transportFactory, DeviceFacto
         ITransportConnection CreateTransport() =>
             transportFactory.Create(transportDescriptor);
 
-        Device CreateDevice(IDeviceDescriptor deviceDescriptor, IByteDuplex byteDuplex, IDeviceManager deviceManager) =>
+        Device CreateDevice(DeviceDescriptor deviceDescriptor, IByteDuplex byteDuplex, IDeviceManager deviceManager) =>
             deviceFactory.Create(deviceDescriptor, byteDuplex, deviceManager);
     }
 }
@@ -124,7 +124,7 @@ internal sealed class TransportFactory(IEnumerable<ITransportFactory> factories)
 
 internal sealed class DeviceFactory(TagAccessorFactory tagAccessorFactory, ILogger<Device> logger)
 {
-    public Device Create(IDeviceDescriptor descriptor, IByteDuplex byteDuplex, IDeviceManager deviceManager)
+    public Device Create(DeviceDescriptor descriptor, IByteDuplex byteDuplex, IDeviceManager deviceManager)
     {
         return new(descriptor, CreateTagAccessor, id => deviceManager.RemoveDeviceAsync(id, default), logger);
 

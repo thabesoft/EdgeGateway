@@ -31,7 +31,7 @@ public sealed class DesignPort(ITransportDescriptor transportDescriptor, DesignG
         foreach (var i in _devices.Values) await i.DisableAsync();
     }
 
-    public IDevice AddDevice(IDeviceDescriptor descriptor)
+    public IDevice AddDevice(DeviceDescriptor descriptor)
     {
         ObjectDisposedException.ThrowIf(_isDisposed, this);
 

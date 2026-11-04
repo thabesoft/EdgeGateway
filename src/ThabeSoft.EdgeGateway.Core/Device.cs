@@ -16,7 +16,7 @@ internal sealed class Device : ConcurrentLifecycleBase, IDevice, IOnDemandReadWr
     private readonly DeviceDisposedHandler _disposedCallbackHandler;
 
     public Device(
-            IDeviceDescriptor descriptor,
+            DeviceDescriptor descriptor,
             TagAccessorFactoryHandler tagAccessorFactoryHandler,
             DeviceDisposedHandler disposedCallbackHandler,
             ILogger<Device> logger

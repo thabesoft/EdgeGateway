@@ -30,14 +30,14 @@ internal sealed partial class PortViewModel(IPort port, DeviceViewModelFactory d
     private async Task OpenAsync()
     {
         await port.OpenAsync();
-        IsOpen = port.IsOpen;
+        RefreshIsOpen();
     }
 
     [RelayCommand]
     private async Task CloseAsync()
     {
         await port.CloseAsync();
-        IsOpen = port.IsOpen;
+        RefreshIsOpen();
     }
 
     [RelayCommand]
@@ -67,5 +67,11 @@ internal sealed partial class PortViewModel(IPort port, DeviceViewModelFactory d
         if (deviceVm is null) return;
 
         _devices.Remove(deviceVm);
+    }
+
+    public void RefreshIsOpen()
+    {
+        IsOpen = port.IsOpen;
+        foreach (var device in Devices) device.RefreshIsEnabled();
     }
 }

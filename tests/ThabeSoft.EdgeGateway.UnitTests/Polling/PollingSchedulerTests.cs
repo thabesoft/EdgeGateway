@@ -20,7 +20,7 @@ public class PollingSchedulerTests
         _ = pollingScheduler.Register("test,", mockTag.Object, mockTrigger.Object);
 
 
-        Assert.HasCount(1, pollingScheduler.Monitors);
+        Assert.HasCount(1, pollingScheduler.TagMonitors);
         mockTrigger.Verify(t => t.Subscribe(It.IsAny<TriggerHandler>()), Times.Once,
             "注册后，Scheduler 应该向 Trigger 订阅回调");
     }
@@ -39,6 +39,6 @@ public class PollingSchedulerTests
         pollingScheduler.Unregister(tagMonitor.Name);
 
 
-        Assert.HasCount(0, pollingScheduler.Monitors);
+        Assert.HasCount(0, pollingScheduler.TagMonitors);
     }
 }

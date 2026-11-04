@@ -54,7 +54,7 @@ file sealed class Device(
     public required DeviceId Id { get; init; }
     public required ProtocolType ProtocolType { get; init; }
     public bool IsEnabled => IsRunning;
-    public IReadOnlyDictionary<TagName, ITagMonitor> Monitors => _pollingScheduler.Monitors;
+    public IReadOnlyDictionary<TagName, ITagMonitor> TagMonitors => _pollingScheduler.TagMonitors;
 
 
     public ValueTask EnableAsync(CancellationToken cancellationToken = default) =>

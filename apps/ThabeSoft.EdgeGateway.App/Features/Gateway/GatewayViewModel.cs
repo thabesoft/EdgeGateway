@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ThabeSoft.EdgeGateway.App.Features;
 using ThabeSoft.EdgeGateway.Channels;
-using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Ports;
 
@@ -16,9 +15,14 @@ internal sealed partial class GatewayViewModel(IGateway gateway, PortViewModelFa
         portViewModelFactory(port))];
 
 
+
     [ObservableProperty]
-    public partial bool IsRunning { get; private set; } = gateway.State == LifecycleState.Running;
-    public IReadOnlyList<PortViewModel> Ports => _ports;
+    [NotifyPropertyChangedFor(nameof(IsRunning))]
+    public partial LifecycleState LifecycleState { get; private set; } = gateway.State;
+    public bool IsRunning => gateway.State == LifecycleState.Running;
+
+
+    public IAvaloniaReadOnlyList<PortViewModel> Ports => _ports;
 
 
 
@@ -29,14 +33,14 @@ internal sealed partial class GatewayViewModel(IGateway gateway, PortViewModelFa
     private async Task StartAsync()
     {
         await gateway.StartAsync();
-        IsRunning = gateway.State == LifecycleState.Running;
+        RefreshIsRunning();
     }
 
     [RelayCommand]
     private async Task StopAsync()
     {
         await gateway.StopAsync();
-        IsRunning = gateway.State == LifecycleState.Stopped;
+        RefreshIsRunning();
     }
 
 
@@ -62,4 +66,13 @@ internal sealed partial class GatewayViewModel(IGateway gateway, PortViewModelFa
 
         _ports.Remove(portVm);
     }
+
+    public void RefreshIsRunning()
+    {
+        LifecycleState = gateway.State;
+        foreach (var port in _ports) port.RefreshIsOpen();
+    }
 }
+
+
+public sealed class GatewayStartMessage;

@@ -5,9 +5,8 @@
              xmlns:viewmodels="using:ThabeSoft.EdgeGateway.App.ViewModels"
              xmlns:local="using:ThabeSoft.EdgeGateway.App.Features.Topology"
              mc:Ignorable="d"
-             MinHeight="150"
-             Height="420"
              MinWidth="200"
+             MinHeight="460"
              x:DataType="local:AddPortViewModel"
              x:Class="ThabeSoft.EdgeGateway.App.Features.Topology.AddPortView">
 
@@ -34,7 +33,7 @@
                 <!-- 连接类型 -->
                 <StackPanel Spacing="5">
                     <TextBlock Text="连接类型" FontWeight="SemiBold" />
-                    <ComboBox ItemsSource="{Binding IpForm.ConnectionTypeOptions}" SelectedItem="{Binding IpForm.ConnectionType}"></ComboBox>
+                    <ComboBox ItemsSource="{Binding IpForm.TransportTypeOptions}" SelectedItem="{Binding IpForm.TransportType}"></ComboBox>
                 </StackPanel>
             </StackPanel>
         </TabItem>

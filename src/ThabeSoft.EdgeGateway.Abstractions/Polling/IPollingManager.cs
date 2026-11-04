@@ -6,7 +6,7 @@ namespace ThabeSoft.EdgeGateway.Polling;
 
 public interface IPollingManager
 {
-    IReadOnlyDictionary<TagName, ITagMonitor> Monitors { get; }
+    IReadOnlyDictionary<TagName, ITagMonitor> TagMonitors { get; }
 
     ITagMonitor<T> Register<T>(TagName tagName, ITag<T> tag, ITrigger trigger) where T : notnull;
     void Unregister(TagName tagName);

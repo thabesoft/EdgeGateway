@@ -2,7 +2,7 @@
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                 xmlns:suki="clr-namespace:SukiUI.Controls;assembly=SukiUI"
+                 xmlns:suki="https://github.com/kikipoulet/SukiUI"
                  xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
                  xmlns:local="using:ThabeSoft.EdgeGateway.App"
                  xmlns:v="using:ThabeSoft.EdgeGateway.App.Views"
@@ -40,22 +40,26 @@
             </avalonia:MaterialIcon.Transitions>
         </avalonia:MaterialIcon>
     </suki:SukiWindow.LogoContent>
+
     <!--叠加层-->
     <suki:SukiWindow.Hosts>
-        <suki:SukiToastHost Manager="{Binding ToastManager}" />
         <suki:SukiDialogHost Manager="{Binding DialogManager}" />
+        <suki:SukiToastHost Manager="{Binding ToastManager}" />
     </suki:SukiWindow.Hosts>
 
     <!--内容-->
-    <suki:SukiSideMenu IsSearchEnabled="True"
+    <suki:SukiSideMenu IsSearchEnabled="False"
                        ItemsSource="{Binding Pages}"
+                       Content="{Binding ActivePage}"
                        SelectedItem="{Binding ActivePage}">
 
+        <!--菜单样式-->
         <suki:SukiSideMenu.ItemTemplate>
             <DataTemplate>
-                <suki:SukiSideMenuItem Classes="Compact" Header="{Binding DisplayName}">
+                <suki:SukiSideMenuItem Classes="Compact"
+                                       Header="{Binding DisplayName}" >
                     <suki:SukiSideMenuItem.Icon>
-                        <avalonia:MaterialIcon Kind="{Binding Icon}" />
+                        <avalonia:MaterialIcon Kind="{Binding Icon}" Foreground="Black" IconSize="10"></avalonia:MaterialIcon>
                     </suki:SukiSideMenuItem.Icon>
                 </suki:SukiSideMenuItem>
             </DataTemplate>

@@ -1,4 +1,5 @@
-﻿using ThabeSoft.EdgeGateway.Devices;
+﻿using System.Collections.Concurrent;
+using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Polling;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Tags;
@@ -6,15 +7,15 @@ using ThabeSoft.EdgeGateway.Triggers;
 
 namespace ThabeSoft.EdgeGateway.App.Designs;
 
-public sealed class DesignDevice(IDeviceDescriptor deviceDescriptor) : IDevice
+public sealed class DesignDevice(IDeviceDescriptor deviceDescriptor, DesignPort port) : IDevice
 {
-    private readonly Dictionary<TagName, ITagMonitor> _monitors = [];
+    private readonly ConcurrentDictionary<TagName, ITagMonitor> _monitors = [];
 
 
     public DeviceId Id => deviceDescriptor.DeviceId;
     public ProtocolType ProtocolType => deviceDescriptor.Protocol.Type;
     public bool IsEnabled { get; private set; }
-    public IReadOnlyDictionary<TagName, ITagMonitor> Monitors => _monitors.AsReadOnly();
+    public IReadOnlyDictionary<TagName, ITagMonitor> TagMonitors => _monitors.AsReadOnly();
 
 
     public ValueTask EnableAsync(CancellationToken cancellationToken = default)
@@ -37,12 +38,12 @@ public sealed class DesignDevice(IDeviceDescriptor deviceDescriptor) : IDevice
     }
     public void Unregister(TagName tagName)
     {
-        _monitors.Remove(tagName);
+        _monitors.TryRemove(tagName, out _);
     }
 
-    public ValueTask DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
         _monitors.Clear();
-        return ValueTask.CompletedTask;
+        await port.RemoveDeviceAsync(Id);
     }
 }

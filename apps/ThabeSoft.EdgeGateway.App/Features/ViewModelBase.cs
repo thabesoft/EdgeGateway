@@ -24,7 +24,11 @@ public abstract class ViewModelBase : ObservableObject, INotifyDataErrorInfo
         return list.Select(errorMessage => new ValidationResult(errorMessage, [propertyName]));
     }
 
-
+    protected string[] GetErrors(string? propertyName)
+    {
+        if (string.IsNullOrWhiteSpace(propertyName)) return [];
+        return _errors.TryGetValue(propertyName, out var value) ? value : [];
+    }
 
     protected bool TrySetPropertyError(string propertyName, params IReadOnlyCollection<string?>? errorMessages)
     {

@@ -1,13 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SukiUI.Dialogs;
+using SukiUI.Toasts;
 using ThabeSoft.EdgeGateway.App.ViewModels;
 using ThabeSoft.EdgeGateway.Channels;
+using ThabeSoft.EdgeGateway.Ports;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 
 
-internal sealed partial class AddPortViewModel(ISukiDialog dialog) : ObservableObject
+internal sealed partial class AddPortViewModel(ISukiDialog dialog, ISukiToastManager sukiToastManager, GatewayViewModel gatewayViewModel) : ObservableObject
 {
     public IpPortFormViewModel IpForm { get; } = new();
     public SerialPortFormViewModel SerialForm { get; } = new();
@@ -20,17 +22,37 @@ internal sealed partial class AddPortViewModel(ISukiDialog dialog) : ObservableO
     public partial bool IsSelectedSerialFrom { get; set; }
 
 
-    public IChannelDescriptor Build()
+    [RelayCommand]
+    private void Create()
     {
-        if (IsSelectedIpFrom) return IpForm.Build();
-        if (IsSelectedSerialFrom) return SerialForm.Build();
+        try
+        {
+            IChannelDescriptor? descriptor = null;
 
-        throw new InvalidOperationException("无法构建");
+            if (IsSelectedIpFrom) descriptor = IpForm.Build();
+            else if (IsSelectedSerialFrom) descriptor = SerialForm.Build();
+
+            if (descriptor == null) return;
+            gatewayViewModel.AddPortCommand.Execute(PortDescriptor.Create(descriptor));
+
+            dialog.Dismiss();
+        }
+        catch(Exception ex)
+        {
+            if (IsSelectedIpFrom) IpForm.ValidateAllProperty();
+            else if (IsSelectedSerialFrom) SerialForm.ValidateAllProperty();
+
+            sukiToastManager.CreateToast()
+                .OfType(Avalonia.Controls.Notifications.NotificationType.Error)
+                .WithTitle("创建失败")
+                .WithContent(ex.Message)
+                .Dismiss().After(TimeSpan.FromSeconds(3))
+                .Queue();
+        }
     }
 
-
     [RelayCommand]
-    private void CloseDialog()
+    private void Cancel()
     {
         dialog.Dismiss();
     }

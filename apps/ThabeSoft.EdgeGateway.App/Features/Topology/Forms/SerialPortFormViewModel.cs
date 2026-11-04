@@ -1,7 +1,10 @@
 ﻿using Avalonia.Data.Converters;
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Ports;
+using System.Net;
 using ThabeSoft.EdgeGateway.Channels;
+using ThabeSoft.EdgeGateway.Ports;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 
@@ -72,9 +75,15 @@ internal sealed partial class SerialPortFormViewModel : ViewModelBase
     }
 
 
+    public SerialChannelDescriptor Build() =>
+        SerialChannelDescriptor.Create(PortName, BaudRate, Parity, DataBits, StopBits);
 
-    public SerialChannelDescriptor Build()
+    public void ValidateAllProperty()
     {
-        return SerialChannelDescriptor.Create(PortName, BaudRate, Parity, DataBits, StopBits);
+        OnPortNameChanged(PortName);
+        OnBaudRateChanged(BaudRate);
+        OnParityChanged(Parity);
+        OnDataBitsChanged(DataBits);
+        OnStopBitsChanged(StopBits);
     }
 }

@@ -2,8 +2,10 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using SukiUI.Controls;
 using SukiUI.Dialogs;
 using SukiUI.Enums;
@@ -14,55 +16,46 @@ namespace ThabeSoft.EdgeGateway.App;
 public class App : Application
 {
     private readonly IHost _host;
+    private readonly ILogger<App> _logger;
 
-    public App(Action<IHostBuilder> buildAction)
+
+    public App()
     {
-        var builder = Host.CreateDefaultBuilder()
-            .UseEdgeGatewayApp();
+        _host = Host.CreateDefaultBuilder()
+            .UseEdgeGatewayApp()
+            .Build();
 
-        buildAction?.Invoke(builder);
-        _host = builder.Build();
+        _logger = _host.Services.GetRequiredService<ILogger<App>>();
     }
-    public App() : this(delegate { }) { }
 
 
     public IServiceProvider Services => _host.Services;
-
 
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
     }
 
-    public override void OnFrameworkInitializationCompleted()
+    public override async void OnFrameworkInitializationCompleted()
     {
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        try
         {
-            var viewFactory = Services.GetRequiredService<ViewFactory>();
-            var viewLocator = Services.GetRequiredService<ViewLocator>();
+            await _host.StartAsync();
 
-            DataTemplates.Add(viewLocator);
-            desktop.MainWindow = viewFactory.CreateView<MainWindowViewModel>() as Window;
-        }
-        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleView)
-        {
-            var p = new Panel();
-            p.Children.Add(new SukiBackground() { Style = SukiBackgroundStyle.Bubble });
-            var dialogManager = new SukiDialogManager();
-
-            singleView.MainView = new SukiMainHost()
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                Hosts = [
-                    new SukiDialogHost
-                    {
-                        Manager = dialogManager
-                    }
-                ],
-                Content = p
-            };
-        }
+                var viewFactory = Services.GetRequiredService<ViewFactory>();
+                var viewLocator = Services.GetRequiredService<ViewLocator>();
 
-        _host.Start();
-        base.OnFrameworkInitializationCompleted();
+                DataTemplates.Add(viewLocator);
+
+                Dispatcher.Invoke(() =>
+                    desktop.MainWindow = viewFactory.CreateView<MainWindowViewModel>() as Window);
+            }
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "启动失败");
+        }
     }
 }

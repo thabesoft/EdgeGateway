@@ -11,39 +11,23 @@ using ThabeSoft.EdgeGateway.App.Utilities;
 namespace ThabeSoft.EdgeGateway.App;
 
 
-internal partial class MainWindowViewModel : ObservableObject
+internal partial class MainWindowViewModel(
+        ISukiToastManager toastManager,
+        ISukiDialogManager dialogManager,
+        IEnumerable<PageViewModel> pageViewModels
+    ) : ObservableObject, INavigationHost
 {
-    public MainWindowViewModel(
-            ISukiToastManager toastManager, 
-            ISukiDialogManager dialogManager,
-            PageNavigationService pageNavigationService,
-            IEnumerable<PageViewModel> pageViewModels
-        )
-    {
-        ToastManager = toastManager;
-        DialogManager = dialogManager;
+    private readonly AvaloniaList<PageViewModel> _pages = [..pageViewModels
+        .OrderBy(x => x.Index).ThenBy(x => x.DisplayName)];
 
 
-        Pages = new AvaloniaList<PageViewModel>(pageViewModels.OrderBy(x => x.Index).ThenBy(x => x.DisplayName));
-        pageNavigationService.NavigationRequested += pageType =>
-        {
-            var page = Pages.FirstOrDefault(x => x.GetType() == pageType);
-            if (page is null || ActivePage?.GetType() == pageType) return;
-            ActivePage = page;
-        };
-    }
+    public ISukiToastManager ToastManager { get; } = toastManager;
+    public ISukiDialogManager DialogManager { get; } = dialogManager;
+    public IReadOnlyList<PageViewModel> Pages => _pages;
 
-    public ISukiToastManager ToastManager { get; }
-    public ISukiDialogManager DialogManager { get; }
-
-
-
-    public IAvaloniaReadOnlyList<PageViewModel> Pages { get; }
 
     [ObservableProperty]
     public partial PageViewModel? ActivePage { get; set; }
-
-
 
 
 
@@ -70,7 +54,6 @@ internal partial class MainWindowViewModel : ObservableObject
 
     [ObservableProperty]
     public partial bool WindowLocked { get; set; }
-
 
 
     [RelayCommand]

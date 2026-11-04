@@ -1,154 +1,189 @@
 <UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:avalonia="using:Material.Icons.Avalonia"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:theme="https://github.com/kikipoulet/SukiUI"
+             xmlns:suki="https://github.com/kikipoulet/SukiUI"
+             xmlns:vm="using:ThabeSoft.EdgeGateway.App.ViewModels"
              xmlns:local="using:ThabeSoft.EdgeGateway.App.Features.Topology"
              x:Class="ThabeSoft.EdgeGateway.App.Features.Topology.TopologyView"
              x:DataType="local:TopologyViewModel">
 
-     <Grid ColumnDefinitions="250,Auto,3*">
+    <suki:GlassCard ClipToBounds="True">
+        <suki:SukiSideMenu ItemsSource="{Binding MenuItemsSource}"
+                           IsToggleButtonVisible="False"
+                           IsSearchEnabled="True"
+                           SelectedItem="{Binding SelectedMenu}"
+                           UseCustomContent="True">
+            <!--菜单-->
+            <suki:SukiSideMenu.ItemTemplate>
+                <DataTemplate>
+                    <suki:SukiSideMenuItem Header="{Binding Header}" ItemsSource="{Binding ChildItemsSource}" Icon="{avalonia:MaterialIconExt Kind=Person}">
+                        <suki:SukiSideMenuItem.ItemTemplate>
+                            <DataTemplate>
+                                <suki:SukiSideMenuItem Header="{Binding Header}"></suki:SukiSideMenuItem>
+                            </DataTemplate>
+                        </suki:SukiSideMenuItem.ItemTemplate>
+                    </suki:SukiSideMenuItem>
+                </DataTemplate>
+            </suki:SukiSideMenu.ItemTemplate>
 
-        <!--导航栏-->
-        <ScrollViewer  Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <!--内容页-->
+            <suki:SukiSideMenu.Content>
+                <Panel>
 
-            <DockPanel>
+                    <!--端口页面-->
+                    <DockPanel IsVisible="{Binding IsSelecteedPort}">
 
-                <!--功能按钮-->
-                <DockPanel DockPanel.Dock="Top">
+                        <!--顶部栏-->
+                        <DockPanel DockPanel.Dock="Top">
 
-                    <Button DockPanel.Dock="Left" Command="{Binding ShowAddPortDialogCommand}" Content="添加"></Button>
-                    <Button DockPanel.Dock="Right" Content="刷新"></Button>
-                    <Panel></Panel>
+                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
 
-                </DockPanel>
+                                <Button IsVisible="{Binding !SelectedPort.IsOpen}"
+                                        Content="打开"
+                                        Classes="Information"
+                                        Command="{Binding SelectedPort.OpenCommand}" />
 
-                <ListBox ItemsSource="{Binding Gateway.Ports}" SelectedItem="{Binding SelectedPort}">
+                                <Button IsVisible="{Binding SelectedPort.IsOpen}"
+                                        Content="关闭"
+                                        Command="{Binding SelectedPort.CloseCommand}" />
 
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
+                                <Separator Height="20" Width="1"></Separator>
 
-                            <StackPanel Orientation="Horizontal" Spacing="5" >
-
-                                <Border VerticalAlignment="Center"
-                                        CornerRadius="3"
-                                        Background="Green"
-                                        Padding="5 2">
-                                    <TextBlock VerticalAlignment="Center"
-                                               Foreground="White" FontSize="12" FontWeight="Bold" Text="{Binding ChannelAddress.ConnectionType}"/>
-                                </Border>
-
-                                <TextBlock Text="{Binding ChannelAddress.Endpoint}"
-                                           VerticalAlignment="Center"
-                                           FontSize="12"
-                                           FontWeight="Light" />
+                                <Button Content="删除"
+                                        Classes="Danger"
+                                        Command="{Binding RemoveSelectedPortCommand}" />
 
                             </StackPanel>
 
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
+                            <DockPanel>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding SelectedPort.ChannelAddress}"></TextBlock>
+                            </DockPanel>
 
-                </ListBox>
+                        </DockPanel>
 
-            </DockPanel>
+                        <!--内容栏-->
+                        <DockPanel>
 
-        </ScrollViewer>
+                            <DataGrid ItemsSource="{Binding SelectedPort.Devices}"
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="True"
+                                      CanUserResizeColumns="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="设备 ID" Binding="{Binding Id}" Width="Auto"/>
+                                    <DataGridTextColumn Header="协议类型" Binding="{Binding ProtocolType}" Width="Auto"/>
 
-        <!--分界线-->
-        <GridSplitter Grid.Column="1"
-                      Margin="5 0"
-                      Background="Gray"
-                      ResizeDirection="Columns" />
+                                    <!--数据点-->
+                                    <DataGridTemplateColumn Header="数据点" Width="Auto">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <!-- 用一个 Button 伪装成普通的文本，去掉边框和背景 -->
+                                                <Button Background="Transparent"
+                                                        HorizontalAlignment="Stretch"
+                                                        VerticalAlignment="Stretch"
+                                                        HorizontalContentAlignment="Center"
+                                                        VerticalContentAlignment="Center"
+                                                        BorderThickness="0"
+                                                        Padding="0"
+                                                        Cursor="Hand"
+                                                        Content="{Binding}">
+                                                </Button>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
 
-        <!--右侧详情-->
-        <DockPanel Grid.Column="2">
+                                    <!--操作-->
+                                    <DataGridTemplateColumn Header="操作" Width="Auto">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Spacing="5">
+                                                    <Button IsVisible="{Binding !IsEnabled}" Command="{Binding EnableCommand}">启用</Button>
+                                                    <Button IsVisible="{Binding IsEnabled}" Command="{Binding DisableCommand}">禁用</Button>
+                                                    <Separator Height="20" Width="1"></Separator>
+                                                    <Button Command="{Binding $parent[UserControl].DataContext.SelectedPort.RemoveDeviceCommand}"
+                                                            CommandParameter="{Binding Id}"
+                                                            Content="删除" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
 
-            <!--顶部栏-->
-            <DockPanel DockPanel.Dock="Top">
+                            </DataGrid>
 
-                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                        </DockPanel>
 
-                    <Button IsVisible="{Binding !SelectedPort.IsOpen}"
-                            Content="打开"
-                            Classes="Information" 
-                            Command="{Binding SelectedPort.OpenCommand}" />
+                    </DockPanel>
 
-                    <Button IsVisible="{Binding SelectedPort.IsOpen}"
-                            Content="关闭"
-                            Command="{Binding SelectedPort.CloseCommand}" />
+                    <!--设备页面-->
+                    <DockPanel IsVisible="{Binding IsSelectedDevice}">
 
-                    <Separator Height="20" Width="1"></Separator>
+                        <!--顶部栏-->
+                        <DockPanel DockPanel.Dock="Top">
 
-                    <Button Content="删除"
-                            Classes="Danger"
-                            Command="{Binding RemoveSelectedPortCommand}" />
+                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
 
-                </StackPanel>
+                                <Button IsVisible="{Binding !SelectedPort.IsOpen}"
+                                        Content="启用"
+                                        Classes="Information"
+                                        Command="{Binding SelectedPort.OpenCommand}" />
 
-                <DockPanel>
-                    <TextBlock VerticalAlignment="Center" Text="{Binding SelectedPort.ChannelAddress}"></TextBlock>
-                </DockPanel>
+                                <Button IsVisible="{Binding SelectedPort.IsOpen}"
+                                        Content="禁用"
+                                        Command="{Binding SelectedPort.CloseCommand}" />
 
-            </DockPanel>
+                                <Separator Height="20" Width="1"></Separator>
 
-            <!--底部栏-->
-            <DockPanel DockPanel.Dock="Bottom">
+                                <Button Content="删除"
+                                        Classes="Danger"
+                                        Command="{Binding RemoveSelectedPortCommand}" />
 
-            </DockPanel>
+                            </StackPanel>
 
-            <!--内容栏-->
-            <DockPanel>
+                            <DockPanel>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding SelectedPort.ChannelAddress}"></TextBlock>
+                            </DockPanel>
 
-                <DataGrid ItemsSource="{Binding SelectedPort.Devices}"
-                          AutoGenerateColumns="False"
-                          IsReadOnly="True"
-                          CanUserResizeColumns="True">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="设备 ID" Binding="{Binding Id}" Width="Auto"/>
-                        <DataGridTextColumn Header="协议类型" Binding="{Binding ProtocolType}" Width="Auto"/>
+                        </DockPanel>
 
-                        <!--数据点-->
-                        <DataGridTemplateColumn Header="数据点" Width="Auto">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <!-- 用一个 Button 伪装成普通的文本，去掉边框和背景 -->
-                                    <Button Background="Transparent"
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Stretch"
-                                            HorizontalContentAlignment="Center"
-                                            VerticalContentAlignment="Center"
-                                            BorderThickness="0"
-                                            Padding="0"
-                                            Cursor="Hand"
-                                            Content="{Binding}">
-                                    </Button>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
+                        <!--内容栏-->
+                        <DockPanel>
 
-                        <!--操作-->
-                        <DataGridTemplateColumn Header="操作" Width="Auto">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Spacing="5">
-                                        <Button IsVisible="{Binding !IsEnabled}" Command="{Binding EnableCommand}">启用</Button>
-                                        <Button IsVisible="{Binding IsEnabled}" Command="{Binding DisableCommand}">禁用</Button>
-                                        <Separator Height="20" Width="1"></Separator>
-                                        <Button Command="{Binding $parent[UserControl].DataContext.SelectedPort.RemoveDeviceCommand}"
-                                                CommandParameter="{Binding Id}"
-                                                Content="删除" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
+                            <DataGrid ItemsSource="{Binding SelectedDevice.TagMonitors}"
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="True"
+                                      CanUserResizeColumns="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="名称" Binding="{Binding Name}" Width="Auto"/>
+                                    <DataGridTextColumn Header="地址" Binding="{Binding Address}" Width="Auto"/>
+                                    <DataGridTextColumn Header="状态" Binding="{Binding State}" Width="Auto"/>
+                                    <DataGridTextColumn Header="值" Binding="{Binding Value}" Width="Auto"/>
+                                    <DataGridTextColumn Header="时间" Binding="{Binding UpdateTime}" Width="Auto"/>
 
-                </DataGrid>
+                                    <!--操作-->
+                                    <DataGridTemplateColumn Header="操作" Width="Auto">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                    <Button Command="{Binding $parent[UserControl].DataContext.SelectedPort.RemoveDeviceCommand}"
+                                                            CommandParameter="{Binding Name}"
+                                                            Content="删除" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
 
-            </DockPanel>
+                            </DataGrid>
 
-        </DockPanel>
+                        </DockPanel>
 
-    </Grid>
+                    </DockPanel>
+
+                </Panel>
+            </suki:SukiSideMenu.Content>
+
+        </suki:SukiSideMenu>
+
+    </suki:GlassCard>
 
 </UserControl>

@@ -14,4 +14,9 @@ internal abstract partial class PageViewModel(string displayName, MaterialIconKi
 
     [ObservableProperty]
     public partial int Index { get; set; } = index;
+
+
+
+    public virtual void OnNavigationEnter() { }
+    public virtual void OnNavigationLeave() { }
 }

@@ -1,9 +1,4 @@
-﻿using Avalonia.Controls;
-using Avalonia.Input;
-using Avalonia.Interactivity;
-using SukiUI.Controls;
-using SukiUI.Enums;
-using SukiUI.Models;
+﻿using SukiUI.Controls;
 using ThabeSoft.EdgeGateway.App.Designs;
 
 namespace ThabeSoft.EdgeGateway.App;

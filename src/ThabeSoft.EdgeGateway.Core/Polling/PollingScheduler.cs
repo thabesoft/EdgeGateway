@@ -15,7 +15,7 @@ internal sealed class PollingScheduler(ITagReader tagReader, ILogger<PollingSche
 
     public PollingScheduler(ITagReader tagReader) : this(tagReader, NullLogger<PollingScheduler>.Instance) { }
 
-    public IReadOnlyDictionary<TagName, ITagMonitor> Monitors => _context.ToDictionary(k => k.Key, v => v.Value.Monitor);
+    public IReadOnlyDictionary<TagName, ITagMonitor> TagMonitors => _context.ToDictionary(k => k.Key, v => v.Value.Monitor);
 
 
     public ITagMonitor<T> Register<T>(TagName tagName, ITag<T> tag, ITrigger pollingTrigger) where T : notnull

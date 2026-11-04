@@ -52,7 +52,7 @@ public sealed partial class DeviceItemViewModel(IDevice device, IPort port) : Vi
     public DeviceId Id => device.Id;
     public ProtocolType ProtocolType => device.ProtocolType;
     public bool IsEnabled => device.IsEnabled;
-    public int MonitorsCount => device.Monitors.Count;
+    public int MonitorsCount => device.TagMonitors.Count;
 
 
     [RelayCommand]

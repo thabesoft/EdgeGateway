@@ -31,6 +31,8 @@ public static class DependencyInjectionExtensions
 
             builder.ConfigureServices(services =>
             {
+                services.AddApp();
+
 #if DEBUG
                 services.AddEdgeGateway(gateway =>
                 {
@@ -43,9 +45,8 @@ public static class DependencyInjectionExtensions
 
                     gateway.AddUdpPort(IPAddress.Loopback, 2, x => x
                         .AddModbusIpDevice(DeviceId.From("Ip_Udp_Device")));
+                });
 #endif
-                })
-                .AddApp();
 
                 if (Design.IsDesignMode || true)
                 {
@@ -72,7 +73,7 @@ public static class DependencyInjectionExtensions
         {
             // Services
             descriptors.AddSingleton<ClipboardService>();
-            descriptors.AddSingleton<PageNavigationService>();
+            descriptors.AddSingleton<NavigationService>();
 
             descriptors.AddSingleton<ISukiToastManager, SukiToastManager>();
             descriptors.AddSingleton<ISukiDialogManager, SukiDialogManager>();
@@ -96,6 +97,7 @@ public static class DependencyInjectionExtensions
 
             // Shell
             descriptors.AddViewMapping<MainWindow, MainWindowViewModel>(ServiceLifetime.Singleton);
+            descriptors.AddSingleton<INavigationHost>(sp => sp.GetRequiredService<MainWindowViewModel>());
 
             // Pages
             descriptors.AddViewMapping<DashboardView, DashboardViewModel>(ServiceLifetime.Singleton);

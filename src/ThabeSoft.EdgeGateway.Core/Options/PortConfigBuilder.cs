@@ -1,19 +1,19 @@
-﻿using ThabeSoft.EdgeGateway.Ports;
+﻿using ThabeSoft.EdgeGateway.Transport;
 
 namespace ThabeSoft.EdgeGateway.Options;
 
 
 internal sealed class PortConfigBuilder : IPortOptionsBuilder
 {
-    private IPortDescriptor? _descriptor;
+    private ITransportDescriptor? _transport;
     private readonly List<DeviceOptions> _devices = [];
 
 
-    public IPortOptionsBuilder SetDescriptor(IPortDescriptor descriptor)
+    public IPortOptionsBuilder WithTransport(ITransportDescriptor transportDescriptor)
     {
-        ArgumentNullException.ThrowIfNull(descriptor);
+        ArgumentNullException.ThrowIfNull(transportDescriptor);
 
-        _descriptor = descriptor;
+        _transport = transportDescriptor;
         return this;
     }
     public IPortOptionsBuilder AddDevice(Action<IDeviceOptionsBuilder> buildAction)
@@ -32,12 +32,12 @@ internal sealed class PortConfigBuilder : IPortOptionsBuilder
 
     public PortOptions Build()
     {
-        if (_descriptor is null)
-            throw new ArgumentNullException(nameof(_descriptor), "未初始化端口信息");
+        if (_transport is null)
+            throw new ArgumentNullException(nameof(_transport), "未初始化端口信息");
 
         return new PortOptions()
         {
-            Descriptor = _descriptor,
+            Transport = _transport,
             Devices = _devices
         };
     }
@@ -46,6 +46,6 @@ internal sealed class PortConfigBuilder : IPortOptionsBuilder
 
 internal sealed record class PortOptions
 {
-    public required IPortDescriptor Descriptor { get; init; }
+    public required ITransportDescriptor Transport { get; init; }
     public required IReadOnlyList<DeviceOptions> Devices { get; init; }
 }

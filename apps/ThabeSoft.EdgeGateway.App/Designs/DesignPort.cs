@@ -5,13 +5,13 @@ using ThabeSoft.EdgeGateway.Ports;
 
 namespace ThabeSoft.EdgeGateway.App.Designs;
 
-public sealed class DesignPort(IPortDescriptor portDescriptor, DesignGateway gateway) : IPort
+public sealed class DesignPort(ITransportDescriptor transportDescriptor, DesignGateway gateway) : IPort
 {
     private bool _isDisposed;
     private readonly ConcurrentDictionary<DeviceId, IDevice> _devices = [];
 
 
-    public ConnectionEndpoint Endpoint => portDescriptor.Transport.Address;
+    public ConnectionEndpoint Endpoint => transportDescriptor.Address;
     public bool IsOpen { get; private set; }
     public IReadOnlyDictionary<DeviceId, IDevice> Devices => _devices.AsReadOnly();
 

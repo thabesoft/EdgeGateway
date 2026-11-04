@@ -1,23 +1,9 @@
 ﻿using ThabeSoft.EdgeGateway.Transport;
-using ThabeSoft.EdgeGateway.Ports;
 
 namespace ThabeSoft.EdgeGateway.Options;
 
 public interface IPortOptionsBuilder
 {
-    IPortOptionsBuilder SetDescriptor(IPortDescriptor descriptor);
+    IPortOptionsBuilder WithTransport(ITransportDescriptor transportDescriptor);
     IPortOptionsBuilder AddDevice(Action<IDeviceOptionsBuilder> buildActnion);
-}
-
-
-public static class PortConfigBuilderExtensions
-{
-    extension(IPortOptionsBuilder builder)
-    {
-        public IPortOptionsBuilder SetDescriptor(ITransportDescriptor channelDescriptor)
-        {
-            ArgumentNullException.ThrowIfNull(channelDescriptor);
-            return builder.SetDescriptor(PortDescriptor.Create(channelDescriptor));
-        }
-    }
 }

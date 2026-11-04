@@ -16,6 +16,6 @@ public static class OptionsExtensions
     extension(IPortOptionsBuilder builder)
     {
         public IPortOptionsBuilder UseSerial(string portName, int baudRate = 9600, Parity parity = Parity.None, int dataBits = 8, StopBits stopBits = StopBits.One) =>
-            builder.SetDescriptor(SerialTransportDescriptor.Create(portName, baudRate, parity, dataBits, stopBits));
+            builder.WithTransport(SerialTransportDescriptor.Create(portName, baudRate, parity, dataBits, stopBits));
     }
 }

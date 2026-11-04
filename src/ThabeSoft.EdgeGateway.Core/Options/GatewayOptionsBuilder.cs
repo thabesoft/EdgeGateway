@@ -21,7 +21,7 @@ internal sealed class GatewayOptionsBuilder : IGatewayOptionsBuilder
         buildAction.Invoke(builder);
         var options = builder.Build();
 
-        _ports[options.Descriptor.Transport.Address] = options;
+        _ports[options.Transport.Address] = options;
         return this;
     }
 

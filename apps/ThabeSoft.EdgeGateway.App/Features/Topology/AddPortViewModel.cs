@@ -33,7 +33,7 @@ internal sealed partial class AddPortViewModel(ISukiDialog dialog, ISukiToastMan
             else if (IsSelectedSerialFrom) descriptor = SerialForm.Build();
 
             if (descriptor == null) return;
-            gatewayViewModel.AddPortCommand.Execute(PortDescriptor.Create(descriptor));
+            gatewayViewModel.AddPortCommand.Execute(descriptor);
 
             dialog.Dismiss();
         }

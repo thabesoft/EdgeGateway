@@ -29,7 +29,7 @@ internal sealed class GatewayHostedService(IGateway gateway, GatewayOptions opti
     {
         try
         {
-            var port = gateway.AddPort(options.Descriptor);
+            var port = gateway.AddPort(options.Transport);
 
             foreach (var device in options.Devices)
                 AddDevice(port, device);
@@ -37,7 +37,7 @@ internal sealed class GatewayHostedService(IGateway gateway, GatewayOptions opti
         catch (Exception ex)
         {
             loggeer.LogError(ex, "端口添加失败 [{Addr}]",
-                options.Descriptor.Transport.Address);
+                options.Transport.Address);
         }
     }
 

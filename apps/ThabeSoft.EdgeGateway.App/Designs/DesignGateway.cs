@@ -29,9 +29,9 @@ public sealed class DesignGateway : IGateway
         State = LifecycleState.Stopped;
     }
 
-    public IPort AddPort(IPortDescriptor descriptor)
+    public IPort AddPort(ITransportDescriptor transportDescriptor)
     {
-        var port = new DesignPort(descriptor, this);
+        var port = new DesignPort(transportDescriptor, this);
         _ports[port.Endpoint] = port;
         return port;
     }

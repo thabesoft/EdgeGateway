@@ -45,11 +45,11 @@ internal sealed partial class GatewayViewModel(IGateway gateway, PortViewModelFa
 
 
     [RelayCommand]
-    private void AddPort(IPortDescriptor portDescriptor)
+    private void AddPort(ITransportDescriptor transportDescriptor)
     {
-        if (portDescriptor is null) return;
+        if (transportDescriptor is null) return;
 
-        var port = gateway.AddPort(portDescriptor);
+        var port = gateway.AddPort(transportDescriptor);
         var portVm = portViewModelFactory(port);
 
         _ports.Add(portVm);

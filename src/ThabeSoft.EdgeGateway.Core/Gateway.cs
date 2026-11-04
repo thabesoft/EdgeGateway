@@ -20,11 +20,11 @@ internal sealed class Gateway(
     public IReadOnlyDictionary<ConnectionEndpoint, IPort> Ports => _ports;
 
 
-    public IPort AddPort(IPortDescriptor descriptor)
+    public IPort AddPort(ITransportDescriptor transportDescriptor)
     {
-        ArgumentNullException.ThrowIfNull(descriptor);
+        ArgumentNullException.ThrowIfNull(transportDescriptor);
 
-        var port = portFactory.Create(descriptor, this);
+        var port = portFactory.Create(transportDescriptor, this);
         return _ports[port.Endpoint] = port;
     }
     public async ValueTask RemovePortAsync(ConnectionEndpoint endpoint, CancellationToken cancellationToken = default)
@@ -98,12 +98,12 @@ internal sealed class Gateway(
 
 internal sealed class PortFactory(TransportFactory transportFactory, DeviceFactory deviceFactory)
 {
-    public Port Create(IPortDescriptor portDescriptor, IPortManager portManager)
+    public Port Create(ITransportDescriptor transportDescriptor, IPortManager portManager)
     {
         return new(CreateTransport, CreateDevice, endpoint => portManager.RemovePortAsync(endpoint, default));
 
         ITransportConnection CreateTransport() =>
-            transportFactory.Create(portDescriptor.Transport);
+            transportFactory.Create(transportDescriptor);
 
         Device CreateDevice(IDeviceDescriptor deviceDescriptor, IByteDuplex byteDuplex, IDeviceManager deviceManager) =>
             deviceFactory.Create(deviceDescriptor, byteDuplex, deviceManager);

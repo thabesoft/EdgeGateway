@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Polling;
+﻿namespace ThabeSoft.EdgeGateway.Tags;
 
 public enum TagValueState
 {

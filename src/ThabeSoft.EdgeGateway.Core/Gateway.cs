@@ -5,7 +5,6 @@ using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Transport.Byte;
 
 namespace ThabeSoft.EdgeGateway;
@@ -128,14 +127,14 @@ internal sealed class DeviceFactory(TagAccessorFactory tagAccessorFactory, ILogg
     {
         return new(descriptor, CreateTagAccessor, id => deviceManager.RemoveDeviceAsync(id, default), logger);
 
-        ITagAccessor CreateTagAccessor() =>
+        IProtocolAccessor CreateTagAccessor() =>
             tagAccessorFactory.Create(descriptor.Protocol, byteDuplex);
     }
 }
 
-internal sealed class TagAccessorFactory(IEnumerable<ITagAccessorFactory> factories)
+internal sealed class TagAccessorFactory(IEnumerable<IProtocolAccessorFactory> factories)
 {
-    public ITagAccessor Create(IProtocolDescriptor protocolDescriptor, IByteDuplex byteDuplex)
+    public IProtocolAccessor Create(IProtocolDescriptor protocolDescriptor, IByteDuplex byteDuplex)
     {
         return factories
             .FirstOrDefault(x => x.CanCreate(protocolDescriptor))

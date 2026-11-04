@@ -1,7 +1,6 @@
 ﻿using ThabeSoft.EdgeGateway.Addressing;
-using ThabeSoft.EdgeGateway.Tags;
 
-namespace ThabeSoft.EdgeGateway.Polling;
+namespace ThabeSoft.EdgeGateway.Tags;
 
 
 public interface ITagMonitor

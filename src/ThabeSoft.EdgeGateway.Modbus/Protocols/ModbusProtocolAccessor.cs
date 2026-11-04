@@ -2,11 +2,12 @@
 using System.Buffers.Binary;
 using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Codecs;
+using ThabeSoft.EdgeGateway.Protocols;
 
 namespace ThabeSoft.EdgeGateway.Tags;
 
 
-internal sealed class ModbusTagAccessor(IModbusMaster master) : ITagAccessor
+internal sealed class ModbusProtocolAccessor(IModbusMaster master) : IProtocolAccessor
 {
     public async ValueTask<T> ReadAsync<T>(TagDescriptor<T> tag, CancellationToken cancellationToken = default)
         where T : notnull

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Polling;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Triggers;

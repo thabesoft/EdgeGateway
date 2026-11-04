@@ -1,6 +1,6 @@
-﻿using ThabeSoft.EdgeGateway.Tags;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NModbus;
+using ThabeSoft.EdgeGateway.Protocols;
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
 namespace ThabeSoft.EdgeGateway;
@@ -17,7 +17,7 @@ public static class DependencyInjectionExtensions
         public IServiceCollection AddModbus()
         {
             descriptors.AddSingleton<IModbusFactory, ModbusFactory>();
-            descriptors.AddSingleton<ITagAccessorFactory, ModbusTagAccessorFactory>();
+            descriptors.AddSingleton<IProtocolAccessorFactory, ModbusProtocolAccessorFactory>();
             return descriptors;
         }
     }

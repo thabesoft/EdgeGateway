@@ -1,5 +1,4 @@
 ﻿using ThabeSoft.EdgeGateway.Addressing;
-using ThabeSoft.EdgeGateway.Polling;
 using ThabeSoft.EdgeGateway.Tags;
 
 namespace ThabeSoft.EdgeGateway.App.Designs;

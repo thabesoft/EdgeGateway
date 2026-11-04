@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using ThabeSoft.EdgeGateway.App.Features;
-using ThabeSoft.EdgeGateway.Polling;
+using ThabeSoft.EdgeGateway.Tags;
 
 namespace ThabeSoft.EdgeGateway.App.ViewModels;
 

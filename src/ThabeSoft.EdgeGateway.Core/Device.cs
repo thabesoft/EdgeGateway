@@ -11,7 +11,7 @@ namespace ThabeSoft.EdgeGateway;
 
 internal sealed class Device : ConcurrentLifecycleBase, IDevice, IOnDemandReadWrite
 {
-    private ITagAccessor _tagAccessor;
+    private IProtocolAccessor _tagAccessor;
     private readonly PollingScheduler _pollingScheduler;
     private readonly DeviceDisposedHandler _disposedCallbackHandler;
 
@@ -65,5 +65,5 @@ internal sealed class Device : ConcurrentLifecycleBase, IDevice, IOnDemandReadWr
     }
 }
 
-internal delegate ITagAccessor TagAccessorFactoryHandler();
+internal delegate IProtocolAccessor TagAccessorFactoryHandler();
 internal delegate ValueTask DeviceDisposedHandler(DeviceId id);

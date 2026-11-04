@@ -6,7 +6,7 @@ namespace ThabeSoft.EdgeGateway.Polling;
 public interface ITagMonitor
 {
     TagName Name { get; }
-    ITag Tag { get; }
+    ITagDescriptor Tag { get; }
 
 
     DateTimeOffset UpdateTime { get; }
@@ -19,12 +19,12 @@ public interface ITagMonitor<T> : ITagMonitor
 {
     event Action<T> Updated;
 
-    new ITag<T> Tag { get; }
+    new ITagDescriptor<T> Tag { get; }
     new T? Value { get; }
 
 
 #if NETCOREAPP
-    ITag ITagMonitor.Tag => Tag;
+    ITagDescriptor ITagMonitor.Tag => Tag;
     object? ITagMonitor.Value => Value;
 #endif
 }

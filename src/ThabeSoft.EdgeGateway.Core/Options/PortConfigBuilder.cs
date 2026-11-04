@@ -1,10 +1,9 @@
-﻿using ThabeSoft.EdgeGateway.Channels;
-using ThabeSoft.EdgeGateway.Ports;
+﻿using ThabeSoft.EdgeGateway.Ports;
 
 namespace ThabeSoft.EdgeGateway.Options;
 
 
-public sealed class PortConfigBuilder : IPortOptionsBuilder
+internal sealed class PortConfigBuilder : IPortOptionsBuilder
 {
     private IPortDescriptor? _descriptor;
     private readonly List<DeviceOptions> _devices = [];
@@ -42,4 +41,11 @@ public sealed class PortConfigBuilder : IPortOptionsBuilder
             Devices = _devices
         };
     }
+}
+
+
+internal sealed record class PortOptions
+{
+    public required IPortDescriptor Descriptor { get; init; }
+    public required IReadOnlyList<DeviceOptions> Devices { get; init; }
 }

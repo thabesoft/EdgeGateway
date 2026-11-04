@@ -63,13 +63,13 @@ file sealed class Device(
         StopAsync(cancellationToken);
 
 
-    public ValueTask<T> ReadNowAsync<T>(ITag<T> tag, CancellationToken cancellationToken = default) where T : notnull =>
+    public ValueTask<T> ReadNowAsync<T>(ITagDescriptor<T> tag, CancellationToken cancellationToken = default) where T : notnull =>
         tagAccessor.ReadAsync(tag, cancellationToken);
-    public ValueTask WriteNowAsync<T>(ITag<T> tag, T value, CancellationToken cancellationToken = default) where T : notnull =>
+    public ValueTask WriteNowAsync<T>(ITagDescriptor<T> tag, T value, CancellationToken cancellationToken = default) where T : notnull =>
         tagAccessor.WriteAsync(tag, value, cancellationToken);
 
 
-    public ITagMonitor<T> Register<T>(TagName tagName, ITag<T> tag, ITrigger pollingTrigger) where T : notnull =>
+    public ITagMonitor<T> Register<T>(TagName tagName, ITagDescriptor<T> tag, ITrigger pollingTrigger) where T : notnull =>
         _pollingScheduler.Register(tagName, tag, pollingTrigger);
     public void Unregister(TagName tagName) =>
         _pollingScheduler.Unregister(tagName);

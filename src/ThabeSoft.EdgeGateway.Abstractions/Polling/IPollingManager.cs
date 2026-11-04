@@ -8,7 +8,7 @@ public interface IPollingManager
 {
     IReadOnlyDictionary<TagName, ITagMonitor> TagMonitors { get; }
 
-    ITagMonitor<T> Register<T>(TagName tagName, ITag<T> tag, ITrigger trigger) where T : notnull;
+    ITagMonitor<T> Register<T>(TagName tagName, ITagDescriptor<T> tag, ITrigger trigger) where T : notnull;
     void Unregister(TagName tagName);
 }
 
@@ -17,7 +17,7 @@ public static class PollingManagerExtensions
 
     extension(IPollingManager pollingManager)
     {
-        public ITagMonitor<T> Register<T>(string tagName, ITag<T> tag, ITrigger trigger) where T : notnull =>
+        public ITagMonitor<T> Register<T>(string tagName, ITagDescriptor<T> tag, ITrigger trigger) where T : notnull =>
             pollingManager.Register(TagName.From(tagName), tag, trigger);
 
         public void Unregister(string tagName) =>

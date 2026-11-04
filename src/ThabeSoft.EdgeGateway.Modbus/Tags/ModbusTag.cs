@@ -3,15 +3,15 @@ using ThabeSoft.EdgeGateway.Codecs;
 
 namespace ThabeSoft.EdgeGateway.Tags;
 
-public sealed class ModbusTag<T> : ITag<T>
+public sealed class ModbusTag<T> : ITagDescriptor<T>
     where T : notnull
 {
     public required ModbusDataAddress Address { get; init; }
     public required ICodec<T> Codec { get; init; }
 
 
-    IDataAddress ITag.Address => Address;
-    ICodec ITag.Codec => Codec;
+    IDataAddress ITagDescriptor.Address => Address;
+    ICodec ITagDescriptor.Codec => Codec;
 
 
     internal ModbusTag() { }

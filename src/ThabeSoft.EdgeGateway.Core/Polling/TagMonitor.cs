@@ -3,12 +3,12 @@
 namespace ThabeSoft.EdgeGateway.Polling;
 
 
-internal sealed class TagMonitor<T>(TagName tagName, ITag<T> tag) : ITagMonitor<T>
+internal sealed class TagMonitor<T>(TagName tagName, ITagDescriptor<T> tag) : ITagMonitor<T>
     where T : notnull
 {
     public event Action<T>? Updated;
 
-    public ITag<T> Tag => tag;
+    public ITagDescriptor<T> Tag => tag;
     public TagName Name => tagName;
 
 
@@ -18,7 +18,7 @@ internal sealed class TagMonitor<T>(TagName tagName, ITag<T> tag) : ITagMonitor<
 
 
 #if NETSTANDARD
-    ITag ITagMonitor.Tag => Tag;
+    ITagDescriptor ITagMonitor.Tag => Tag;
     object? ITagMonitor.Value => Value;
 
 #endif

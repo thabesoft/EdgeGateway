@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Runtime.CompilerServices;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Hosting;
 using ThabeSoft.EdgeGateway.Options;
@@ -13,12 +15,11 @@ public static class DependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {
-        public IServiceCollection AddEdgeGateway(Action<GatewayOptionsBuilder>? buildAction = null)
+        public IServiceCollection AddEdgeGateway(Action<IGatewayOptionsBuilder>? buildAction = null)
         {
             // Options
-            var builder = new GatewayOptionsBuilder();
-            buildAction?.Invoke(builder);
-            descriptors.AddSingleton(builder.Build());
+            if (buildAction is not null)
+                descriptors.AddGatewayOptions(buildAction);
 
             // Core
             descriptors.AddSingleton<IPortFactory, PortFactory>();
@@ -29,5 +30,30 @@ public static class DependencyInjectionExtensions
 
             return descriptors;
         }
+
+
+        /// <summary>
+        /// 添加网关配置
+        /// </summary>
+        public IServiceCollection AddGatewayOptions(Action<IGatewayOptionsBuilder> buildAction)
+        {
+            // 配置实例
+            descriptors.TryAddSingleton<GatewayOptions>(sp =>
+            {
+                var builder = new GatewayOptionsBuilder();
+
+                foreach (var action in sp.GetServices<GatewayOptionsHandler>())
+                    action.Invoke(builder);
+
+                return builder.Build();
+            });
+
+            // 配置过程
+            if (buildAction is null) return descriptors;
+            return descriptors.AddSingleton(new GatewayOptionsHandler(buildAction));
+        }
     }
+
+
+    private delegate void GatewayOptionsHandler(IGatewayOptionsBuilder optionAction);
 }

@@ -3,17 +3,17 @@
 namespace ThabeSoft.EdgeGateway.Tags;
 
 
-public interface ITag<T> : ITag
+public interface ITagDescriptor<T> : ITagDescriptor
     where T : notnull
 {
     new ICodec<T> Codec { get; }
 
 #if NETCOREAPP
-    ICodec ITag.Codec => Codec;
+    ICodec ITagDescriptor.Codec => Codec;
 #endif
 }
 
-public interface ITag
+public interface ITagDescriptor
 {
     IDataAddress Address { get; }
     ICodec Codec { get; }

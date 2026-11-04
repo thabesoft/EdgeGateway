@@ -14,7 +14,7 @@ public class PollingSchedulerTests
         var mockTagReader = new Mock<ITagReader>();
         var pollingScheduler = new PollingScheduler(mockTagReader.Object);
 
-        var mockTag = new Mock<ITag<int>>();
+        var mockTag = new Mock<ITagDescriptor<int>>();
         var mockTrigger = new Mock<ITrigger>();
 
         _ = pollingScheduler.Register("test,", mockTag.Object, mockTrigger.Object);
@@ -32,7 +32,7 @@ public class PollingSchedulerTests
         var mockTagReader = new Mock<ITagReader>();
         var pollingScheduler = new PollingScheduler(mockTagReader.Object);
 
-        var mockTag = new Mock<ITag<int>>();
+        var mockTag = new Mock<ITagDescriptor<int>>();
         var mockTrigger = new Mock<ITrigger>();
 
         var tagMonitor = pollingScheduler.Register("test", mockTag.Object, mockTrigger.Object);

@@ -1,5 +1,6 @@
 ﻿using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Tags;
 
 namespace ThabeSoft.EdgeGateway.Options;
 

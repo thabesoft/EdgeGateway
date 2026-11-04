@@ -3,7 +3,7 @@
 namespace ThabeSoft.EdgeGateway.Options;
 
 
-public sealed class GatewayOptionsBuilder : IGatewayOptionsBuilder
+internal sealed class GatewayOptionsBuilder : IGatewayOptionsBuilder
 {
     private readonly Dictionary<ChannelAddress, PortOptions> _ports = [];
 
@@ -17,7 +17,6 @@ public sealed class GatewayOptionsBuilder : IGatewayOptionsBuilder
         return this;
     }
 
-
     public GatewayOptions Build()
     {
         return new()
@@ -25,4 +24,9 @@ public sealed class GatewayOptionsBuilder : IGatewayOptionsBuilder
             Ports = [.. _ports.Values]
         };
     }
+}
+
+internal sealed record class GatewayOptions
+{
+    public required IReadOnlyList<PortOptions> Ports { get; init; }
 }

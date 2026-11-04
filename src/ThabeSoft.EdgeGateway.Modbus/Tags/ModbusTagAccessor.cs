@@ -7,7 +7,7 @@ namespace ThabeSoft.EdgeGateway.Tags;
 
 internal sealed class ModbusTagAccessor(IModbusMaster master) : ITagAccessor
 {
-    public async ValueTask<T> ReadAsync<T>(ITag<T> tag, CancellationToken cancellationToken = default)
+    public async ValueTask<T> ReadAsync<T>(ITagDescriptor<T> tag, CancellationToken cancellationToken = default)
         where T : notnull
     {
         if (tag.Address is not ModbusDataAddress mosbus)
@@ -39,7 +39,7 @@ internal sealed class ModbusTagAccessor(IModbusMaster master) : ITagAccessor
         throw new InvalidProgramException();
     }
 
-    public async ValueTask WriteAsync<T>(ITag<T> tag, T value, CancellationToken cancellationToken = default)
+    public async ValueTask WriteAsync<T>(ITagDescriptor<T> tag, T value, CancellationToken cancellationToken = default)
         where T : notnull
     {
         if (tag.Address is not ModbusDataAddress modbus)

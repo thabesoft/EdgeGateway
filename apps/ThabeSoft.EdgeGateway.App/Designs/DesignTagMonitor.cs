@@ -4,7 +4,7 @@ using ThabeSoft.EdgeGateway.Tags;
 
 namespace ThabeSoft.EdgeGateway.App.Designs;
 
-public sealed class DesignTagMonitor<T>(ITagDescriptor<T> descriptor) : ITagMonitor<T>
+public sealed class DesignTagMonitor<T>(TagDescriptor<T> descriptor) : ITagMonitor<T>
     where T : notnull
 {
     public event Action<T>? Updated;

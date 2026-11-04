@@ -4,25 +4,7 @@ using ThabeSoft.EdgeGateway.Codecs;
 namespace ThabeSoft.EdgeGateway.Tags;
 
 
-public interface ITagDescriptor<T> : ITagDescriptor
-    where T : notnull
-{
-    new ICodec<T> Codec { get; }
-
-#if NETCOREAPP
-    ICodec ITagDescriptor.Codec => Codec;
-#endif
-}
-
-public interface ITagDescriptor
-{
-    TagId Id { get; }
-    IDataAddress Address { get; }
-    ICodec Codec { get; }
-}
-
-
-public sealed class TagDescriptor<T> : ITagDescriptor<T>
+public sealed class TagDescriptor<T>
      where T : notnull
 {
     internal TagDescriptor() { }
@@ -31,7 +13,6 @@ public sealed class TagDescriptor<T> : ITagDescriptor<T>
     public required TagId Id { get; init; }
     public required IDataAddress Address { get; init; }
     public required ICodec<T> Codec { get; init; }
-    ICodec ITagDescriptor.Codec => Codec;
 }
 
 public static class TagDescriptor

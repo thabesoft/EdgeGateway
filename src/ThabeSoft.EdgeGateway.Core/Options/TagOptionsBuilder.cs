@@ -9,11 +9,11 @@ internal sealed class TagOptionsBuilder<T> : ITagOptionsBuilder<T>
     where T : notnull
 {
     private TagId? _name;
-    private ITagDescriptor<T>? _descriptor;
+    private TagDescriptor<T>? _descriptor;
     private ITrigger? _trigger;
 
 
-    public ITagOptionsBuilder<T> WithDescriptor(ITagDescriptor<T> descriptor)
+    public ITagOptionsBuilder<T> WithDescriptor(TagDescriptor<T> descriptor)
     {
         ArgumentNullException.ThrowIfNull(descriptor);
 
@@ -68,7 +68,6 @@ public static class TagOptionsBuilderExtensions
 internal interface ITagOptions
 {
     TagId Name { get; }
-    ITagDescriptor Descriptor { get; }
     ITrigger Trigger { get; }
 
     void RegisterTo(IPollingManager pollingManager);
@@ -78,10 +77,8 @@ internal sealed class TagOptions<T> : ITagOptions
     where T : notnull
 {
     public required TagId Name { get; init; }
-    public required ITagDescriptor<T> Descriptor { get; init; }
+    public required TagDescriptor<T> Descriptor { get; init; }
     public required ITrigger Trigger { get; init; }
-
-    ITagDescriptor ITagOptions.Descriptor => Descriptor;
 
     void ITagOptions.RegisterTo(IPollingManager pollingManager) =>
         pollingManager.Register(Descriptor, Trigger);

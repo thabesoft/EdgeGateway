@@ -45,9 +45,9 @@ public static class DeviceOptionsBuilderExtensions
 {
     extension(IDeviceOptionsBuilder builder)
     {
-        public IDeviceOptionsBuilder AddFixedIntervalTriggerTag<T>(ITagDescriptor<T> tagDescriptor, TimeSpan timeSpan) where T : notnull =>
+        public IDeviceOptionsBuilder AddFixedIntervalTriggerTag<T>(TagDescriptor<T> tagDescriptor, TimeSpan timeSpan) where T : notnull =>
             builder.AddTag<T>(x => x.WithFixedIntervalTrigger(timeSpan).WithDescriptor(tagDescriptor));
-        public IDeviceOptionsBuilder AddTagWithFixedInterval<T>(ITagDescriptor<T> tagDescriptor, double milliseconds) where T : notnull =>
+        public IDeviceOptionsBuilder AddTagWithFixedInterval<T>(TagDescriptor<T> tagDescriptor, double milliseconds) where T : notnull =>
            builder.AddFixedIntervalTriggerTag(tagDescriptor, TimeSpan.FromMilliseconds(milliseconds));
     }
 }

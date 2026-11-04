@@ -22,7 +22,7 @@ public static class DeviceOptionsBuilderExtensions
         public IDeviceOptionsBuilder UseProtocol(IProtocolDescriptor descriptor) =>
             builder.SetDescriptor(DeviceDescriptor.Create(descriptor));
 
-        public IDeviceOptionsBuilder AddTag<T>(ITagDescriptor<T> descriptor, ITrigger trigger) where T : notnull =>
+        public IDeviceOptionsBuilder AddTag<T>(TagDescriptor<T> descriptor, ITrigger trigger) where T : notnull =>
            builder.AddTag<T>(x => x.WithDescriptor(descriptor).WithTrigger(trigger));
     }
 }

@@ -13,9 +13,8 @@ public interface IDevice : IDeviceLifecycle, IPollingManager, IAsyncDisposable
 
 public interface IOnDemandReadWrite
 {
-    ValueTask<T> ReadNowAsync<T>(ITagDescriptor<T> tag, CancellationToken ct = default) 
+    ValueTask<T> ReadNowAsync<T>(TagDescriptor<T> tag, CancellationToken ct = default) 
         where T : notnull;
-
-    ValueTask WriteNowAsync<T>(ITagDescriptor<T> tag, T value, CancellationToken ct = default)
+    ValueTask WriteNowAsync<T>(TagDescriptor<T> tag, T value, CancellationToken ct = default)
         where T : notnull;
 }

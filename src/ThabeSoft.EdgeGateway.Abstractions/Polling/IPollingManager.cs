@@ -8,7 +8,7 @@ public interface IPollingManager
 {
     IReadOnlyDictionary<TagId, ITagMonitor> TagMonitors { get; }
 
-    ITagMonitor<T> Register<T>(ITagDescriptor<T> descriptor, ITrigger trigger) where T : notnull;
+    ITagMonitor<T> Register<T>(TagDescriptor<T> descriptor, ITrigger trigger) where T : notnull;
     void Unregister(TagId id);
 }
 

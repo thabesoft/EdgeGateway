@@ -4,7 +4,7 @@ using ThabeSoft.EdgeGateway.Tags;
 namespace ThabeSoft.EdgeGateway.Polling;
 
 
-internal sealed class TagMonitor<T>(ITagDescriptor<T> tag) : ITagMonitor<T>
+internal sealed class TagMonitor<T>(TagDescriptor<T> tag) : ITagMonitor<T>
     where T : notnull
 {
     public event Action<T>? Updated;

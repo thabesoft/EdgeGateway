@@ -42,13 +42,13 @@ internal sealed class Device : ConcurrentLifecycleBase, IDevice, IOnDemandReadWr
         StopAsync(cancellationToken);
 
 
-    public ValueTask<T> ReadNowAsync<T>(ITagDescriptor<T> tag, CancellationToken cancellationToken = default) where T : notnull =>
+    public ValueTask<T> ReadNowAsync<T>(TagDescriptor<T> tag, CancellationToken cancellationToken = default) where T : notnull =>
         _tagAccessor.ReadAsync(tag, cancellationToken);
-    public ValueTask WriteNowAsync<T>(ITagDescriptor<T> tag, T value, CancellationToken cancellationToken = default) where T : notnull =>
+    public ValueTask WriteNowAsync<T>(TagDescriptor<T> tag, T value, CancellationToken cancellationToken = default) where T : notnull =>
         _tagAccessor.WriteAsync(tag, value, cancellationToken);
 
 
-    public ITagMonitor<T> Register<T>(ITagDescriptor<T> tag, ITrigger trigger) where T : notnull =>
+    public ITagMonitor<T> Register<T>(TagDescriptor<T> tag, ITrigger trigger) where T : notnull =>
         _pollingScheduler.Register(tag, trigger);
     public void Unregister(TagId id) =>
         _pollingScheduler.Unregister(id);

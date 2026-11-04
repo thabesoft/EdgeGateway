@@ -18,7 +18,7 @@ internal sealed class PollingScheduler(ITagReader tagReader, ILogger<PollingSche
     public IReadOnlyDictionary<TagId, ITagMonitor> TagMonitors => _context.ToDictionary(k => k.Key, v => v.Value.Monitor);
 
 
-    public ITagMonitor<T> Register<T>(ITagDescriptor<T> descriptor, ITrigger trigger) where T : notnull
+    public ITagMonitor<T> Register<T>(TagDescriptor<T> descriptor, ITrigger trigger) where T : notnull
     {
         var monitor = new TagMonitor<T>(descriptor);
         var disposer = trigger.Subscribe(async ct =>

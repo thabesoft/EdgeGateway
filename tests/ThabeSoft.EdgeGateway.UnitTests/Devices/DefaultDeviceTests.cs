@@ -14,7 +14,7 @@ public class DefaultDeviceTests
     {
 
         var timeProvider = new FakeTimeProvider();
-        var tag = ModbusTag.HoldingRegister(1, 0, WordCodec.BigEndian);
+        var tag = ModbusTags.HoldingRegister(1, 0, WordCodec.BigEndian);
         var trigger = new FixedIntervalTrigger(TimeSpan.FromSeconds(1), timeProvider);
 
         //device.Register("test", tag, );

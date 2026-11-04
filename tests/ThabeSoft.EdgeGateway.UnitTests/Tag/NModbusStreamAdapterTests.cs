@@ -1,4 +1,5 @@
 using Moq;
+using ThabeSoft.EdgeGateway.Transport.Byte;
 using ThabeSoft.EdgeGateway.IO;
 
 namespace ThabeSoft.EdgeGateway.Tag;
@@ -10,7 +11,7 @@ public class NModbusStreamAdapterTests
     [TestMethod]
     public void Read_UsesOffsetAndCount()
     {
-        var mockChannel = new Mock<IByteStream>();
+        var mockChannel = new Mock<IByteDuplex>();
         mockChannel
             .Setup(x => x.ReadAsync(It.IsAny<Memory<byte>>(), It.IsAny<CancellationToken>()))
             .Returns((Memory<byte> buffer, CancellationToken _) =>
@@ -36,7 +37,7 @@ public class NModbusStreamAdapterTests
     [TestMethod]
     public void Read_Timeout_ThrowsTimeoutException()
     {
-        var mockChannel = new Mock<IByteStream>();
+        var mockChannel = new Mock<IByteDuplex>();
         mockChannel
             .Setup(x => x.ReadAsync(It.IsAny<Memory<byte>>(), It.IsAny<CancellationToken>()))
             .Returns(async (Memory<byte> _, CancellationToken ct) =>
@@ -54,7 +55,7 @@ public class NModbusStreamAdapterTests
     [TestMethod]
     public void Write_UsesOffsetAndCount()
     {
-        var mockChannel = new Mock<IByteStream>();
+        var mockChannel = new Mock<IByteDuplex>();
         mockChannel
             .Setup(x => x.WriteAsync(It.IsAny<ReadOnlyMemory<byte>>(), It.IsAny<CancellationToken>()))
             .Returns(ValueTask.CompletedTask);

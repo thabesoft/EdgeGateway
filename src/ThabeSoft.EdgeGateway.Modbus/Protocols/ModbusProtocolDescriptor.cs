@@ -1,4 +1,4 @@
-﻿using ThabeSoft.EdgeGateway.Channels;
+﻿using ThabeSoft.EdgeGateway.Transport;
 
 namespace ThabeSoft.EdgeGateway.Protocols;
 

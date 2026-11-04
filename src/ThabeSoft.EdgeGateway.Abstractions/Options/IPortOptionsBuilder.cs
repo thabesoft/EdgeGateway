@@ -1,4 +1,4 @@
-﻿using ThabeSoft.EdgeGateway.Channels;
+﻿using ThabeSoft.EdgeGateway.Transport;
 using ThabeSoft.EdgeGateway.Ports;
 
 namespace ThabeSoft.EdgeGateway.Options;
@@ -14,7 +14,7 @@ public static class PortConfigBuilderExtensions
 {
     extension(IPortOptionsBuilder builder)
     {
-        public IPortOptionsBuilder SetDescriptor(IChannelDescriptor channelDescriptor)
+        public IPortOptionsBuilder SetDescriptor(ITransportDescriptor channelDescriptor)
         {
             ArgumentNullException.ThrowIfNull(channelDescriptor);
             return builder.SetDescriptor(PortDescriptor.Create(channelDescriptor));

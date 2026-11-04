@@ -1,5 +1,6 @@
 ﻿using NModbus;
 using System.Buffers.Binary;
+using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Codecs;
 
 namespace ThabeSoft.EdgeGateway.Tags;

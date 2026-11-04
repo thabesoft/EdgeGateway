@@ -1,4 +1,4 @@
-﻿using ThabeSoft.EdgeGateway.Channels;
+﻿using ThabeSoft.EdgeGateway.Transport;
 using ThabeSoft.EdgeGateway.Devices;
 
 namespace ThabeSoft.EdgeGateway.Ports;
@@ -6,5 +6,5 @@ namespace ThabeSoft.EdgeGateway.Ports;
 
 public interface IPort : IPortLifecycle, IDeviceManager, IAsyncDisposable
 {
-    ChannelAddress ChannelAddress { get; }
+    ConnectionEndpoint Endpoint { get; }
 }

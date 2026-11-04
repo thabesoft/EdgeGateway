@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ThabeSoft.EdgeGateway.App.Features;
-using ThabeSoft.EdgeGateway.Channels;
+using ThabeSoft.EdgeGateway.Transport;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Ports;
 
@@ -56,7 +56,7 @@ internal sealed partial class GatewayViewModel(IGateway gateway, PortViewModelFa
     }
 
     [RelayCommand]
-    private async Task RemovePortAsync(ChannelAddress channelAddress)
+    private async Task RemovePortAsync(ConnectionEndpoint channelAddress)
     {
         if (channelAddress is null) return;
 

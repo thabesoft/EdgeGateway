@@ -1,11 +1,19 @@
-﻿using ThabeSoft.EdgeGateway.Channels;
+﻿using ThabeSoft.EdgeGateway.Transport;
 
 namespace ThabeSoft.EdgeGateway.Options;
 
 
 internal sealed class GatewayOptionsBuilder : IGatewayOptionsBuilder
 {
-    private readonly Dictionary<ChannelAddress, PortOptions> _ports = [];
+    private bool _autoLaunch = true;
+    private readonly Dictionary<ConnectionEndpoint, PortOptions> _ports = [];
+
+
+    public IGatewayOptionsBuilder WithAutoLaunch(bool value)
+    {
+        _autoLaunch = value;
+        return this;
+    }
 
     public IGatewayOptionsBuilder AddPort(Action<IPortOptionsBuilder> buildAction)
     {
@@ -13,7 +21,7 @@ internal sealed class GatewayOptionsBuilder : IGatewayOptionsBuilder
         buildAction.Invoke(builder);
         var options = builder.Build();
 
-        _ports[options.Descriptor.ChannelDescriptor.Address] = options;
+        _ports[options.Descriptor.Transport.Address] = options;
         return this;
     }
 
@@ -21,6 +29,7 @@ internal sealed class GatewayOptionsBuilder : IGatewayOptionsBuilder
     {
         return new()
         {
+            AutoLaunch = _autoLaunch,
             Ports = [.. _ports.Values]
         };
     }
@@ -28,5 +37,6 @@ internal sealed class GatewayOptionsBuilder : IGatewayOptionsBuilder
 
 internal sealed record class GatewayOptions
 {
+    public required bool AutoLaunch { get; init; }
     public required IReadOnlyList<PortOptions> Ports { get; init; }
 }

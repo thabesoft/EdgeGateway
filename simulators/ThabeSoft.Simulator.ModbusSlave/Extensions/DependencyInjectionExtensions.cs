@@ -1,4 +1,5 @@
-﻿using ThabeSoft.Simulator.ModbusSlave;
+﻿using Microsoft.Extensions.Hosting;
+using ThabeSoft.Simulator.ModbusSlave;
 
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
@@ -17,6 +18,7 @@ public static class DependencyInjectionExtensions
 
             descriptors.AddSingleton<IModbusSerialSimulator>(x => x.GetRequiredService<ModbusRtuSimulator>());
             descriptors.AddSingleton<IModbusSimulator>(x => x.GetRequiredService<ModbusRtuSimulator>());
+            descriptors.AddHostedService<ModbusSimulatorHostedService>();
 
             return descriptors;
         }
@@ -32,4 +34,14 @@ public static class DependencyInjectionExtensions
             return descriptors;
         }
     }
+}
+
+
+internal sealed class ModbusSimulatorHostedService(IModbusSimulator simulator) : IHostedService
+{
+    public Task StartAsync(CancellationToken cancellationToken) =>
+        simulator.StartAsync(cancellationToken);
+
+    public Task StopAsync(CancellationToken cancellationToken) =>
+        simulator.StopAsync(cancellationToken);
 }

@@ -1,14 +1,13 @@
 ﻿using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Tags;
-using ThabeSoft.EdgeGateway.Triggers;
 
 namespace ThabeSoft.EdgeGateway.Options;
 
 
-public sealed class DeviceOptionsBuilder : IDeviceOptionsBuilder
+internal sealed class DeviceOptionsBuilder : IDeviceOptionsBuilder
 {
     private IDeviceDescriptor? _descriptor;
-    private readonly Dictionary<TagName, TagOptions> _tags = [];
+    private readonly Dictionary<TagName, ITagOptions> _tags = [];
 
 
     public IDeviceOptionsBuilder SetDescriptor(IDeviceDescriptor descriptor)
@@ -19,9 +18,9 @@ public sealed class DeviceOptionsBuilder : IDeviceOptionsBuilder
         return this;
     }
 
-    public IDeviceOptionsBuilder AddTag(Action<ITagOptionsBuilder> buildAction)
+    public IDeviceOptionsBuilder AddTag<T>(Action<ITagOptionsBuilder<T>> buildAction) where T : notnull
     {
-        var builder = new TagOptionsBuilder();
+        var builder = new TagOptionsBuilder<T>();
         buildAction?.Invoke(builder);
         var options = builder.Build();
 
@@ -36,13 +35,27 @@ public sealed class DeviceOptionsBuilder : IDeviceOptionsBuilder
 
         return new()
         {
-            Descriptor = _descriptor
+            Descriptor = _descriptor,
+            Tags = [.. _tags.Values]
         };
     }
 }
 
+public static class DeviceOptionsBuilderExtensions
+{
+    extension(IDeviceOptionsBuilder builder)
+    {
+        public IDeviceOptionsBuilder AddFixedIntervalTriggerTag<T>(ITagDescriptor<T> tagDescriptor, TimeSpan timeSpan) where T : notnull =>
+            builder.AddTag<T>(x => x.WithFixedIntervalTrigger(timeSpan).WithDescriptor(tagDescriptor));
+        public IDeviceOptionsBuilder AddTagWithFixedInterval<T>(ITagDescriptor<T> tagDescriptor, double milliseconds) where T : notnull =>
+           builder.AddFixedIntervalTriggerTag(tagDescriptor, TimeSpan.FromMilliseconds(milliseconds));
+    }
+}
 
-public sealed record class DeviceOptions
+
+
+internal sealed record class DeviceOptions
 {
     public required IDeviceDescriptor Descriptor { get; init; }
+    public required IReadOnlyList<ITagOptions> Tags { get; init; }
 }

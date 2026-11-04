@@ -33,6 +33,7 @@ public abstract class ResilientLifecycleBase(ILogger logger) : ILifecycle, IAsyn
 
 
     public LifecycleState State { get; private set; } = LifecycleState.Created;
+    protected bool IsRunning => State == LifecycleState.Running;
     protected bool IsDisposed => State == LifecycleState.Disposed;
 
 

@@ -1,26 +1,26 @@
-﻿using ThabeSoft.EdgeGateway.Channels;
+﻿using ThabeSoft.EdgeGateway.Transport;
 
 namespace ThabeSoft.EdgeGateway.Ports;
 
 
 public interface IPortDescriptor
 {
-    IChannelDescriptor ChannelDescriptor { get; }
+    ITransportDescriptor Transport { get; }
 }
 
 public sealed record class PortDescriptor : IPortDescriptor
 {
-    public required IChannelDescriptor ChannelDescriptor { get; init; }
+    public required ITransportDescriptor Transport { get; init; }
 
 
     private PortDescriptor() { }
-    public static PortDescriptor Create(IChannelDescriptor channelDescriptor)
+    public static PortDescriptor Create(ITransportDescriptor channelDescriptor)
     {
         ArgumentNullException.ThrowIfNull(channelDescriptor);
 
         return new()
         {
-            ChannelDescriptor = channelDescriptor
+            Transport = channelDescriptor
         };
     }
 }

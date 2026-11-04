@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.ComponentModel;
 using System.Net;
-using ThabeSoft.EdgeGateway.Channels;
+using ThabeSoft.EdgeGateway.Transport;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 
@@ -23,22 +23,22 @@ internal sealed partial class IpPortFormViewModel : ViewModelBase
 
     partial void OnIpChanged(string value)
     {
-        IpChannelDescriptor.ValidateIp(value, out var errorMessage);
+        IpTransportDescriptor.ValidateIp(value, out var errorMessage);
         TrySetPropertyError(nameof(Ip), errorMessage);
     }
     partial void OnPortChanged(int? value)
     {
-        IpChannelDescriptor.ValidatePort(value ?? 0, out var errorMessage);
+        IpTransportDescriptor.ValidatePort(value ?? 0, out var errorMessage);
         TrySetPropertyError(nameof(Port), errorMessage);
     }
     partial void OnTransportTypeChanged(IpTransportType value)
     {
-        IpChannelDescriptor.ValidateTransportType(value, out var errorMessage);
+        IpTransportDescriptor.ValidateTransportType(value, out var errorMessage);
         TrySetPropertyError(nameof(TransportType), errorMessage);
     }
 
-    public IpChannelDescriptor Build() =>
-        IpChannelDescriptor.Create(TransportType, new IPEndPoint(IPAddress.Parse(Ip), Port!.Value));
+    public IpTransportDescriptor Build() =>
+        IpTransportDescriptor.Create(TransportType, new IPEndPoint(IPAddress.Parse(Ip), Port!.Value));
 
     public void ValidateAllProperty()
     {

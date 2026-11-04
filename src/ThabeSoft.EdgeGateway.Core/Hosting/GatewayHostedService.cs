@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Options;
+using ThabeSoft.EdgeGateway.Ports;
 
 namespace ThabeSoft.EdgeGateway.Hosting;
 
@@ -9,8 +11,12 @@ internal sealed class GatewayHostedService(IGateway gateway, GatewayOptions opti
 {
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        Initialize(options);
-        await gateway.StartAsync(cancellationToken);
+        // 根据配置初始化
+        foreach (var options in options.Ports)
+            AddPort(gateway, options);
+
+        if (options.AutoLaunch)
+            await gateway.StartAsync(cancellationToken);
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)
@@ -19,32 +25,48 @@ internal sealed class GatewayHostedService(IGateway gateway, GatewayOptions opti
     }
 
 
-    public void Initialize(GatewayOptions options)
+    public void AddPort(IGateway gateway, PortOptions options)
     {
-        foreach (var portOptions in options.Ports)
+        try
         {
-            try
-            {
-                var port = gateway.AddPort(portOptions.Descriptor);
-                foreach (var deviceOptions in portOptions.Devices)
-                {
-                    try
-                    {
-                        var device = port.AddDevice(deviceOptions.Descriptor);
-                        //device.Register()
-                    }
-                    catch (Exception ex)
-                    {
-                        loggeer.LogError(ex, "设备配置失败 [{Id}], 所属通道地址:{Addr}",
-                            deviceOptions.Descriptor.DeviceId,
-                            portOptions.Descriptor.ChannelDescriptor.Address);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                loggeer.LogError(ex, "端口配置失败, 通道地址: {Addr}", portOptions.Descriptor.ChannelDescriptor.Address);
-            }
+            var port = gateway.AddPort(options.Descriptor);
+
+            foreach (var device in options.Devices)
+                AddDevice(port, device);
+        }
+        catch (Exception ex)
+        {
+            loggeer.LogError(ex, "端口添加失败 [{Addr}]",
+                options.Descriptor.Transport.Address);
+        }
+    }
+
+    public void AddDevice(IPort port, DeviceOptions options)
+    {
+        try
+        {
+            var device = port.AddDevice(options.Descriptor);
+
+            foreach (var tag in options.Tags)
+                AddTag(device, tag);
+        }
+        catch (Exception ex)
+        {
+            loggeer.LogError(ex, "设备添加失败 [{Id}], 所属通道地址:{Addr}",
+                options.Descriptor.DeviceId, port.Endpoint);
+        }
+    }
+
+    public void AddTag(IDevice device, ITagOptions tagOptions)
+    {
+        try
+        {
+            tagOptions.RegisterTo(device);
+        }
+        catch (Exception ex)
+        {
+            loggeer.LogError(ex, "标签添加失败 [{Name}], 所属设备Id: {Id}",
+                tagOptions.Name, device.Id);
         }
     }
 }

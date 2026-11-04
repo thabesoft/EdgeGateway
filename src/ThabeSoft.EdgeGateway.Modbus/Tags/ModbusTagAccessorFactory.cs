@@ -1,6 +1,6 @@
 ﻿using ThabeSoft.EdgeGateway.Protocols;
 using NModbus;
-using ThabeSoft.EdgeGateway.IO;
+using ThabeSoft.EdgeGateway.Transport.Byte;
 
 namespace ThabeSoft.EdgeGateway.Tags;
 
@@ -12,7 +12,7 @@ internal sealed class ModbusTagAccessorFactory(IModbusFactory modbusFactory) : I
         return descriptor is ModbusProtocolDescriptor;
     }
 
-    public ITagAccessor Create(IProtocolDescriptor descriptor, IByteStream byteStream)
+    public ITagAccessor Create(IProtocolDescriptor descriptor, IByteDuplex byteStream)
     {
         if (descriptor is not ModbusProtocolDescriptor modbus)
             throw new ArgumentException("描述不是 Modbus RTU。", nameof(descriptor));

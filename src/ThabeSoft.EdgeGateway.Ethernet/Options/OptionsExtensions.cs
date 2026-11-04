@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using ThabeSoft.EdgeGateway.Channels;
+using ThabeSoft.EdgeGateway.Transport;
 
 namespace ThabeSoft.EdgeGateway.Options;
 
@@ -28,7 +28,7 @@ public static class OptionsExtensions
     extension(IPortOptionsBuilder builder)
     {
         public IPortOptionsBuilder UseTcp(IPEndPoint iPEndPoint) =>
-            builder.SetDescriptor(IpChannelDescriptor.Tcp(iPEndPoint));
+            builder.SetDescriptor(IpTransportDescriptor.Tcp(iPEndPoint));
         public IPortOptionsBuilder UseTcp(IPAddress iPAddress, int port) =>
             builder.UseTcp(new IPEndPoint(iPAddress, port));
         public IPortOptionsBuilder UseTcp(string iPAddress, int port) =>
@@ -36,7 +36,7 @@ public static class OptionsExtensions
 
 
         public IPortOptionsBuilder UseUdp(IPEndPoint iPEndPoint) =>
-            builder.SetDescriptor(IpChannelDescriptor.Udp(iPEndPoint));
+            builder.SetDescriptor(IpTransportDescriptor.Udp(iPEndPoint));
         public IPortOptionsBuilder UseUdp(IPAddress iPAddress, int port) =>
             builder.UseUdp(new IPEndPoint(iPAddress, port));
         public IPortOptionsBuilder UseUdp(string iPAddress, int port) =>

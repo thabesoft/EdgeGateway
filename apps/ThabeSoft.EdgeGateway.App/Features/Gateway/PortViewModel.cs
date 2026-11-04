@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ThabeSoft.EdgeGateway.App.Features;
-using ThabeSoft.EdgeGateway.Channels;
+using ThabeSoft.EdgeGateway.Transport;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
@@ -18,7 +18,7 @@ internal sealed partial class PortViewModel(IPort port, DeviceViewModelFactory d
 
 
     public ICollection<DeviceViewModel> Devices => _devices;
-    public ChannelAddress ChannelAddress => port.ChannelAddress;
+    public ConnectionEndpoint ChannelAddress => port.Endpoint;
 
 
 

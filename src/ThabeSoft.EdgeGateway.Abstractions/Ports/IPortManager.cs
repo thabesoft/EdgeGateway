@@ -1,20 +1,20 @@
-﻿using ThabeSoft.EdgeGateway.Channels;
+﻿using ThabeSoft.EdgeGateway.Transport;
 
 namespace ThabeSoft.EdgeGateway.Ports;
 
 public interface IPortManager
 {
-    IReadOnlyDictionary<ChannelAddress, IPort> Ports { get; }
+    IReadOnlyDictionary<ConnectionEndpoint, IPort> Ports { get; }
 
     IPort AddPort(IPortDescriptor descriptor);
-    ValueTask RemovePortAsync(ChannelAddress id, CancellationToken cancellationToken = default);
+    ValueTask RemovePortAsync(ConnectionEndpoint id, CancellationToken cancellationToken = default);
 }
 
 public static class PortManagerExtensions
 {
     extension(IPortManager portManager)
     {
-        public IPort AddPort(IChannelDescriptor channelDescriptor)
+        public IPort AddPort(ITransportDescriptor channelDescriptor)
         {
             ArgumentNullException.ThrowIfNull(channelDescriptor);
 

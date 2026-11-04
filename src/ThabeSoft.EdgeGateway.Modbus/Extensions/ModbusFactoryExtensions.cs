@@ -1,4 +1,5 @@
 ﻿using NModbus.IO;
+using ThabeSoft.EdgeGateway.Transport.Byte;
 using ThabeSoft.EdgeGateway.IO;
 using ThabeSoft.EdgeGateway.Protocols;
 
@@ -27,7 +28,7 @@ internal static class ModbusFactoryExtensions
             };
         }
 
-        public IModbusMaster Create(ModbusFrameFormat modbusFrame, IByteStream byteStream)
+        public IModbusMaster Create(ModbusFrameFormat modbusFrame, IByteDuplex byteStream)
         {
             ArgumentNullException.ThrowIfNull(byteStream);
 

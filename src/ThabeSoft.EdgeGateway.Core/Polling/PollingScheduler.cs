@@ -18,29 +18,36 @@ internal sealed class PollingScheduler(ITagReader tagReader, ILogger<PollingSche
     public IReadOnlyDictionary<TagName, ITagMonitor> TagMonitors => _context.ToDictionary(k => k.Key, v => v.Value.Monitor);
 
 
-    public ITagMonitor<T> Register<T>(TagName tagName, ITagDescriptor<T> tag, ITrigger pollingTrigger) where T : notnull
+    public ITagMonitor<T> Register<T>(ITagDescriptor<T> descriptor, ITrigger trigger) where T : notnull
     {
-        var monitor = new TagMonitor<T>(tagName, tag);
-        var disposer = pollingTrigger.Subscribe(async ct =>
+        var monitor = new TagMonitor<T>(descriptor);
+        var disposer = trigger.Subscribe(async ct =>
         {
             try
             {
-                var value = await tagReader.ReadAsync(tag, ct);
+                logger.LogDebug("触发器回调, 开始读取标签值");
+
+                var value = await tagReader.ReadAsync(descriptor, ct);
                 monitor.SetValue(value);
+
+                logger.LogDebug("标签值已更新: {value}", value);
             }
             catch (Exception ex)
             {
                 monitor.SetError(ex);
+                logger.LogDebug(ex, "标签读取失败");
             }
         });
 
-        _context[tagName] = new(disposer)
+        _context[descriptor.Name] = new(disposer)
         {
             Monitor = monitor,
-            Trigger = pollingTrigger
+            Trigger = trigger
         };
         return monitor;
     }
+
+
     public void Unregister(TagName tagName)
     {
         if (!_context.TryRemove(tagName, out var context))

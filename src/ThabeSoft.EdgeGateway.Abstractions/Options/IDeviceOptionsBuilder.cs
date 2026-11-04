@@ -9,7 +9,7 @@ namespace ThabeSoft.EdgeGateway.Options;
 public interface IDeviceOptionsBuilder
 {
     IDeviceOptionsBuilder SetDescriptor(IDeviceDescriptor descriptor);
-    IDeviceOptionsBuilder AddTag(Action<ITagOptionsBuilder> buildAction);
+    IDeviceOptionsBuilder AddTag<T>(Action<ITagOptionsBuilder<T>> buildAction) where T : notnull;
 }
 
 public static class DeviceOptionsBuilderExtensions
@@ -22,7 +22,7 @@ public static class DeviceOptionsBuilderExtensions
         public IDeviceOptionsBuilder UseProtocol(IProtocolDescriptor descriptor) =>
             builder.SetDescriptor(DeviceDescriptor.Create(descriptor));
 
-        public IDeviceOptionsBuilder AddTag(TagName tagName, ITagDescriptor descriptor, ITrigger trigger) =>
-           builder.AddTag(x => x.WithDescriptor(descriptor).WithName(tagName).WithTrigger(trigger));
+        public IDeviceOptionsBuilder AddTag<T>(ITagDescriptor<T> descriptor, ITrigger trigger) where T : notnull =>
+           builder.AddTag<T>(x => x.WithDescriptor(descriptor).WithTrigger(trigger));
     }
 }

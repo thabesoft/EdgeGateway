@@ -3,19 +3,8 @@ using ThabeSoft.EdgeGateway.Triggers;
 
 namespace ThabeSoft.EdgeGateway.Options;
 
-public interface ITagOptionsBuilder
+public interface ITagOptionsBuilder<T> where T : notnull
 {
-    ITagOptionsBuilder WithDescriptor(ITagDescriptor descriptor);
-    ITagOptionsBuilder WithName(TagName name);
-    ITagOptionsBuilder WithTrigger(ITrigger trigger);
-}
-
-
-public static class TagOptionsBuilderExtensions
-{
-    extension(ITagOptionsBuilder builder)
-    {
-        public ITagOptionsBuilder WithName(string tagName) =>
-            builder.WithName(TagName.From(tagName));
-    }
+    ITagOptionsBuilder<T> WithDescriptor(ITagDescriptor<T> descriptor);
+    ITagOptionsBuilder<T> WithTrigger(ITrigger trigger);
 }

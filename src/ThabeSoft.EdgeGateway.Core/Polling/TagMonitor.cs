@@ -1,15 +1,17 @@
-﻿using ThabeSoft.EdgeGateway.Tags;
+﻿using ThabeSoft.EdgeGateway.Addressing;
+using ThabeSoft.EdgeGateway.Tags;
 
 namespace ThabeSoft.EdgeGateway.Polling;
 
 
-internal sealed class TagMonitor<T>(TagName tagName, ITagDescriptor<T> tag) : ITagMonitor<T>
+internal sealed class TagMonitor<T>(ITagDescriptor<T> tag) : ITagMonitor<T>
     where T : notnull
 {
     public event Action<T>? Updated;
 
-    public ITagDescriptor<T> Tag => tag;
-    public TagName Name => tagName;
+
+    public TagName Name => tag.Name;
+    public IDataAddress Address => tag.Address;
 
 
     public DateTimeOffset UpdateTime { get; private set; }
@@ -18,7 +20,6 @@ internal sealed class TagMonitor<T>(TagName tagName, ITagDescriptor<T> tag) : IT
 
 
 #if NETSTANDARD
-    ITagDescriptor ITagMonitor.Tag => Tag;
     object? ITagMonitor.Value => Value;
 
 #endif

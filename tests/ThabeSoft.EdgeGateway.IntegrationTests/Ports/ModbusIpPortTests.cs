@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
-using ThabeSoft.EdgeGateway.Channels;
+using ThabeSoft.EdgeGateway.Transport;
 using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Polling;
@@ -31,15 +31,15 @@ public class ModbusIpPortTests : GatewayTestBase
         await simulator.StartAsync(TestContext.CancellationToken);
         simulator.SetHoldingRegister(0, 100); // 初始值 100
 
-        var port = Gateway.AddPort(IpChannelDescriptor.Tcp(simulator.IPEndPoint));
+        var port = Gateway.AddPort(IpTransportDescriptor.Tcp(simulator.IPEndPoint));
         await port.OpenAsync(TestContext.CancellationToken);
 
         var device = port.AddDevice(ModbusProtocolDescriptor.Ip);
         await device.EnableAsync(TestContext.CancellationToken);
 
         var trigger = new SignalTrigger();
-        var tag = ModbusTag.HoldingRegister(simulator.UnitId, 0, WordCodec.BigEndian);
-        var tagMonitor = device.Register("温度", tag, trigger);
+        var tag = ModbusTags.HoldingRegister("温度", simulator.UnitId, 0, WordCodec.BigEndian);
+        var tagMonitor = device.Register(tag, trigger);
 
         // ================= 2. 第一次手动触发 =================
         await trigger.OnTickAsync(TestContext.CancellationToken);

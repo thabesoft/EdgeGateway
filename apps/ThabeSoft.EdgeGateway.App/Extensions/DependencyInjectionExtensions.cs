@@ -36,7 +36,7 @@ public static class DependencyInjectionExtensions
 #if DEBUG
                 services.AddEdgeGateway(gateway =>
                 {
-                    gateway.AddSerialPort("COM2", portBuildAction: x => x
+                    gateway.AddSerialPort("COM2", configure: x => x
                         .AddModbusRtuDevice(DeviceId.From("Serial_Rtu_Device"))
                         .AddModbusAsciiDevice(DeviceId.From("Serial_Ascii_Device")));
 

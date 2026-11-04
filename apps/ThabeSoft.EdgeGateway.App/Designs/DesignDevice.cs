@@ -30,10 +30,10 @@ public sealed class DesignDevice(IDeviceDescriptor deviceDescriptor, DesignPort 
     }
 
 
-    public ITagMonitor<T> Register<T>(TagName tagName, ITagDescriptor<T> tag, ITrigger trigger) where T : notnull
+    public ITagMonitor<T> Register<T>(ITagDescriptor<T> descriptor, ITrigger trigger) where T : notnull
     {
-        var monitor = new DesignTagMonitor<T>(tagName, tag);
-        _monitors[tagName] = monitor;
+        var monitor = new DesignTagMonitor<T>(descriptor);
+        _monitors[descriptor.Name] = monitor;
         return monitor;
     }
     public void Unregister(TagName tagName)

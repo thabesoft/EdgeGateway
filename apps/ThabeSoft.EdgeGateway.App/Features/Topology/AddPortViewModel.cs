@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using SukiUI.Dialogs;
 using SukiUI.Toasts;
 using ThabeSoft.EdgeGateway.App.ViewModels;
-using ThabeSoft.EdgeGateway.Channels;
+using ThabeSoft.EdgeGateway.Transport;
 using ThabeSoft.EdgeGateway.Ports;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
@@ -27,7 +27,7 @@ internal sealed partial class AddPortViewModel(ISukiDialog dialog, ISukiToastMan
     {
         try
         {
-            IChannelDescriptor? descriptor = null;
+            ITransportDescriptor? descriptor = null;
 
             if (IsSelectedIpFrom) descriptor = IpForm.Build();
             else if (IsSelectedSerialFrom) descriptor = SerialForm.Build();

@@ -10,7 +10,7 @@ internal sealed partial class TagViewModel(ITagMonitor monitor) : ViewModelBase
     public partial string Name { get; set; } = monitor.Name.ToString();
 
     [ObservableProperty]
-    public partial string Address { get; set; } = monitor.Tag.Address.ToString() ?? "";
+    public partial string Address { get; set; } = monitor.Address.ToString() ?? "";
 
 
     [ObservableProperty]

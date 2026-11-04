@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Ports;
 using System.Net;
-using ThabeSoft.EdgeGateway.Channels;
+using ThabeSoft.EdgeGateway.Transport;
 using ThabeSoft.EdgeGateway.Ports;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
@@ -12,7 +12,7 @@ internal sealed partial class SerialPortFormViewModel : ViewModelBase
 {
     public Parity[] ParitysOptions { get; } = [Parity.None, Parity.Odd, Parity.Even, Parity.Mark, Parity.Space];
     public StopBits[] StopBitsOptions { get; } = [StopBits.One, StopBits.OnePointFive, StopBits.Two];
-    public int[] BaudRatesOptions { get; } = SerialChannelDescriptor.StandardBaudRates;
+    public int[] BaudRatesOptions { get; } = SerialTransportDescriptor.StandardBaudRates;
     public string[] PortNameOptions => SerialPort.GetPortNames();
 
 
@@ -50,33 +50,33 @@ internal sealed partial class SerialPortFormViewModel : ViewModelBase
 
     partial void OnPortNameChanged(string value)
     {
-        SerialChannelDescriptor.ValidatePortName(value, out var errorMessage);
+        SerialTransportDescriptor.ValidatePortName(value, out var errorMessage);
         TrySetPropertyError(nameof(PortName), errorMessage);
     }
     partial void OnBaudRateChanged(int value)
     {
-        SerialChannelDescriptor.ValidateBaudRate(value, out var errorMessage);
+        SerialTransportDescriptor.ValidateBaudRate(value, out var errorMessage);
         TrySetPropertyError(nameof(BaudRate), errorMessage);
     }
     partial void OnParityChanged(Parity value)
     {
-        SerialChannelDescriptor.ValidateParity(value, out var errorMessage);
+        SerialTransportDescriptor.ValidateParity(value, out var errorMessage);
         TrySetPropertyError(nameof(Parity), errorMessage);
     }
     partial void OnDataBitsChanged(int value)
     {
-        SerialChannelDescriptor.ValidateDataBits(value, out var errorMessage);
+        SerialTransportDescriptor.ValidateDataBits(value, out var errorMessage);
         TrySetPropertyError(nameof(DataBits), errorMessage);
     }
     partial void OnStopBitsChanged(StopBits value)
     {
-        SerialChannelDescriptor.ValidateStopBits(value, out var errorMessage);
+        SerialTransportDescriptor.ValidateStopBits(value, out var errorMessage);
         TrySetPropertyError(nameof(StopBits), errorMessage);
     }
 
 
-    public SerialChannelDescriptor Build() =>
-        SerialChannelDescriptor.Create(PortName, BaudRate, Parity, DataBits, StopBits);
+    public SerialTransportDescriptor Build() =>
+        SerialTransportDescriptor.Create(PortName, BaudRate, Parity, DataBits, StopBits);
 
     public void ValidateAllProperty()
     {

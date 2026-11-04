@@ -1,4 +1,4 @@
-﻿using ThabeSoft.EdgeGateway.Channels;
+﻿using ThabeSoft.EdgeGateway.Transport;
 using Microsoft.Extensions.DependencyInjection;
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
@@ -14,8 +14,8 @@ public static class DependencyInjectionExtensions
         /// </summary>
         public IServiceCollection AddEthernet()
         {
-            descriptors.AddSingleton<IChannelFactory, TcpChannelFactory>();
-            descriptors.AddSingleton<IChannelFactory, UdpChannelFactory>();
+            descriptors.AddSingleton<ITransportFactory, TcpTransportConnectionFactory>();
+            descriptors.AddSingleton<ITransportFactory, UdpTransportConnectionFactory>();
 
             return descriptors;
         }

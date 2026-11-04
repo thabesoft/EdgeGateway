@@ -1,5 +1,5 @@
 ﻿using System.Collections.Concurrent;
-using ThabeSoft.EdgeGateway.Channels;
+using ThabeSoft.EdgeGateway.Transport;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ports;
 
@@ -11,7 +11,7 @@ public sealed class DesignPort(IPortDescriptor portDescriptor, DesignGateway gat
     private readonly ConcurrentDictionary<DeviceId, IDevice> _devices = [];
 
 
-    public ChannelAddress ChannelAddress => portDescriptor.ChannelDescriptor.Address;
+    public ConnectionEndpoint Endpoint => portDescriptor.Transport.Address;
     public bool IsOpen { get; private set; }
     public IReadOnlyDictionary<DeviceId, IDevice> Devices => _devices.AsReadOnly();
 
@@ -52,7 +52,7 @@ public sealed class DesignPort(IPortDescriptor portDescriptor, DesignGateway gat
         if (_isDisposed) return;
         _isDisposed = true;
 
-        await gateway.RemovePortAsync(ChannelAddress);
+        await gateway.RemovePortAsync(Endpoint);
         foreach (var i in _devices.Values) await i.DisposeAsync();
     }
 }

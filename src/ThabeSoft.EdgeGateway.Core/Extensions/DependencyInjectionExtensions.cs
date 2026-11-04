@@ -1,10 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using System.Runtime.CompilerServices;
-using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Hosting;
 using ThabeSoft.EdgeGateway.Options;
-using ThabeSoft.EdgeGateway.Ports;
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
 namespace ThabeSoft.EdgeGateway;
@@ -22,8 +19,11 @@ public static class DependencyInjectionExtensions
                 descriptors.AddGatewayOptions(buildAction);
 
             // Core
-            descriptors.AddSingleton<IPortFactory, PortFactory>();
-            descriptors.AddSingleton<IDeviceFactory, DeviceFactory>();
+            descriptors.AddSingleton<PortFactory>();
+            descriptors.AddSingleton<TransportFactory>();
+            descriptors.AddSingleton<DeviceFactory>();
+            descriptors.AddSingleton<TagAccessorFactory>();
+
 
             descriptors.AddSingleton<IGateway, Gateway>();
             descriptors.AddHostedService<GatewayHostedService>();

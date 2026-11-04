@@ -1,8 +1,9 @@
 ﻿using NModbus.IO;
+using ThabeSoft.EdgeGateway.Transport.Byte;
 
 namespace ThabeSoft.EdgeGateway.IO;
 
-internal sealed class NModbusStreamAdapter(IByteStream byteChannel) : IStreamResource
+internal sealed class NModbusStreamAdapter(IByteDuplex byteChannel) : IStreamResource
 {
     public int InfiniteTimeout { get; set; } = 1000;
     public int ReadTimeout { get; set; } = 1000;

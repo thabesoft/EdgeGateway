@@ -7,7 +7,7 @@ namespace ThabeSoft.EdgeGateway.Options;
 internal sealed class DeviceOptionsBuilder : IDeviceOptionsBuilder
 {
     private IDeviceDescriptor? _descriptor;
-    private readonly Dictionary<TagName, ITagOptions> _tags = [];
+    private readonly Dictionary<TagId, ITagOptions> _tags = [];
 
 
     public IDeviceOptionsBuilder SetDescriptor(IDeviceDescriptor descriptor)

@@ -7,7 +7,7 @@ namespace ThabeSoft.EdgeGateway.App.ViewModels;
 internal sealed partial class TagViewModel(ITagMonitor monitor) : ViewModelBase
 {
     [ObservableProperty]
-    public partial string Name { get; set; } = monitor.Name.ToString();
+    public partial string Name { get; set; } = monitor.Id.ToString();
 
     [ObservableProperty]
     public partial string Address { get; set; } = monitor.Address.ToString() ?? "";

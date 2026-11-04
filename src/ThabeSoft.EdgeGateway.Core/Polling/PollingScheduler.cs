@@ -10,12 +10,12 @@ namespace ThabeSoft.EdgeGateway.Polling;
 
 internal sealed class PollingScheduler(ITagReader tagReader, ILogger<PollingScheduler> logger) : ResilientLifecycleBase(logger), IPollingScheduler
 {
-    private readonly ConcurrentDictionary<TagName, Context> _context = [];
+    private readonly ConcurrentDictionary<TagId, Context> _context = [];
 
 
     public PollingScheduler(ITagReader tagReader) : this(tagReader, NullLogger<PollingScheduler>.Instance) { }
 
-    public IReadOnlyDictionary<TagName, ITagMonitor> TagMonitors => _context.ToDictionary(k => k.Key, v => v.Value.Monitor);
+    public IReadOnlyDictionary<TagId, ITagMonitor> TagMonitors => _context.ToDictionary(k => k.Key, v => v.Value.Monitor);
 
 
     public ITagMonitor<T> Register<T>(ITagDescriptor<T> descriptor, ITrigger trigger) where T : notnull
@@ -39,7 +39,7 @@ internal sealed class PollingScheduler(ITagReader tagReader, ILogger<PollingSche
             }
         });
 
-        _context[descriptor.Name] = new(disposer)
+        _context[descriptor.Id] = new(disposer)
         {
             Monitor = monitor,
             Trigger = trigger
@@ -48,9 +48,9 @@ internal sealed class PollingScheduler(ITagReader tagReader, ILogger<PollingSche
     }
 
 
-    public void Unregister(TagName tagName)
+    public void Unregister(TagId id)
     {
-        if (!_context.TryRemove(tagName, out var context))
+        if (!_context.TryRemove(id, out var context))
             return;
 
         context.Dispose();

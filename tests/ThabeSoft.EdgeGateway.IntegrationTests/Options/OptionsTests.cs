@@ -31,9 +31,9 @@ public class OptionsTests
                     {
                         port.AddModbusRtuDevice(device =>
                         {
-                            device.AddTagWithFixedInterval(ModbusTags.HoldingRegisterWord("测试1", 1, 100), 100);
-                            device.AddTagWithFixedInterval(ModbusTags.HoldingRegisterWord("测试1", 1, 100), 100);
-                            device.AddTagWithFixedInterval(ModbusTags.HoldingRegisterWord("测试1", 1, 100), 100);
+                            device.AddTagWithFixedInterval(ModbusTags.HoldingRegister(1, 100, WordCodec.BigEndian), 100);
+                            device.AddTagWithFixedInterval(ModbusTags.HoldingRegister(1, 100, WordCodec.BigEndian), 100);
+                            device.AddTagWithFixedInterval(ModbusTags.HoldingRegister(1, 100, WordCodec.BigEndian), 100);
                         });
                     });
                 });

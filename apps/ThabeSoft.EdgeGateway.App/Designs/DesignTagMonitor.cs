@@ -8,7 +8,7 @@ public sealed class DesignTagMonitor<T>(ITagDescriptor<T> descriptor) : ITagMoni
     where T : notnull
 {
     public event Action<T>? Updated;
-    public TagName Name => descriptor.Name;
+    public TagId Id => descriptor.Id;
     public IDataAddress Address => descriptor.Address;
 
 

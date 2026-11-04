@@ -10,7 +10,7 @@ internal sealed class TagMonitor<T>(ITagDescriptor<T> tag) : ITagMonitor<T>
     public event Action<T>? Updated;
 
 
-    public TagName Name => tag.Name;
+    public TagId Id => tag.Id;
     public IDataAddress Address => tag.Address;
 
 

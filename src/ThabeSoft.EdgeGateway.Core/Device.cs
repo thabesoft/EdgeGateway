@@ -33,7 +33,7 @@ internal sealed class Device : ConcurrentLifecycleBase, IDevice, IOnDemandReadWr
     public DeviceId Id { get; }
     public ProtocolType ProtocolType { get; }
     public bool IsEnabled => IsRunning;
-    public IReadOnlyDictionary<TagName, ITagMonitor> TagMonitors => _pollingScheduler.TagMonitors;
+    public IReadOnlyDictionary<TagId, ITagMonitor> TagMonitors => _pollingScheduler.TagMonitors;
 
 
     public ValueTask EnableAsync(CancellationToken cancellationToken = default) =>
@@ -50,8 +50,8 @@ internal sealed class Device : ConcurrentLifecycleBase, IDevice, IOnDemandReadWr
 
     public ITagMonitor<T> Register<T>(ITagDescriptor<T> tag, ITrigger trigger) where T : notnull =>
         _pollingScheduler.Register(tag, trigger);
-    public void Unregister(TagName tagName) =>
-        _pollingScheduler.Unregister(tagName);
+    public void Unregister(TagId id) =>
+        _pollingScheduler.Unregister(id);
 
 
     protected override ValueTask OnStartAsync(CancellationToken cancellationToken) =>

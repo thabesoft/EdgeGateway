@@ -9,13 +9,13 @@ namespace ThabeSoft.EdgeGateway.App.Designs;
 
 public sealed class DesignDevice(IDeviceDescriptor deviceDescriptor, DesignPort port) : IDevice
 {
-    private readonly ConcurrentDictionary<TagName, ITagMonitor> _monitors = [];
+    private readonly ConcurrentDictionary<TagId, ITagMonitor> _monitors = [];
 
 
     public DeviceId Id => deviceDescriptor.DeviceId;
     public ProtocolType ProtocolType => deviceDescriptor.Protocol.Type;
     public bool IsEnabled { get; private set; }
-    public IReadOnlyDictionary<TagName, ITagMonitor> TagMonitors => _monitors.AsReadOnly();
+    public IReadOnlyDictionary<TagId, ITagMonitor> TagMonitors => _monitors.AsReadOnly();
 
 
     public ValueTask EnableAsync(CancellationToken cancellationToken = default)
@@ -33,12 +33,12 @@ public sealed class DesignDevice(IDeviceDescriptor deviceDescriptor, DesignPort 
     public ITagMonitor<T> Register<T>(ITagDescriptor<T> descriptor, ITrigger trigger) where T : notnull
     {
         var monitor = new DesignTagMonitor<T>(descriptor);
-        _monitors[descriptor.Name] = monitor;
+        _monitors[descriptor.Id] = monitor;
         return monitor;
     }
-    public void Unregister(TagName tagName)
+    public void Unregister(TagId id)
     {
-        _monitors.TryRemove(tagName, out _);
+        _monitors.TryRemove(id, out _);
     }
 
     public async ValueTask DisposeAsync()

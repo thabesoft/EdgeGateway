@@ -6,7 +6,7 @@ namespace ThabeSoft.EdgeGateway.Polling;
 
 public interface ITagMonitor
 {
-    TagName Name { get; }
+    TagId Id { get; }
     IDataAddress Address { get; }
 
 

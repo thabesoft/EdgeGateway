@@ -17,7 +17,7 @@ public class PollingSchedulerTests
         var mockTag = new Mock<ITagDescriptor<int>>();
         var mockTrigger = new Mock<ITrigger>();
 
-        _ = pollingScheduler.Register("test,", mockTag.Object, mockTrigger.Object);
+        _ = pollingScheduler.Register(mockTag.Object, mockTrigger.Object);
 
 
         Assert.HasCount(1, pollingScheduler.TagMonitors);
@@ -35,8 +35,8 @@ public class PollingSchedulerTests
         var mockTag = new Mock<ITagDescriptor<int>>();
         var mockTrigger = new Mock<ITrigger>();
 
-        var tagMonitor = pollingScheduler.Register("test", mockTag.Object, mockTrigger.Object);
-        pollingScheduler.Unregister(tagMonitor.Name);
+        var tagMonitor = pollingScheduler.Register(mockTag.Object, mockTrigger.Object);
+        pollingScheduler.Unregister(tagMonitor.Id);
 
 
         Assert.HasCount(0, pollingScheduler.TagMonitors);

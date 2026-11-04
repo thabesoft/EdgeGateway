@@ -8,7 +8,7 @@ namespace ThabeSoft.EdgeGateway.Options;
 internal sealed class TagOptionsBuilder<T> : ITagOptionsBuilder<T>
     where T : notnull
 {
-    private TagName? _name;
+    private TagId? _name;
     private ITagDescriptor<T>? _descriptor;
     private ITrigger? _trigger;
 
@@ -21,7 +21,7 @@ internal sealed class TagOptionsBuilder<T> : ITagOptionsBuilder<T>
         return this;
     }
 
-    public ITagOptionsBuilder<T> WithName(TagName name)
+    public ITagOptionsBuilder<T> WithName(TagId name)
     {
         _name = name;
         return this;
@@ -67,7 +67,7 @@ public static class TagOptionsBuilderExtensions
 
 internal interface ITagOptions
 {
-    TagName Name { get; }
+    TagId Name { get; }
     ITagDescriptor Descriptor { get; }
     ITrigger Trigger { get; }
 
@@ -77,7 +77,7 @@ internal interface ITagOptions
 internal sealed class TagOptions<T> : ITagOptions
     where T : notnull
 {
-    public required TagName Name { get; init; }
+    public required TagId Name { get; init; }
     public required ITagDescriptor<T> Descriptor { get; init; }
     public required ITrigger Trigger { get; init; }
 

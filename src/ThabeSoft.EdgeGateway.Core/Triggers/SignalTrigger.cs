@@ -1,7 +1,7 @@
 ﻿namespace ThabeSoft.EdgeGateway.Triggers;
 
 
-public sealed class SignalTrigger : ITrigger
+internal sealed class SignalTrigger : ITrigger
 {
     private HashSet<TriggerHandler> _handlers = [];
     private readonly object _lock = new();

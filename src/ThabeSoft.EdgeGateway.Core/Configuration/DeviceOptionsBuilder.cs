@@ -1,16 +1,16 @@
 ﻿using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Tags;
 
-namespace ThabeSoft.EdgeGateway.Options;
+namespace ThabeSoft.EdgeGateway.Configuration;
 
 
-internal sealed class DeviceOptionsBuilder : IDeviceOptionsBuilder
+internal sealed class DeviceOptionsBuilder : IDeviceOptionsConfigurator
 {
     private DeviceDescriptor? _descriptor;
     private readonly Dictionary<TagId, ITagOptions> _tags = [];
 
 
-    public IDeviceOptionsBuilder SetDescriptor(DeviceDescriptor descriptor)
+    public IDeviceOptionsConfigurator SetDescriptor(DeviceDescriptor descriptor)
     {
         ArgumentNullException.ThrowIfNull(descriptor);
 
@@ -18,7 +18,7 @@ internal sealed class DeviceOptionsBuilder : IDeviceOptionsBuilder
         return this;
     }
 
-    public IDeviceOptionsBuilder AddTag<T>(Action<ITagOptionsBuilder<T>> buildAction) where T : notnull
+    public IDeviceOptionsConfigurator AddTag<T>(Action<ITagOptionsConfigurator<T>> buildAction) where T : notnull
     {
         var builder = new TagOptionsBuilder<T>();
         buildAction?.Invoke(builder);
@@ -43,11 +43,11 @@ internal sealed class DeviceOptionsBuilder : IDeviceOptionsBuilder
 
 public static class DeviceOptionsBuilderExtensions
 {
-    extension(IDeviceOptionsBuilder builder)
+    extension(IDeviceOptionsConfigurator builder)
     {
-        public IDeviceOptionsBuilder AddFixedIntervalTriggerTag<T>(TagDescriptor<T> tagDescriptor, TimeSpan timeSpan) where T : notnull =>
+        public IDeviceOptionsConfigurator AddFixedIntervalTriggerTag<T>(TagDescriptor<T> tagDescriptor, TimeSpan timeSpan) where T : notnull =>
             builder.AddTag<T>(x => x.WithFixedIntervalTrigger(timeSpan).WithDescriptor(tagDescriptor));
-        public IDeviceOptionsBuilder AddTagWithFixedInterval<T>(TagDescriptor<T> tagDescriptor, double milliseconds) where T : notnull =>
+        public IDeviceOptionsConfigurator AddTagWithFixedInterval<T>(TagDescriptor<T> tagDescriptor, double milliseconds) where T : notnull =>
            builder.AddFixedIntervalTriggerTag(tagDescriptor, TimeSpan.FromMilliseconds(milliseconds));
     }
 }

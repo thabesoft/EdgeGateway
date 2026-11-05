@@ -3,9 +3,9 @@ using ThabeSoft.EdgeGateway.Polling;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Triggers;
 
-namespace ThabeSoft.EdgeGateway.Options;
+namespace ThabeSoft.EdgeGateway.Configuration;
 
-internal sealed class TagOptionsBuilder<T> : ITagOptionsBuilder<T>
+internal sealed class TagOptionsBuilder<T> : ITagOptionsConfigurator<T>
     where T : notnull
 {
     private TagId? _name;
@@ -13,7 +13,7 @@ internal sealed class TagOptionsBuilder<T> : ITagOptionsBuilder<T>
     private ITrigger? _trigger;
 
 
-    public ITagOptionsBuilder<T> WithDescriptor(TagDescriptor<T> descriptor)
+    public ITagOptionsConfigurator<T> WithDescriptor(TagDescriptor<T> descriptor)
     {
         ArgumentNullException.ThrowIfNull(descriptor);
 
@@ -21,13 +21,13 @@ internal sealed class TagOptionsBuilder<T> : ITagOptionsBuilder<T>
         return this;
     }
 
-    public ITagOptionsBuilder<T> WithName(TagId name)
+    public ITagOptionsConfigurator<T> WithName(TagId name)
     {
         _name = name;
         return this;
     }
 
-    public ITagOptionsBuilder<T> WithTrigger(ITrigger trigger)
+    public ITagOptionsConfigurator<T> WithTrigger(ITrigger trigger)
     {
         _trigger = trigger;
         return this;
@@ -53,12 +53,12 @@ internal sealed class TagOptionsBuilder<T> : ITagOptionsBuilder<T>
 
 public static class TagOptionsBuilderExtensions
 {
-    extension<T>(ITagOptionsBuilder<T> builder) where T : notnull
+    extension<T>(ITagOptionsConfigurator<T> builder) where T : notnull
     {
-        public ITagOptionsBuilder<T> WithFixedIntervalTrigger(TimeSpan timeSpan) =>
+        public ITagOptionsConfigurator<T> WithFixedIntervalTrigger(TimeSpan timeSpan) =>
             builder.WithTrigger(new FixedIntervalTrigger(timeSpan));
 
-        public ITagOptionsBuilder<T> WithFixedIntervalTrigger(double milliseconds) =>
+        public ITagOptionsConfigurator<T> WithFixedIntervalTrigger(double milliseconds) =>
            builder.WithFixedIntervalTrigger(TimeSpan.FromMilliseconds(milliseconds));
     }
 }

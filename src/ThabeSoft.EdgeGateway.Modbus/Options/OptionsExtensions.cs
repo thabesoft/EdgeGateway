@@ -2,48 +2,48 @@
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Tags;
 
-namespace ThabeSoft.EdgeGateway.Options;
+namespace ThabeSoft.EdgeGateway.Configuration;
 
 
 public static class OptionsExtensions
 {
-    extension(IPortOptionsBuilder builder)
+    extension(IPortOptionsConfigurator builder)
     {
-        public IPortOptionsBuilder AddModbusRtuDevice(DeviceId deviceId, Action<IDeviceOptionsBuilder>? buildAction = null) =>
+        public IPortOptionsConfigurator AddModbusRtuDevice(DeviceId deviceId, Action<IDeviceOptionsConfigurator>? buildAction = null) =>
             builder.AddDevice(x => { buildAction?.Invoke(x); x.UseModbusRtu(deviceId); });
-        public IPortOptionsBuilder AddModbusRtuDevice(Action<IDeviceOptionsBuilder>? buildAction = null) =>
+        public IPortOptionsConfigurator AddModbusRtuDevice(Action<IDeviceOptionsConfigurator>? buildAction = null) =>
             builder.AddModbusRtuDevice(DeviceId.Create(), buildAction);
 
 
-        public IPortOptionsBuilder AddModbusAsciiDevice(DeviceId deviceId, Action<IDeviceOptionsBuilder>? buildAction = null) =>
+        public IPortOptionsConfigurator AddModbusAsciiDevice(DeviceId deviceId, Action<IDeviceOptionsConfigurator>? buildAction = null) =>
            builder.AddDevice(x => { buildAction?.Invoke(x); x.UseModbusAscii(deviceId); });
-        public IPortOptionsBuilder AddModbusAsciiDevice(Action<IDeviceOptionsBuilder>? buildAction = null) =>
+        public IPortOptionsConfigurator AddModbusAsciiDevice(Action<IDeviceOptionsConfigurator>? buildAction = null) =>
             builder.AddModbusAsciiDevice(DeviceId.Create(), buildAction);
 
 
-        public IPortOptionsBuilder AddModbusIpDevice(DeviceId deviceId, Action<IDeviceOptionsBuilder>? buildAction = null) =>
+        public IPortOptionsConfigurator AddModbusIpDevice(DeviceId deviceId, Action<IDeviceOptionsConfigurator>? buildAction = null) =>
            builder.AddDevice(x => { buildAction?.Invoke(x); x.UseModbusIp(deviceId); });
-        public IPortOptionsBuilder AddModbusIpDevice(Action<IDeviceOptionsBuilder>? buildAction = null) =>
+        public IPortOptionsConfigurator AddModbusIpDevice(Action<IDeviceOptionsConfigurator>? buildAction = null) =>
             builder.AddModbusIpDevice(DeviceId.Create(), buildAction);
     }
 
-    extension(IDeviceOptionsBuilder builder)
+    extension(IDeviceOptionsConfigurator builder)
     {
-        public IDeviceOptionsBuilder UseModbusRtu(DeviceId deviceId) =>
+        public IDeviceOptionsConfigurator UseModbusRtu(DeviceId deviceId) =>
             builder.UseProtocol(deviceId, ModbusProtocolDescriptor.Rtu);
-        public IDeviceOptionsBuilder UseModbusRtu() =>
+        public IDeviceOptionsConfigurator UseModbusRtu() =>
             builder.UseModbusRtu(DeviceId.Create());
 
 
-        public IDeviceOptionsBuilder UseModbusAscii(DeviceId deviceId) =>
+        public IDeviceOptionsConfigurator UseModbusAscii(DeviceId deviceId) =>
             builder.UseProtocol(deviceId, ModbusProtocolDescriptor.Ascii);
-        public IDeviceOptionsBuilder UseModbusAscii() =>
+        public IDeviceOptionsConfigurator UseModbusAscii() =>
             builder.UseModbusAscii(DeviceId.Create());
 
 
-        public IDeviceOptionsBuilder UseModbusIp(DeviceId deviceId) =>
+        public IDeviceOptionsConfigurator UseModbusIp(DeviceId deviceId) =>
             builder.UseProtocol(deviceId, ModbusProtocolDescriptor.Ip);
-        public IDeviceOptionsBuilder UseModbusIp() =>
+        public IDeviceOptionsConfigurator UseModbusIp() =>
             builder.UseModbusIp(DeviceId.Create());
     }
 }

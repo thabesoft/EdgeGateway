@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using ThabeSoft.EdgeGateway.Hosting;
-using ThabeSoft.EdgeGateway.Options;
+using ThabeSoft.EdgeGateway.Configuration;
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
 namespace ThabeSoft.EdgeGateway;
@@ -12,7 +12,7 @@ public static class DependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {
-        public IServiceCollection AddEdgeGateway(Action<IGatewayOptionsBuilder>? buildAction = null)
+        public IServiceCollection AddEdgeGateway(Action<IGatewayOptionsConfigurator>? buildAction = null)
         {
             // Options
             if (buildAction is not null)
@@ -35,7 +35,7 @@ public static class DependencyInjectionExtensions
         /// <summary>
         /// 添加网关配置
         /// </summary>
-        public IServiceCollection AddGatewayOptions(Action<IGatewayOptionsBuilder> buildAction)
+        public IServiceCollection AddGatewayOptions(Action<IGatewayOptionsConfigurator> buildAction)
         {
             // 配置实例
             descriptors.TryAddSingleton<GatewayOptions>(sp =>
@@ -55,5 +55,5 @@ public static class DependencyInjectionExtensions
     }
 
 
-    private delegate void GatewayOptionsHandler(IGatewayOptionsBuilder optionAction);
+    private delegate void GatewayOptionsHandler(IGatewayOptionsConfigurator optionAction);
 }

@@ -1,22 +1,22 @@
 ﻿using ThabeSoft.EdgeGateway.Transport;
 
-namespace ThabeSoft.EdgeGateway.Options;
+namespace ThabeSoft.EdgeGateway.Configuration;
 
 
-internal sealed class PortConfigBuilder : IPortOptionsBuilder
+internal sealed class PortConfigBuilder : IPortOptionsConfigurator
 {
     private ITransportDescriptor? _transport;
     private readonly List<DeviceOptions> _devices = [];
 
 
-    public IPortOptionsBuilder WithTransport(ITransportDescriptor transportDescriptor)
+    public IPortOptionsConfigurator WithTransport(ITransportDescriptor transportDescriptor)
     {
         ArgumentNullException.ThrowIfNull(transportDescriptor);
 
         _transport = transportDescriptor;
         return this;
     }
-    public IPortOptionsBuilder AddDevice(Action<IDeviceOptionsBuilder> buildAction)
+    public IPortOptionsConfigurator AddDevice(Action<IDeviceOptionsConfigurator> buildAction)
     {
         var builder = new DeviceOptionsBuilder();
         buildAction.Invoke(builder);

@@ -13,7 +13,7 @@ using ThabeSoft.EdgeGateway.App.Features.Topology;
 using ThabeSoft.EdgeGateway.App.Services;
 using ThabeSoft.EdgeGateway.App.ViewModels;
 using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Options;
+using ThabeSoft.EdgeGateway.Configuration;
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
 namespace ThabeSoft.EdgeGateway;

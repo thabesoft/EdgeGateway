@@ -1,21 +1,21 @@
 ﻿using System.IO.Ports;
 using ThabeSoft.EdgeGateway.Transport;
 
-namespace ThabeSoft.EdgeGateway.Options;
+namespace ThabeSoft.EdgeGateway.Configuration;
 
 
 public static class OptionsExtensions
 {
-    extension(IGatewayOptionsBuilder builder)
+    extension(IGatewayOptionsConfigurator builder)
     {
-        public IGatewayOptionsBuilder AddSerialPort(string portName, int baudRate = 9600, Parity parity = Parity.None, int dataBits = 8, StopBits stopBits = StopBits.One, Action<IPortOptionsBuilder>? configure = null) =>
+        public IGatewayOptionsConfigurator AddSerialPort(string portName, int baudRate = 9600, Parity parity = Parity.None, int dataBits = 8, StopBits stopBits = StopBits.One, Action<IPortOptionsConfigurator>? configure = null) =>
             builder.AddPort(x => { configure?.Invoke(x); x.UseSerial(portName, baudRate, parity, dataBits, stopBits); });
 
     }
 
-    extension(IPortOptionsBuilder builder)
+    extension(IPortOptionsConfigurator builder)
     {
-        public IPortOptionsBuilder UseSerial(string portName, int baudRate = 9600, Parity parity = Parity.None, int dataBits = 8, StopBits stopBits = StopBits.One) =>
+        public IPortOptionsConfigurator UseSerial(string portName, int baudRate = 9600, Parity parity = Parity.None, int dataBits = 8, StopBits stopBits = StopBits.One) =>
             builder.WithTransport(SerialTransportDescriptor.Create(portName, baudRate, parity, dataBits, stopBits));
     }
 }

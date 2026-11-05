@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Options;
+using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Ports;
 
 namespace ThabeSoft.EdgeGateway.Hosting;

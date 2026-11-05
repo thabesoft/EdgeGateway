@@ -4,7 +4,7 @@ using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.Simulator.ModbusSlave;
 
-namespace ThabeSoft.EdgeGateway.Options;
+namespace ThabeSoft.EdgeGateway.Configuration;
 
 
 [TestClass]

@@ -1,21 +1,21 @@
 ﻿using ThabeSoft.EdgeGateway.Transport;
 
-namespace ThabeSoft.EdgeGateway.Options;
+namespace ThabeSoft.EdgeGateway.Configuration;
 
 
-internal sealed class GatewayOptionsBuilder : IGatewayOptionsBuilder
+internal sealed class GatewayOptionsBuilder : IGatewayOptionsConfigurator
 {
     private bool _autoLaunch = true;
     private readonly Dictionary<ConnectionEndpoint, PortOptions> _ports = [];
 
 
-    public IGatewayOptionsBuilder WithAutoLaunch(bool value)
+    public IGatewayOptionsConfigurator WithAutoLaunch(bool value)
     {
         _autoLaunch = value;
         return this;
     }
 
-    public IGatewayOptionsBuilder AddPort(Action<IPortOptionsBuilder> buildAction)
+    public IGatewayOptionsConfigurator AddPort(Action<IPortOptionsConfigurator> buildAction)
     {
         var builder = new PortConfigBuilder();
         buildAction.Invoke(builder);

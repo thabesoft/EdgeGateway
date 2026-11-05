@@ -3,36 +3,35 @@
 
 internal sealed class SignalTrigger : ITrigger
 {
-    private HashSet<TriggerHandler> _handlers = [];
-    private readonly object _lock = new();
+    private readonly SemaphoreSlim _signal = new(0);
+    private readonly CancellationTokenSource _cts = new();
+    private bool _disposed;
 
 
-    public IDisposable Subscribe(TriggerHandler onTick)
+    public void Signal()
     {
-        ArgumentNullException.ThrowIfNull(onTick);
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        _signal.Release();
+    }
+    public async ValueTask<bool> WaitForNextTickAsync(CancellationToken cancellationToken)
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
 
-        lock (_lock)
-        {
-            _handlers.Add(onTick);
-        }
+        using var linked = CancellationTokenSource.CreateLinkedTokenSource(
+            cancellationToken, _cts.Token);
 
-        return new Disposer(() =>
-        {
-            lock (_lock) { _handlers.Remove(onTick); }
-        });
+        await _signal.WaitAsync(linked.Token);
+        return true;
     }
 
-    public async ValueTask OnTickAsync(CancellationToken cancellationToken = default)
+    public ValueTask DisposeAsync()
     {
-        TriggerHandler[] snapshot;
-        lock (_lock)
-        {
-            snapshot = [.. _handlers];
-        }
+        if (_disposed) return ValueTask.CompletedTask;
+        _disposed = true;
 
-        foreach (var handler in snapshot)
-        {
-            await handler.Invoke(cancellationToken);
-        }
+        _cts.Cancel();
+        _cts.Dispose();
+        _signal.Dispose();
+        return ValueTask.CompletedTask;
     }
 }

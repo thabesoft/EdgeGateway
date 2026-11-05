@@ -1,9 +1,7 @@
 ﻿namespace ThabeSoft.EdgeGateway.Triggers;
 
 
-public interface ITrigger
+public interface ITrigger : IAsyncDisposable
 {
-    IDisposable Subscribe(TriggerHandler handler);
+    ValueTask<bool> WaitForNextTickAsync(CancellationToken cancellationToken = default);
 }
-
-public delegate ValueTask TriggerHandler(CancellationToken cancellationToken = default);

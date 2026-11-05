@@ -49,7 +49,7 @@ internal sealed partial class GatewayViewModel(IGateway gateway, PortViewModelFa
     {
         if (transportDescriptor is null) return;
 
-        var port = gateway.AddPort(transportDescriptor);
+        var port = gateway.RegisterPort(transportDescriptor);
         var portVm = portViewModelFactory(port);
 
         _ports.Add(portVm);

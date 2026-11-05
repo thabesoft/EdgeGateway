@@ -13,7 +13,7 @@ internal delegate DeviceViewModel DeviceViewModelFactory(IDevice device);
 
 internal sealed partial class DeviceViewModel(IDevice device) : ViewModelBase
 {
-    private readonly AvaloniaList<TagViewModel> _tagMonitors = [..device.TagMonitors.Values.Select(device =>
+    private readonly AvaloniaList<TagViewModel> _tagMonitors = [..device.Subscriptions.Select(device =>
         new TagViewModel(device))];
 
 

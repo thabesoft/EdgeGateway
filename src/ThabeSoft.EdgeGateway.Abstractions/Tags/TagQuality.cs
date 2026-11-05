@@ -1,6 +1,7 @@
 ﻿namespace ThabeSoft.EdgeGateway.Tags;
 
-public enum TagValueState
+
+public enum TagQuality
 {
     Unknown,
     Good,

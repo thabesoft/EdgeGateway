@@ -13,7 +13,7 @@ internal sealed class GatewayHostedService(IGateway gateway, GatewayOptions opti
     {
         // 根据配置初始化
         foreach (var options in options.Ports)
-            AddPort(gateway, options);
+            await AddPort(gateway, options);
 
         if (options.AutoLaunch)
             await gateway.StartAsync(cancellationToken);
@@ -25,30 +25,30 @@ internal sealed class GatewayHostedService(IGateway gateway, GatewayOptions opti
     }
 
 
-    public void AddPort(IGateway gateway, PortOptions options)
+    public async ValueTask AddPort(IGateway gateway, PortOptions options)
     {
         try
         {
-            var port = gateway.AddPort(options.Transport);
+            var port = await gateway.AddPortAsync(options.Transport);
 
             foreach (var device in options.Devices)
-                AddDevice(port, device);
+                await AddDevice(port, device);
         }
         catch (Exception ex)
         {
             loggeer.LogError(ex, "端口添加失败 [{Addr}]",
-                options.Transport.Address);
+                options.Transport.Endpoint);
         }
     }
 
-    public void AddDevice(IPort port, DeviceOptions options)
+    public async ValueTask AddDevice(IPort port, DeviceOptions options)
     {
         try
         {
-            var device = port.AddDevice(options.Descriptor);
+            var device = await port.AddDeviceAsync(options.Descriptor);
 
-            foreach (var tag in options.Tags)
-                AddTag(device, tag);
+            //foreach (var tag in options.Tags)
+            //    AddTag(device, tag);
         }
         catch (Exception ex)
         {
@@ -57,16 +57,17 @@ internal sealed class GatewayHostedService(IGateway gateway, GatewayOptions opti
         }
     }
 
-    public void AddTag(IDevice device, ITagOptions tagOptions)
-    {
-        try
-        {
-            tagOptions.RegisterTo(device);
-        }
-        catch (Exception ex)
-        {
-            loggeer.LogError(ex, "标签添加失败 [{Name}], 所属设备Id: {Id}",
-                tagOptions.Name, device.Id);
-        }
-    }
+    //public void AddTag(IDevice device, ITagOptions tagOptions)
+    //{
+    //    try
+    //    {
+    //        device.AddSubscriptionAsync()
+    //        tagOptions.re(device);
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        loggeer.LogError(ex, "标签添加失败 [{Name}], 所属设备Id: {Id}",
+    //            tagOptions.Name, device.Id);
+    //    }
+    //}
 }

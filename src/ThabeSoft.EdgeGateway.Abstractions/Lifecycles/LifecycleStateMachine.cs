@@ -38,6 +38,7 @@ public abstract class LifecycleStateMachine(ILogger logger) : ILifecycle, IAsync
                 case LifecycleState.Stopped:
                     break;
                 case LifecycleState.Running:
+                    return;
                 case LifecycleState.Starting:
                     throw new InvalidOperationException($"当前状态 {State} 不能启动");
                 case LifecycleState.Stopping:
@@ -85,7 +86,7 @@ public abstract class LifecycleStateMachine(ILogger logger) : ILifecycle, IAsync
                 case LifecycleState.Running:
                     break;
                 case LifecycleState.Stopped:
-                    throw new InvalidOperationException($"当前状态 {State} 不能停止（未运行）");
+                    return;
                 case LifecycleState.Starting:
                     throw new InvalidOperationException("正在启动中，不能停止");
                 case LifecycleState.Stopping:

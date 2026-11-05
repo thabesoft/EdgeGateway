@@ -44,7 +44,7 @@ internal sealed partial class PortViewModel(IPort port, DeviceViewModelFactory d
     [RelayCommand]
     private void AddDevice(DeviceDescriptor deviceDescriptor)
     {
-        var device = port.AddDevice(deviceDescriptor);
+        var device = port.AddDeviceAsync(deviceDescriptor);
         var deviceVm = deviceViewModelFactory(device);
 
         _devices.Add(deviceVm);
@@ -53,7 +53,7 @@ internal sealed partial class PortViewModel(IPort port, DeviceViewModelFactory d
     [RelayCommand]
     private void AddDeviceFromProtocol(IProtocolDescriptor protocolDescriptor)
     {
-        var device = port.AddDevice(protocolDescriptor);
+        var device = port.AddDeviceAsync(protocolDescriptor);
         var deviceVm = deviceViewModelFactory(device);
 
         _devices.Add(deviceVm);

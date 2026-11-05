@@ -15,7 +15,7 @@ internal sealed class SerialTransportConnection(SerialTransportDescriptor descri
         stopBits: descriptor.StopBits);
 
 
-    public ConnectionEndpoint Endpoint { get; } = descriptor.Address;
+    public ConnectionEndpoint Endpoint { get; } = descriptor.Endpoint;
 
 
     public ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default) =>

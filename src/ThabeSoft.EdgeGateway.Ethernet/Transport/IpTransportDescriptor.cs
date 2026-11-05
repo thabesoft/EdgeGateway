@@ -6,7 +6,7 @@ namespace ThabeSoft.EdgeGateway.Transport;
 
 public sealed record IpTransportDescriptor : ITransportDescriptor
 {
-    public required ConnectionEndpoint Address { get; init; }
+    public required ConnectionEndpoint Endpoint { get; init; }
     public required IpTransportType TransportType { get; init; }
     public required IPAddress IPAddress { get; init; }
     public required int Port { get; init; }
@@ -27,7 +27,7 @@ public sealed record IpTransportDescriptor : ITransportDescriptor
 
         return new()
         {
-            Address = ConnectionEndpoint.Ethernet(iPEndPoint),
+            Endpoint = ConnectionEndpoint.Ethernet(iPEndPoint),
             TransportType = transportType,
             IPAddress = iPEndPoint.Address,
             Port = iPEndPoint.Port

@@ -8,7 +8,7 @@ internal sealed class UdpTransportConnection(IpTransportDescriptor descriptor) :
     private readonly UdpClient _udpClient = new();
 
 
-    public ConnectionEndpoint Endpoint { get; } = descriptor.Address;
+    public ConnectionEndpoint Endpoint { get; } = descriptor.Endpoint;
 
 
     public async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)

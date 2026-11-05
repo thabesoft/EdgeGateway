@@ -24,19 +24,19 @@ public partial class DevicePageViewModel : ViewModelBase
     [RelayCommand]
     private void AddModbusAsciiDevice()
     {
-        var device = _port.AddDevice(ModbusProtocolDescriptor.Ascii);
+        var device = _port.AddDeviceAsync(ModbusProtocolDescriptor.Ascii);
         AddDevice(device);
     }
     [RelayCommand]
     private void AddModbusRtuDevice()
     {
-        var device = _port.AddDevice(ModbusProtocolDescriptor.Rtu);
+        var device = _port.AddDeviceAsync(ModbusProtocolDescriptor.Rtu);
         AddDevice(device);
     }
     [RelayCommand]
     private void AddModbusIpDevice()
     {
-        var device = _port.AddDevice(ModbusProtocolDescriptor.Ip);
+        var device = _port.AddDeviceAsync(ModbusProtocolDescriptor.Ip);
         AddDevice(device);
     }
 

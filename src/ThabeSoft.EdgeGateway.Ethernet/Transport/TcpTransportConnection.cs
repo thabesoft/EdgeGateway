@@ -9,7 +9,7 @@ internal sealed class TcpTransportConnection(IpTransportDescriptor descriptor) :
     private readonly TcpClient _tcpClient = new();
 
 
-    public ConnectionEndpoint Endpoint { get; } = descriptor.Address;
+    public ConnectionEndpoint Endpoint { get; } = descriptor.Endpoint;
 
 
     public ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default) =>

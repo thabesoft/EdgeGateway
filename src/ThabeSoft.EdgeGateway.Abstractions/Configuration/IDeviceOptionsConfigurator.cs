@@ -16,13 +16,13 @@ public static class DeviceOptionsConfiguratorExtensions
 {
     extension(IDeviceOptionsConfigurator builder)
     {
-        public IDeviceOptionsConfigurator UseProtocol(DeviceId deviceId, IProtocolDescriptor descriptor) =>
-            builder.SetDescriptor(DeviceDescriptor.Create(deviceId, descriptor));
+        public IDeviceOptionsConfigurator UseProtocol(DeviceId deviceId, IProtocolDescriptor protocolDescriptor) =>
+            builder.SetDescriptor(DeviceDescriptor.Create(deviceId, protocolDescriptor));
 
-        public IDeviceOptionsConfigurator UseProtocol(IProtocolDescriptor descriptor) =>
-            builder.SetDescriptor(DeviceDescriptor.Create(descriptor));
+        public IDeviceOptionsConfigurator UseProtocol(IProtocolDescriptor protocolDescriptor) =>
+            builder.SetDescriptor(DeviceDescriptor.Create(protocolDescriptor));
 
-        public IDeviceOptionsConfigurator AddTag<T>(TagDescriptor<T> descriptor, ITrigger trigger) where T : notnull =>
-           builder.AddTag<T>(x => x.WithDescriptor(descriptor).WithTrigger(trigger));
+        public IDeviceOptionsConfigurator AddTag<T>(TagDescriptor<T> descriptor, ITriggerDescriptor triggerDescriptor) where T : notnull =>
+           builder.AddTag<T>(x => x.WithDescriptor(descriptor).WithTrigger(triggerDescriptor));
     }
 }

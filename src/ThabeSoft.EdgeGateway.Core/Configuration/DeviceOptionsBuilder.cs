@@ -24,7 +24,7 @@ internal sealed class DeviceOptionsBuilder : IDeviceOptionsConfigurator
         buildAction?.Invoke(builder);
         var options = builder.Build();
 
-        _tags[options.Name] = options;
+        _tags[options.Descriptor.Id] = options;
         return this;
     }
 
@@ -51,7 +51,6 @@ public static class DeviceOptionsBuilderExtensions
            builder.AddFixedIntervalTriggerTag(tagDescriptor, TimeSpan.FromMilliseconds(milliseconds));
     }
 }
-
 
 
 internal sealed record class DeviceOptions

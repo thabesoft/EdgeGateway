@@ -6,7 +6,7 @@ namespace ThabeSoft.EdgeGateway.Transport;
 
 public sealed record class SerialTransportDescriptor : ITransportDescriptor
 {
-    public required ConnectionEndpoint Address { get; init; }
+    public required ConnectionEndpoint Endpoint { get; init; }
     public required string PortName { get; init; }
     public required int BaudRate { get; init; }
     public required int DataBits { get; init; }
@@ -35,7 +35,7 @@ public sealed record class SerialTransportDescriptor : ITransportDescriptor
 
         return new()
         {
-            Address = ConnectionEndpoint.Serial(portName),
+            Endpoint = ConnectionEndpoint.Serial(portName),
             PortName = portName,
             BaudRate = baudRate,
             Parity = parity,

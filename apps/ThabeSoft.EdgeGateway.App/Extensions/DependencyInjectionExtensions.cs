@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SukiUI.Dialogs;
@@ -12,8 +13,11 @@ using ThabeSoft.EdgeGateway.App.Features.Dashboard;
 using ThabeSoft.EdgeGateway.App.Features.Topology;
 using ThabeSoft.EdgeGateway.App.Services;
 using ThabeSoft.EdgeGateway.App.ViewModels;
-using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Configuration;
+using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Transport;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
 namespace ThabeSoft.EdgeGateway;
@@ -50,9 +54,13 @@ public static class DependencyInjectionExtensions
 
                 if (Design.IsDesignMode || true)
                 {
-                    services.AddSingleton<IGateway, DesignGateway>();
+                    // 模拟底层传输
+                    services.RemoveAll<ITransportFactory>();
+                    services.AddSingleton<ITransportFactory, MockTransportFactory>();
                     return;
                 }
+
+
 
                 services.AddSerial();
                 services.AddEthernet();
@@ -110,3 +118,40 @@ public static class DependencyInjectionExtensions
         }
     }
 }
+
+
+public sealed class MockTransportFactory(ILoggerFactory loggerFactory) : ITransportFactory
+{
+    public bool CanCreate(ITransportDescriptor descriptor) => true;
+    public ITransportConnection Create(ITransportDescriptor descriptor) =>
+        new MockTransportConnection(descriptor, loggerFactory.CreateLogger<MockTransportConnection>());
+
+
+    private sealed class MockTransportConnection(ITransportDescriptor transportDescriptor, ILogger<MockTransportConnection> logger) : LifecycleStateMachine, ITransportConnection
+    {
+        public ConnectionEndpoint Endpoint => transportDescriptor.Endpoint;
+
+        public ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
+        {
+            logger.LogDebug("读取数据");
+            return ValueTask.FromResult(0);
+        }
+        public ValueTask WriteAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
+        {
+            logger.LogDebug("写入数据, 长度:{Len}", data.Length);
+            return ValueTask.CompletedTask;
+        }
+
+        protected override ValueTask OnStartAsync(CancellationToken cancellationToken)
+        {
+            logger.LogDebug("已启动");
+            return ValueTask.CompletedTask;
+        }
+        protected override ValueTask OnStopAsync(CancellationToken cancellationToken)
+        {
+            logger.LogDebug("已停止");
+            return ValueTask.CompletedTask;
+        }
+    }
+}
+

@@ -2,5 +2,5 @@
 
 public interface ITransportDescriptor
 {
-    ConnectionEndpoint Address { get; }
+    ConnectionEndpoint Endpoint { get; }
 }

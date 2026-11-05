@@ -6,6 +6,6 @@ namespace ThabeSoft.EdgeGateway.Configuration;
 
 public interface ITagOptionsConfigurator<T> where T : notnull
 {
-    ITagOptionsConfigurator<T> WithDescriptor(TagDescriptor<T> descriptor);
-    ITagOptionsConfigurator<T> WithTrigger(ITrigger trigger);
+    ITagOptionsConfigurator<T> WithDescriptor(TagDescriptor<T> tagDescriptor);
+    ITagOptionsConfigurator<T> WithTrigger(ITriggerDescriptor triggerDescriptor);
 }

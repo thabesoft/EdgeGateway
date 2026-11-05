@@ -1,6 +1,6 @@
 ﻿namespace ThabeSoft.EdgeGateway.Lifecycles;
 
-public interface ILifecycle 
+public interface ILifecycle
 {
     LifecycleState State { get; }
 

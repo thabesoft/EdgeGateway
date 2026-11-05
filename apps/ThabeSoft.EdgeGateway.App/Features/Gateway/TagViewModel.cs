@@ -4,7 +4,7 @@ using ThabeSoft.EdgeGateway.Tags;
 
 namespace ThabeSoft.EdgeGateway.App.ViewModels;
 
-internal sealed partial class TagViewModel(ITagMonitor monitor) : ViewModelBase
+internal sealed partial class TagViewModel(ITag monitor) : ViewModelBase
 {
     [ObservableProperty]
     public partial string Name { get; set; } = monitor.Id.ToString();
@@ -14,7 +14,7 @@ internal sealed partial class TagViewModel(ITagMonitor monitor) : ViewModelBase
 
 
     [ObservableProperty]
-    public partial TagValueState State { get; set; } = monitor.State;
+    public partial TagQuality State { get; set; } = monitor.Quality;
 
     [ObservableProperty]
     public partial object? Value { get; set; } = monitor.Value;

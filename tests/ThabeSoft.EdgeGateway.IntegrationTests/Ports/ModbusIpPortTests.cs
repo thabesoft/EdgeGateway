@@ -1,13 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
-using ThabeSoft.EdgeGateway.Transport;
-using ThabeSoft.EdgeGateway.Codecs;
-using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Polling;
-using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.EdgeGateway.Tags;
-using ThabeSoft.EdgeGateway.Triggers;
-using ThabeSoft.Simulator.ModbusSlave;
 
 namespace ThabeSoft.EdgeGateway.Ports;
 

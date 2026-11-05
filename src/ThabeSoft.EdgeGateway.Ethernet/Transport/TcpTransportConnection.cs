@@ -1,40 +1,33 @@
 ﻿using System.Net.Sockets;
+using ThabeSoft.EdgeGateway.Lifecycles;
 
 namespace ThabeSoft.EdgeGateway.Transport;
 
 
-internal sealed class TcpTransportConnection(IpTransportDescriptor descriptor) : ITransportConnection
+internal sealed class TcpTransportConnection(IpTransportDescriptor descriptor) : ConcurrentLifecycleBase, ITransportConnection
 {
     private readonly TcpClient _tcpClient = new();
 
 
     public ConnectionEndpoint Endpoint { get; } = descriptor.Address;
-    public bool IsOpen => _tcpClient.Connected;
 
 
-    public async ValueTask OpenAsync(CancellationToken cancellationToken = default)
+    public ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default) =>
+        _tcpClient.GetStream().ReadAsync(buffer, cancellationToken);
+    public ValueTask WriteAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default) =>
+        _tcpClient.GetStream().WriteAsync(data, cancellationToken);
+
+
+    protected override ValueTask OnStartAsync(CancellationToken cancellationToken)
     {
-        await _tcpClient.ConnectAsync(descriptor.IPAddress, descriptor.Port, cancellationToken);
+        return _tcpClient.ConnectAsync(descriptor.IPAddress, descriptor.Port, cancellationToken);
     }
-    public ValueTask CloseAsync(CancellationToken cancellationToken = default)
+    protected override ValueTask OnStopAsync(CancellationToken cancellationToken)
     {
         _tcpClient.Close();
         return ValueTask.CompletedTask;
     }
-
-
-    public ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
-    {
-        return _tcpClient.GetStream().ReadAsync(buffer, cancellationToken);
-    }
-
-    public ValueTask WriteAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
-    {
-        return _tcpClient.GetStream().WriteAsync(data, cancellationToken);
-    }
-
-
-    public ValueTask DisposeAsync()
+    protected override ValueTask OnDisposeAsync()
     {
         _tcpClient.Dispose();
         return ValueTask.CompletedTask;

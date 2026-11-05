@@ -6,6 +6,7 @@ using ThabeSoft.EdgeGateway.Transport;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Lifecycles;
 
 namespace ThabeSoft.EdgeGateway.App.ViewModels;
 
@@ -23,20 +24,20 @@ internal sealed partial class PortViewModel(IPort port, DeviceViewModelFactory d
 
 
     [ObservableProperty]
-    public partial bool IsOpen { get; set; } = port.IsOpen;
+    public partial bool IsOpen { get; set; } = port.IsRunning;
 
 
     [RelayCommand]
     private async Task OpenAsync()
     {
-        await port.OpenAsync();
+        await port.StartAsync();
         RefreshIsOpen();
     }
 
     [RelayCommand]
     private async Task CloseAsync()
     {
-        await port.CloseAsync();
+        await port.StopAsync();
         RefreshIsOpen();
     }
 
@@ -71,7 +72,7 @@ internal sealed partial class PortViewModel(IPort port, DeviceViewModelFactory d
 
     public void RefreshIsOpen()
     {
-        IsOpen = port.IsOpen;
+        IsOpen = port.IsRunning;
         foreach (var device in Devices) device.RefreshIsEnabled();
     }
 }

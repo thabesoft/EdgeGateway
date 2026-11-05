@@ -1,10 +1,11 @@
 ﻿using System.IO.Ports;
+using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Transport.Byte;
 
 namespace ThabeSoft.EdgeGateway.Transport;
 
 
-internal sealed class SerialTransportConnection(SerialTransportDescriptor descriptor) : ITransportConnection, IReadBufferDiscardable
+internal sealed class SerialTransportConnection(SerialTransportDescriptor descriptor) : ConcurrentLifecycleBase, ITransportConnection, IReadBufferDiscardable
 {
     private readonly SerialPort _serialPort = new(
         portName: descriptor.PortName,
@@ -15,37 +16,30 @@ internal sealed class SerialTransportConnection(SerialTransportDescriptor descri
 
 
     public ConnectionEndpoint Endpoint { get; } = descriptor.Address;
-    public bool IsOpen => _serialPort.IsOpen;
 
 
-    public ValueTask OpenAsync(CancellationToken cancellationToken = default)
+    public ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default) =>
+        _serialPort.BaseStream.ReadAsync(buffer, cancellationToken);
+
+    public ValueTask WriteAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default) =>
+        _serialPort.BaseStream.WriteAsync(data, cancellationToken);
+    public void DiscardInputBuffer() =>
+        _serialPort.DiscardInBuffer();
+
+
+
+    protected override ValueTask OnStartAsync(CancellationToken cancellationToken)
     {
         _serialPort.Open();
         return ValueTask.CompletedTask;
     }
 
-    public ValueTask CloseAsync(CancellationToken cancellationToken = default)
+    protected override ValueTask OnStopAsync(CancellationToken cancellationToken)
     {
         _serialPort.Close();
         return ValueTask.CompletedTask;
     }
-
-    public ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
-    {
-        return _serialPort.BaseStream.ReadAsync(buffer, cancellationToken);
-    }
-
-    public ValueTask WriteAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
-    {
-        return _serialPort.BaseStream.WriteAsync(data, cancellationToken);
-    }
-    public void DiscardInputBuffer()
-    {
-        _serialPort.DiscardInBuffer();
-    }
-
-
-    public ValueTask DisposeAsync()
+    protected override ValueTask OnDisposeAsync()
     {
         _serialPort.Dispose();
         return ValueTask.CompletedTask;

@@ -1,4 +1,5 @@
-﻿using ThabeSoft.EdgeGateway.Transport.Byte;
+﻿using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Transport.Byte;
 
 namespace ThabeSoft.EdgeGateway.Transport;
 
@@ -26,7 +27,7 @@ namespace ThabeSoft.EdgeGateway.Transport;
 /// <b>不保证并发安全</b>；并发调用需由调用方串行化（或由协议会话内部加锁）。
 /// </para>
 /// </remarks>
-public interface ITransportConnection : ITransportLifecycle, IByteDuplex, IAsyncDisposable
+public interface ITransportConnection : ILifecycle, IByteDuplex, IAsyncDisposable
 {
     ConnectionEndpoint Endpoint { get; }
 }

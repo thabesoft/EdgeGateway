@@ -31,7 +31,7 @@ internal sealed class Gateway(
         ArgumentNullException.ThrowIfNull(endpoint);
 
         if (!_ports.TryRemove(endpoint, out var port)) return;
-        await port.CloseAsync(cancellationToken);
+        await port.DisposeAsync();
     }
     public override string ToString()
     {
@@ -47,7 +47,7 @@ internal sealed class Gateway(
         {
             try
             {
-                await port.OpenAsync(cancellationToken);
+                await port.StartAsync();
             }
             catch (Exception ex)
             {
@@ -66,7 +66,7 @@ internal sealed class Gateway(
         {
             try
             {
-                await port.CloseAsync(cancellationToken);
+                await port.StopAsync();
             }
             catch (Exception ex)
             {

@@ -1,32 +1,14 @@
 ﻿using System.Net.Sockets;
+using ThabeSoft.EdgeGateway.Lifecycles;
 
 namespace ThabeSoft.EdgeGateway.Transport;
 
-internal sealed class UdpTransportConnection(IpTransportDescriptor descriptor) : ITransportConnection
+internal sealed class UdpTransportConnection(IpTransportDescriptor descriptor) : ConcurrentLifecycleBase, ITransportConnection
 {
     private readonly UdpClient _udpClient = new();
 
 
     public ConnectionEndpoint Endpoint { get; } = descriptor.Address;
-    public bool IsOpen { get; private set; }
-
-
-    public ValueTask OpenAsync(CancellationToken cancellationToken = default)
-    {
-        if (IsOpen) return ValueTask.CompletedTask;
-        IsOpen = true;
-
-        _udpClient.Connect(descriptor.IPAddress, descriptor.Port);
-        return ValueTask.CompletedTask;
-    }
-    public ValueTask CloseAsync(CancellationToken cancellationToken = default)
-    {
-        if (!IsOpen) return ValueTask.CompletedTask;
-        IsOpen = false;
-
-        _udpClient.Close();
-        return ValueTask.CompletedTask;
-    }
 
 
     public async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
@@ -42,14 +24,24 @@ internal sealed class UdpTransportConnection(IpTransportDescriptor descriptor) :
         datagram.CopyTo(buffer.Span);
         return datagram.Length;
     }
-
     public async ValueTask WriteAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
     {
         await _udpClient.SendAsync(data, cancellationToken);
     }
 
 
-    public ValueTask DisposeAsync()
+
+    protected override ValueTask OnStartAsync(CancellationToken cancellationToken)
+    {
+        _udpClient.Connect(descriptor.IPAddress, descriptor.Port);
+        return ValueTask.CompletedTask;
+    }
+    protected override ValueTask OnStopAsync(CancellationToken cancellationToken)
+    {
+        _udpClient.Close();
+        return ValueTask.CompletedTask;
+    }
+    protected override ValueTask OnDisposeAsync()
     {
         _udpClient.Dispose();
         return ValueTask.CompletedTask;

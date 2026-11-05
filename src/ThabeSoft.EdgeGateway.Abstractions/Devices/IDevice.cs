@@ -1,11 +1,12 @@
-﻿using ThabeSoft.EdgeGateway.Polling;
+﻿using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Polling;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Tags;
 
 namespace ThabeSoft.EdgeGateway.Devices;
 
 
-public interface IDevice : IDeviceLifecycle, IPollingManager, IAsyncDisposable
+public interface IDevice : ILifecycle, IPollingManager, IAsyncDisposable
 {
     DeviceId Id { get; }
     ProtocolType ProtocolType { get; }

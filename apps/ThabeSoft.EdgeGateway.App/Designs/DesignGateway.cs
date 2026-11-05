@@ -8,26 +8,11 @@ using ThabeSoft.EdgeGateway.Ports;
 namespace ThabeSoft.EdgeGateway.App.Designs;
 
 
-public sealed class DesignGateway : IGateway
+public sealed class DesignGateway : ResilientLifecycleBase, IGateway
 {
     private readonly ConcurrentDictionary<ConnectionEndpoint, IPort> _ports = [];
-
-    public LifecycleState State { get; private set; }
     public IReadOnlyDictionary<ConnectionEndpoint, IPort> Ports => _ports.AsReadOnly();
 
-
-    public async ValueTask StartAsync(CancellationToken cancellationToken = default)
-    {
-        State = LifecycleState.Starting;
-        foreach (var i in _ports.Values) await i.OpenAsync(cancellationToken);
-        State = LifecycleState.Running;
-    }
-    public async ValueTask StopAsync(CancellationToken cancellationToken = default)
-    {
-        State = LifecycleState.Stopping;
-        foreach (var i in _ports.Values) await i.CloseAsync(cancellationToken);
-        State = LifecycleState.Stopped;
-    }
 
     public IPort AddPort(ITransportDescriptor transportDescriptor)
     {
@@ -41,10 +26,18 @@ public sealed class DesignGateway : IGateway
         await port.DisposeAsync();
     }
 
-    public async ValueTask DisposeAsync()
+
+    protected override async ValueTask OnStartAsync(CancellationToken cancellationToken)
+    {
+        foreach (var i in _ports.Values) await i.StartAsync(cancellationToken);
+    }
+    protected override async ValueTask OnStopAsync(CancellationToken cancellationToken)
+    {
+        foreach (var i in _ports.Values) await i.StopAsync(cancellationToken);
+    }
+    protected override async ValueTask OnDisposeAsync()
     {
         foreach (var i in _ports.Values) await i.DisposeAsync();
         _ports.Clear();
-        State = LifecycleState.Disposed;
     }
 }

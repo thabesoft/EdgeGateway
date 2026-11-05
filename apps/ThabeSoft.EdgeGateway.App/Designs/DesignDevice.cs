@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Triggers;
@@ -13,18 +14,18 @@ public sealed class DesignDevice(DeviceDescriptor deviceDescriptor, DesignPort p
 
     public DeviceId Id => deviceDescriptor.DeviceId;
     public ProtocolType ProtocolType => deviceDescriptor.Protocol.Type;
-    public bool IsEnabled { get; private set; }
     public IReadOnlyDictionary<TagId, ITagMonitor> TagMonitors => _monitors.AsReadOnly();
+    public LifecycleState State { get; private set; }
 
 
-    public ValueTask EnableAsync(CancellationToken cancellationToken = default)
+    public ValueTask StartAsync(CancellationToken cancellationToken = default)
     {
-        IsEnabled = true;
+        State = LifecycleState.Running;
         return ValueTask.CompletedTask;
     }
-    public ValueTask DisableAsync(CancellationToken cancellationToken = default)
+    public ValueTask StopAsync(CancellationToken cancellationToken = default)
     {
-        IsEnabled = false;
+        State = LifecycleState.Stopping;
         return ValueTask.CompletedTask;
     }
 

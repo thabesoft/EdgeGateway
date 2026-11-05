@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using ThabeSoft.EdgeGateway.App.Features;
 using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
 
@@ -51,21 +52,21 @@ public sealed partial class DeviceItemViewModel(IDevice device, IPort port) : Vi
 {
     public DeviceId Id => device.Id;
     public ProtocolType ProtocolType => device.ProtocolType;
-    public bool IsEnabled => device.IsEnabled;
+    public bool IsEnabled => device.IsRunning;
     public int MonitorsCount => device.TagMonitors.Count;
 
 
     [RelayCommand]
     private async Task EnableAsync()
     {
-        await device.EnableAsync();
+        await device.StartAsync();
         OnPropertyChanged(nameof(IsEnabled));
     }
 
     [RelayCommand]
     private async Task DisposeAsync()
     {
-        await device.DisposeAsync();
+        await device.StopAsync();
         OnPropertyChanged(nameof(IsEnabled));
     }
 

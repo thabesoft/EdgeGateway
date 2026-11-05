@@ -2,34 +2,19 @@
 using ThabeSoft.EdgeGateway.Transport;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ports;
+using ThabeSoft.EdgeGateway.Lifecycles;
 
 namespace ThabeSoft.EdgeGateway.App.Designs;
 
-public sealed class DesignPort(ITransportDescriptor transportDescriptor, DesignGateway gateway) : IPort
+public sealed class DesignPort(ITransportDescriptor transportDescriptor, DesignGateway gateway) : ResilientLifecycleBase, IPort
 {
     private bool _isDisposed;
     private readonly ConcurrentDictionary<DeviceId, IDevice> _devices = [];
 
 
     public ConnectionEndpoint Endpoint => transportDescriptor.Address;
-    public bool IsOpen { get; private set; }
     public IReadOnlyDictionary<DeviceId, IDevice> Devices => _devices.AsReadOnly();
 
-
-    public async ValueTask OpenAsync(CancellationToken cancellationToken = default)
-    {
-        ObjectDisposedException.ThrowIf(_isDisposed, this);
-
-        IsOpen = true;
-        foreach (var i in _devices.Values) await i.EnableAsync();
-    }
-    public async ValueTask CloseAsync(CancellationToken cancellationToken = default)
-    {
-        ObjectDisposedException.ThrowIf(_isDisposed, this);
-
-        IsOpen = false;
-        foreach (var i in _devices.Values) await i.DisableAsync();
-    }
 
     public IDevice AddDevice(DeviceDescriptor descriptor)
     {
@@ -47,12 +32,28 @@ public sealed class DesignPort(ITransportDescriptor transportDescriptor, DesignG
         await device.DisposeAsync();
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        if (_isDisposed) return;
-        _isDisposed = true;
 
+    protected override async ValueTask OnStartAsync(CancellationToken cancellationToken)
+    {
+        foreach (var i in _devices.Values)
+        {
+            await i.StartAsync(cancellationToken);
+        }
+    }
+    protected override async ValueTask OnStopAsync(CancellationToken cancellationToken)
+    {
+        foreach (var i in _devices.Values)
+        {
+            await i.StopAsync(cancellationToken);
+        }
+    }
+    protected override async ValueTask OnDisposeAsync()
+    {
         await gateway.RemovePortAsync(Endpoint);
-        foreach (var i in _devices.Values) await i.DisposeAsync();
+
+        foreach (var i in _devices.Values)
+        {
+            await i.DisposeAsync();
+        }
     }
 }

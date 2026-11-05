@@ -42,24 +42,24 @@ internal sealed class Port(
         if (!_devices.TryRemove(id, out var device))
             return;
 
-        await device.DisableAsync(cancellationToken);
+        await device.DisposeAsync();
     }
 
 
     protected override async ValueTask OnStartAsync(CancellationToken cancellationToken)
     {
-        await _transportConnection.OpenAsync(cancellationToken);
+        await _transportConnection.StartAsync(cancellationToken);
 
         foreach (var i in _devices.Values)
-            await i.EnableAsync(cancellationToken);
+            await i.StartAsync(cancellationToken);
     }
 
     protected override async ValueTask OnStopAsync(CancellationToken cancellationToken)
     {
         foreach (var i in _devices.Values)
-            await i.DisableAsync(cancellationToken);
+            await i.StopAsync(cancellationToken);
 
-        await _transportConnection.CloseAsync(cancellationToken);
+        await _transportConnection.StopAsync(cancellationToken);
     }
     protected override async ValueTask OnDisposeAsync()
     {

@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ThabeSoft.EdgeGateway.App.Features;
 using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Protocols;
 
 namespace ThabeSoft.EdgeGateway.App.ViewModels;
@@ -26,23 +27,23 @@ internal sealed partial class DeviceViewModel(IDevice device) : ViewModelBase
     public partial bool DisplayName { get; set; }
 
     [ObservableProperty]
-    public partial bool IsEnabled { get; set; } = device.IsEnabled;
+    public partial bool IsEnabled { get; set; } = device.IsRunning;
 
 
     [RelayCommand]
     private async Task EnableAsync()
     {
-        await device.EnableAsync();
+        await device.StartAsync();
         RefreshIsEnabled();
     }
 
     [RelayCommand]
     private async Task DisableAsync()
     {
-        await device.DisableAsync();
+        await device.StopAsync();
         RefreshIsEnabled();
     }
 
 
-    public void RefreshIsEnabled() => IsEnabled = device.IsEnabled;
+    public void RefreshIsEnabled() => IsEnabled = device.IsRunning;
 }

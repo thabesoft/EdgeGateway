@@ -13,7 +13,7 @@ namespace ThabeSoft.EdgeGateway;
 internal sealed class Gateway(
         PortFactory portFactory,
         ILogger<Gateway> logger
-    ) : ResilientLifecycleBase, IGateway
+    ) : RetryableLifecycle, IGateway
 {
     private readonly ConcurrentDictionary<ConnectionEndpoint, IPort> _ports = [];
     public IReadOnlyDictionary<ConnectionEndpoint, IPort> Ports => _ports;

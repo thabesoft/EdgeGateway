@@ -4,7 +4,7 @@ using ThabeSoft.EdgeGateway.Lifecycles;
 namespace ThabeSoft.EdgeGateway.Transport;
 
 
-internal sealed class TcpTransportConnection(IpTransportDescriptor descriptor) : ConcurrentLifecycleBase, ITransportConnection
+internal sealed class TcpTransportConnection(IpTransportDescriptor descriptor) : LifecycleStateMachine, ITransportConnection
 {
     private readonly TcpClient _tcpClient = new();
 

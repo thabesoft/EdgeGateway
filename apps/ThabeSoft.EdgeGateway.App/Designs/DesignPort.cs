@@ -6,7 +6,7 @@ using ThabeSoft.EdgeGateway.Lifecycles;
 
 namespace ThabeSoft.EdgeGateway.App.Designs;
 
-public sealed class DesignPort(ITransportDescriptor transportDescriptor, DesignGateway gateway) : ResilientLifecycleBase, IPort
+public sealed class DesignPort(ITransportDescriptor transportDescriptor, DesignGateway gateway) : RetryableLifecycle, IPort
 {
     private bool _isDisposed;
     private readonly ConcurrentDictionary<DeviceId, IDevice> _devices = [];

@@ -3,7 +3,7 @@ using ThabeSoft.EdgeGateway.Lifecycles;
 
 namespace ThabeSoft.EdgeGateway.Transport;
 
-internal sealed class UdpTransportConnection(IpTransportDescriptor descriptor) : ConcurrentLifecycleBase, ITransportConnection
+internal sealed class UdpTransportConnection(IpTransportDescriptor descriptor) : LifecycleStateMachine, ITransportConnection
 {
     private readonly UdpClient _udpClient = new();
 

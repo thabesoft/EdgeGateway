@@ -152,7 +152,7 @@ public class ResilientLifecycleTests
 }
 
 
-file sealed class ResilientCounterLifecycle(TestContext testContext) : ResilientLifecycleBase()
+file sealed class ResilientCounterLifecycle(TestContext testContext) : RetryableLifecycle()
 {
     public int StartCallCount { get; private set; }
     public int StopCallCount { get; private set; }
@@ -172,7 +172,7 @@ file sealed class ResilientCounterLifecycle(TestContext testContext) : Resilient
     }
 }
 
-file sealed class ResilientStartExceptionLifecycle : ResilientLifecycleBase
+file sealed class ResilientStartExceptionLifecycle : RetryableLifecycle
 {
     public bool IsResourceReleased { get; private set; }
 

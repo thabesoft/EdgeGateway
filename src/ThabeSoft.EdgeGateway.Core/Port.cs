@@ -11,7 +11,7 @@ internal sealed class Port(
         TransportFactoryHandler transportFactoryHandler,
         DeviceFactoryHandler deviceFactoryHandler,
         PortDisposedHandler disposedHandler
-    ) : ResilientLifecycleBase, IPort
+    ) : RetryableLifecycle, IPort
 {
     private readonly ITransportConnection _transportConnection = transportFactoryHandler();
     private readonly ConcurrentDictionary<DeviceId, IDevice> _devices = [];

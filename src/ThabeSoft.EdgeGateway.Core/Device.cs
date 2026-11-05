@@ -9,7 +9,7 @@ using ThabeSoft.EdgeGateway.Triggers;
 namespace ThabeSoft.EdgeGateway;
 
 
-internal sealed class Device : ConcurrentLifecycleBase, IDevice, IOnDemandReadWrite
+internal sealed class Device : LifecycleStateMachine, IDevice, IOnDemandReadWrite
 {
     private IProtocolAccessor _tagAccessor;
     private readonly PollingScheduler _pollingScheduler;

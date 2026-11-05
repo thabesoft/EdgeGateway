@@ -5,7 +5,7 @@ using ThabeSoft.EdgeGateway.Transport.Byte;
 namespace ThabeSoft.EdgeGateway.Transport;
 
 
-internal sealed class SerialTransportConnection(SerialTransportDescriptor descriptor) : ConcurrentLifecycleBase, ITransportConnection, IReadBufferDiscardable
+internal sealed class SerialTransportConnection(SerialTransportDescriptor descriptor) : LifecycleStateMachine, ITransportConnection, IReadBufferDiscardable
 {
     private readonly SerialPort _serialPort = new(
         portName: descriptor.PortName,

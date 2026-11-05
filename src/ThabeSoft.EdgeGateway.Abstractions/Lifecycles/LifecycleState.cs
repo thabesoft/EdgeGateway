@@ -5,24 +5,21 @@
 /// </summary>
 public enum LifecycleState
 {
-    /// <summary>已创建，但从未启动过。</summary>
-    Created,
-
-    /// <summary>正在启动中。此时不能接受停止操作。</summary>
-    Starting,
-
-    /// <summary>已启动，正在运行。</summary>
-    Running,
-
-    /// <summary>正在停止中。此时不能接受启动操作。</summary>
-    Stopping,
-
-    /// <summary>已停止（可再次启动）。</summary>
+    /// <summary>已停止或未启动</summary>
     Stopped,
 
-    /// <summary>启动或者停止失败，可再启动或停止。</summary>
+    /// <summary>正在启动中</summary>
+    Starting,
+
+    /// <summary>正在运行中</summary>
+    Running,
+
+    /// <summary>正在停止中</summary>
+    Stopping,
+
+    /// <summary>启动或者停止失败</summary>
     Faulted,
 
-    /// <summary>已彻底释放，不可再启动或停止。</summary>
+    /// <summary>已彻底释放</summary>
     Disposed,
 }

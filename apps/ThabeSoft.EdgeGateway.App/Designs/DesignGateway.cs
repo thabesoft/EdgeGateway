@@ -8,7 +8,7 @@ using ThabeSoft.EdgeGateway.Ports;
 namespace ThabeSoft.EdgeGateway.App.Designs;
 
 
-public sealed class DesignGateway : ResilientLifecycleBase, IGateway
+public sealed class DesignGateway : RetryableLifecycle, IGateway
 {
     private readonly ConcurrentDictionary<ConnectionEndpoint, IPort> _ports = [];
     public IReadOnlyDictionary<ConnectionEndpoint, IPort> Ports => _ports.AsReadOnly();

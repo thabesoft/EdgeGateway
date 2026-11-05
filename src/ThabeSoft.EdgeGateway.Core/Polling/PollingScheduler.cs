@@ -8,7 +8,7 @@ using ThabeSoft.EdgeGateway.Lifecycles;
 namespace ThabeSoft.EdgeGateway.Polling;
 
 
-internal sealed class PollingScheduler(ITagReader tagReader, ILogger<PollingScheduler> logger) : ResilientLifecycleBase(logger), IPollingScheduler
+internal sealed class PollingScheduler(ITagReader tagReader, ILogger<PollingScheduler> logger) : RetryableLifecycle(logger), IPollingScheduler
 {
     private readonly ConcurrentDictionary<TagId, Context> _context = [];
 

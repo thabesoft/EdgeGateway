@@ -6,7 +6,7 @@ using ThabeSoft.EdgeGateway.Lifecycles;
 namespace ThabeSoft.EdgeGateway.Triggers;
 
 
-internal sealed class FixedIntervalTrigger : ConcurrentLifecycleBase, ITrigger, ILifecycle
+internal sealed class FixedIntervalTrigger : LifecycleStateMachine, ITrigger, ILifecycle
 {
     private readonly ILogger<FixedIntervalTrigger> _logger;
     private readonly TimeProvider _timeProvider;

@@ -124,7 +124,7 @@ public sealed class ConcurrentLifecycleTests
 }
 
 
-file sealed class CounterLifecycle(TestContext testContext) : ConcurrentLifecycleBase()
+file sealed class CounterLifecycle(TestContext testContext) : LifecycleStateMachine()
 {
     public int StartCallCount { get; private set; }
     public int StopCallCount { get; private set; }
@@ -146,7 +146,7 @@ file sealed class CounterLifecycle(TestContext testContext) : ConcurrentLifecycl
         await Task.Yield();
     }
 }
-file sealed class StartExceptionLifecycle : ConcurrentLifecycleBase
+file sealed class StartExceptionLifecycle : LifecycleStateMachine
 {
     public bool IsResourceReleased { get; private set; }
     protected override async ValueTask OnStartAsync(CancellationToken ct)

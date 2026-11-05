@@ -24,15 +24,17 @@ public abstract class RetryableLifecycle(ILogger logger) : ILifecycle, IAsyncDis
 
     public virtual async ValueTask StartAsync(CancellationToken cancellationToken = default)
     {
-        // 启动中或者已释放 不在启动
-        if (State is LifecycleState.Starting or LifecycleState.Disposed)
+        ObjectDisposedException.ThrowIf(State == LifecycleState.Disposed, this);
+        if (State is LifecycleState.Starting)
             return;
 
         await _stateChangeLock.WaitAsync(cancellationToken);
         try
         {
+            ObjectDisposedException.ThrowIf(State == LifecycleState.Disposed, this);
+
             // 启动中或者已释放 不在启动
-            if (State is (LifecycleState.Starting or LifecycleState.Disposed))
+            if (State is LifecycleState.Starting or LifecycleState.Disposed)
                 return;
 
             // 启动中
@@ -56,16 +58,19 @@ public abstract class RetryableLifecycle(ILogger logger) : ILifecycle, IAsyncDis
     }
     public virtual async ValueTask StopAsync(CancellationToken cancellationToken = default)
     {
-        // 停止中或已释放
-        if (State is LifecycleState.Stopping or LifecycleState.Disposed)
-            return;
+        ObjectDisposedException.ThrowIf(State == LifecycleState.Disposed, this);
 
+        // 停止中或已释放
+        if (State is LifecycleState.Stopping)
+            return;
 
         await _stateChangeLock.WaitAsync(cancellationToken);
         try
         {
+            ObjectDisposedException.ThrowIf(State == LifecycleState.Disposed, this);
+
             // 停止中或已释放
-            if (State is LifecycleState.Stopping or LifecycleState.Disposed)
+            if (State is LifecycleState.Stopping)
                 return;
 
 

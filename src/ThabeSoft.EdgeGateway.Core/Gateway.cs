@@ -47,7 +47,7 @@ internal sealed class Gateway(
         {
             try
             {
-                await port.StartAsync();
+                await port.StartAsync(cancellationToken);
             }
             catch (Exception ex)
             {
@@ -66,7 +66,7 @@ internal sealed class Gateway(
         {
             try
             {
-                await port.StopAsync();
+                await port.StopAsync(cancellationToken);
             }
             catch (Exception ex)
             {

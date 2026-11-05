@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using System.Diagnostics;
 
 namespace ThabeSoft.EdgeGateway.Lifecycles;
 
@@ -29,15 +30,25 @@ public abstract class LifecycleStateMachine(ILogger logger) : ILifecycle, IAsync
 
     public virtual async ValueTask StartAsync(CancellationToken cancellationToken = default)
     {
-        if (State is LifecycleState.Running or LifecycleState.Starting or LifecycleState.Disposed)
-            return;
-
-
         await _stateChangeLock.WaitAsync(cancellationToken);
         try
         {
-            if (State is LifecycleState.Running or LifecycleState.Starting or LifecycleState.Disposed)
-                return;
+            switch (State)
+            {
+                case LifecycleState.Stopped:
+                    break;
+                case LifecycleState.Running:
+                case LifecycleState.Starting:
+                    throw new InvalidOperationException($"当前状态 {State} 不能启动");
+                case LifecycleState.Stopping:
+                    throw new InvalidOperationException("正在停止中，不能启动");
+                case LifecycleState.Disposed:
+                    throw new ObjectDisposedException(GetType().Name);
+                case LifecycleState.Faulted:
+                    break;
+                default:
+                    throw new InvalidOperationException($"未知状态 {State}");
+            }
 
             // 启动中
             State = LifecycleState.Starting;
@@ -66,14 +77,26 @@ public abstract class LifecycleStateMachine(ILogger logger) : ILifecycle, IAsync
     }
     public virtual async ValueTask StopAsync(CancellationToken cancellationToken = default)
     {
-        if (State is LifecycleState.Stopping or LifecycleState.Stopped or LifecycleState.Disposed)
-            return;
-
         await _stateChangeLock.WaitAsync(cancellationToken);
         try
         {
-            if (State is LifecycleState.Stopping or LifecycleState.Stopped or LifecycleState.Disposed)
-                return;
+            switch (State)
+            {
+                case LifecycleState.Running:
+                    break;
+                case LifecycleState.Stopped:
+                    throw new InvalidOperationException($"当前状态 {State} 不能停止（未运行）");
+                case LifecycleState.Starting:
+                    throw new InvalidOperationException("正在启动中，不能停止");
+                case LifecycleState.Stopping:
+                    throw new InvalidOperationException("正在停止中，不能重复停止");
+                case LifecycleState.Faulted:
+                    break;
+                case LifecycleState.Disposed:
+                    throw new ObjectDisposedException(GetType().Name);
+                default:
+                    throw new InvalidOperationException($"未知状态 {State}");
+            }
 
             // 停止中
             State = LifecycleState.Stopping;
@@ -113,7 +136,7 @@ public abstract class LifecycleStateMachine(ILogger logger) : ILifecycle, IAsync
             if (State == LifecycleState.Disposed) return;
 
             // 还在运行
-            if(State == LifecycleState.Running)
+            if (State == LifecycleState.Running)
             {
                 // 停止中
                 State = LifecycleState.Stopping;
@@ -123,23 +146,35 @@ public abstract class LifecycleStateMachine(ILogger logger) : ILifecycle, IAsync
                 {
                     await OnStopAsync(CancellationToken.None);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    logger.LogError(ex, "{Type} 释放时停止服务发生异常", GetType().Name);
+                    try { logger.LogError(ex, "{Type} 释放时停止服务发生异常", GetType().Name); }
+                    catch (Exception loggerEx) { Trace.WriteLine($"[{GetType().Name}] 日志器异常: {loggerEx.Message}"); }
                 }
                 finally
                 {
+                    // 已停止
                     State = LifecycleState.Stopped;
                     _lifecycleCts?.Dispose();
                     _lifecycleCts = null;
                 }
             }
 
-            // 已释放
-            try { await OnDisposeAsync(); }
-            catch (Exception ex) { logger.LogError(ex, "{Type} 释放资源发生异常", GetType().Name); }
-
-            State = LifecycleState.Disposed;
+            // 释放过程
+            try
+            {
+                await OnDisposeAsync();
+            }
+            catch (Exception ex)
+            {
+                try { logger.LogError(ex, "{Type} 释放资源发生异常", GetType().Name); }
+                catch (Exception loggerEx) { Trace.WriteLine($"[{GetType().Name}] 日志器异常: {loggerEx.Message}"); }
+            }
+            finally
+            {
+                // 已释放
+                State = LifecycleState.Disposed;
+            }
         }
         finally
         {

@@ -3,23 +3,23 @@
 namespace ThabeSoft.EdgeGateway.Triggers;
 
 
-internal sealed class TriggerManager(IEnumerable<ITriggerFactory> triggerFactories)
+internal sealed class TriggerManager(IEnumerable<ITriggerFactory> factories)
 {
     private readonly ConcurrentDictionary<ITrigger, byte> _entries = [];
     public IReadOnlyCollection<ITrigger> Triggers => [.. _entries.Keys];
 
 
-    public async ValueTask<ITrigger> RegisterAsync(ITriggerDescriptor triggerDescriptor)
+    public ITrigger Register(ITriggerDescriptor descriptor)
     {
-        var trigger = triggerFactories.FirstOrDefault(x => x.CanCreate(triggerDescriptor))
-            ?.Create(triggerDescriptor);
+        var trigger = factories.FirstOrDefault(x => x.CanCreate(descriptor))
+            ?.Create(descriptor);
         ArgumentNullException.ThrowIfNull(trigger);
 
 
         var entry = new Entry(trigger, this);
         if (_entries.TryAdd(entry, 0)) return entry;
 
-        await entry.DisposeAsync();
+        entry.Dispose();
         throw new InvalidOperationException();
     }
 
@@ -30,14 +30,25 @@ internal sealed class TriggerManager(IEnumerable<ITriggerFactory> triggerFactori
     }
 
 
-    private sealed class Entry(ITrigger trigger, TriggerManager manager) : ITrigger
+    private sealed class Entry(
+            ITrigger trigger,
+            TriggerManager manager
+        ) : ITrigger, IDisposable
     {
+        private int _disposed;
+
         public async ValueTask DisposeAsync()
         {
-            await trigger.DisposeAsync();
+            if (Interlocked.Exchange(ref _disposed, 1) != 0) return;
 
+            await trigger.DisposeAsync();
             manager._entries.TryRemove(trigger, out _);
         }
+        public async void Dispose()
+        {
+            await DisposeAsync();
+        }
+
 
         public ValueTask<bool> WaitForNextTickAsync(CancellationToken cancellationToken = default) =>
             trigger.WaitForNextTickAsync(cancellationToken);

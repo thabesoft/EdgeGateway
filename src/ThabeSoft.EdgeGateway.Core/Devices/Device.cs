@@ -1,48 +1,48 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using ThabeSoft.EdgeGateway.Lifecycles;
-using ThabeSoft.EdgeGateway.Polling;
 using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transport.Byte;
 
 namespace ThabeSoft.EdgeGateway.Devices;
 
 
 internal sealed class Device(
-        DeviceDescriptor descriptor,
+        DeviceDescriptor deviceDescriptor,
         SubscriptionManager subscriptionManager,
         IByteDuplex byteDuplex,
         ILogger<Device> logger
     ) : RetryableLifecycle(logger), IDevice
 {
-    private readonly ConcurrentDictionary<ISubscription, byte> _subscriptions = [];
+    private readonly ConcurrentDictionary<SubscriptionId, ISubscription> _subscriptions = [];
 
 
-    public DeviceId Id => descriptor.DeviceId;
-    public ProtocolType ProtocolType => descriptor.Protocol.Type;
-    public IReadOnlyCollection<ISubscription> Subscriptions => [.. _subscriptions.Keys];
+    public DeviceId Id => deviceDescriptor.DeviceId;
+    public ProtocolType ProtocolType => deviceDescriptor.Protocol.Type;
+    public IReadOnlyDictionary<SubscriptionId, ISubscription> Subscriptions => _subscriptions;
 
 
-    public async ValueTask<ISubscription<T>> AddSubscriptionAsync<T>(SubscriptionDescriptor<T> subscriptionDescriptor) where T : notnull
+    public ISubscription<T> AddSubscription<T>(SubscriptionDescriptor<T> subscriptionDescriptor) where T : notnull
     {
-        var subscription = await subscriptionManager.RegisterAsync(subscriptionDescriptor, descriptor.Protocol, byteDuplex);
-        _subscriptions[subscription] = 0;
+        var subscription =  subscriptionManager.Register(subscriptionDescriptor, deviceDescriptor.Protocol, byteDuplex);
+        _subscriptions[subscriptionDescriptor.Id] = subscription;
         return subscription;
     }
 
     protected override async ValueTask OnStartAsync(CancellationToken cancellationToken)
     {
-        foreach (var i in Subscriptions)
+        foreach (var i in Subscriptions.Values)
             await i.StartAsync(cancellationToken);
     }
     protected override async ValueTask OnStopAsync(CancellationToken cancellationToken)
     {
-        foreach (var i in Subscriptions)
+        foreach (var i in Subscriptions.Values)
             await i.StopAsync(cancellationToken);
     }
     protected override async ValueTask OnDisposeAsync()
     {
-        foreach (var i in Subscriptions)
+        foreach (var i in Subscriptions.Values)
             await i.DisposeAsync();
     }
 }

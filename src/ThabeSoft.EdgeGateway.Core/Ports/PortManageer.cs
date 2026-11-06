@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using Microsoft.Extensions.Logging;
+using System.Collections.Concurrent;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Transport;
@@ -6,30 +7,40 @@ using ThabeSoft.EdgeGateway.Transport;
 namespace ThabeSoft.EdgeGateway.Ports;
 
 
-internal sealed class PortManageer(TransportManager transportManager, DeviceManager deviceManager)
+internal sealed class PortManageer(TransportManager transportManager, DeviceManager deviceManager, ILoggerFactory loggerFactory)
 {
+    private readonly ILogger<PortManageer> _loggeer = loggerFactory.CreateLogger<PortManageer>();
     private readonly ConcurrentDictionary<ConnectionEndpoint, IPort> _entries = [];
 
-    public async ValueTask<IPort> RegisterAsync(ITransportDescriptor transportDescriptor)
+
+    public IPort Register(ITransportDescriptor transportDescriptor)
     {
-        var transportConnection = await transportManager.RegisterTransportAsync(transportDescriptor);
+        var transportConnection = transportManager.Register(transportDescriptor);
         var port = new Port(transportConnection, deviceManager);
-        var entry = new Entry(port, transportConnection, this);
+        var entry = new Entry(port, transportConnection, this, _loggeer);
 
         if (_entries.TryAdd(transportDescriptor.Endpoint, entry)) return entry;
 
-        await entry.DisposeAsync();
+        entry.Dispose();
         throw new InvalidDataException();
     }
 
-    private sealed class Entry(Port port, ITransportConnection transportConnection, PortManageer portManageer) : IPort
+    private sealed class Entry(Port port, ITransportConnection transportConnection, PortManageer portManageer, ILogger logger) : IPort, IDisposable
     {
+        private int _disposed;
+
         public async ValueTask DisposeAsync()
         {
+            if (Interlocked.Exchange(ref _disposed, 1) != 0) return;
+
             await port.DisposeAsync();
             await transportConnection.DisposeAsync();
 
             portManageer._entries.TryRemove(Endpoint, out _);
+        }
+        public async void Dispose()
+        {
+            await DisposeAsync();
         }
 
 
@@ -38,11 +49,26 @@ internal sealed class PortManageer(TransportManager transportManager, DeviceMana
         public IReadOnlyDictionary<DeviceId, IDevice> Devices => port.Devices;
 
 
-        public ValueTask<IDevice> AddDeviceAsync(DeviceDescriptor descriptor) =>
-            port.AddDeviceAsync(descriptor);
-        public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
-            port.StartAsync(cancellationToken);
-        public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
-            port.StopAsync(cancellationToken);
+        public IDevice AddDevice(DeviceDescriptor descriptor)
+        {
+            if (logger.IsEnabled(LogLevel.Debug))
+                logger.LogDebug("端口 [{Endpoint}] 添加设备 [{DeviceId}]", Endpoint, descriptor.DeviceId);
+
+            return port.AddDevice(descriptor);
+        }
+        public ValueTask StartAsync(CancellationToken cancellationToken = default)
+        {
+            if (logger.IsEnabled(LogLevel.Debug))
+                logger.LogDebug("端口 [{Endpoint}] 启动", Endpoint);
+
+            return port.StartAsync(cancellationToken);
+        }
+        public ValueTask StopAsync(CancellationToken cancellationToken = default)
+        {
+            if (logger.IsEnabled(LogLevel.Debug))
+                logger.LogDebug("端口 [{Endpoint}] 停止", Endpoint);
+
+            return port.StopAsync(cancellationToken);
+        }
     }
 }

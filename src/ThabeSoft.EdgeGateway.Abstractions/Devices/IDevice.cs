@@ -1,6 +1,6 @@
 ﻿using ThabeSoft.EdgeGateway.Lifecycles;
-using ThabeSoft.EdgeGateway.Polling;
 using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Triggers;
 
@@ -13,21 +13,21 @@ public interface IDevice : ILifecycle, IAsyncDisposable
     ProtocolType ProtocolType { get; }
 
 
-    IReadOnlyCollection<ISubscription> Subscriptions { get; }
-    ValueTask<ISubscription<T>> AddSubscriptionAsync<T>(SubscriptionDescriptor<T> subscriptionDescriptor) where T : notnull;
+    IReadOnlyDictionary<SubscriptionId, ISubscription> Subscriptions { get; }
+    ISubscription<T> AddSubscription<T>(SubscriptionDescriptor<T> subscriptionDescriptor) where T : notnull;
 }
 
 public static class DeviceExtensions
 {
     extension(IDevice device)
     {
-        public ValueTask<ISubscription<T>> AddSubscriptionAsync<T>(
+        public ISubscription<T> AddSubscription<T>(
                 TagDescriptor<T> tagDescriptor,
                 ITriggerDescriptor triggerDescriptor
             ) where T : notnull
         {
             var descriptor = SubscriptionDescriptor.Create(tagDescriptor, triggerDescriptor);
-            return device.AddSubscriptionAsync(descriptor);
+            return device.AddSubscription(descriptor);
         }
     }
 }

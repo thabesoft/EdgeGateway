@@ -8,5 +8,5 @@ namespace ThabeSoft.EdgeGateway;
 public interface IGateway : ILifecycle, IAsyncDisposable
 {
     IReadOnlyDictionary<ConnectionEndpoint, IPort> Ports { get; }
-    ValueTask<IPort> AddPortAsync(ITransportDescriptor transportDescriptor);
+    IPort AddPort(ITransportDescriptor transportDescriptor);
 }

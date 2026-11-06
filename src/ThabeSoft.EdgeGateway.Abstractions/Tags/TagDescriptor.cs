@@ -9,18 +9,15 @@ public sealed class TagDescriptor<T>
 {
     internal TagDescriptor() { }
 
-
-    public required TagId Id { get; init; }
     public required IDataAddress Address { get; init; }
     public required ICodec<T> Codec { get; init; }
 }
 
 public static class TagDescriptor
 {
-    public static TagDescriptor<T> Create<T>(TagId id, IDataAddress address, ICodec<T> codec)
+    public static TagDescriptor<T> Create<T>(IDataAddress address, ICodec<T> codec)
         where T : notnull
     {
-        ArgumentNullException.ThrowIfNull(id);
         ArgumentNullException.ThrowIfNull(address);
         ArgumentNullException.ThrowIfNull(codec);
 
@@ -33,12 +30,8 @@ public static class TagDescriptor
 
         return new()
         {
-            Id = id,
             Address = address,
             Codec = codec
         };
     }
-
-    public static TagDescriptor<T> Create<T>(IDataAddress address, ICodec<T> codec) where T : notnull =>
-        Create(TagId.Create(), address, codec);
 }

@@ -43,7 +43,7 @@ public class GatewayTests
         var gateway = app.Services.GetRequiredService<IGateway>();
 
 
-        var port = await gateway.AddPortAsync(Serial.Port("COM2"));
+        var port = await gateway.AddPort(Serial.Port("COM2"));
         var device = await port.AddDeviceAsync(Modbus.Rtu);
 
         var tag = Modbus.HoldingRegister(1, 0, WordCodec.BigEndian.AsShort());

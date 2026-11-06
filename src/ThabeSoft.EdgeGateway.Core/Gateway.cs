@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using Microsoft.Extensions.Logging;
+using System.Collections.Concurrent;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Transport;
@@ -6,15 +7,20 @@ using ThabeSoft.EdgeGateway.Transport;
 namespace ThabeSoft.EdgeGateway;
 
 internal sealed class Gateway(
-        PortManageer portManageer
+        PortManageer portManageer,
+        ILogger<Gateway> logger
     ) : RetryableLifecycle, IGateway
 {
     private readonly ConcurrentDictionary<ConnectionEndpoint, IPort> _ports = [];
     public IReadOnlyDictionary<ConnectionEndpoint, IPort> Ports => _ports;
 
-    public async ValueTask<IPort> AddPortAsync(ITransportDescriptor transportDescriptor)
+    public IPort AddPort(ITransportDescriptor transportDescriptor)
     {
-        var port = await portManageer.RegisterAsync(transportDescriptor);
+        if (logger.IsEnabled(LogLevel.Debug))
+            logger.LogDebug("网关添加端口 [{Endpoint}]", transportDescriptor.Endpoint);
+
+
+        var port = portManageer.Register(transportDescriptor);
         _ports[port.Endpoint] = port;
         return port;
     }

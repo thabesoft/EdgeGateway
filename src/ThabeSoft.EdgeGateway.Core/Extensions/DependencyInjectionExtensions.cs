@@ -5,6 +5,7 @@ using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Hosting;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transport;
 using ThabeSoft.EdgeGateway.Triggers;
 

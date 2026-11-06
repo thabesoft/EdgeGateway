@@ -16,9 +16,9 @@ internal sealed class Port(ITransportConnection transportConnection, DeviceManag
     public bool IsOpen => IsRunning;
 
 
-    public async ValueTask<IDevice> AddDeviceAsync(DeviceDescriptor descriptor)
+    public IDevice AddDevice(DeviceDescriptor descriptor)
     {
-        var device = await deviceManager.RegisterAsync(descriptor, transportConnection);
+        var device = deviceManager.Register(descriptor, transportConnection);
         _devices[device.Id] = device;
         return device;
     }

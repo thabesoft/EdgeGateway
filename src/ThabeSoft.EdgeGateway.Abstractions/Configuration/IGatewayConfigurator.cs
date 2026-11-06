@@ -1,11 +1,11 @@
 ﻿using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Transport;
 using ThabeSoft.EdgeGateway.Triggers;
 
 namespace ThabeSoft.EdgeGateway.Configuration;
-
 
 
 public interface IGatewayConfigurator
@@ -23,7 +23,7 @@ public interface IDeviceConfigurator : IPortConfigurator
 public interface ISubscriptionConfigurator<T> : IDeviceConfigurator
     where T : notnull
 {
-    ISubscriptionConfigurator<T> OnValue(Action<T> action);
+    ISubscriptionConfigurator<T> Observable(Action<IObservable<Reading<T>>> configureObservable);
 }
 
 public delegate void GatewayConfiguratorHandler(IGatewayConfigurator configurator);

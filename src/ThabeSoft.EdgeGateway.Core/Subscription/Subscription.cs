@@ -88,6 +88,9 @@ internal sealed class Subscription<T>(
         {
             var value = await getValueHandler.Invoke(cancellationToken);
 
+            if (logger.IsEnabled(LogLevel.Trace))
+                logger.LogTrace("订阅 [{Id}] 新值 [{Value}] 已发布", Id, value);
+
             var reading = Reading.Good(value);
             Latest = reading;
             OnNext(reading);
@@ -100,6 +103,9 @@ internal sealed class Subscription<T>(
         }
         catch (Exception ex)
         {
+            if (logger.IsEnabled(LogLevel.Trace))
+                logger.LogTrace(ex, "订阅 [{Id}] 异常已发布", Id);
+
             OnError(ex);
         }
     }

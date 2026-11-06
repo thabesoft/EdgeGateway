@@ -1,12 +1,16 @@
-﻿using System.Collections.Concurrent;
+﻿using Microsoft.Extensions.Logging;
+using System.Collections.Concurrent;
 
 namespace ThabeSoft.EdgeGateway.Triggers;
 
 
-internal sealed class TriggerManager(IEnumerable<ITriggerFactory> factories)
+internal sealed class TriggerManager(
+        IEnumerable<ITriggerFactory> factories, 
+        ILoggerFactory loggerFactory
+    ) : IAsyncDisposable
 {
-    private readonly ConcurrentDictionary<ITrigger, byte> _entries = [];
-    public IReadOnlyCollection<ITrigger> Triggers => [.. _entries.Keys];
+    private readonly ILogger<TriggerManager> _logger = loggerFactory.CreateLogger<TriggerManager>();
+    private readonly ConcurrentDictionary<Guid, ITrigger> _entries = [];
 
 
     public ITrigger Register(ITriggerDescriptor descriptor)
@@ -16,23 +20,29 @@ internal sealed class TriggerManager(IEnumerable<ITriggerFactory> factories)
         ArgumentNullException.ThrowIfNull(trigger);
 
 
-        var entry = new Entry(trigger, this);
-        if (_entries.TryAdd(entry, 0)) return entry;
+        var id = Guid.NewGuid();
+        var entry = new Entry(id, trigger, this, _logger);
+        if (_entries.TryAdd(id, entry)) return entry;
 
         entry.Dispose();
         throw new InvalidOperationException();
     }
 
-
-    public ValueTask DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
-        throw new NotImplementedException();
+        foreach (var i in _entries.Values)
+            await i.DisposeAsync();
+
+        if (_logger.IsEnabled(LogLevel.Debug))
+            _logger.LogDebug("触发器理器已释放");
     }
 
 
     private sealed class Entry(
+            Guid id,
             ITrigger trigger,
-            TriggerManager manager
+            TriggerManager manager,
+            ILogger logger
         ) : ITrigger, IDisposable
     {
         private int _disposed;
@@ -42,7 +52,10 @@ internal sealed class TriggerManager(IEnumerable<ITriggerFactory> factories)
             if (Interlocked.Exchange(ref _disposed, 1) != 0) return;
 
             await trigger.DisposeAsync();
-            manager._entries.TryRemove(trigger, out _);
+            manager._entries.TryRemove(id, out _);
+
+            if (logger.IsEnabled(LogLevel.Trace))
+                logger.LogTrace("触发器 [{Endpoint}] 释放", trigger.GetType().Name);
         }
         public async void Dispose()
         {
@@ -50,7 +63,14 @@ internal sealed class TriggerManager(IEnumerable<ITriggerFactory> factories)
         }
 
 
-        public ValueTask<bool> WaitForNextTickAsync(CancellationToken cancellationToken = default) =>
-            trigger.WaitForNextTickAsync(cancellationToken);
+        public async ValueTask<bool> WaitForNextTickAsync(CancellationToken cancellationToken = default)
+        {
+            var result = await trigger.WaitForNextTickAsync(cancellationToken);
+
+            if (logger.IsEnabled(LogLevel.Trace))
+                logger.LogTrace("触发器 [{Name}] 触发", trigger.GetType().Name);
+
+            return result;
+        }
     }
 }

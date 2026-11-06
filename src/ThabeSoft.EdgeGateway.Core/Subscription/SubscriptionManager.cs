@@ -9,7 +9,11 @@ using ThabeSoft.EdgeGateway.Triggers;
 namespace ThabeSoft.EdgeGateway.Subscription;
 
 
-internal sealed class SubscriptionManager(TriggerManager triggerManager, ProtocolAccessorManager protocolAccessorManager, ILoggerFactory loggerFactory) : IAsyncDisposable
+internal sealed class SubscriptionManager(
+        TriggerManager triggerManager,
+        ProtocolAccessorManager protocolAccessorManager,
+        ILoggerFactory loggerFactory
+    ) : IAsyncDisposable
 {
     private readonly ILogger<SubscriptionManager> _logger = loggerFactory.CreateLogger<SubscriptionManager>();
     private readonly ConcurrentDictionary<SubscriptionId, ISubscription> _items = [];
@@ -45,6 +49,9 @@ internal sealed class SubscriptionManager(TriggerManager triggerManager, Protoco
     {
         foreach (var i in _items.Values)
             await i.DisposeAsync();
+
+        if (_logger.IsEnabled(LogLevel.Debug))
+            _logger.LogDebug("订阅管理器已释放");
     }
 
     public sealed class Entry<T>(
@@ -61,17 +68,18 @@ internal sealed class SubscriptionManager(TriggerManager triggerManager, Protoco
         {
             if (Interlocked.Exchange(ref _disposed, 1) != 0) return;
 
-            logger.LogDebug("订阅已释放");
-
             await subscription.DisposeAsync();
             await trigger.DisposeAsync();
             //await protocolAccessor.DisposeAsync();
 
             manager._items.TryRemove(Id, out _);
+
+            if (logger.IsEnabled(LogLevel.Debug))
+                logger.LogDebug("订阅 [{Id}] 已释放", Id);
         }
-        public void Dispose()
+        public async void Dispose()
         {
-            throw new NotImplementedException();
+            await DisposeAsync();
         }
 
 

@@ -8,7 +8,10 @@ using ThabeSoft.EdgeGateway.Transport.Byte;
 namespace ThabeSoft.EdgeGateway.Devices;
 
 
-internal sealed class DeviceManager(SubscriptionManager subscriptionManager, ILoggerFactory loggerFactory)
+internal sealed class DeviceManager(
+        SubscriptionManager subscriptionManager,
+        ILoggerFactory loggerFactory
+    ) : IAsyncDisposable
 {
     private readonly ILogger<DeviceManager> _logger = loggerFactory.CreateLogger<DeviceManager>();
     private readonly ConcurrentDictionary<DeviceId, IDevice> _entries = [];
@@ -24,6 +27,15 @@ internal sealed class DeviceManager(SubscriptionManager subscriptionManager, ILo
         entry.Dispose();
         throw new InvalidOperationException("创建是啊比啊");
     }
+    public async ValueTask DisposeAsync()
+    {
+        foreach (var i in _entries.Values)
+            await i.DisposeAsync();
+
+        if (_logger.IsEnabled(LogLevel.Debug))
+            _logger.LogDebug("设备管理器已释放");
+    }
+
 
     private sealed class Entry(IDevice device, DeviceManager manager, ILogger logger) : IDevice, IDisposable
     {
@@ -33,11 +45,11 @@ internal sealed class DeviceManager(SubscriptionManager subscriptionManager, ILo
         {
             if (Interlocked.Exchange(ref _disposed, 1) != 0) return;
 
-            if (logger.IsEnabled(LogLevel.Debug))
-                logger.LogDebug("设备 [{Did}] 释放", Id);
-
             await device.DisposeAsync();
             manager._entries.TryRemove(Id, out _);
+
+            if (logger.IsEnabled(LogLevel.Trace))
+                logger.LogTrace("设备 [{Did}] 释放", Id);
         }
         public async void Dispose()
         {
@@ -72,7 +84,5 @@ internal sealed class DeviceManager(SubscriptionManager subscriptionManager, ILo
 
             return device.StopAsync(cancellationToken);
         }
-
-
     }
 }

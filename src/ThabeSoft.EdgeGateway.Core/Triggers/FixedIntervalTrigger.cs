@@ -2,7 +2,7 @@
 
 
 internal sealed class FixedIntervalTrigger(FixedIntervalTriggerDescriptor descriptor, TimeProvider timeProvider) : ITrigger
-{
+{ 
     private readonly PeriodicTimer _periodicTimer = new(descriptor.Interval, timeProvider);
 
     public FixedIntervalTrigger(FixedIntervalTriggerDescriptor descriptor) : this(descriptor, TimeProvider.System) { }

@@ -27,6 +27,9 @@ internal sealed class Gateway(
 
     protected override async ValueTask OnStartAsync(CancellationToken cancellationToken)
     {
+        if (logger.IsEnabled(LogLevel.Debug))
+            logger.LogDebug("网关启动");
+
         List<Exception> exceptions = [];
 
         foreach (var port in Ports.Values)
@@ -60,6 +63,9 @@ internal sealed class Gateway(
             }
         }
 
+        if (logger.IsEnabled(LogLevel.Debug))
+            logger.LogDebug("网关停止");
+
         if (exceptions.Count == 0) return;
         throw new AggregateException("部分端口关闭失败", exceptions);
     }
@@ -69,5 +75,8 @@ internal sealed class Gateway(
             await port.DisposeAsync();
 
         _ports.Clear();
+
+        if (logger.IsEnabled(LogLevel.Debug))
+            logger.LogDebug("网关释放");
     }
 }

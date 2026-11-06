@@ -7,9 +7,13 @@ using ThabeSoft.EdgeGateway.Transport;
 namespace ThabeSoft.EdgeGateway.Ports;
 
 
-internal sealed class PortManageer(TransportManager transportManager, DeviceManager deviceManager, ILoggerFactory loggerFactory)
+internal sealed class PortManageer(
+        TransportManager transportManager,
+        DeviceManager deviceManager,
+        ILoggerFactory loggerFactory
+    ) : IAsyncDisposable
 {
-    private readonly ILogger<PortManageer> _loggeer = loggerFactory.CreateLogger<PortManageer>();
+    private readonly ILogger<PortManageer> _logger = loggerFactory.CreateLogger<PortManageer>();
     private readonly ConcurrentDictionary<ConnectionEndpoint, IPort> _entries = [];
 
 
@@ -17,15 +21,29 @@ internal sealed class PortManageer(TransportManager transportManager, DeviceMana
     {
         var transportConnection = transportManager.Register(transportDescriptor);
         var port = new Port(transportConnection, deviceManager);
-        var entry = new Entry(port, transportConnection, this, _loggeer);
+        var entry = new Entry(port, transportConnection, this, _logger);
 
         if (_entries.TryAdd(transportDescriptor.Endpoint, entry)) return entry;
 
         entry.Dispose();
         throw new InvalidDataException();
     }
+    public async ValueTask DisposeAsync()
+    {
+        foreach (var i in _entries.Values)
+            await i.DisposeAsync();
 
-    private sealed class Entry(Port port, ITransportConnection transportConnection, PortManageer portManageer, ILogger logger) : IPort, IDisposable
+        if (_logger.IsEnabled(LogLevel.Debug))
+            _logger.LogDebug("端口管理器已释放");
+    }
+
+
+    private sealed class Entry(
+            Port port,
+            ITransportConnection transportConnection,
+            PortManageer portManageer,
+            ILogger logger
+        ) : IPort, IDisposable
     {
         private int _disposed;
 
@@ -37,6 +55,9 @@ internal sealed class PortManageer(TransportManager transportManager, DeviceMana
             await transportConnection.DisposeAsync();
 
             portManageer._entries.TryRemove(Endpoint, out _);
+
+            if (logger.IsEnabled(LogLevel.Debug))
+                logger.LogDebug("端口 [{Endpoint}] 释放", Endpoint);
         }
         public async void Dispose()
         {

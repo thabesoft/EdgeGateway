@@ -1,7 +1,7 @@
 ﻿namespace ThabeSoft.EdgeGateway.Triggers;
 
 
-internal sealed class SignalTrigger : ITrigger
+internal sealed class SignalTrigger(SignalTriggerDescriptor descriptor) : ITrigger
 {
     private readonly SemaphoreSlim _signal = new(0);
     private readonly CancellationTokenSource _cts = new();
@@ -11,7 +11,7 @@ internal sealed class SignalTrigger : ITrigger
     public void Signal()
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
-        _signal.Release();
+        descriptor.Signal.Release();
     }
     public async ValueTask<bool> WaitForNextTickAsync(CancellationToken cancellationToken)
     {
@@ -20,7 +20,7 @@ internal sealed class SignalTrigger : ITrigger
         using var linked = CancellationTokenSource.CreateLinkedTokenSource(
             cancellationToken, _cts.Token);
 
-        await _signal.WaitAsync(linked.Token);
+        await descriptor.Signal.WaitAsync(linked.Token);
         return true;
     }
 

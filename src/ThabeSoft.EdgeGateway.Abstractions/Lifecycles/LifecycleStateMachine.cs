@@ -30,6 +30,7 @@ public abstract class LifecycleStateMachine(ILogger logger) : ILifecycle, IAsync
 
     public virtual async ValueTask StartAsync(CancellationToken cancellationToken = default)
     {
+        // 切换状态
         await _stateChangeLock.WaitAsync(cancellationToken);
         try
         {
@@ -37,10 +38,10 @@ public abstract class LifecycleStateMachine(ILogger logger) : ILifecycle, IAsync
             {
                 case LifecycleState.Stopped:
                     break;
-                case LifecycleState.Running:
-                    return;
                 case LifecycleState.Starting:
-                    throw new InvalidOperationException($"当前状态 {State} 不能启动");
+                    throw new InvalidOperationException($"启动中, 不能再次启动");
+                case LifecycleState.Running:
+                    throw new InvalidOperationException($"已启动, 不能再次启动");
                 case LifecycleState.Stopping:
                     throw new InvalidOperationException("正在停止中，不能启动");
                 case LifecycleState.Disposed:
@@ -51,33 +52,34 @@ public abstract class LifecycleStateMachine(ILogger logger) : ILifecycle, IAsync
                     throw new InvalidOperationException($"未知状态 {State}");
             }
 
-            // 启动中
             State = LifecycleState.Starting;
-            _lifecycleCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-
-            try
-            {
-                // 运行中
-                await OnStartAsync(_lifecycleCts.Token);
-                State = LifecycleState.Running;
-            }
-            catch
-            {
-                // 启动失败
-                State = LifecycleState.Faulted;
-                _lifecycleCts.Dispose();
-                _lifecycleCts = null;
-
-                throw;
-            }
         }
         finally
         {
             _stateChangeLock.Release();
         }
+
+
+        _lifecycleCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        try
+        {
+            // 运行中
+            await OnStartAsync(_lifecycleCts.Token);
+            State = LifecycleState.Running;
+        }
+        catch
+        {
+            // 启动失败
+            State = LifecycleState.Faulted;
+            _lifecycleCts.Dispose();
+            _lifecycleCts = null;
+
+            throw;
+        }
     }
     public virtual async ValueTask StopAsync(CancellationToken cancellationToken = default)
     {
+        // 切换状态
         await _stateChangeLock.WaitAsync(cancellationToken);
         try
         {
@@ -85,10 +87,10 @@ public abstract class LifecycleStateMachine(ILogger logger) : ILifecycle, IAsync
             {
                 case LifecycleState.Running:
                     break;
-                case LifecycleState.Stopped:
-                    return;
                 case LifecycleState.Starting:
                     throw new InvalidOperationException("正在启动中，不能停止");
+                case LifecycleState.Stopped:
+                    throw new InvalidOperationException("已停止，不能重复停止");
                 case LifecycleState.Stopping:
                     throw new InvalidOperationException("正在停止中，不能重复停止");
                 case LifecycleState.Faulted:
@@ -101,29 +103,30 @@ public abstract class LifecycleStateMachine(ILogger logger) : ILifecycle, IAsync
 
             // 停止中
             State = LifecycleState.Stopping;
-            if (_lifecycleCts is not null) await _lifecycleCts.CancelAsync();
-
-            try
-            {
-                // 已停止
-                await OnStopAsync(cancellationToken);
-                State = LifecycleState.Stopped;
-            }
-            catch
-            {
-                // 停止失败
-                State = LifecycleState.Faulted;
-                throw;
-            }
-            finally
-            {
-                _lifecycleCts?.Dispose();
-                _lifecycleCts = null;
-            }
         }
         finally
         {
             _stateChangeLock.Release();
+        }
+
+
+        if (_lifecycleCts is not null) await _lifecycleCts.CancelAsync();
+        try
+        {
+            // 已停止
+            await OnStopAsync(cancellationToken);
+            State = LifecycleState.Stopped;
+        }
+        catch
+        {
+            // 停止失败
+            State = LifecycleState.Faulted;
+            throw;
+        }
+        finally
+        {
+            _lifecycleCts?.Dispose();
+            _lifecycleCts = null;
         }
     }
     public virtual async ValueTask DisposeAsync()
@@ -195,10 +198,10 @@ public abstract class LifecycleStateMachine(ILogger logger) : ILifecycle, IAsync
     /// 如果内部抛出异常, 向上抛出
     /// </summary>
     protected abstract ValueTask OnStopAsync(CancellationToken cancellationToken);
-
     /// <summary>
     /// 不应抛出异常
     /// </summary>
     protected virtual ValueTask OnDisposeAsync()
         => ValueTask.CompletedTask;
+
 }

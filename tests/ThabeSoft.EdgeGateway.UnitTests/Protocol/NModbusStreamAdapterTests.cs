@@ -2,7 +2,7 @@ using Moq;
 using ThabeSoft.EdgeGateway.Transport.Byte;
 using ThabeSoft.EdgeGateway.IO;
 
-namespace ThabeSoft.EdgeGateway.Tag;
+namespace ThabeSoft.EdgeGateway.Protocol;
 
 
 [TestClass]

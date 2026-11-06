@@ -5,8 +5,9 @@ using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Transport.Byte;
+using ThabeSoft.EdgeGateway.Polling;
 
-namespace ThabeSoft.EdgeGateway.Polling;
+namespace ThabeSoft.EdgeGateway.Devices;
 
 
 internal sealed class SubscriptionManager(TriggerManager triggerManager, ProtocolAccessorManager protocolAccessorManager, ILoggerFactory loggerFactory)

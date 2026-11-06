@@ -37,23 +37,24 @@ public abstract class RetryableLifecycle(ILogger logger) : ILifecycle, IAsyncDis
             if (State is LifecycleState.Starting or LifecycleState.Disposed)
                 return;
 
-            // 启动中
             State = LifecycleState.Starting;
-            _lifecycleCts ??= CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-
-            try
-            {
-                await OnStartAsync(_lifecycleCts.Token);
-            }
-            finally
-            {
-                // 已启动
-                State = LifecycleState.Running;
-            }
         }
         finally
         {
             _stateChangeLock.Release();
+        }
+
+
+        _lifecycleCts ??= CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+
+        try
+        {
+            await OnStartAsync(_lifecycleCts.Token);
+        }
+        finally
+        {
+            // 已启动
+            State = LifecycleState.Running;
         }
     }
     public virtual async ValueTask StopAsync(CancellationToken cancellationToken = default)
@@ -76,24 +77,25 @@ public abstract class RetryableLifecycle(ILogger logger) : ILifecycle, IAsyncDis
 
             // 停止中
             State = LifecycleState.Stopping;
-            if (_lifecycleCts is not null) await _lifecycleCts.CancelAsync();
-
-            try
-            {
-                await OnStopAsync(cancellationToken);
-            }
-            finally
-            {
-                // 已停止
-                State = LifecycleState.Stopped;
-
-                _lifecycleCts?.Dispose();
-                _lifecycleCts = null;
-            }
         }
         finally
         {
             _stateChangeLock.Release();
+        }
+
+
+        if (_lifecycleCts is not null) await _lifecycleCts.CancelAsync();
+        try
+        {
+            await OnStopAsync(cancellationToken);
+        }
+        finally
+        {
+            // 已停止
+            State = LifecycleState.Stopped;
+
+            _lifecycleCts?.Dispose();
+            _lifecycleCts = null;
         }
     }
     public virtual async ValueTask DisposeAsync()

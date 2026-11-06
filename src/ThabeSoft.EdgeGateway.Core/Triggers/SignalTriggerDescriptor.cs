@@ -1,7 +1,6 @@
 ﻿namespace ThabeSoft.EdgeGateway.Triggers;
 
-public sealed class SignalTriggerDescriptor : ITriggerDescriptor
+internal sealed class SignalTriggerDescriptor : ITriggerDescriptor
 {
-    private SignalTriggerDescriptor() { }
-    public static SignalTriggerDescriptor Instance { get; } = new();
+    internal SignalTriggerDescriptor() { }
 }

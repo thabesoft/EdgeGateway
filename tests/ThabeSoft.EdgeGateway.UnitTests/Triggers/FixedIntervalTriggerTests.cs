@@ -11,7 +11,7 @@ public class FixedIntervalTriggerTests
     {
         var fakeTime = new FakeTimeProvider();
         await using var trigger = new FixedIntervalTrigger(
-            FixedIntervalTriggerDescriptor.FromMilliseconds(100), fakeTime);
+            new FixedIntervalTriggerDescriptor { Interval = TimeSpan.FromMilliseconds(100) }, fakeTime);
 
         // 1. 先发起等待（注册监听），拿到未完成的 Task
         var waitTask = trigger.WaitForNextTickAsync(TestContext.CancellationToken);

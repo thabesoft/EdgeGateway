@@ -1,9 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Polling;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Triggers;
 
-namespace ThabeSoft.EdgeGateway.Polling;
+namespace ThabeSoft.EdgeGateway.Devices;
 
 
 internal sealed class Subscription<T> : LifecycleStateMachine, ISubscription<T>

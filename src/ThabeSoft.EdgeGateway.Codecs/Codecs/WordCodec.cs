@@ -4,21 +4,24 @@ using ThabeSoft.EdgeGateway.Codecs.Swappers;
 namespace ThabeSoft.EdgeGateway.Codecs;
 
 
-public sealed class WordCodec : ICodec<ushort>
+public sealed class WordCodec : ICodec<ushort>, IRequiredBits
 {
     public static WordCodec BigEndian { get; } = new(WordSwapper.BigEndian);
     public static WordCodec LittleEndian { get; } = new(WordSwapper.LittleEndian);
 
 
-    public const int ByteLength = 2;
     private readonly ISwapper _byteSwapper;
     private WordCodec(ISwapper byteSwapper) => _byteSwapper = byteSwapper;
 
 
+    public const int RequiredBytes = 2;
+    public int RequiredBits { get; } = RequiredBytes * 8;
+
+
     public int Encode(ushort value, Span<byte> buffer)
     {
-        if (buffer.Length < ByteLength)
-            throw new ArgumentException($"缓冲区至少需要 {ByteLength} 字节。", nameof(buffer));
+        if (buffer.Length < RequiredBytes)
+            throw new ArgumentException($"缓冲区至少需要 {RequiredBytes} 字节。", nameof(buffer));
 
         BinaryPrimitives.WriteUInt16BigEndian(buffer, value);
         _byteSwapper.Swap(buffer);
@@ -28,10 +31,10 @@ public sealed class WordCodec : ICodec<ushort>
 
     public ushort Decode(ReadOnlySpan<byte> raw)
     {
-        if (raw.Length < ByteLength)
-            throw new ArgumentException($"数据至少需要 {ByteLength} 字节。", nameof(raw));
+        if (raw.Length < RequiredBytes)
+            throw new ArgumentException($"数据至少需要 {RequiredBytes} 字节。", nameof(raw));
 
-        Span<byte> cache = stackalloc byte[ByteLength];
+        Span<byte> cache = stackalloc byte[RequiredBytes];
         raw.CopyTo(cache);
         _byteSwapper.Swap(cache);
 

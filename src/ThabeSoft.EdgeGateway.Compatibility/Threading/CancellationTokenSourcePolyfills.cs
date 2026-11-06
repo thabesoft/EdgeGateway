@@ -8,7 +8,9 @@ public static class CancellationTokenSourceExtensions
     {
         public Task CancelAsync()
         {
-            return new Task(cts.Cancel);
+            try { cts.Cancel(); }
+            catch (AggregateException) { /* 回调异常，吞掉或记录 */ }
+            return Task.CompletedTask;
         }
     }
 }

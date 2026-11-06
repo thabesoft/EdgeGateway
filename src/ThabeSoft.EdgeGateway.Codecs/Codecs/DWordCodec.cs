@@ -4,7 +4,7 @@ using ThabeSoft.EdgeGateway.Codecs.Swappers;
 namespace ThabeSoft.EdgeGateway.Codecs;
 
 
-public sealed class DWordCodec : ICodec<uint>
+public sealed class DWordCodec : ICodec<uint>, IRequiredBits
 {
     public static DWordCodec BigEndian { get; } = new(DWordSwapper.BigEndian);
     public static DWordCodec LittleEndian { get; } = new(DWordSwapper.LittleEndian);
@@ -15,29 +15,32 @@ public sealed class DWordCodec : ICodec<uint>
     public static DWordCodec BADC { get; } = new(DWordSwapper.BADC);
 
 
-    public const int ByteLength = 4;
     private readonly DWordSwapper _wordSwapper;
     private DWordCodec(DWordSwapper wordSwapper) => _wordSwapper = wordSwapper;
+
+
+    public const int RequiredBytes = 4;
+    public int RequiredBits { get; } = RequiredBytes * 8;
 
 
 
     public int Encode(uint value, Span<byte> buffer)
     {
-        if (buffer.Length < ByteLength)
-            throw new ArgumentException($"缓冲区至少需要 {ByteLength} 字节。", nameof(buffer));
+        if (buffer.Length < RequiredBytes)
+            throw new ArgumentException($"缓冲区至少需要 {RequiredBytes} 字节。", nameof(buffer));
 
         BinaryPrimitives.WriteUInt32BigEndian(buffer, value);
         _wordSwapper.Swap(buffer);
 
-        return ByteLength;
+        return RequiredBytes;
     }
 
     public uint Decode(ReadOnlySpan<byte> raw)
     {
-        if (raw.Length < ByteLength)
-            throw new ArgumentException($"数据至少需要 {ByteLength} 字节。", nameof(raw));
+        if (raw.Length < RequiredBytes)
+            throw new ArgumentException($"数据至少需要 {RequiredBytes} 字节。", nameof(raw));
 
-        Span<byte> cache = stackalloc byte[ByteLength];
+        Span<byte> cache = stackalloc byte[RequiredBytes];
         raw.CopyTo(cache);
         _wordSwapper.Swap(cache);
 

@@ -2,6 +2,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Abstractions\ThabeSoft.EdgeGateway.Abstractions.csproj" />
+		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Codecs\ThabeSoft.EdgeGateway.Codecs.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

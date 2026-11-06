@@ -4,7 +4,9 @@
     <Project Path="apps/ThabeSoft.EdgeGateway.App.Desktop/ThabeSoft.EdgeGateway.App.Desktop.csproj" />
     <Project Path="apps/ThabeSoft.EdgeGateway.App/ThabeSoft.EdgeGateway.App.csproj" />
   </Folder>
-  <Folder Name="/Modules/" />
+  <Folder Name="/Modules/">
+    <Project Path="src/ThabeSoft.EdgeGateway.Codecs/ThabeSoft.EdgeGateway.Codecs.csproj" Id="d4d20e08-7043-4c25-aef9-55a0df891630" />
+  </Folder>
   <Folder Name="/Modules/Connections/">
     <Project Path="src/ThabeSoft.EdgeGateway.Ethernet/ThabeSoft.EdgeGateway.Ethernet.csproj" Id="9293874d-7505-40a5-b5fc-1f88aa38a405" />
     <Project Path="src/ThabeSoft.EdgeGateway.Serial/ThabeSoft.EdgeGateway.Serial.csproj" Id="7f4865ff-6e31-4577-89ad-3073834fd687" />

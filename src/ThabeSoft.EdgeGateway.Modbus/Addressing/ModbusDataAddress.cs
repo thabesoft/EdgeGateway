@@ -1,12 +1,14 @@
-﻿namespace ThabeSoft.EdgeGateway.Addressing;
+﻿using ThabeSoft.EdgeGateway.Codecs;
 
-public sealed record class ModbusDataAddress : IDataAddress
+namespace ThabeSoft.EdgeGateway.Addressing;
+
+public sealed record class ModbusDataAddress : IDataAddress, IRequiredBits
 {
     public required byte SlaveId { get; init; }
     public required ModbusDataKind DataKind { get; init; }
     public required ushort StartAddress { get; init; }
     public required ushort Quantity { get; init; }
-
+    public required int RequiredBits { get; init; }
 
     private ModbusDataAddress() { }
     public bool Equals(IDataAddress? other) =>
@@ -20,7 +22,8 @@ public sealed record class ModbusDataAddress : IDataAddress
             SlaveId = slaveId,
             DataKind = ModbusDataKind.Coil,
             StartAddress = address,
-            Quantity = quantity
+            Quantity = quantity,
+            RequiredBits = quantity
         };
     }
     public static ModbusDataAddress DiscreteInput(byte slaveId, ushort address, ushort quantity)
@@ -30,7 +33,8 @@ public sealed record class ModbusDataAddress : IDataAddress
             SlaveId = slaveId,
             DataKind = ModbusDataKind.DiscreteInput,
             StartAddress = address,
-            Quantity = quantity
+            Quantity = quantity,
+            RequiredBits = quantity
         };
     }
     public static ModbusDataAddress HoldingRegister(byte slaveId, ushort address, ushort quantity)
@@ -40,7 +44,8 @@ public sealed record class ModbusDataAddress : IDataAddress
             SlaveId = slaveId,
             DataKind = ModbusDataKind.HoldingRegister,
             StartAddress = address,
-            Quantity = quantity
+            Quantity = quantity,
+            RequiredBits = quantity * 16
         };
     }
     public static ModbusDataAddress InputRegister(byte slaveId, ushort address, ushort quantity)
@@ -50,7 +55,8 @@ public sealed record class ModbusDataAddress : IDataAddress
             SlaveId = slaveId,
             DataKind = ModbusDataKind.InputRegister,
             StartAddress = address,
-            Quantity = quantity
+            Quantity = quantity,
+            RequiredBits = quantity * 16
         };
     }
 }

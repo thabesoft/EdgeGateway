@@ -4,11 +4,11 @@ using System.Collections;
 using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Tags;
 
-namespace ThabeSoft.EdgeGateway.Tag;
+namespace ThabeSoft.EdgeGateway.Protocol;
 
 
 [TestClass]
-public class ModbusTagAccessorTests
+public class ModbusProtocolAccessorTests
 {
     [TestMethod]
     [DataRow(true)]

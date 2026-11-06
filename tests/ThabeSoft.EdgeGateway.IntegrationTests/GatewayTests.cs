@@ -3,7 +3,9 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel.Design;
+using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Codecs;
+using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Polling;
 using ThabeSoft.EdgeGateway.Ports;
@@ -19,12 +21,6 @@ namespace ThabeSoft.EdgeGateway;
 [TestClass]
 public class GatewayTests
 {
-    [TestMethod]
-    public async Task FcA()
-    {
-
-    }
-
     [TestMethod]
     public async Task Fc()
     {
@@ -46,13 +42,15 @@ public class GatewayTests
         var serialSimulator = app.Services.GetRequiredService<IModbusSerialSimulator>();
         serialSimulator.SetHoldingRegister(0, 123);
 
-        
+
         var gateway = app.Services.GetRequiredService<IGateway>();
 
 
         var port = await gateway.AddPortAsync(SerialTransportDescriptor.Create("COM2"));
         var device = await port.AddDeviceAsync(ModbusProtocolDescriptor.Rtu);
-        var subscription = await device.AddSubscriptionAsync(SubscriptionDescriptor.Create(ModbusTags.HoldingRegister(1, 0, WordCodec.BigEndian), FixedIntervalTriggerDescriptor.FromMilliseconds(10)));
+
+        var tag = ModbusTags.HoldingRegister(1, 0, WordCodec.BigEndian.AsShort());
+        var subscription = await device.AddSubscriptionAsync(tag, TriggerDescriptor.Interval(10));
 
         using var _ = subscription.Tag.Subscribe(x =>
             TestContext.WriteLine(x.ToString()));

@@ -44,7 +44,7 @@ public static class TagOptionsBuilderExtensions
     extension<T>(ITagOptionsConfigurator<T> builder) where T : notnull
     {
         public ITagOptionsConfigurator<T> WithFixedIntervalTrigger(TimeSpan timeSpan) =>
-            builder.WithTrigger(FixedIntervalTriggerDescriptor.From(timeSpan));
+            builder.WithTrigger(TriggerDescriptor.Interval(timeSpan));
 
         public ITagOptionsConfigurator<T> WithFixedIntervalTrigger(double milliseconds) =>
            builder.WithFixedIntervalTrigger(TimeSpan.FromMilliseconds(milliseconds));

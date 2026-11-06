@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Hosting;
-using ThabeSoft.EdgeGateway.Polling;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Transport;

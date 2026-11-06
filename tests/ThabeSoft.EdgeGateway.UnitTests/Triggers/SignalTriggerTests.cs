@@ -1,6 +1,4 @@
-﻿using ThabeSoft.EdgeGateway.Triggers.Signal;
-
-namespace ThabeSoft.EdgeGateway.Triggers;
+﻿namespace ThabeSoft.EdgeGateway.Triggers;
 
 [TestClass]
 public class SignalTriggerTests

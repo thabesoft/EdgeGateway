@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<RootNamespace>System</RootNamespace>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<!--低版本兼容包-->

@@ -13,7 +13,7 @@ public class DWordCodecTests
     {
         var codec = DWordCodec.ABCD;
 
-        Span<byte> cache = stackalloc byte[DWordCodec.ByteLength];
+        Span<byte> cache = stackalloc byte[DWordCodec.RequiredBytes];
         codec.Encode(value, cache);
         var expected = codec.Decode(cache);
 
@@ -29,7 +29,7 @@ public class DWordCodecTests
     {
         var codec = DWordCodec.BADC;
 
-        Span<byte> cache = stackalloc byte[DWordCodec.ByteLength];
+        Span<byte> cache = stackalloc byte[DWordCodec.RequiredBytes];
         codec.Encode(value, cache);
         var expected = codec.Decode(cache);
 
@@ -45,7 +45,7 @@ public class DWordCodecTests
     {
         var codec = DWordCodec.CDAB;
 
-        Span<byte> cache = stackalloc byte[DWordCodec.ByteLength];
+        Span<byte> cache = stackalloc byte[DWordCodec.RequiredBytes];
         codec.Encode(value, cache);
         var expected = codec.Decode(cache);
 
@@ -61,12 +61,47 @@ public class DWordCodecTests
     {
         var codec = DWordCodec.DCBA;
 
-        Span<byte> cache = stackalloc byte[DWordCodec.ByteLength];
+        Span<byte> cache = stackalloc byte[DWordCodec.RequiredBytes];
         codec.Encode(value, cache);
         var expected = codec.Decode(cache);
 
         Assert.AreEqual(expected, value);
     }
+
+
+
+    [TestMethod]
+    [DataRow(3.14f)]
+    [DataRow(0.001f)]
+    [DataRow(123456f)]
+    [DataRow(-123f)]
+    [DataRow(-12.3f)]
+    public void BigEndian_AsFloat_RoundTrip(float expected)
+    {
+        var codec = DWordCodec.BigEndian.AsFloat();
+        Span<byte> buffer = stackalloc byte[codec.RequiredBytes];
+
+        codec.Encode(expected, buffer);
+        var actual = codec.Decode(buffer);
+
+        Assert.AreEqual(expected, actual);
+    }
+
+    [TestMethod]
+    [DataRow(12345)]
+    public void BigEndian_AsShort_RoundTrip(int expected)
+    {
+        var codec = DWordCodec.BigEndian.AsInt();
+        Span<byte> buffer = stackalloc byte[codec.RequiredBytes];
+
+        codec.Encode(expected, buffer);
+        var actual = codec.Decode(buffer);
+
+        Assert.AreEqual(expected, actual);
+    }
+
+
+
 
 
     [TestMethod]

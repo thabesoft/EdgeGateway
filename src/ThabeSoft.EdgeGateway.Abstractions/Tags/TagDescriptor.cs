@@ -24,6 +24,13 @@ public static class TagDescriptor
         ArgumentNullException.ThrowIfNull(address);
         ArgumentNullException.ThrowIfNull(codec);
 
+
+        if (address is IRequiredBits addr && codec is IRequiredBits codecRb && codecRb.RequiredBits != addr.RequiredBits)
+        {
+            throw new InvalidOperationException(
+                $"数据位数不匹配, 地址要求读取 {addr.RequiredBits} Bit，但 Codec 要求 {codecRb.RequiredBits} Bit");
+        }
+
         return new()
         {
             Id = id,
@@ -31,4 +38,7 @@ public static class TagDescriptor
             Codec = codec
         };
     }
+
+    public static TagDescriptor<T> Create<T>(IDataAddress address, ICodec<T> codec) where T : notnull =>
+        Create(TagId.Create(), address, codec);
 }

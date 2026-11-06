@@ -1,4 +1,6 @@
-﻿using ThabeSoft.EdgeGateway.Transport;
+﻿using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Transport;
 
 namespace ThabeSoft.EdgeGateway.Configuration;
 

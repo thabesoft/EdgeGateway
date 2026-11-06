@@ -6,6 +6,7 @@ using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Transport.Byte;
 using ThabeSoft.EdgeGateway.Polling;
+using System.Diagnostics;
 
 namespace ThabeSoft.EdgeGateway.Devices;
 
@@ -24,8 +25,18 @@ internal sealed class SubscriptionManager(TriggerManager triggerManager, Protoco
 
         var subscription = new Subscription<T>(trigger, tag, async ct =>
         {
-            var value = await protocolAccessor.ReadAsync(subscriptionDescriptor.Tag, ct);
-            tag.Update(value);
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            linkedCts.CancelAfter(1000);
+
+            try
+            {
+                var value = await protocolAccessor.ReadAsync(subscriptionDescriptor.Tag, linkedCts.Token);
+                tag.Update(value);
+            }
+            catch(Exception ex)
+            {
+                Debug.Write(ex);
+            }
 
         }, loggerFactory.CreateLogger<Subscription<T>>());
 

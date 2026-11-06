@@ -1,14 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using System.ComponentModel.Design;
-using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Codecs;
+using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
-using ThabeSoft.EdgeGateway.Polling;
-using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Transport;
@@ -58,6 +54,46 @@ public class GatewayTests
         await app.StartAsync(TestContext.CancellationToken);
         await Task.Delay(100, TestContext.CancellationToken);
     }
+
+    [TestMethod]
+    public async Task FromBuilder()
+    {
+        using var app = Host.CreateDefaultBuilder()
+            .ConfigureServices(x => x
+                .AddModbusRtuSimulator(x =>
+                {
+                    x.UnitId = 1;
+                    x.SerialPortOptions = new SerialPortOptions() { PortName = "COM3" };
+                })
+                .AddEdgeGateway(gateway =>
+                {
+                    gateway.AddSerialPort("COM2", configure: port =>
+                    {
+                        port.AddModbusRtuDevice(x =>
+                        {
+                            x.AddSubscription(ModbusTags.HoldingRegister(0, 0, Codec.Int16), TriggerDescriptor.Interval(10), 
+                                x => TestContext.WriteLine(x.ToString()));
+                        });
+
+                    });
+                })
+                .AddModbus()
+                .AddSerial()
+                )
+            .Build();
+
+        var serialSimulator = app.Services.GetRequiredService<IModbusSerialSimulator>();
+        serialSimulator.SetHoldingRegister(0, 123);
+        serialSimulator.SetHoldingRegister(10, 456);
+
+
+        var gateway = app.Services.GetRequiredService<IGateway>();
+        await app.StartAsync(TestContext.CancellationToken);
+
+        await Task.Delay(100, TestContext.CancellationToken);
+    }
+
+
 
     public TestContext TestContext { get; set; }
 }

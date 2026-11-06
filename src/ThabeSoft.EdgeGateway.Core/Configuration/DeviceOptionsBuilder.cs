@@ -1,5 +1,4 @@
 ﻿using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Tags;
 
 namespace ThabeSoft.EdgeGateway.Configuration;
 
@@ -7,7 +6,7 @@ namespace ThabeSoft.EdgeGateway.Configuration;
 internal sealed class DeviceOptionsBuilder : IDeviceOptionsConfigurator
 {
     private DeviceDescriptor? _descriptor;
-    private readonly Dictionary<TagId, ITagOptions> _tags = [];
+    private readonly List<ISubscriptionOptions> _subscriptions = [];
 
 
     public IDeviceOptionsConfigurator SetDescriptor(DeviceDescriptor descriptor)
@@ -18,13 +17,13 @@ internal sealed class DeviceOptionsBuilder : IDeviceOptionsConfigurator
         return this;
     }
 
-    public IDeviceOptionsConfigurator AddTag<T>(Action<ITagOptionsConfigurator<T>> buildAction) where T : notnull
+    public IDeviceOptionsConfigurator AddSubscription<T>(Action<ISubscriptionOptionsConfigurator<T>> buildAction) where T : notnull
     {
-        var builder = new TagOptionsBuilder<T>();
+        var builder = new SubscriptionOptionsBuilder<T>();
         buildAction?.Invoke(builder);
         var options = builder.Build();
 
-        _tags[options.Descriptor.Id] = options;
+        _subscriptions.Add(options);
         return this;
     }
 
@@ -36,7 +35,7 @@ internal sealed class DeviceOptionsBuilder : IDeviceOptionsConfigurator
         return new()
         {
             Descriptor = _descriptor,
-            Tags = [.. _tags.Values]
+            Subscriptions = [.. _subscriptions]
         };
     }
 }
@@ -45,10 +44,6 @@ public static class DeviceOptionsBuilderExtensions
 {
     extension(IDeviceOptionsConfigurator builder)
     {
-        public IDeviceOptionsConfigurator AddFixedIntervalTriggerTag<T>(TagDescriptor<T> tagDescriptor, TimeSpan timeSpan) where T : notnull =>
-            builder.AddTag<T>(x => x.WithFixedIntervalTrigger(timeSpan).WithDescriptor(tagDescriptor));
-        public IDeviceOptionsConfigurator AddTagWithFixedInterval<T>(TagDescriptor<T> tagDescriptor, double milliseconds) where T : notnull =>
-           builder.AddFixedIntervalTriggerTag(tagDescriptor, TimeSpan.FromMilliseconds(milliseconds));
     }
 }
 
@@ -56,5 +51,5 @@ public static class DeviceOptionsBuilderExtensions
 internal sealed record class DeviceOptions
 {
     public required DeviceDescriptor Descriptor { get; init; }
-    public required IReadOnlyList<ITagOptions> Tags { get; init; }
+    public required ISubscriptionOptions[] Subscriptions { get; init; }
 }

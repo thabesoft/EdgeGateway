@@ -1,4 +1,5 @@
 ﻿using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Polling;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Triggers;
@@ -9,7 +10,7 @@ namespace ThabeSoft.EdgeGateway.Configuration;
 public interface IDeviceOptionsConfigurator
 {
     IDeviceOptionsConfigurator SetDescriptor(DeviceDescriptor descriptor);
-    IDeviceOptionsConfigurator AddTag<T>(Action<ITagOptionsConfigurator<T>> buildAction) where T : notnull;
+    IDeviceOptionsConfigurator AddSubscription<T>(Action<ISubscriptionOptionsConfigurator<T>> buildAction) where T : notnull;
 }
 
 public static class DeviceOptionsConfiguratorExtensions
@@ -22,7 +23,15 @@ public static class DeviceOptionsConfiguratorExtensions
         public IDeviceOptionsConfigurator UseProtocol(IProtocolDescriptor protocolDescriptor) =>
             builder.SetDescriptor(DeviceDescriptor.Create(protocolDescriptor));
 
-        public IDeviceOptionsConfigurator AddTag<T>(TagDescriptor<T> descriptor, ITriggerDescriptor triggerDescriptor) where T : notnull =>
-           builder.AddTag<T>(x => x.WithDescriptor(descriptor).WithTrigger(triggerDescriptor));
+
+        public IDeviceOptionsConfigurator AddSubscription<T>(TagDescriptor<T> descriptor, ITriggerDescriptor triggerDescriptor, params Action<T>[] tagUpdatee) where T : notnull =>
+           builder.AddSubscription<T>(x =>
+           {
+               x.WithDescriptor(SubscriptionDescriptor.Create(descriptor, triggerDescriptor));
+
+               if (tagUpdatee.Length == 0) return;
+               foreach (var i in tagUpdatee)
+                   x.AddTagCallback(i);
+           });
     }
 }

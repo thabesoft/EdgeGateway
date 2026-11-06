@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Configuration;
+using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ports;
 
 namespace ThabeSoft.EdgeGateway.Hosting;
@@ -47,8 +47,8 @@ internal sealed class GatewayHostedService(IGateway gateway, GatewayOptions opti
         {
             var device = await port.AddDeviceAsync(options.Descriptor);
 
-            //foreach (var tag in options.Tags)
-            //    AddTag(device, tag);
+            foreach (var tag in options.Subscriptions)
+                await AddSubscriptionAsync(device, tag);
         }
         catch (Exception ex)
         {
@@ -57,17 +57,16 @@ internal sealed class GatewayHostedService(IGateway gateway, GatewayOptions opti
         }
     }
 
-    //public void AddTag(IDevice device, ITagOptions tagOptions)
-    //{
-    //    try
-    //    {
-    //        device.AddSubscriptionAsync()
-    //        tagOptions.re(device);
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        loggeer.LogError(ex, "标签添加失败 [{Name}], 所属设备Id: {Id}",
-    //            tagOptions.Name, device.Id);
-    //    }
-    //}
+    public async ValueTask AddSubscriptionAsync(IDevice device, ISubscriptionOptions subscriptionOptions)
+    {
+        try
+        {
+            await subscriptionOptions.AddSubscriptionAsync(device);
+        }
+        catch (Exception ex)
+        {
+            loggeer.LogError(ex, "标签添加失败 [{Name}], 所属设备Id: {Id}",
+                subscriptionOptions, device.Id);
+        }
+    }
 }

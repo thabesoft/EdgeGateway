@@ -2,13 +2,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Tags;
+using ThabeSoft.EdgeGateway.Triggers;
 using ThabeSoft.Simulator.ModbusSlave;
 
 namespace ThabeSoft.EdgeGateway.Configuration;
 
 
 [TestClass]
-public class OptionsTests
+public class ConfigurationTests
 {
     [TestMethod]
     public async Task TestMethod1()
@@ -31,9 +32,7 @@ public class OptionsTests
                     {
                         port.AddModbusRtuDevice(device =>
                         {
-                            device.AddTagWithFixedInterval(ModbusTags.HoldingRegister(1, 100, WordCodec.BigEndian), 100);
-                            device.AddTagWithFixedInterval(ModbusTags.HoldingRegister(1, 100, WordCodec.BigEndian), 100);
-                            device.AddTagWithFixedInterval(ModbusTags.HoldingRegister(1, 100, WordCodec.BigEndian), 100);
+                            device.AddSubscription(ModbusTags.HoldingRegister(1, 100, WordCodec.BigEndian), TriggerDescriptor.Interval(100));
                         });
                     });
                 });

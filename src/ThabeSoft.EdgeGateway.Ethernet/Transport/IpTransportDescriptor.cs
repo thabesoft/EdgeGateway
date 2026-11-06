@@ -33,12 +33,6 @@ public sealed record IpTransportDescriptor : ITransportDescriptor
             Port = iPEndPoint.Port
         };
     }
-    public static IpTransportDescriptor Tcp(IPEndPoint iPEndPoint) =>
-        Create(IpTransportType.Tcp, iPEndPoint);
-    public static IpTransportDescriptor Udp(IPEndPoint iPEndPoint) =>
-        Create(IpTransportType.Udp, iPEndPoint);
-
-
 
 
     public static bool ValidateIp(string ipString, [NotNullWhen(false)] out string? errorMessage)

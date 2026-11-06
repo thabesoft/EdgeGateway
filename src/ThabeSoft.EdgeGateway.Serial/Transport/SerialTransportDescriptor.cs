@@ -15,7 +15,7 @@ public sealed record class SerialTransportDescriptor : ITransportDescriptor
 
 
     internal SerialTransportDescriptor() { }
-    public static SerialTransportDescriptor Create(string portName, int baudRate = 9600, Parity parity = Parity.None, int dataBits = 8, StopBits stopBits = StopBits.One)
+    public static SerialTransportDescriptor Create(string portName, int baudRate, Parity parity, int dataBits, StopBits stopBits)
     {
         if (!ValidatePortName(portName, out var portNameErrorMessage))
             throw new ArgumentException(portNameErrorMessage, nameof(portName));
@@ -73,7 +73,7 @@ public sealed record class SerialTransportDescriptor : ITransportDescriptor
     public static int[] StandardBaudRates { get; } = [1200, 2400, 4800, 9600, 14400, 19200, 38400, 57600, 115200, 128000, 256000];
     public static bool ValidateBaudRate(int? baudRate, [NotNullWhen(false)] out string? errorMessage)
     {
-        if(baudRate is null)
+        if (baudRate is null)
         {
             errorMessage = $"波特率不可为空";
             return false;

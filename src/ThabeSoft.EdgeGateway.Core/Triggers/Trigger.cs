@@ -1,7 +1,7 @@
 ﻿namespace ThabeSoft.EdgeGateway.Triggers;
 
 
-public static class TriggerDescriptor
+public static class Trigger
 {
     public static ITriggerDescriptor Signal { get; } = new SignalTriggerDescriptor();
 

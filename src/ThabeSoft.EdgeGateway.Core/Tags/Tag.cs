@@ -31,7 +31,7 @@ internal sealed record class Tag<T>(TagDescriptor<T> tag) : ITag<T>
         ts[callback] = default;
         return new Disposer(() => ts.TryRemove(callback, out _));
     }
-    public IDisposable Subcribe(Action<object> callback)
+    public IDisposable Subscribe(Action<object> callback)
     {
         os[callback] = default;
         return new Disposer(() => os.TryRemove(callback, out _));

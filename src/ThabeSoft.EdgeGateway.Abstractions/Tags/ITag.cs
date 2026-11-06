@@ -13,7 +13,7 @@ public interface ITag
     object? Value { get; }
 
 
-    IDisposable Subcribe(Action<object> callback);
+    IDisposable Subscribe(Action<object> callback);
 }
 
 public interface ITag<T> : ITag

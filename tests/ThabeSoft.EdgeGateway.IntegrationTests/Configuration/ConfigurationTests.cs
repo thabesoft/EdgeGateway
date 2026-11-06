@@ -1,7 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ThabeSoft.EdgeGateway.Codecs;
-using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Triggers;
 using ThabeSoft.Simulator.ModbusSlave;
 
@@ -32,7 +31,7 @@ public class ConfigurationTests
                     {
                         port.AddModbusRtuDevice(device =>
                         {
-                            device.AddSubscription(ModbusTags.HoldingRegister(1, 100, WordCodec.BigEndian), TriggerDescriptor.Interval(100));
+                            device.AddSubscription(Modbus.HoldingRegister(1, 100, WordCodec.BigEndian), Trigger.Interval(100));
                         });
                     });
                 });

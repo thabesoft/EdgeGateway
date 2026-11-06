@@ -4,7 +4,7 @@ using ThabeSoft.EdgeGateway.Addressing;
 namespace ThabeSoft.EdgeGateway.Tags;
 
 
-internal sealed record class Tag<T>(TagDescriptor<T> tag) : ITag<T>
+internal sealed class Tag<T>(TagDescriptor<T> tag) : ITag<T>
     where T : notnull
 {
     public TagId Id => tag.Id;

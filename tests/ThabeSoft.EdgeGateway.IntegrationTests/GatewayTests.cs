@@ -46,7 +46,7 @@ public class GatewayTests
         var port = await gateway.AddPortAsync(Serial.Port("COM2"));
         var device = await port.AddDeviceAsync(Modbus.Rtu);
 
-        var tag = Tags.Modbus.HoldingRegister(1, 0, WordCodec.BigEndian.AsShort());
+        var tag = Modbus.HoldingRegister(1, 0, WordCodec.BigEndian.AsShort());
         var subscription = await device.AddSubscriptionAsync(tag, Trigger.Interval(10));
 
         using var _ = subscription.Tag.Subscribe(x =>
@@ -66,18 +66,15 @@ public class GatewayTests
                     x.UnitId = 1;
                     x.SerialPortOptions = new SerialPortOptions() { PortName = "COM3" };
                 })
-                .AddEdgeGateway(gateway =>
-                {
-                    gateway.AddSerialPort("COM2", configure: port =>
-                    {
-                        port.AddModbusRtuDevice(x =>
-                        {
-                            x.AddSubscription(Modbus.HoldingRegister(0, 0, Codec.Int16), Trigger.Interval(10),
-                                x => TestContext.WriteLine(x.ToString()));
-                        });
-
-                    });
-                })
+                .AddEdgeGateway(gateway => gateway
+                    .AddSerialPort("COM2")
+                        .AddModbusRtuDevice()
+                            .AddSubscription(Modbus.HoldingRegister(0, 0, Codec.Int16), Trigger.Interval(10))
+                            .OnValue(x => { })
+                    .AddTcpPort(IPAddress.Loopback, 8086)
+                        .AddModbusIpDevice()
+                            .AddSubscription(Modbus.InputRegister(1, 0, Codec.Float), Trigger.Interval(100))
+                )
                 .AddModbus()
                 .AddSerial()
                 )
@@ -93,37 +90,6 @@ public class GatewayTests
 
         await Task.Delay(100, TestContext.CancellationToken);
     }
-
-    [TestMethod]
-    public async Task FromBuilderV2()
-    {
-        void ConfigAction(IGatewayOptionsConfiguratorV2 gateway)
-        {
-            gateway
-                // 端口1
-                .AddPort(Serial.Port("COM3"))
-                   // 设备1
-                   .AddDevice(DeviceId.Create(), Modbus.Ascii)
-                       // 温度
-                       .AddSubscription(Modbus.Coil(1, 1), Trigger.Interval(100))
-                           .OnValue(x => TestContext.WriteLine(x.ToString()))
-                       // 水位
-                       .AddSubscription(Modbus.HoldingRegister(0, 0, Codec.UInt16), Trigger.Interval(10))
-                           .OnValue(x => TestContext.WriteLine(x.ToString()))
-
-                   // 设备2
-                   .AddDevice(DeviceId.Create(), Modbus.Rtu)
-                       // 速度
-                       .AddSubscription(Modbus.InputRegister(1, 100, Codec.Int16), Trigger.Interval(10))
-                           .OnValue(x => TestContext.WriteLine(x.ToString()))
-                // 端口 2
-                .AddPort(Ethernet.Tcp(IPAddress.Loopback, 80));
-        }
-
-
-
-    }
-
 
 
     public TestContext TestContext { get; set; }

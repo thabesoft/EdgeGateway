@@ -1,4 +1,5 @@
 ﻿using ThabeSoft.EdgeGateway.Addressing;
+using ThabeSoft.EdgeGateway.Lifecycles;
 
 namespace ThabeSoft.EdgeGateway.Tags;
 

@@ -17,10 +17,11 @@ public static class DependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {
-        public IServiceCollection AddEdgeGateway(Action<IGatewayOptionsConfigurator>? buildAction = null)
+        public IServiceCollection AddEdgeGateway(GatewayConfiguratorHandler? configuratorHandler = null)
         {
             // Options
-            descriptors.ConfigureGateway(buildAction ?? delegate { });
+            if (configuratorHandler is not null)
+                descriptors.ConfigureGateway(configuratorHandler);
 
             // Manager
             descriptors.AddSingleton<TransportManager>();
@@ -37,7 +38,8 @@ public static class DependencyInjectionExtensions
 
             // Gateway
             descriptors.AddSingleton<IGateway, Gateway>();
-            descriptors.AddHostedService<GatewayHostedService>();
+            descriptors.AddHostedService<ConfiguratorHostedService>();
+            descriptors.AddHostedService<LaunchHostedService>();
 
             return descriptors;
         }
@@ -46,25 +48,9 @@ public static class DependencyInjectionExtensions
         /// <summary>
         /// 添加网关配置
         /// </summary>
-        public IServiceCollection ConfigureGateway(Action<IGatewayOptionsConfigurator> buildAction)
+        public IServiceCollection ConfigureGateway(GatewayConfiguratorHandler configuratorHandler)
         {
-            // 配置实例
-            descriptors.TryAddSingleton<GatewayOptions>(sp =>
-            {
-                var builder = new GatewayOptionsBuilder();
-
-                foreach (var action in sp.GetServices<GatewayOptionsHandler>())
-                    action.Invoke(builder);
-
-                return builder.Build();
-            });
-
-            // 配置过程
-            if (buildAction is null) return descriptors;
-            return descriptors.AddSingleton(new GatewayOptionsHandler(buildAction));
+            return descriptors.AddSingleton(configuratorHandler);
         }
     }
-
-
-    private delegate void GatewayOptionsHandler(IGatewayOptionsConfigurator optionAction);
 }

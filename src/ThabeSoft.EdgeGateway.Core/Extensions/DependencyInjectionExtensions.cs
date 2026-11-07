@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Hosting;
+using ThabeSoft.EdgeGateway.Options;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
@@ -18,33 +19,31 @@ public static class DependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {
-        public IServiceCollection AddEdgeGateway(GatewayConfiguratorHandler? configuratorHandler = null)
+        public IServiceCollection AddEdgeGateway(Action<GatewayOptions>? optionsAction = null)
         {
-            // Options
-            if (configuratorHandler is not null)
-                descriptors.ConfigureGateway(configuratorHandler);
+            if (optionsAction is not null)
+                descriptors.Configure(optionsAction);
 
             // Manager
-            descriptors.AddSingleton<TransportManager>();
-            descriptors.AddSingleton<TriggerManager>();
-            descriptors.AddSingleton<ProtocolAccessorManager>();
-            descriptors.AddSingleton<SubscriptionManager>();
-            descriptors.AddSingleton<DeviceManager>();
-            descriptors.AddSingleton<PortManageer>();
+            descriptors.TryAddSingleton<TransportManager>();
+            descriptors.TryAddSingleton<TriggerManager>();
+            descriptors.TryAddSingleton<ProtocolAccessorManager>();
+            descriptors.TryAddSingleton<SubscriptionManager>();
+            descriptors.TryAddSingleton<DeviceManager>();
+            descriptors.TryAddSingleton<PortManageer>();
 
             // Trigger
             descriptors.TryAddSingleton(TimeProvider.System);
-            descriptors.AddSingleton<ITriggerFactory, FixedIntervalTriggerFactory>();
-            descriptors.AddSingleton<ITriggerFactory, SignalTriggerFactory>();
+            descriptors.TryAddSingleton<ITriggerFactory, FixedIntervalTriggerFactory>();
+            descriptors.TryAddSingleton<ITriggerFactory, SignalTriggerFactory>();
 
             // Gateway
-            descriptors.AddSingleton<IGateway, Gateway>();
+            descriptors.TryAddSingleton<IGateway, Gateway>();
             descriptors.AddHostedService<ConfiguratorHostedService>();
             descriptors.AddHostedService<LaunchHostedService>();
 
             return descriptors;
         }
-
 
         /// <summary>
         /// 添加网关配置

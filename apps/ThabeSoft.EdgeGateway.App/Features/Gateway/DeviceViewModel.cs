@@ -10,7 +10,11 @@ namespace ThabeSoft.EdgeGateway.App.Features.Gateway;
 
 internal sealed partial class DeviceViewModel(IDevice device, ISukiToastManager sukiToastManager) : LifecycleViewModel(device, sukiToastManager), IAsyncDisposable
 {
-    private readonly AvaloniaDictionary<SubscriptionId, SubscriptionViewModeel> _subscription = [];
+    private readonly AvaloniaDictionary<SubscriptionId, SubscriptionViewModeel> _subscription = new(
+        device.Subscriptions.Values
+            .Select(x => KeyValuePair.Create(x.Id, new SubscriptionViewModeel(x, sukiToastManager)))
+            .ToDictionary()
+    );
 
 
     public DeviceId Id => device.Id;

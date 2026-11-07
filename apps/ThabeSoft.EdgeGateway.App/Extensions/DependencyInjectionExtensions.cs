@@ -34,23 +34,26 @@ public static class DependencyInjectionExtensions
 
             builder.ConfigureServices(services =>
             {
+                services.AddEdgeGateway(x => x.DisabledAutoLauch());
                 services.AddSerial();
                 services.AddEthernet();
                 services.AddModbus();
                 services.AddApp();
 
 #if DEBUG
-                services.AddEdgeGateway(gateway =>
+                services.ConfigureGateway(gateway =>
                 {
                     gateway.AddSerialPort("COM2")
                         .AddModbusRtuDevice(DeviceId.From("Serial_Rtu_Device"))
                             .AddSubscription(Modbus.Coil(1, 0), Trigger.Interval(10));
-                    
+
                     gateway.AddTcpPort(IPAddress.Loopback, 1)
-                        .AddModbusIpDevice(DeviceId.From("Ip_Tcp_Device"));
+                        .AddModbusIpDevice(DeviceId.From("Ip_Tcp_Device"))
+                            .AddSubscription(Modbus.Coil(1, 0), Trigger.Interval(10));
 
                     gateway.AddUdpPort(IPAddress.Loopback, 2)
-                        .AddModbusIpDevice(DeviceId.From("Ip_Udp_Device"));
+                        .AddModbusIpDevice(DeviceId.From("Ip_Udp_Device"))
+                            .AddSubscription(Modbus.Coil(1, 0), Trigger.Interval(10));
                 });
 #endif
 
@@ -59,7 +62,7 @@ public static class DependencyInjectionExtensions
                     // 模拟底层传输
                     services.RemoveAll<ITransportFactory>();
                     services.AddSingleton<ITransportFactory, MockTransportFactory>();
-                }                
+                }
             });
 
             return builder;

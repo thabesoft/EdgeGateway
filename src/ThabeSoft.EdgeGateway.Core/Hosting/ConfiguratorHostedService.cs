@@ -1,19 +1,21 @@
 ﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using ThabeSoft.EdgeGateway.Configuration;
+using ThabeSoft.EdgeGateway.Options;
 
 namespace ThabeSoft.EdgeGateway.Hosting;
 
 
-internal class ConfiguratorHostedService(IGateway gateway, IEnumerable<GatewayConfiguratorHandler> configuratorHandlers) : IHostedService
+internal class ConfiguratorHostedService(IGateway gateway, IOptions<GatewayOptions> options, IEnumerable<GatewayConfiguratorHandler> configuratorHandlers) : IHostedService
 {
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var builder = new GatewayConfigurator(gateway);
+        if (options.Value.IsDisabledConfigurator)
+            return;
 
-        foreach (var i in configuratorHandlers)
-        {
-            i.Invoke(builder);
-        }
+
+        var builder = new GatewayConfigurator(gateway);
+        foreach (var i in configuratorHandlers) i.Invoke(builder);
     }
     public Task StopAsync(CancellationToken cancellationToken)
     {

@@ -29,5 +29,13 @@ internal sealed partial class DeviceViewModel(IDevice device, ISukiToastManager 
         _subscription[subscription.Id] = new SubscriptionViewModeel(subscription, sukiToastManager);
     }
 
+    [RelayCommand]
+    private void RemoveSubscription(SubscriptionId subscriptionId)
+    {
+        if (_subscription.TryGetValue(subscriptionId, out var vm))
+            vm.Dispose();
+    }
+
+
     public ValueTask DisposeAsync() => device.DisposeAsync();
 }

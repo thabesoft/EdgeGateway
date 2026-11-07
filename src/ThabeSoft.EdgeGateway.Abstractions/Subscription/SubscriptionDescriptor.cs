@@ -15,7 +15,7 @@ public sealed class SubscriptionDescriptor<T> where T : notnull
 
 
     internal SubscriptionDescriptor() { }
-
+    public override string ToString() => $"Subscription({Id}, {Tag}, {Trigger})";
 }
 
 public static class SubscriptionDescriptor

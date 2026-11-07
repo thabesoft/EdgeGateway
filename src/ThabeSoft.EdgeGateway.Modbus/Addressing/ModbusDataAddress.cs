@@ -2,7 +2,7 @@
 
 namespace ThabeSoft.EdgeGateway.Addressing;
 
-public sealed record class ModbusDataAddress : IDataAddress, IRequiredBits
+public sealed class ModbusDataAddress : IDataAddress, IRequiredBits
 {
     public required byte SlaveId { get; init; }
     public required ModbusDataKind DataKind { get; init; }
@@ -11,8 +11,10 @@ public sealed record class ModbusDataAddress : IDataAddress, IRequiredBits
     public required int RequiredBits { get; init; }
 
     private ModbusDataAddress() { }
-    public bool Equals(IDataAddress? other) =>
-        Equals(other as ModbusDataAddress);
+    public bool Equals(IDataAddress? other) => Equals(other as ModbusDataAddress);
+    // Coil(0, 1)
+    public override string ToString() => $"{DataKind}({StartAddress}, {Quantity})";
+
 
 
     public static ModbusDataAddress Coil(byte slaveId, ushort address, ushort quantity)

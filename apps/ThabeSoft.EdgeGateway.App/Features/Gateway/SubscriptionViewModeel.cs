@@ -16,7 +16,8 @@ internal sealed partial class SubscriptionViewModeel : LifecycleViewModel, IDisp
     {
         _subscription = subscription;
         Latest = subscription.Latest;
-        _subscriptionHandle = subscription.Subscribe(value => Latest = value);
+        _subscriptionHandle = subscription.Subscribe(value => 
+            Latest = value);
     }
 
     public SubscriptionId Id => _subscription.Id;

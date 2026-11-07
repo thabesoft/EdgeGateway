@@ -14,7 +14,30 @@ public sealed record class SerialTransportDescriptor : ITransportDescriptor
     public required StopBits StopBits { get; init; }
 
 
-    internal SerialTransportDescriptor() { }
+    private SerialTransportDescriptor() { }
+
+    // COM2(9600, 8N5)
+    public override string ToString() => $"{PortName}({BaudRate}, {DataBits}{ParityChar}{StopBitsChar})";
+
+    private char ParityChar => Parity switch
+    {
+        Parity.None => 'N',
+        Parity.Even => 'E',
+        Parity.Odd => 'O',
+        Parity.Mark => 'M',
+        Parity.Space => 'S',
+        _ => '?'
+    };
+    private char StopBitsChar => StopBits switch
+    {
+        StopBits.One => '1',
+        StopBits.Two => '2',
+        StopBits.OnePointFive => '5',
+        _ => '?'
+    };
+
+
+
     public static SerialTransportDescriptor Create(string portName, int baudRate, Parity parity, int dataBits, StopBits stopBits)
     {
         if (!ValidatePortName(portName, out var portNameErrorMessage))

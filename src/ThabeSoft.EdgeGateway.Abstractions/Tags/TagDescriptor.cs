@@ -8,6 +8,8 @@ public sealed class TagDescriptor<T>
      where T : notnull
 {
     internal TagDescriptor() { }
+    public override string ToString() => $"Tag({Address}, {Codec})";
+
 
     public required IDataAddress Address { get; init; }
     public required ICodec<T> Codec { get; init; }

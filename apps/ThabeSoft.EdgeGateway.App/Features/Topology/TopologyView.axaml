@@ -5,6 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:suki="https://github.com/kikipoulet/SukiUI"
              xmlns:vm="using:ThabeSoft.EdgeGateway.App.ViewModels"
+             d:DesignWidth="800"
              xmlns:local="using:ThabeSoft.EdgeGateway.App.Features.Topology"
              x:Class="ThabeSoft.EdgeGateway.App.Features.Topology.TopologyView"
              x:DataType="local:TopologyViewModel">
@@ -124,14 +125,14 @@
 
                             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
 
-                                <Button IsVisible="{Binding !SelectedPort.State}"
+                                <Button IsVisible="{Binding !SelectedDevice.State}"
                                         Content="启用"
                                         Classes="Information"
-                                        Command="{Binding SelectedPort.StartCommand}" />
+                                        Command="{Binding SelectedDevice.StartCommand}" />
 
-                                <Button IsVisible="{Binding SelectedPort.IsRunning}"
+                                <Button IsVisible="{Binding SelectedDevice.IsRunning}"
                                         Content="禁用"
-                                        Command="{Binding SelectedPort.StopCommand}" />
+                                        Command="{Binding SelectedDevice.StopCommand}" />
 
                                 <Separator Height="20" Width="1"></Separator>
 
@@ -142,7 +143,7 @@
                             </StackPanel>
 
                             <DockPanel>
-                                <TextBlock VerticalAlignment="Center" Text="{Binding SelectedPort.Endpoint}"></TextBlock>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding SelectedDevice.Id}"></TextBlock>
                             </DockPanel>
 
                         </DockPanel>
@@ -155,20 +156,24 @@
                                       IsReadOnly="True"
                                       CanUserResizeColumns="True">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="Auto"/>
+                                    <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="100"/>
                                     <DataGridTextColumn Header="地址" Binding="{Binding Address}" Width="Auto"/>
-                                    <DataGridTextColumn Header="启用" Binding="{Binding IsRunning}" Width="Auto"/>
-                                    <DataGridTextColumn Header="值" Binding="{Binding Latest.Value}" Width="Auto"/>
-                                    <DataGridTextColumn Header="时间" Binding="{Binding Latest.Value.Timestamp}" Width="Auto"/>
+                                    <DataGridTextColumn Header="值" Binding="{Binding Latest.Value.Value}" Width="Auto"/>
+                                    <DataGridTextColumn Header="时间" Binding="{Binding Latest.Value.Timestamp.LocalDateTime, StringFormat={}{0:HH:mm:ss.fff}}" Width="Auto"/>
                                     <DataGridTextColumn Header="质量" Binding="{Binding Latest.Value.Quality}" Width="Auto"/>
 
                                     <!--操作-->
-                                    <DataGridTemplateColumn Header="操作" Width="Auto">
+                                    <DataGridTemplateColumn Header="操作" Width="*">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
-                                                <Button Command="{Binding $parent[UserControl].DataContext.SelectedPort.RemoveDeviceCommand}"
-                                                        CommandParameter="{Binding Id}"
-                                                        Content="删除" />
+                                                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Spacing="5">
+                                                    <Button IsVisible="{Binding !IsRunning}" Command="{Binding StartCommand}">启用</Button>
+                                                    <Button IsVisible="{Binding IsRunning}" Command="{Binding StopCommand}">禁用</Button>
+                                                    <Separator Height="20" Width="1"></Separator>
+                                                    <Button Command="{Binding $parent[UserControl].DataContext.SelectedDevice.RemoveSubscriptionCommand}"
+                                                            CommandParameter="{Binding Id}"
+                                                            Content="删除" />
+                                                </StackPanel>
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>

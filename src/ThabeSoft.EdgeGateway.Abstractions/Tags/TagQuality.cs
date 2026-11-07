@@ -1,3 +1,0 @@
-﻿namespace ThabeSoft.EdgeGateway.Tags;
-
-

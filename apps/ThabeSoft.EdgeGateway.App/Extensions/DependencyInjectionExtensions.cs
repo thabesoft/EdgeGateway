@@ -12,6 +12,7 @@ using ThabeSoft.EdgeGateway.App.Features.Dashboard;
 using ThabeSoft.EdgeGateway.App.Features.Gateway;
 using ThabeSoft.EdgeGateway.App.Features.Topology;
 using ThabeSoft.EdgeGateway.App.Services;
+using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
@@ -44,20 +45,23 @@ public static class DependencyInjectionExtensions
                 services.ConfigureGateway(gateway =>
                 {
                     gateway.AddSerialPort("COM2")
-                        .AddModbusRtuDevice(DeviceId.From("Serial_Rtu_Device"))
-                            .AddSubscription(Modbus.Coil(1, 0), Trigger.Interval(10));
+                        .AddModbusRtuDevice()
+                            .AddSubscription(Modbus.HoldingRegister(1, 0, Codec.Int16), Trigger.Interval(100))
+                                .Subscribe(x =>
+                                    Console.WriteLine(x)
+                                );
 
-                    gateway.AddTcpPort(IPAddress.Loopback, 1)
-                        .AddModbusIpDevice(DeviceId.From("Ip_Tcp_Device"))
-                            .AddSubscription(Modbus.Coil(1, 0), Trigger.Interval(10));
+                    //gateway.AddTcpPort(IPAddress.Loopback, 1)
+                    //    .AddModbusIpDevice(DeviceId.From("Ip_Tcp_Device"))
+                    //        .AddSubscription(Modbus.Coil(1, 0), Trigger.Interval(10));
 
-                    gateway.AddUdpPort(IPAddress.Loopback, 2)
-                        .AddModbusIpDevice(DeviceId.From("Ip_Udp_Device"))
-                            .AddSubscription(Modbus.Coil(1, 0), Trigger.Interval(10));
+                    //gateway.AddUdpPort(IPAddress.Loopback, 2)
+                    //    .AddModbusIpDevice(DeviceId.From("Ip_Udp_Device"))
+                    //        .AddSubscription(Modbus.Coil(1, 0), Trigger.Interval(10));
                 });
 #endif
 
-                if (Design.IsDesignMode || true)
+                if (Design.IsDesignMode)
                 {
                     // 模拟底层传输
                     services.RemoveAll<ITransportFactory>();

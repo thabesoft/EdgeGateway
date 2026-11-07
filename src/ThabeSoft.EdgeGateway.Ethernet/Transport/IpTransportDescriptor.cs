@@ -10,13 +10,16 @@ public sealed record IpTransportDescriptor : ITransportDescriptor
     public required IpTransportType TransportType { get; init; }
     public required IPAddress IPAddress { get; init; }
     public required int Port { get; init; }
-
-
     public IPEndPoint IPEndPoint => new(IPAddress, Port);
 
 
 
-    internal IpTransportDescriptor() { }
+    private IpTransportDescriptor() { }
+
+    // Tcp(192.168.1.1:1234)
+    public override string ToString() => $"{TransportType}({IPEndPoint})";
+
+
     public static IpTransportDescriptor Create(IpTransportType transportType, IPEndPoint iPEndPoint)
     {
         if (!ValidateTransportType(transportType, out var errorMessage))

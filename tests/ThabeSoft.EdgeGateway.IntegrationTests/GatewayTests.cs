@@ -78,7 +78,8 @@ public class GatewayTests
                     x.UnitId = 1;
                     x.SerialPortOptions = new SerialPortOptions() { PortName = "COM3" };
                 })
-                .AddEdgeGateway(gateway => gateway
+                .AddEdgeGateway()
+                .ConfigureGateway(gateway => gateway
                     .AddSerialPort("COM2")
                         .AddModbusRtuDevice()
                             .AddSubscription(Modbus.HoldingRegister(1, 0, Codec.Int16), Trigger.Interval(10))

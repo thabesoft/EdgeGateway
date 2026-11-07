@@ -6,6 +6,9 @@ internal sealed class FixedIntervalTriggerDescriptor : ITriggerDescriptor
     public required TimeSpan Interval { get; init; }
 
     private FixedIntervalTriggerDescriptor() { }
+    public override string ToString() => $"FixedInterval({Interval.TotalMilliseconds}ms)";
+
+
     public static FixedIntervalTriggerDescriptor Create(TimeSpan timeSpan)
     {
         if (timeSpan <= TimeSpan.Zero)

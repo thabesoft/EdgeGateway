@@ -9,7 +9,10 @@ public sealed class DeviceDescriptor
     public required IProtocolDescriptor Protocol { get; init; }
 
 
-    internal DeviceDescriptor() { }
+    private DeviceDescriptor() { }
+    public override string ToString() => $"{Id} @ {Protocol}";
+
+
     public static DeviceDescriptor Create(DeviceId deviceId, IProtocolDescriptor protocolDescriptor)
     {
         ArgumentNullException.ThrowIfNull(deviceId);

@@ -2,15 +2,19 @@
 using System.Collections.Concurrent;
 using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Transport.Byte;
 using ThabeSoft.EdgeGateway.Triggers;
 
 namespace ThabeSoft.EdgeGateway.Subscription;
 
 
 internal sealed class Subscription<T>(
-        SubscriptionDescriptor<T> descriptor,
-        ITrigger trigger,
-        Subscription<T>.GetValueHandler getValueHandler,
+        SubscriptionDescriptor<T> subscriptionDescriptor,
+        IProtocolDescriptor protocolDescriptor,
+        TriggerFactorySelector triggerFactorySelector,
+        IByteDuplex byteDuplex,
+        SubscriptionValueReaderFactory subscriptionValueReaderFactory,
         ILogger<Subscription<T>> logger
     ) : LifecycleStateMachine, ISubscription<T> where T : notnull
 {
@@ -20,13 +24,14 @@ internal sealed class Subscription<T>(
     private Task? _loopTask;
     private CancellationTokenSource? _loopCts;
 
-
+    private ITrigger _trigegr = triggerFactorySelector.Create(subscriptionDescriptor.Trigger);
+    private SubscriptionValueReader<T> _subscriptionValueReader = subscriptionValueReaderFactory.Create(subscriptionDescriptor, protocolDescriptor, byteDuplex);
     private readonly ConcurrentDictionary<Guid, IObserver<Reading<T>>> _observers = [];
 
 
 
-    public SubscriptionId Id => descriptor.Id;
-    public IDataAddress Address => descriptor.Tag.Address;
+    public SubscriptionId Id => subscriptionDescriptor.Id;
+    public IDataAddress Address => subscriptionDescriptor.Tag.Address;
     public Reading<T>? Latest { get; private set; }
     Reading? ISubscription.Latest => Latest;
 
@@ -81,7 +86,7 @@ internal sealed class Subscription<T>(
     {
         while (!cancellationToken.IsCancellationRequested)
         {
-            if (!await trigger.WaitForNextTickAsync(cancellationToken))
+            if (!await _trigegr.WaitForNextTickAsync(cancellationToken))
                 return;
 
             await OnPublishAsync(cancellationToken);
@@ -91,7 +96,7 @@ internal sealed class Subscription<T>(
     {
         try
         {
-            var value = await getValueHandler.Invoke(cancellationToken);
+            var value = await _subscriptionValueReader.WaitNextAsync(cancellationToken);
 
             if (logger.IsEnabled(LogLevel.Trace))
                 logger.LogTrace("订阅 [{Id}] 新值 [{Value}] 已发布", Id, value);

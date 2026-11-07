@@ -64,8 +64,8 @@ public static class DependencyInjectionExtensions
                 if (Design.IsDesignMode)
                 {
                     // 模拟底层传输
-                    services.RemoveAll<ITransportFactory>();
-                    services.AddSingleton<ITransportFactory, MockTransportFactory>();
+                    services.RemoveAll<ITransportConnectionFactory>();
+                    services.AddSingleton<ITransportConnectionFactory, MockTransportFactory>();
                 }
             });
 
@@ -114,7 +114,7 @@ public static class DependencyInjectionExtensions
 }
 
 
-public sealed class MockTransportFactory(ILoggerFactory loggerFactory) : ITransportFactory
+public sealed class MockTransportFactory(ILoggerFactory loggerFactory) : ITransportConnectionFactory
 {
     public bool CanCreate(ITransportDescriptor descriptor) => true;
     public ITransportConnection Create(ITransportDescriptor descriptor) =>

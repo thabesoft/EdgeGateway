@@ -6,21 +6,22 @@ using ThabeSoft.EdgeGateway.Transport;
 
 namespace ThabeSoft.EdgeGateway;
 
+
 internal sealed class Gateway(
-        PortManageer portManageer,
+        PortFactory portFactory,
         ILogger<Gateway> logger
-    ) : RetryableLifecycle, IGateway
+    ) : RetryableLifecycle(logger), IGateway
 {
     private readonly ConcurrentDictionary<ConnectionEndpoint, IPort> _ports = [];
     public IReadOnlyDictionary<ConnectionEndpoint, IPort> Ports => _ports;
+
 
     public IPort AddPort(ITransportDescriptor transportDescriptor)
     {
         if (_ports.ContainsKey(transportDescriptor.Endpoint))
             throw new InvalidOperationException($"端口添加失败, 存在相同的 端点({transportDescriptor.Endpoint})");
 
-
-        var port = portManageer.Register(transportDescriptor);
+        var port = portFactory.Create(transportDescriptor);
         _ports[port.Endpoint] = port;
 
         LogAddPort(transportDescriptor.Endpoint);
@@ -29,9 +30,6 @@ internal sealed class Gateway(
 
     protected override async ValueTask OnStartAsync(CancellationToken cancellationToken)
     {
-        if (logger.IsEnabled(LogLevel.Debug))
-            logger.LogDebug("网关启动");
-
         List<Exception> exceptions = [];
 
         foreach (var port in Ports.Values)
@@ -64,9 +62,6 @@ internal sealed class Gateway(
                 exceptions.Add(ex);
             }
         }
-
-        if (logger.IsEnabled(LogLevel.Debug))
-            logger.LogDebug("网关停止");
 
         if (exceptions.Count == 0) return;
         throw new AggregateException("部分端口关闭失败", exceptions);

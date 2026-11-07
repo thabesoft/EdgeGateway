@@ -1,7 +1,7 @@
 ﻿namespace ThabeSoft.EdgeGateway.Transport;
 
 
-internal sealed class SerialTransportFactory : ITransportFactory
+internal sealed class SerialTransportFactory : ITransportConnectionFactory
 {
     public bool CanCreate(ITransportDescriptor descriptor)
     {

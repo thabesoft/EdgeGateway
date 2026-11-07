@@ -24,18 +24,21 @@ public static class DependencyInjectionExtensions
             if (optionsAction is not null)
                 descriptors.Configure(optionsAction);
 
-            // Manager
-            descriptors.TryAddSingleton<TransportManager>();
-            descriptors.TryAddSingleton<TriggerManager>();
-            descriptors.TryAddSingleton<ProtocolAccessorManager>();
-            descriptors.TryAddSingleton<SubscriptionManager>();
-            descriptors.TryAddSingleton<DeviceManager>();
-            descriptors.TryAddSingleton<PortManageer>();
-
             // Trigger
             descriptors.TryAddSingleton(TimeProvider.System);
             descriptors.TryAddSingleton<ITriggerFactory, FixedIntervalTriggerFactory>();
             descriptors.TryAddSingleton<ITriggerFactory, SignalTriggerFactory>();
+
+            // Factory
+            descriptors.TryAddSingleton<PortFactory>();
+            descriptors.TryAddSingleton<DeviceFactory>();
+            descriptors.TryAddSingleton<SubscriptionFactory>();
+            descriptors.TryAddSingleton<SubscriptionValueReaderFactory>();
+
+            // FactorySelector
+            descriptors.TryAddSingleton<TransportConnectionFactorySelector>();
+            descriptors.TryAddSingleton<ProtocolAccessorFactorySelector>();
+            descriptors.TryAddSingleton<TriggerFactorySelector>();
 
             // Gateway
             descriptors.TryAddSingleton<IGateway, Gateway>();

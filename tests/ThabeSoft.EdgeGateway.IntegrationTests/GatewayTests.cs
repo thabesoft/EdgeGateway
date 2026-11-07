@@ -113,7 +113,7 @@ public class GatewayTests
 
 
 
-file sealed class MockTransportFactory(ILoggerFactory loggerFactory) : ITransportFactory
+file sealed class MockTransportFactory(ILoggerFactory loggerFactory) : ITransportConnectionFactory
 {
     public bool CanCreate(ITransportDescriptor descriptor) => true;
     public ITransportConnection Create(ITransportDescriptor descriptor) =>

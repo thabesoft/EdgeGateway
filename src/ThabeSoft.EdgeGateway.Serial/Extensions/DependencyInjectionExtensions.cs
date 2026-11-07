@@ -15,7 +15,7 @@ public static class DependencyInjectionExtensions
         /// </summary>
         public IServiceCollection AddSerial()
         {
-            descriptors.AddSingleton<ITransportFactory, SerialTransportFactory>();
+            descriptors.AddSingleton<ITransportConnectionFactory, SerialTransportFactory>();
             return descriptors;
         }
     }

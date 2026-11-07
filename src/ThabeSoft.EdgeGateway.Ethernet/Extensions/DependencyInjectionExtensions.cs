@@ -14,8 +14,8 @@ public static class DependencyInjectionExtensions
         /// </summary>
         public IServiceCollection AddEthernet()
         {
-            descriptors.AddSingleton<ITransportFactory, TcpTransportConnectionFactory>();
-            descriptors.AddSingleton<ITransportFactory, UdpTransportConnectionFactory>();
+            descriptors.AddSingleton<ITransportConnectionFactory, TcpTransportConnectionFactory>();
+            descriptors.AddSingleton<ITransportConnectionFactory, UdpTransportConnectionFactory>();
 
             return descriptors;
         }

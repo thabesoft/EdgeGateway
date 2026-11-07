@@ -8,12 +8,13 @@ namespace ThabeSoft.EdgeGateway.Ports;
 
 
 internal sealed class Port(
-        Func<ITransportConnection> transportConnectionFactory,
-        Func<DeviceDescriptor, ITransportConnection, IDevice> deviceFactory,
+        ITransportDescriptor transportDescriptor,
+        TransportConnectionFactorySelector transportConnectionFactorySelector,
+        DeviceFactory deviceFactory,
         ILogger<Port> logger
     ) : RetryableLifecycle, IPort
 {
-    private ITransportConnection _transportConnection = transportConnectionFactory();
+    private ITransportConnection _transportConnection = transportConnectionFactorySelector.Create(transportDescriptor);
     private readonly ConcurrentDictionary<DeviceId, IDevice> _devices = [];
 
 
@@ -26,7 +27,7 @@ internal sealed class Port(
         if (_devices.ContainsKey(descriptor.Id))
             throw new InvalidOperationException($"已存在相同 Id({descriptor.Id}) 的设备");
 
-        var device = deviceFactory(descriptor, _transportConnection);
+        var device = deviceFactory.Create(descriptor, _transportConnection);
         _devices[device.Id] = device;
 
         LogAddDevice(device.Id);

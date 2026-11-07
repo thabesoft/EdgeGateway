@@ -1,6 +1,6 @@
 ﻿namespace ThabeSoft.EdgeGateway.Transport;
 
-internal sealed class UdpTransportConnectionFactory : ITransportFactory
+internal sealed class UdpTransportConnectionFactory : ITransportConnectionFactory
 {
     public bool CanCreate(ITransportDescriptor descriptor)
     {

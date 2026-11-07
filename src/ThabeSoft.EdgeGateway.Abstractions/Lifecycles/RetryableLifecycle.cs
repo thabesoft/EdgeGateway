@@ -38,6 +38,7 @@ public abstract class RetryableLifecycle(ILogger logger) : ILifecycle, IAsyncDis
                 return;
 
             State = LifecycleState.Starting;
+            LogStarting();
         }
         finally
         {
@@ -50,6 +51,12 @@ public abstract class RetryableLifecycle(ILogger logger) : ILifecycle, IAsyncDis
         try
         {
             await OnStartAsync(_lifecycleCts.Token);
+            LogStared();
+        }
+        catch (Exception ex)
+        {
+            LogStartInnerTaskError(ex);
+            throw;
         }
         finally
         {
@@ -74,9 +81,9 @@ public abstract class RetryableLifecycle(ILogger logger) : ILifecycle, IAsyncDis
             if (State is LifecycleState.Stopping)
                 return;
 
-
             // 停止中
             State = LifecycleState.Stopping;
+            LogStoping();
         }
         finally
         {
@@ -88,6 +95,12 @@ public abstract class RetryableLifecycle(ILogger logger) : ILifecycle, IAsyncDis
         try
         {
             await OnStopAsync(cancellationToken);
+            LogStoped();
+        }
+        catch(Exception ex)
+        {
+            LogStopInnerTaskError(ex);
+            throw;
         }
         finally
         {
@@ -147,4 +160,38 @@ public abstract class RetryableLifecycle(ILogger logger) : ILifecycle, IAsyncDis
     protected abstract ValueTask OnStartAsync(CancellationToken cancellationToken);
     protected abstract ValueTask OnStopAsync(CancellationToken cancellationToken);
     protected virtual ValueTask OnDisposeAsync() => ValueTask.CompletedTask;
+
+
+    private void LogStarting()
+    {
+        if (!logger.IsEnabled(LogLevel.Debug)) return;
+        logger.LogDebug("启动中");
+    }
+    private void LogStared()
+    {
+        if (!logger.IsEnabled(LogLevel.Debug)) return;
+        logger.LogDebug("已启动");
+    }
+    private void LogStartInnerTaskError(Exception exception)
+    {
+        if (!logger.IsEnabled(LogLevel.Debug)) return;
+        logger.LogDebug(exception, "启动内部任务失败");
+    }
+
+
+    private void LogStoping()
+    {
+        if (!logger.IsEnabled(LogLevel.Debug)) return;
+        logger.LogDebug("停止中");
+    }
+    private void LogStoped()
+    {
+        if (!logger.IsEnabled(LogLevel.Debug)) return;
+        logger.LogDebug("已停止");
+    }
+    private void LogStopInnerTaskError(Exception exception)
+    {
+        if (!logger.IsEnabled(LogLevel.Debug)) return;
+        logger.LogDebug(exception, "停止内部任务失败");
+    }
 }

@@ -19,7 +19,7 @@ public class ConfigurationTests
     [TestMethod]
     public async Task SignalTrigger_ManualSignal_PublishesReading()
     {
-        var mockTransportFactory = new Mock<ITransportFactory>();
+        var mockTransportFactory = new Mock<ITransportConnectionFactory>();
         mockTransportFactory.Setup(x => x.CanCreate(It.IsAny<ITransportDescriptor>()))
             .Returns(true);
         mockTransportFactory.Setup(x => x.Create(It.IsAny<ITransportDescriptor>()))
@@ -64,7 +64,7 @@ public class ConfigurationTests
                 .AddSerial()
                 .AddEthernet()
                 .RemoveAll<IProtocolAccessorFactory>().AddSingleton(mockProtocolAccessorFactory.Object)
-                .RemoveAll<ITransportFactory>().AddSingleton(mockTransportFactory.Object)
+                .RemoveAll<ITransportConnectionFactory>().AddSingleton(mockTransportFactory.Object)
             )
             .Build();
 

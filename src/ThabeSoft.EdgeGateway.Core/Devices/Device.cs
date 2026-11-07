@@ -10,7 +10,7 @@ namespace ThabeSoft.EdgeGateway.Devices;
 
 internal sealed class Device(
         DeviceDescriptor deviceDescriptor,
-        SubscriptionManager subscriptionManager,
+        SubscriptionFactory subscriptionFactory,
         IByteDuplex byteDuplex,
         ILogger<Device> logger
     ) : RetryableLifecycle(logger), IDevice
@@ -25,7 +25,7 @@ internal sealed class Device(
 
     public ISubscription<T> AddSubscription<T>(SubscriptionDescriptor<T> subscriptionDescriptor) where T : notnull
     {
-        var subscription =  subscriptionManager.Register(subscriptionDescriptor, deviceDescriptor.Protocol, byteDuplex);
+        var subscription =  subscriptionFactory.Create(subscriptionDescriptor, deviceDescriptor.Protocol, byteDuplex);
         _subscriptions[subscriptionDescriptor.Id] = subscription;
         return subscription;
     }

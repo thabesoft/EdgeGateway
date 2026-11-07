@@ -1,13 +1,14 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Time.Testing;
 using System.Net;
 using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
-using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.EdgeGateway.Tags;
+using ThabeSoft.EdgeGateway.Ports;
+using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transport;
 using ThabeSoft.EdgeGateway.Triggers;
 using ThabeSoft.Simulator.ModbusSlave;
@@ -19,8 +20,10 @@ namespace ThabeSoft.EdgeGateway;
 public class GatewayTests
 {
     [TestMethod]
-    public async Task Fc()
+    public async Task Normal()
     {
+        var fakeTimeProvider = new FakeTimeProvider();
+
         using var app = Host.CreateDefaultBuilder()
             .ConfigureServices(x => x
                 .AddModbusRtuSimulator(x =>
@@ -31,6 +34,7 @@ public class GatewayTests
                 .AddEdgeGateway()
                 .AddModbus()
                 .AddSerial()
+                .AddSingleton<TimeProvider>(fakeTimeProvider)
                 //.RemoveAll<ITransportFactory>()
                 //.AddSingleton<ITransportFactory, MockTransportFactory>()
                 )
@@ -43,22 +47,30 @@ public class GatewayTests
         var gateway = app.Services.GetRequiredService<IGateway>();
 
 
-        var port = await gateway.AddPort(Serial.Port("COM2"));
-        var device = await port.AddDeviceAsync(Modbus.Rtu);
+        var port = gateway.AddPort(Serial.Port("COM2"));
+        var device = port.AddDevice(Modbus.Rtu);
 
         var tag = Modbus.HoldingRegister(1, 0, WordCodec.BigEndian.AsShort());
-        var subscription = await device.AddSubscriptionAsync(tag, Trigger.Interval(10));
+        var subscription = device.AddSubscription(tag, Trigger.Interval(100));
 
-        using var _ = subscription.Tag.Subscribe(x =>
-            TestContext.WriteLine(x.ToString()));
+        var tcs = new TaskCompletionSource();
+        using var _ = subscription.Subscribe(x =>
+        {
+            TestContext.WriteLine(x.ToString());
+            tcs.SetResult();
+        });
 
         await app.StartAsync(TestContext.CancellationToken);
-        await Task.Delay(100, TestContext.CancellationToken);
+        fakeTimeProvider.Advance(TimeSpan.FromSeconds(100));
+
+        tcs.Task.Wait(TestContext.CancellationToken);
     }
 
     [TestMethod]
     public async Task FromBuilder()
     {
+        var fakeTimeProvider = new FakeTimeProvider();
+
         using var app = Host.CreateDefaultBuilder()
             .ConfigureServices(x => x
                 .AddModbusRtuSimulator(x =>
@@ -69,14 +81,16 @@ public class GatewayTests
                 .AddEdgeGateway(gateway => gateway
                     .AddSerialPort("COM2")
                         .AddModbusRtuDevice()
-                            .AddSubscription(Modbus.HoldingRegister(0, 0, Codec.Int16), Trigger.Interval(10))
-                            .OnValue(x => { })
+                            .AddSubscription(Modbus.HoldingRegister(1, 0, Codec.Int16), Trigger.Interval(10))
+                                .Subscribe(x => TestContext.WriteLine(x.ToString()))
                     .AddTcpPort(IPAddress.Loopback, 8086)
                         .AddModbusIpDevice()
-                            .AddSubscription(Modbus.InputRegister(1, 0, Codec.Float), Trigger.Interval(100))
+                            .AddSubscription(Modbus.InputRegister(1, 10, Codec.Float), Trigger.Interval(100))
                 )
                 .AddModbus()
                 .AddSerial()
+                .AddEthernet()
+                .AddSingleton<TimeProvider>(fakeTimeProvider)
                 )
             .Build();
 
@@ -87,6 +101,7 @@ public class GatewayTests
 
         var gateway = app.Services.GetRequiredService<IGateway>();
         await app.StartAsync(TestContext.CancellationToken);
+        fakeTimeProvider.Advance(TimeSpan.FromSeconds(1));
 
         await Task.Delay(100, TestContext.CancellationToken);
     }

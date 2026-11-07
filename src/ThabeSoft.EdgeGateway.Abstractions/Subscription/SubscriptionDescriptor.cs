@@ -3,6 +3,7 @@ using ThabeSoft.EdgeGateway.Triggers;
 
 namespace ThabeSoft.EdgeGateway.Subscription;
 
+
 /// <summary>
 /// 订阅描述
 /// </summary>

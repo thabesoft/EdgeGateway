@@ -4,7 +4,9 @@ using CommunityToolkit.Mvvm.Input;
 using Material.Icons;
 using SukiUI.Dialogs;
 using SukiUI.Toasts;
-using ThabeSoft.EdgeGateway.App.ViewModels;
+using ThabeSoft.EdgeGateway.App.Features.Gateway;
+using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Ports;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 
@@ -26,7 +28,7 @@ internal sealed partial class TopologyViewModel(
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsSelecteedPort))]
-    public partial PortViewModel? SelectedPort { get; set; }
+    public partial PortViewModele? SelectedPort { get; set; }
     public bool IsSelecteedPort => SelectedPort is not null;
 
 
@@ -59,12 +61,13 @@ internal sealed partial class TopologyViewModel(
     {
         if (SelectedPort is null) return;
 
-        var nextItem = GetNextItem([.. Gateway.Ports], SelectedPort);
-        await Gateway.RemovePortCommand.ExecuteAsync(SelectedPort.ChannelAddress);
+        var nextItem = GetNextItem([.. Gateway.Ports.Values], SelectedPort);
+        await gatewayViewModel.RemovePortCommand.ExecuteAsync(SelectedPort.Endpoint);
+
         SelectedPort = nextItem;
 
 
-        static PortViewModel? GetNextItem(PortViewModel[] items, PortViewModel item)
+        static PortViewModele? GetNextItem(PortViewModele[] items, PortViewModele item)
         {
             for (int i = 0; i < items.Length; i++)
             {
@@ -90,12 +93,12 @@ internal sealed partial class TopologyViewModel(
 
     public override void OnNavigationEnter()
     {
-        var ports = gatewayViewModel.Ports
+        var ports = gatewayViewModel.Ports.Values
             .Select(port => new MenuItemViewModel()
             {
-                Header = port.ChannelAddress.ToString(),
+                Header = port.Endpoint.ToString(),
                 Content = port,
-                ChildItemsSource = new AvaloniaList<MenuItemViewModel>(port.Devices
+                ChildItemsSource = new AvaloniaList<MenuItemViewModel>(port.Devices.Values
                      .Select(device => new MenuItemViewModel()
                      {
                          Header = device.Id.ToString(),
@@ -113,7 +116,7 @@ internal sealed partial class TopologyViewModel(
     {
         if (value is null) return;
 
-        if (value.Content is PortViewModel port)
+        if (value.Content is PortViewModele port)
         {
             SelectedPort = port;
             SelectedDevice = null;

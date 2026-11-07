@@ -1,6 +1,5 @@
 ﻿using Avalonia.Collections;
 using CommunityToolkit.Mvvm.Input;
-using ThabeSoft.EdgeGateway.App.Features;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Ports;
@@ -24,19 +23,19 @@ public partial class DevicePageViewModel : ViewModelBase
     [RelayCommand]
     private void AddModbusAsciiDevice()
     {
-        var device = _port.AddDevice(ModbusProtocolDescriptor.Ascii);
+        var device = _port.AddDevice(DeviceDescriptor.Create(Modbus.Ascii));
         AddDevice(device);
     }
     [RelayCommand]
     private void AddModbusRtuDevice()
     {
-        var device = _port.AddDevice(ModbusProtocolDescriptor.Rtu);
+        var device = _port.AddDevice(DeviceDescriptor.Create(Modbus.Rtu));
         AddDevice(device);
     }
     [RelayCommand]
     private void AddModbusIpDevice()
     {
-        var device = _port.AddDevice(ModbusProtocolDescriptor.Ip);
+        var device = _port.AddDevice(DeviceDescriptor.Create(Modbus.Ip));
         AddDevice(device);
     }
 
@@ -53,7 +52,7 @@ public sealed partial class DeviceItemViewModel(IDevice device, IPort port) : Vi
     public DeviceId Id => device.Id;
     public ProtocolType ProtocolType => device.ProtocolType;
     public bool IsEnabled => device.IsRunning;
-    public int MonitorsCount => device.TagMonitors.Count;
+    public int SubscriptionsCount => device.Subscriptions.Count;
 
 
     [RelayCommand]
@@ -73,12 +72,7 @@ public sealed partial class DeviceItemViewModel(IDevice device, IPort port) : Vi
     [RelayCommand]
     private async Task RemoveAsync()
     {
-        await port.RemoveDeviceAsync(Id);
-    }
-
-    [RelayCommand]
-    private async Task OpenMonitorAsync()
-    {
-        await port.RemoveDeviceAsync(Id);
+        if (port.Devices.TryGetValue(Id, out var devicee))
+            await device.DisposeAsync();
     }
 }

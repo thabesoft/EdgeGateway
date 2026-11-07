@@ -2,9 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using SukiUI.Dialogs;
 using SukiUI.Toasts;
-using ThabeSoft.EdgeGateway.App.ViewModels;
+using ThabeSoft.EdgeGateway.App.Features.Gateway;
 using ThabeSoft.EdgeGateway.Transport;
-using ThabeSoft.EdgeGateway.Ports;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 

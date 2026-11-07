@@ -1,49 +1,29 @@
 ﻿using Avalonia.Collections;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ThabeSoft.EdgeGateway.App.Features;
+using SukiUI.Toasts;
 using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Subscription;
 
-namespace ThabeSoft.EdgeGateway.App.ViewModels;
+namespace ThabeSoft.EdgeGateway.App.Features.Gateway;
 
 
-internal delegate DeviceViewModel DeviceViewModelFactory(IDevice device);
-
-internal sealed partial class DeviceViewModel(IDevice device) : ViewModelBase
+internal sealed partial class DeviceViewModel(IDevice device, ISukiToastManager sukiToastManager) : LifecycleViewModel(device, sukiToastManager), IAsyncDisposable
 {
-    private readonly AvaloniaList<TagViewModel> _tagMonitors = [..device.Subscriptions.Select(device =>
-        new TagViewModel(device))];
+    private readonly AvaloniaDictionary<SubscriptionId, SubscriptionViewModeel> _subscription = [];
 
 
     public DeviceId Id => device.Id;
     public ProtocolType ProtocolType => device.ProtocolType;
-    public ICollection<TagViewModel> TagMonitors => _tagMonitors;
-
-
-
-    [ObservableProperty]
-    public partial bool DisplayName { get; set; }
-
-    [ObservableProperty]
-    public partial bool IsEnabled { get; set; } = device.IsRunning;
+    public IAvaloniaReadOnlyDictionary<SubscriptionId, SubscriptionViewModeel> Subscriptions => _subscription;
 
 
     [RelayCommand]
-    private async Task EnableAsync()
+    private void AddSubscription(SubscriptionDescriptor<int> subscriptionDescriptor)
     {
-        await device.StartAsync();
-        RefreshIsEnabled();
+        var subscription = device.AddSubscription(subscriptionDescriptor);
+        _subscription[subscription.Id] = new SubscriptionViewModeel(subscription, sukiToastManager);
     }
 
-    [RelayCommand]
-    private async Task DisableAsync()
-    {
-        await device.StopAsync();
-        RefreshIsEnabled();
-    }
-
-
-    public void RefreshIsEnabled() => IsEnabled = device.IsRunning;
+    public ValueTask DisposeAsync() => device.DisposeAsync();
 }

@@ -22,7 +22,7 @@ internal sealed class DeviceManager(
         var device = new Device(descriptor, subscriptionManager, byteDuplex, loggerFactory.CreateLogger<Device>());
 
         var entry = new Entry(device, this, _logger);
-        if (_entries.TryAdd(descriptor.DeviceId, entry)) return entry;
+        if (_entries.TryAdd(descriptor.Id, entry)) return entry;
 
         entry.Dispose();
         throw new InvalidOperationException("创建是啊比啊");

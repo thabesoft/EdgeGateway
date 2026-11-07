@@ -18,7 +18,7 @@ internal sealed class Device(
     private readonly ConcurrentDictionary<SubscriptionId, ISubscription> _subscriptions = [];
 
 
-    public DeviceId Id => deviceDescriptor.DeviceId;
+    public DeviceId Id => deviceDescriptor.Id;
     public ProtocolType ProtocolType => deviceDescriptor.Protocol.Type;
     public IReadOnlyDictionary<SubscriptionId, ISubscription> Subscriptions => _subscriptions;
 

@@ -19,7 +19,6 @@
     <Project Path="simulators/ThabeSoft.Simulator.ModbusSlave/ThabeSoft.Simulator.ModbusSlave.csproj" />
   </Folder>
   <Folder Name="/Tests/">
-    <Project Path="tests/ThabeSoft.EdgeGateway.Benchmarks/ThabeSoft.EdgeGateway.Benchmarks.csproj" Id="0f1c13a8-c29a-467e-8d46-f1f4b0fa474b" />
     <Project Path="tests/ThabeSoft.EdgeGateway.IntegrationTests/ThabeSoft.EdgeGateway.IntegrationTests.csproj" Id="861f1cea-1f75-45c5-b940-1c2408bc5670" />
     <Project Path="tests/ThabeSoft.EdgeGateway.UnitTests/ThabeSoft.EdgeGateway.UnitTests.csproj" />
   </Folder>

@@ -1,12 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
 using ThabeSoft.EdgeGateway.Configuration;
-using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Ports;
-using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.EdgeGateway.Subscription;
-using ThabeSoft.EdgeGateway.Tags;
-using ThabeSoft.EdgeGateway.Transport;
-using ThabeSoft.EdgeGateway.Triggers;
 
 namespace ThabeSoft.EdgeGateway.Hosting;
 

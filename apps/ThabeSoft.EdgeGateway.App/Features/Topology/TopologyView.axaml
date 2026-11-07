@@ -40,14 +40,14 @@
 
                             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
 
-                                <Button IsVisible="{Binding !SelectedPort.IsOpen}"
+                                <Button IsVisible="{Binding !SelectedPort.IsRunning}"
                                         Content="打开"
                                         Classes="Information"
-                                        Command="{Binding SelectedPort.OpenCommand}" />
+                                        Command="{Binding SelectedPort.StartCommand}" />
 
-                                <Button IsVisible="{Binding SelectedPort.IsOpen}"
+                                <Button IsVisible="{Binding SelectedPort.IsRunning}"
                                         Content="关闭"
-                                        Command="{Binding SelectedPort.CloseCommand}" />
+                                        Command="{Binding SelectedPort.StopCommand}" />
 
                                 <Separator Height="20" Width="1"></Separator>
 
@@ -58,7 +58,7 @@
                             </StackPanel>
 
                             <DockPanel>
-                                <TextBlock VerticalAlignment="Center" Text="{Binding SelectedPort.ChannelAddress}"></TextBlock>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding SelectedPort.Endpoint}"></TextBlock>
                             </DockPanel>
 
                         </DockPanel>
@@ -66,7 +66,7 @@
                         <!--内容栏-->
                         <DockPanel>
 
-                            <DataGrid ItemsSource="{Binding SelectedPort.Devices}"
+                            <DataGrid ItemsSource="{Binding SelectedPort.Devices.Values}"
                                       AutoGenerateColumns="False"
                                       IsReadOnly="True"
                                       CanUserResizeColumns="True">
@@ -98,8 +98,8 @@
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
                                                 <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Spacing="5">
-                                                    <Button IsVisible="{Binding !IsEnabled}" Command="{Binding EnableCommand}">启用</Button>
-                                                    <Button IsVisible="{Binding IsEnabled}" Command="{Binding DisableCommand}">禁用</Button>
+                                                    <Button IsVisible="{Binding !IsRunning}" Command="{Binding StartCommand}">启用</Button>
+                                                    <Button IsVisible="{Binding IsRunning}" Command="{Binding StopCommand}">禁用</Button>
                                                     <Separator Height="20" Width="1"></Separator>
                                                     <Button Command="{Binding $parent[UserControl].DataContext.SelectedPort.RemoveDeviceCommand}"
                                                             CommandParameter="{Binding Id}"
@@ -124,14 +124,14 @@
 
                             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
 
-                                <Button IsVisible="{Binding !SelectedPort.IsOpen}"
+                                <Button IsVisible="{Binding !SelectedPort.State}"
                                         Content="启用"
                                         Classes="Information"
-                                        Command="{Binding SelectedPort.OpenCommand}" />
+                                        Command="{Binding SelectedPort.StartCommand}" />
 
-                                <Button IsVisible="{Binding SelectedPort.IsOpen}"
+                                <Button IsVisible="{Binding SelectedPort.IsRunning}"
                                         Content="禁用"
-                                        Command="{Binding SelectedPort.CloseCommand}" />
+                                        Command="{Binding SelectedPort.StopCommand}" />
 
                                 <Separator Height="20" Width="1"></Separator>
 
@@ -142,7 +142,7 @@
                             </StackPanel>
 
                             <DockPanel>
-                                <TextBlock VerticalAlignment="Center" Text="{Binding SelectedPort.ChannelAddress}"></TextBlock>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding SelectedPort.Endpoint}"></TextBlock>
                             </DockPanel>
 
                         </DockPanel>
@@ -150,24 +150,25 @@
                         <!--内容栏-->
                         <DockPanel>
 
-                            <DataGrid ItemsSource="{Binding SelectedDevice.TagMonitors}"
+                            <DataGrid ItemsSource="{Binding SelectedDevice.Subscriptions.Values}"
                                       AutoGenerateColumns="False"
                                       IsReadOnly="True"
                                       CanUserResizeColumns="True">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="名称" Binding="{Binding Name}" Width="Auto"/>
+                                    <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="Auto"/>
                                     <DataGridTextColumn Header="地址" Binding="{Binding Address}" Width="Auto"/>
-                                    <DataGridTextColumn Header="状态" Binding="{Binding State}" Width="Auto"/>
-                                    <DataGridTextColumn Header="值" Binding="{Binding Value}" Width="Auto"/>
-                                    <DataGridTextColumn Header="时间" Binding="{Binding UpdateTime}" Width="Auto"/>
+                                    <DataGridTextColumn Header="启用" Binding="{Binding IsRunning}" Width="Auto"/>
+                                    <DataGridTextColumn Header="值" Binding="{Binding Latest.Value}" Width="Auto"/>
+                                    <DataGridTextColumn Header="时间" Binding="{Binding Latest.Value.Timestamp}" Width="Auto"/>
+                                    <DataGridTextColumn Header="质量" Binding="{Binding Latest.Value.Quality}" Width="Auto"/>
 
                                     <!--操作-->
                                     <DataGridTemplateColumn Header="操作" Width="Auto">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
-                                                    <Button Command="{Binding $parent[UserControl].DataContext.SelectedPort.RemoveDeviceCommand}"
-                                                            CommandParameter="{Binding Name}"
-                                                            Content="删除" />
+                                                <Button Command="{Binding $parent[UserControl].DataContext.SelectedPort.RemoveDeviceCommand}"
+                                                        CommandParameter="{Binding Id}"
+                                                        Content="删除" />
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>

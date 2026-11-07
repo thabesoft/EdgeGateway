@@ -37,6 +37,11 @@ internal sealed class Subscription<T>(
         _observers[id] = observer;
         return new Disposer(() => _observers.TryRemove(id, out _));
     }
+    public IDisposable Subscribe(IObserver<Reading> observer)
+    {
+        return Subscribe(new Observer(observer));
+    }
+
 
 
     protected override ValueTask OnStartAsync(CancellationToken cancellationToken)
@@ -143,5 +148,12 @@ internal sealed class Subscription<T>(
     private sealed class Disposer(Action action) : IDisposable
     {
         void IDisposable.Dispose() => action.Invoke();
+    }
+
+    private sealed class Observer(IObserver<Reading> observer) : IObserver<Reading<T>>
+    {
+        public void OnNext(Reading<T> value) => observer.OnNext(value);
+        public void OnCompleted() => observer.OnCompleted();
+        public void OnError(Exception error) => observer.OnError(error);
     }
 }

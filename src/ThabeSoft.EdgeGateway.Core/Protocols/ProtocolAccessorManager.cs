@@ -7,8 +7,9 @@ internal sealed class ProtocolAccessorManager(IEnumerable<IProtocolAccessorFacto
 {
     public IProtocolAccessor Register(IProtocolDescriptor descriptor, IByteDuplex byteDuplex)
     {
-        return (factories.FirstOrDefault(x => x.CanCreate(descriptor))
-            ?.Create(descriptor, byteDuplex))
-            ?? throw new InvalidOperationException("没有工厂能创建");
+        var factory = factories.FirstOrDefault(x => x.CanCreate(descriptor))
+            ?? throw new InvalidOperationException($"不支持的描述符 {descriptor.GetType()} 没有工厂能创建");
+
+        return factory.Create(descriptor, byteDuplex);
     }
 }

@@ -4,7 +4,7 @@ using ThabeSoft.EdgeGateway.Lifecycles;
 namespace ThabeSoft.EdgeGateway.Subscription;
 
 
-public interface ISubscription : ILifecycle, IAsyncDisposable
+public interface ISubscription : ILifecycle, IObservable<Reading>, IAsyncDisposable
 {
     SubscriptionId Id { get; }
     IDataAddress Address { get; }
@@ -18,50 +18,31 @@ public interface ISubscription<T> : ISubscription, IObservable<Reading<T>>
 }
 
 
-public readonly record struct Reading
+public static class SubscriptionExtensions
 {
-    public required DateTimeOffset Timestamp { get; init; }
-    public required ReadingQuality Quality { get; init; }
-    public required object Value { get; init; }
-
-    
-    public static Reading<T> Good<T>(T value) where T : notnull
+    extension<T>(ISubscription<T> configurator) where T : notnull
     {
-        return new()
-        {
-            Value = value,
-            Quality = ReadingQuality.Good,
-            Timestamp = DateTimeOffset.UtcNow
-        };
+        public IDisposable Subscribe(Action<Reading<T>> onNext, Action<Exception>? onError = null, Action? onCompleted = null) =>
+            configurator.Subscribe(new Observer<Reading<T>>() { Next = onNext, Error = onError, Completed = onCompleted });
     }
-    public static Reading<T> Bad<T>() where T : notnull
+
+    extension(ISubscription configurator)
     {
-        return new()
-        {
-            Value = default!,
-            Quality = ReadingQuality.Good,
-            Timestamp = DateTimeOffset.UtcNow
-        };
+        public IDisposable Subscribe(Action<Reading> onNext, Action<Exception>? onError = null, Action? onCompleted = null) =>
+            configurator.Subscribe(new Observer<Reading>() { Next = onNext, Error = onError, Completed = onCompleted });
     }
-}
 
-public readonly record struct Reading<T> where T : notnull
-{
-    public required DateTimeOffset Timestamp { get; init; }
-    public required ReadingQuality Quality { get; init; }
-    public required T Value { get; init; }
 
-    public static implicit operator Reading(Reading<T> reading) => new()
+    private sealed class Observer<T> : IObserver<T>
+        where T : notnull
     {
-        Value = reading.Value,
-        Quality = reading.Quality,
-        Timestamp = reading.Timestamp
-    };
-}
+        public Action? Completed { get; init; }
+        public Action<T>? Next { get; init; }
+        public Action<Exception>? Error { get; init; }
 
-public enum ReadingQuality : byte
-{
-    Unknown,
-    Good,
-    Bad
+
+        public void OnNext(T value) => Next?.Invoke(value);
+        public void OnCompleted() => Completed?.Invoke();
+        public void OnError(Exception error) => Error?.Invoke(error);
+    }
 }

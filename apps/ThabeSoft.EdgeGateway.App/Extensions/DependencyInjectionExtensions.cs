@@ -8,16 +8,15 @@ using SukiUI.Toasts;
 using System.Net;
 using ThabeSoft.EdgeGateway.App;
 using ThabeSoft.EdgeGateway.App.Common;
-using ThabeSoft.EdgeGateway.App.Designs;
 using ThabeSoft.EdgeGateway.App.Features.Dashboard;
+using ThabeSoft.EdgeGateway.App.Features.Gateway;
 using ThabeSoft.EdgeGateway.App.Features.Topology;
 using ThabeSoft.EdgeGateway.App.Services;
-using ThabeSoft.EdgeGateway.App.ViewModels;
 using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Transport;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using ThabeSoft.EdgeGateway.Triggers;
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
 namespace ThabeSoft.EdgeGateway;
@@ -35,20 +34,23 @@ public static class DependencyInjectionExtensions
 
             builder.ConfigureServices(services =>
             {
+                services.AddSerial();
+                services.AddEthernet();
+                services.AddModbus();
                 services.AddApp();
 
 #if DEBUG
                 services.AddEdgeGateway(gateway =>
                 {
-                    gateway.AddSerialPort("COM2", configure: x => x
+                    gateway.AddSerialPort("COM2")
                         .AddModbusRtuDevice(DeviceId.From("Serial_Rtu_Device"))
-                        .AddModbusAsciiDevice(DeviceId.From("Serial_Ascii_Device")));
+                            .AddSubscription(Modbus.Coil(1, 0), Trigger.Interval(10));
+                    
+                    gateway.AddTcpPort(IPAddress.Loopback, 1)
+                        .AddModbusIpDevice(DeviceId.From("Ip_Tcp_Device"));
 
-                    gateway.AddTcpPort(IPAddress.Loopback, 1, x => x
-                        .AddModbusIpDevice(DeviceId.From("Ip_Tcp_Device")));
-
-                    gateway.AddUdpPort(IPAddress.Loopback, 2, x => x
-                        .AddModbusIpDevice(DeviceId.From("Ip_Udp_Device")));
+                    gateway.AddUdpPort(IPAddress.Loopback, 2)
+                        .AddModbusIpDevice(DeviceId.From("Ip_Udp_Device"));
                 });
 #endif
 
@@ -57,14 +59,7 @@ public static class DependencyInjectionExtensions
                     // 模拟底层传输
                     services.RemoveAll<ITransportFactory>();
                     services.AddSingleton<ITransportFactory, MockTransportFactory>();
-                    return;
-                }
-
-
-
-                services.AddSerial();
-                services.AddEthernet();
-                services.AddModbus();
+                }                
             });
 
             return builder;
@@ -92,16 +87,8 @@ public static class DependencyInjectionExtensions
             descriptors.AddSingleton<ViewFactory>();
 
 
-
-            // Core
+            // Gateway
             descriptors.AddSingleton<GatewayViewModel>();
-
-            descriptors.AddSingleton(sp =>
-               new PortViewModelFactory(port =>
-                   ActivatorUtilities.CreateInstance<PortViewModel>(sp, port)));
-            descriptors.AddSingleton(sp =>
-                new DeviceViewModelFactory(device =>
-                    ActivatorUtilities.CreateInstance<DeviceViewModel>(sp, device)));
 
             // Shell
             descriptors.AddViewMapping<MainWindow, MainWindowViewModel>(ServiceLifetime.Singleton);

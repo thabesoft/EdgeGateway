@@ -73,7 +73,7 @@ internal sealed class PortManageer(
         public IDevice AddDevice(DeviceDescriptor descriptor)
         {
             if (logger.IsEnabled(LogLevel.Debug))
-                logger.LogDebug("端口 [{Endpoint}] 添加设备 [{DeviceId}]", Endpoint, descriptor.DeviceId);
+                logger.LogDebug("端口 [{Endpoint}] 添加设备 [{DeviceId}]", Endpoint, descriptor.Id);
 
             return port.AddDevice(descriptor);
         }

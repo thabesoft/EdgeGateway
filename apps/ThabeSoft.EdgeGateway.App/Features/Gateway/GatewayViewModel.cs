@@ -1,78 +1,37 @@
 ﻿using Avalonia.Collections;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ThabeSoft.EdgeGateway.App.Features;
+using SukiUI.Toasts;
 using ThabeSoft.EdgeGateway.Transport;
-using ThabeSoft.EdgeGateway.Lifecycles;
-using ThabeSoft.EdgeGateway.Ports;
 
-namespace ThabeSoft.EdgeGateway.App.ViewModels;
+namespace ThabeSoft.EdgeGateway.App.Features.Gateway;
 
 
-internal sealed partial class GatewayViewModel(IGateway gateway, PortViewModelFactory portViewModelFactory) : ViewModelBase
+internal sealed partial class GatewayViewModel(IGateway gateway, ISukiToastManager sukiToastManager) : LifecycleViewModel(gateway, sukiToastManager)
 {
-    private readonly AvaloniaList<PortViewModel> _ports = [.. gateway.Ports.Values.Select(port =>
-        portViewModelFactory(port))];
+    private readonly AvaloniaDictionary<ConnectionEndpoint, PortViewModele> _viewModels = new(
+        gateway.Ports.Values
+            .Select(x => KeyValuePair.Create(x.Endpoint, new PortViewModele(x, sukiToastManager)))
+            .ToDictionary()
+    );
 
 
+    public IAvaloniaReadOnlyDictionary<ConnectionEndpoint, PortViewModele> Ports => _viewModels;
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsRunning))]
-    public partial LifecycleState LifecycleState { get; private set; } = gateway.State;
-    public bool IsRunning => gateway.State == LifecycleState.Running;
-
-
-    public IAvaloniaReadOnlyList<PortViewModel> Ports => _ports;
-
-
-
-
-
-
-    [RelayCommand]
-    private async Task StartAsync()
-    {
-        await gateway.StartAsync();
-        RefreshIsRunning();
-    }
-
-    [RelayCommand]
-    private async Task StopAsync()
-    {
-        await gateway.StopAsync();
-        RefreshIsRunning();
-    }
 
 
     [RelayCommand]
     private void AddPort(ITransportDescriptor transportDescriptor)
     {
-        if (transportDescriptor is null) return;
-
-        var port = gateway.RegisterPort(transportDescriptor);
-        var portVm = portViewModelFactory(port);
-
-        _ports.Add(portVm);
+        var port = gateway.AddPort(transportDescriptor);
+        _viewModels[transportDescriptor.Endpoint] = new PortViewModele(port, sukiToastManager);
     }
 
     [RelayCommand]
-    private async Task RemovePortAsync(ConnectionEndpoint channelAddress)
+    private async Task RemovePort(ConnectionEndpoint connectionEndpoint)
     {
-        if (channelAddress is null) return;
+        if (_viewModels.TryGetValue(connectionEndpoint, out var vm))
+            await vm.DisposeAsync();
 
-        await gateway.RemovePortAsync(channelAddress);
-        var portVm = _ports.FirstOrDefault(x => x.ChannelAddress == channelAddress);
-        if (portVm is null) return;
-
-        _ports.Remove(portVm);
-    }
-
-    public void RefreshIsRunning()
-    {
-        LifecycleState = gateway.State;
-        foreach (var port in _ports) port.RefreshIsOpen();
+        _viewModels.Remove(connectionEndpoint);
     }
 }
-
-
-public sealed class GatewayStartMessage;

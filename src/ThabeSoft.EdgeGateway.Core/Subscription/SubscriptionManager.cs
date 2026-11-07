@@ -98,6 +98,14 @@ internal sealed class SubscriptionManager(
 
             return subscription.Subscribe(observer);
         }
+        public IDisposable Subscribe(IObserver<Reading> observer)
+        {
+            if (logger.IsEnabled(LogLevel.Debug))
+                logger.LogDebug("订阅 [{Id}] 添加订阅者", Id);
+
+            return subscription.Subscribe(observer);
+        }
+
 
         public ValueTask StartAsync(CancellationToken cancellationToken = default)
         {

@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
-using ThabeSoft.Simulator.ModbusSlave;
+using ThabeSoft.Simulator;
+using ThabeSoft.Simulator.Ethernet;
+using ThabeSoft.Simulator.Serial;
 
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
@@ -26,10 +28,10 @@ public static class DependencyInjectionExtensions
         public IServiceCollection AddModbusIpSimulator(Action<ModbusIpSimulatorOptions> optionsAction)
         {
             descriptors.Configure(optionsAction);
-            descriptors.AddSingleton<ModbusIpSimulator>();
+            descriptors.AddSingleton<ModbusEthernetSimulator>();
 
-            descriptors.AddSingleton<IModbusIpSimulator>(x => x.GetRequiredService<ModbusIpSimulator>());
-            descriptors.AddSingleton<IModbusSimulator>(x => x.GetRequiredService<ModbusIpSimulator>());
+            descriptors.AddSingleton<IModbusIpSimulator>(x => x.GetRequiredService<ModbusEthernetSimulator>());
+            descriptors.AddSingleton<IModbusSimulator>(x => x.GetRequiredService<ModbusEthernetSimulator>());
 
             return descriptors;
         }

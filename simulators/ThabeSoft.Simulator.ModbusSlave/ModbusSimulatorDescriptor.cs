@@ -1,51 +1,22 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using NModbus;
-using NModbus.Serial;
-using System.IO.Ports;
+﻿using ThabeSoft.EdgeGateway.Transport;
 
-namespace ThabeSoft.Simulator.ModbusSlave;
+namespace ThabeSoft.Simulator;
 
-public interface IModbusSerialSimulator : IModbusSimulator
+
+public sealed class ModbusSimulatorDescriptor
 {
-    SerialPortOptions SerialPortOptions { get; }
-}
-
-internal sealed class ModbusRtuSimulator(
-        IModbusFactory modbusFactory,
-        IOptions<ModbusSerialSimulatorOptions> options,
-        ILogger<ModbusRtuSimulator> logger
-    ) : ModbusSimulatorBase(modbusFactory, options.Value.UnitId, logger), IModbusSerialSimulator
-{
-    private SerialPort? _serialPort;
-    public SerialPortOptions SerialPortOptions => options.Value.SerialPortOptions;
+    public required byte UnitId { get; init; }
+    public required ITransportDescriptor Transport { get; init; }
 
 
-    protected override IModbusSlaveNetwork GetModbusSlaveNetwork(IModbusFactory modbusFactory)
+    private ModbusSimulatorDescriptor() { }
+    public static ModbusSimulatorDescriptor Create(byte unitId, ITransportDescriptor transportDescriptor)
     {
-        _serialPort = new(
-            portName: options.Value.SerialPortOptions.PortName,
-            baudRate: options.Value.SerialPortOptions.BaudRate,
-            parity: options.Value.SerialPortOptions.Parity,
-            dataBits: options.Value.SerialPortOptions.DataBits,
-            stopBits: options.Value.SerialPortOptions.StopBits);
+        if (unitId == 0)
+            throw new InvalidOperationException("从站Id不可设置为0");
+        ArgumentNullException.ThrowIfNull(transportDescriptor);
 
-        return modbusFactory.CreateRtuSlaveNetwork(new SerialPortAdapter(_serialPort));
-    }
-    protected override ValueTask OnStartAsync(CancellationToken cancellationToken)
-    {
-        _serialPort?.Open();
-        return ValueTask.CompletedTask;
-    }
-    protected override ValueTask OnStopAsync(CancellationToken cancellationToken)
-    {
-        _serialPort?.Close();
-        return ValueTask.CompletedTask;
-    }
-    protected override ValueTask OnDisposeAsync()
-    {
-        _serialPort?.Dispose();
-        return ValueTask.CompletedTask;
+        return new() { UnitId = unitId, Transport = transportDescriptor };
     }
 }
 

@@ -16,12 +16,14 @@ internal sealed class Gateway(
 
     public IPort AddPort(ITransportDescriptor transportDescriptor)
     {
-        if (logger.IsEnabled(LogLevel.Debug))
-            logger.LogDebug("网关添加端口 [{Endpoint}]", transportDescriptor.Endpoint);
+        if (_ports.ContainsKey(transportDescriptor.Endpoint))
+            throw new InvalidOperationException($"端口添加失败, 存在相同的 端点({transportDescriptor.Endpoint})");
 
 
         var port = portManageer.Register(transportDescriptor);
         _ports[port.Endpoint] = port;
+
+        LogAddPort(transportDescriptor.Endpoint);
         return port;
     }
 
@@ -78,5 +80,14 @@ internal sealed class Gateway(
 
         if (logger.IsEnabled(LogLevel.Debug))
             logger.LogDebug("网关释放");
+    }
+
+
+
+    private void LogAddPort(ConnectionEndpoint endpoint)
+    {
+        if (!logger.IsEnabled(LogLevel.Debug)) return;
+        logger.LogDebug("端口已添加 [{Endpoint}]", endpoint);
+
     }
 }

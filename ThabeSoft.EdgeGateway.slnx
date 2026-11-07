@@ -21,6 +21,7 @@
   <Folder Name="/Tests/">
     <Project Path="tests/ThabeSoft.EdgeGateway.IntegrationTests/ThabeSoft.EdgeGateway.IntegrationTests.csproj" Id="861f1cea-1f75-45c5-b940-1c2408bc5670" />
     <Project Path="tests/ThabeSoft.EdgeGateway.UnitTests/ThabeSoft.EdgeGateway.UnitTests.csproj" />
+    <Project Path="tests/ThabeSoft.Simulator.UnitTests/ThabeSoft.Simulator.UnitTests.csproj" Id="99229757-bf0c-4526-8a57-bd97f05c5ddb" />
   </Folder>
   <Project Path="src/ThabeSoft.EdgeGateway.Abstractions/ThabeSoft.EdgeGateway.Abstractions.csproj" Id="2c45d842-15d4-4141-a034-745e2f81d658" />
   <Project Path="src/ThabeSoft.EdgeGateway.Compatibility/ThabeSoft.EdgeGateway.Compatibility.csproj" Id="708c6812-6f16-4fff-ab61-0b476512348d" />

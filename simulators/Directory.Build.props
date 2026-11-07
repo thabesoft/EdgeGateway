@@ -9,6 +9,13 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 
+		<RootNamespace>ThabeSoft.Simulator</RootNamespace>
+
 	</PropertyGroup>
+
+	<!--测试内部可见-->
+	<ItemGroup>
+		<InternalsVisibleTo Include="ThabeSoft.Simulator.UnitTests"></InternalsVisibleTo>
+	</ItemGroup>
 
 </Project>

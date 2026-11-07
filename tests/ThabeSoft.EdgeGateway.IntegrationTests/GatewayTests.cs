@@ -41,7 +41,7 @@ public class GatewayTests
             .Build();
 
         var serialSimulator = app.Services.GetRequiredService<IModbusSerialSimulator>();
-        serialSimulator.SetHoldingRegister(0, 123);
+        serialSimulator.SetHoldingRegisters(0, 123);
 
 
         var gateway = app.Services.GetRequiredService<IGateway>();
@@ -96,8 +96,8 @@ public class GatewayTests
             .Build();
 
         var serialSimulator = app.Services.GetRequiredService<IModbusSerialSimulator>();
-        serialSimulator.SetHoldingRegister(0, 123);
-        serialSimulator.SetHoldingRegister(10, 456);
+        serialSimulator.SetHoldingRegisters(0, 123);
+        serialSimulator.SetHoldingRegisters(10, 456);
 
 
         var gateway = app.Services.GetRequiredService<IGateway>();

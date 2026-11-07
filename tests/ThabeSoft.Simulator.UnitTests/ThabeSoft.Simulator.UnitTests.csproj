@@ -1,0 +1,11 @@
+﻿<Project Sdk="MSTest.Sdk/4.2.3">
+
+	<PropertyGroup>
+		<RootNamespace>ThabeSoft.Simulator</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\simulators\ThabeSoft.Simulator.ModbusSlave\ThabeSoft.Simulator.ModbusSlave.csproj" />
+	</ItemGroup>
+
+</Project>

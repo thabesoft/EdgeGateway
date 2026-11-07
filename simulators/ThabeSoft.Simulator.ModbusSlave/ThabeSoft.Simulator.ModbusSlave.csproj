@@ -7,4 +7,13 @@
 		<PackageReference Include="NModbus.Serial" Version="3.0.83" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Ascii\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Abstractions\ThabeSoft.EdgeGateway.Abstractions.csproj" />
+	  <ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Serial\ThabeSoft.EdgeGateway.Serial.csproj" />
+	</ItemGroup>
+
 </Project>

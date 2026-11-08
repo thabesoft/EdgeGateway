@@ -11,75 +11,115 @@ internal sealed class Port(
         ITransportDescriptor transportDescriptor,
         TransportConnectionFactorySelector transportConnectionFactorySelector,
         DeviceFactory deviceFactory,
+        ILifecycleState gatewayLifecycleState,
         ILogger<Port> logger
-    ) : RetryableLifecycle, IPort
+    ) : IPort
 {
-    private ITransportConnection _transportConnection = transportConnectionFactorySelector.Create(transportDescriptor);
+    private readonly LifecycleStateMachineA _stateMachine = Lifecycle.Normal(x => x.StartStop(60), logger: logger);
+    private readonly ITransportConnection _transportConnection = transportConnectionFactorySelector.Create(transportDescriptor);
     private readonly ConcurrentDictionary<DeviceId, IDevice> _devices = [];
 
 
     public ConnectionEndpoint Endpoint => _transportConnection.Endpoint;
     public IReadOnlyDictionary<DeviceId, IDevice> Devices => _devices;
+    public LifecycleState State => _stateMachine.State;
+
 
 
     public IDevice AddDevice(DeviceDescriptor descriptor)
     {
-        if (_devices.ContainsKey(descriptor.Id))
-            throw new InvalidOperationException($"已存在相同 Id({descriptor.Id}) 的设备");
+        return _stateMachine.Execute(() =>
+        {
+            if (_devices.ContainsKey(descriptor.Id))
+                throw new InvalidOperationException($"已存在相同 Id({descriptor.Id}) 的设备");
 
-        var device = deviceFactory.Create(descriptor, _transportConnection);
-        _devices[device.Id] = device;
+            var device = deviceFactory.Create(descriptor, this, _transportConnection);
+            _devices[device.Id] = device;
 
-        LogAddDevice(device.Id);
-        return device;
+            return device;
+        });
     }
 
+    public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
+     _stateMachine.StartAsync(OnStartAsync, cancellationToken);
+    public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
+        _stateMachine.StopAsync(OnStopAsync, cancellationToken);
+    public ValueTask DisposeAsync() =>
+        _stateMachine.DisposeAsync(OnDisposeAsync);
 
-    protected override async ValueTask OnStartAsync(CancellationToken cancellationToken)
+
+
+
+    private async ValueTask OnStartAsync(CancellationToken cancellationToken)
     {
+        if (gatewayLifecycleState.State is not (LifecycleState.Starting or LifecycleState.Running))
+            throw new InvalidOperationException("端口启动失败, 网关未启动");
+
         await _transportConnection.StartAsync(cancellationToken);
 
-        foreach (var i in Devices.Values)
-            await i.StartAsync(cancellationToken);
+        List<Exception> errors = [];
+        foreach (var device in Devices.Values)
+        {
+            try
+            {
+                await device.StartAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                errors.Add(ex);
+                logger.LogError(ex, "设备 {DeviceId} 启动失败", device.Id);
+            }
+        }
 
-        LogStarted();
+        if (errors.Count == 0) return;
+        throw new AggregateException($"端口 {Endpoint} 启动时 {errors.Count} 个设备启动失败", errors);
     }
-    protected override async ValueTask OnStopAsync(CancellationToken cancellationToken)
+    private async ValueTask OnStopAsync(CancellationToken cancellationToken)
     {
-        foreach (var i in Devices.Values)
-            await i.StopAsync(cancellationToken);
+        List<Exception> errors = [];
 
-        await _transportConnection.StopAsync(cancellationToken);
-        LogStoped();
-    }
-    protected override async ValueTask OnDisposeAsync()
-    {
-        foreach (var i in _devices.Values)
-            await i.DisposeAsync();
+        foreach (var device in Devices.Values)
+        {
+            try
+            {
+                await device.StopAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                errors.Add(ex);
+                logger.LogError(ex, "设备 {DeviceId} 启动失败", device.Id);
+            }
+        }
 
-        await _transportConnection.DisposeAsync();
-        LogDisposed();
-    }
+        try { await _transportConnection.StopAsync(cancellationToken); }
+        catch (Exception ex)
+        {
+            errors.Add(ex);
+            logger.LogError(ex, "传输器 {Endpoint} 停止失败", _transportConnection.Endpoint);
+        }
 
+        if (errors.Count == 0) return;
+        throw new AggregateException($"端口 {Endpoint} 停止时 {errors.Count} 个端口停止失败", errors);
 
-    private void LogStarted()
-    {
-        if (!logger.IsEnabled(LogLevel.Debug)) return;
-        logger.LogDebug("端口 [{Endpoint}] 启动", Endpoint);
     }
-    private void LogStoped()
+    private async ValueTask OnDisposeAsync()
     {
-        if (!logger.IsEnabled(LogLevel.Debug)) return;
-        logger.LogDebug("端口 [{Endpoint}] 停止", Endpoint);
-    }
-    private void LogAddDevice(DeviceId deviceId)
-    {
-        if (logger.IsEnabled(LogLevel.Debug))
-            logger.LogDebug("端口 [{Endpoint}] 添加设备 [{DeviceId}]", Endpoint, deviceId);
-    }
-    private void LogDisposed()
-    {
-        if (!logger.IsEnabled(LogLevel.Debug)) return;
-        logger.LogDebug("端口 [{Endpoint}] 释放", Endpoint);
+        foreach (var device in _devices.Values)
+        {
+            try { await device.DisposeAsync(); }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "设备 {DeviceId} 释放失败", device.Id);
+            }
+        }
+
+        try
+        {
+            await _transportConnection.DisposeAsync();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "端口 {Endpoint} 传输器 释放失败", _transportConnection.Endpoint);
+        }
     }
 }

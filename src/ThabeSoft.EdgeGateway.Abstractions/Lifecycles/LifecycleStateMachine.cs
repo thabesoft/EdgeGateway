@@ -14,6 +14,7 @@ namespace ThabeSoft.EdgeGateway.Lifecycles;
 /// 释放流程: 任意状态->已释放
 /// </summary>
 /// <param name="logger"></param>
+[Obsolete]
 public abstract class LifecycleStateMachine(ILogger logger) : ILifecycle, IAsyncDisposable
 {
     private readonly SemaphoreSlim _stateChangeLock = new(1, 1);

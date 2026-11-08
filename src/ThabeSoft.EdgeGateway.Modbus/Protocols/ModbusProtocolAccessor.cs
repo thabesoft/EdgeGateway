@@ -16,23 +16,23 @@ internal sealed class ModbusProtocolAccessor(IModbusMaster master) : IProtocolAc
             throw new InvalidOperationException("不是有效的Modbus地址");
 
 
-        if (mosbus.DataKind == ModbusDataKind.Coil)
+        if (mosbus.Kind == ModbusDataKind.Coil)
         {
             var bits = await master.ReadCoilsAsync(mosbus.SlaveId, mosbus.StartAddress, mosbus.Quantity);
             return tag.Codec.DecodeBits(bits);
         }
-        if (mosbus.DataKind == ModbusDataKind.DiscreteInput)
+        if (mosbus.Kind == ModbusDataKind.DiscreteInput)
         {
             var bits = await master.ReadInputsAsync(mosbus.SlaveId, mosbus.StartAddress, mosbus.Quantity);
             return tag.Codec.DecodeBits(bits);
         }
 
-        if (mosbus.DataKind == ModbusDataKind.HoldingRegister)
+        if (mosbus.Kind == ModbusDataKind.HoldingRegister)
         {
             var words = await master.ReadHoldingRegistersAsync(mosbus.SlaveId, mosbus.StartAddress, mosbus.Quantity);
             return tag.Codec.DecodeWords(words);
         }
-        if (mosbus.DataKind == ModbusDataKind.InputRegister)
+        if (mosbus.Kind == ModbusDataKind.InputRegister)
         {
             var words = await master.ReadInputRegistersAsync(mosbus.SlaveId, mosbus.StartAddress, mosbus.Quantity);
             return tag.Codec.DecodeWords(words);
@@ -48,7 +48,7 @@ internal sealed class ModbusProtocolAccessor(IModbusMaster master) : IProtocolAc
             throw new InvalidOperationException("不是有效的Modbus地址");
 
 
-        if (modbus.DataKind == ModbusDataKind.Coil)
+        if (modbus.Kind == ModbusDataKind.Coil)
         {
             Span<byte> cache = stackalloc byte[(modbus.Quantity + 7) / 8];
             tag.Codec.Encode(value, cache);
@@ -70,7 +70,7 @@ internal sealed class ModbusProtocolAccessor(IModbusMaster master) : IProtocolAc
             return;
         }
 
-        if (modbus.DataKind == ModbusDataKind.HoldingRegister)
+        if (modbus.Kind == ModbusDataKind.HoldingRegister)
         {
             Span<byte> cache = stackalloc byte[modbus.Quantity * 2];
             tag.Codec.Encode(value, cache);
@@ -89,42 +89,5 @@ internal sealed class ModbusProtocolAccessor(IModbusMaster master) : IProtocolAc
         }
 
         throw new InvalidOperationException("不可写的数据类别。");
-    }
-}
-
-
-internal static class CodecExtensions
-{
-    extension<T>(ICodec<T> codec) where T : notnull
-    {
-        public T DecodeBits(bool[] bits)
-        {
-            ArgumentNullException.ThrowIfNull(codec);
-            ArgumentNullException.ThrowIfNull(bits);
-
-            var byteLength = (bits.Length + 7) / 8;
-            Span<byte> cache = stackalloc byte[byteLength];
-
-            for (int i = 0; i < bits.Length; i++)
-            {
-                if (bits[i])
-                    cache[i / 8] |= (byte)(1 << (i % 8));
-            }
-
-            return codec.Decode(cache);
-        }
-
-        public T DecodeWords(ushort[] words)
-        {
-            ArgumentNullException.ThrowIfNull(codec);
-            ArgumentNullException.ThrowIfNull(words);
-
-            Span<byte> cache = stackalloc byte[words.Length * 2];
-
-            for (int i = 0; i < words.Length; i++)
-                BinaryPrimitives.WriteUInt16BigEndian(cache[(i * 2)..], words[i]);
-
-            return codec.Decode(cache);
-        }
     }
 }

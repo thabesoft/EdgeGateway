@@ -1,4 +1,4 @@
-﻿using System.IO.Ports;
+﻿using ThabeSoft.EdgeGateway.Transport;
 
 namespace ThabeSoft.EdgeGateway.Configuration;
 
@@ -7,7 +7,11 @@ public static class ConfigurationExtensions
 {
     extension(IGatewayConfigurator configurator)
     {
-        public IPortConfigurator AddSerialPort(string portName, int baudRate = 9600, Parity parity = Parity.None, int dataBits = 8, StopBits stopBits = StopBits.One) =>
-            configurator.AddPort(Serial.Port(portName, baudRate, parity, dataBits, stopBits));
+        public IPortConfigurator AddSerialPort(string portName,
+            int baudRate = 9600,
+            SerialParity parity = SerialParity.None,
+            int dataBits = 8,
+            SerialStopBits stopBits = SerialStopBits.One
+        ) => configurator.AddPort(Serial.Port(portName, baudRate, parity, dataBits, stopBits));
     }
 }

@@ -1,7 +1,9 @@
-﻿namespace ThabeSoft.EdgeGateway.Transport;
+﻿using Microsoft.Extensions.Logging;
+
+namespace ThabeSoft.EdgeGateway.Transport;
 
 
-internal sealed class SerialTransportFactory : ITransportConnectionFactory
+internal sealed class SerialTransportFactory(ILoggerFactory loggerFactory) : ITransportConnectionFactory
 {
     public bool CanCreate(ITransportDescriptor descriptor)
     {
@@ -13,6 +15,6 @@ internal sealed class SerialTransportFactory : ITransportConnectionFactory
         if (descriptor is not SerialTransportDescriptor serial)
             throw new InvalidOperationException();
 
-        return new SerialTransportConnection(serial);
+        return new SerialTransportConnection(serial, loggerFactory.CreateLogger<SerialTransportConnection>());
     }
 }

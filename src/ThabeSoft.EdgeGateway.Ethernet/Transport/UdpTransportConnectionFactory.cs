@@ -1,6 +1,8 @@
-﻿namespace ThabeSoft.EdgeGateway.Transport;
+﻿using Microsoft.Extensions.Logging;
 
-internal sealed class UdpTransportConnectionFactory : ITransportConnectionFactory
+namespace ThabeSoft.EdgeGateway.Transport;
+
+internal sealed class UdpTransportConnectionFactory(ILoggerFactory  loggerFactory) : ITransportConnectionFactory
 {
     public bool CanCreate(ITransportDescriptor descriptor)
     {
@@ -12,6 +14,6 @@ internal sealed class UdpTransportConnectionFactory : ITransportConnectionFactor
         if (descriptor is not IpTransportDescriptor ip || ip.TransportType != IpTransportType.Udp)
             throw new InvalidOperationException();
 
-        return new UdpTransportConnection(ip);
+        return new UdpTransportConnection(ip, loggerFactory.CreateLogger<UdpTransportConnection>());
     }
 }

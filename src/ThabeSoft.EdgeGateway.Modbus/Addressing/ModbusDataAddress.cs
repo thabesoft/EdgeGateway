@@ -5,7 +5,7 @@ namespace ThabeSoft.EdgeGateway.Addressing;
 public sealed class ModbusDataAddress : IDataAddress, IRequiredBits
 {
     public required byte SlaveId { get; init; }
-    public required ModbusDataKind DataKind { get; init; }
+    public required ModbusDataKind Kind { get; init; }
     public required ushort StartAddress { get; init; }
     public required ushort Quantity { get; init; }
     public required int RequiredBits { get; init; }
@@ -13,7 +13,7 @@ public sealed class ModbusDataAddress : IDataAddress, IRequiredBits
     private ModbusDataAddress() { }
     public bool Equals(IDataAddress? other) => Equals(other as ModbusDataAddress);
     // Coil(0, 1)
-    public override string ToString() => $"{DataKind}({StartAddress}, {Quantity})";
+    public override string ToString() => $"{Kind}({StartAddress}, {Quantity})";
 
 
 
@@ -22,7 +22,7 @@ public sealed class ModbusDataAddress : IDataAddress, IRequiredBits
         return new()
         {
             SlaveId = slaveId,
-            DataKind = ModbusDataKind.Coil,
+            Kind = ModbusDataKind.Coil,
             StartAddress = address,
             Quantity = quantity,
             RequiredBits = quantity
@@ -33,7 +33,7 @@ public sealed class ModbusDataAddress : IDataAddress, IRequiredBits
         return new()
         {
             SlaveId = slaveId,
-            DataKind = ModbusDataKind.DiscreteInput,
+            Kind = ModbusDataKind.DiscreteInput,
             StartAddress = address,
             Quantity = quantity,
             RequiredBits = quantity
@@ -44,7 +44,7 @@ public sealed class ModbusDataAddress : IDataAddress, IRequiredBits
         return new()
         {
             SlaveId = slaveId,
-            DataKind = ModbusDataKind.HoldingRegister,
+            Kind = ModbusDataKind.HoldingRegister,
             StartAddress = address,
             Quantity = quantity,
             RequiredBits = quantity * 16
@@ -55,7 +55,7 @@ public sealed class ModbusDataAddress : IDataAddress, IRequiredBits
         return new()
         {
             SlaveId = slaveId,
-            DataKind = ModbusDataKind.InputRegister,
+            Kind = ModbusDataKind.InputRegister,
             StartAddress = address,
             Quantity = quantity,
             RequiredBits = quantity * 16

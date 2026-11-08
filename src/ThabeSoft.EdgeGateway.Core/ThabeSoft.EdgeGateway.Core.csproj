@@ -6,6 +6,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Abstractions\ThabeSoft.EdgeGateway.Abstractions.csproj" />
+		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Lifecycles\ThabeSoft.EdgeGateway.Lifecycles.csproj" />
 	</ItemGroup>
 
 </Project>

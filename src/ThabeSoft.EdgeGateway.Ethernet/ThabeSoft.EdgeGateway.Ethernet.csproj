@@ -1,7 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
+	  <PackageReference Include="System.Threading.Channels" Version="10.0.14" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Abstractions\ThabeSoft.EdgeGateway.Abstractions.csproj" />
+		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Lifecycles\ThabeSoft.EdgeGateway.Lifecycles.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -1,7 +1,9 @@
-﻿namespace ThabeSoft.EdgeGateway.Transport;
+﻿using Microsoft.Extensions.Logging;
+
+namespace ThabeSoft.EdgeGateway.Transport;
 
 
-internal sealed class TcpTransportConnectionFactory : ITransportConnectionFactory
+internal sealed class TcpTransportConnectionFactory(ILoggerFactory loggerFactory) : ITransportConnectionFactory
 {
     public bool CanCreate(ITransportDescriptor descriptor)
     {
@@ -13,6 +15,6 @@ internal sealed class TcpTransportConnectionFactory : ITransportConnectionFactor
         if (descriptor is not IpTransportDescriptor ip || ip.TransportType != IpTransportType.Tcp)
             throw new InvalidOperationException();
 
-        return new TcpTransportConnection(ip);
+        return new TcpTransportConnection(ip, loggerFactory.CreateLogger<TcpTransportConnection>());
     }
 }

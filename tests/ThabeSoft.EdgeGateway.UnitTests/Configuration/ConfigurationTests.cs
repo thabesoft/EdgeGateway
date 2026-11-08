@@ -50,7 +50,8 @@ public class ConfigurationTests
         using var app = Host.CreateDefaultBuilder()
             .ConfigureLogging((_, x) => x.SetMinimumLevel(LogLevel.Trace))
             .ConfigureServices(x => x
-                .AddEdgeGateway(gateway => gateway
+                .AddEdgeGateway()
+                .ConfigureGateway(gateway => gateway
                     .AddSerialPort("COM2")
                         .AddModbusRtuDevice(deviceId)
                             .AddSubscription(Modbus.Coil(1, 0), trigger)

@@ -7,6 +7,7 @@ namespace ThabeSoft.EdgeGateway.Lifecycles;
 /// <summary>
 /// 允许多次启动和停止的状态机
 /// </summary>
+[Obsolete]
 public abstract class RetryableLifecycle(ILogger logger) : ILifecycle, IAsyncDisposable
 {
     private readonly SemaphoreSlim _stateChangeLock = new(1, 1);

@@ -2,10 +2,12 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Abstractions\ThabeSoft.EdgeGateway.Abstractions.csproj" />
+		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Lifecycles\ThabeSoft.EdgeGateway.Lifecycles.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="System.IO.Ports" Version="10.0.13" />
+		<PackageReference Include="RJCP.SerialPortStream" Version="3.0.5" />
+		<PackageReference Include="System.IO.Ports" Version="10.0.14" />
 	</ItemGroup>
 	
 </Project>

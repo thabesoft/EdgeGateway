@@ -1,11 +1,14 @@
-﻿using System.IO.Ports;
-using ThabeSoft.EdgeGateway.Transport;
+﻿using ThabeSoft.EdgeGateway.Transport;
 
 namespace ThabeSoft.EdgeGateway;
 
 
 public static class Serial
 {
-    public static SerialTransportDescriptor Port(string portName, int baudRate = 9600, Parity parity = Parity.None, int dataBits = 8, StopBits stopBits = StopBits.One)
-        => SerialTransportDescriptor.Create(portName, baudRate, parity, dataBits, stopBits);
+    public static SerialTransportDescriptor Port(string portName,
+        int baudRate = 9600,
+        SerialParity parity = SerialParity.None,
+        int dataBits = 8,
+        SerialStopBits stopBits = SerialStopBits.One
+    ) => SerialTransportDescriptor.Create(portName, baudRate, parity, dataBits, stopBits);
 }

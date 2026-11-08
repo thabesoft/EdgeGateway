@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.IO.Ports;
 
 namespace ThabeSoft.EdgeGateway.Transport;
 
@@ -10,8 +9,8 @@ public sealed record class SerialTransportDescriptor : ITransportDescriptor
     public required string PortName { get; init; }
     public required int BaudRate { get; init; }
     public required int DataBits { get; init; }
-    public required Parity Parity { get; init; }
-    public required StopBits StopBits { get; init; }
+    public required SerialParity Parity { get; init; }
+    public required SerialStopBits StopBits { get; init; }
 
 
     private SerialTransportDescriptor() { }
@@ -21,24 +20,24 @@ public sealed record class SerialTransportDescriptor : ITransportDescriptor
 
     private char ParityChar => Parity switch
     {
-        Parity.None => 'N',
-        Parity.Even => 'E',
-        Parity.Odd => 'O',
-        Parity.Mark => 'M',
-        Parity.Space => 'S',
+        SerialParity.None => 'N',
+        SerialParity.Even => 'E',
+        SerialParity.Odd => 'O',
+        SerialParity.Mark => 'M',
+        SerialParity.Space => 'S',
         _ => '?'
     };
     private char StopBitsChar => StopBits switch
     {
-        StopBits.One => '1',
-        StopBits.Two => '2',
-        StopBits.OnePointFive => '5',
+        SerialStopBits.One => '1',
+        SerialStopBits.Two => '2',
+        SerialStopBits.OnePointFive => '5',
         _ => '?'
     };
 
 
 
-    public static SerialTransportDescriptor Create(string portName, int baudRate, Parity parity, int dataBits, StopBits stopBits)
+    public static SerialTransportDescriptor Create(string portName, int baudRate, SerialParity parity, int dataBits, SerialStopBits stopBits)
     {
         if (!ValidatePortName(portName, out var portNameErrorMessage))
             throw new ArgumentException(portNameErrorMessage, nameof(portName));
@@ -117,9 +116,9 @@ public sealed record class SerialTransportDescriptor : ITransportDescriptor
         errorMessage = null;
         return true;
     }
-    public static bool ValidateParity(Parity parity, [NotNullWhen(false)] out string? errorMessage)
+    public static bool ValidateParity(SerialParity parity, [NotNullWhen(false)] out string? errorMessage)
     {
-        if (parity is not (Parity.None or Parity.Odd or Parity.Even or Parity.Mark or Parity.Space))
+        if (parity is not (SerialParity.None or SerialParity.Odd or SerialParity.Even or SerialParity.Mark or SerialParity.Space))
         {
             errorMessage = "无效的校验位，仅支持：None, Odd, Even, Mark, Space";
             return false;
@@ -139,9 +138,9 @@ public sealed record class SerialTransportDescriptor : ITransportDescriptor
         errorMessage = null;
         return true;
     }
-    public static bool ValidateStopBits(StopBits stopBits, [NotNullWhen(false)] out string? errorMessage)
+    public static bool ValidateStopBits(SerialStopBits stopBits, [NotNullWhen(false)] out string? errorMessage)
     {
-        if (stopBits is not (StopBits.One or StopBits.OnePointFive or StopBits.Two))
+        if (stopBits is not (SerialStopBits.One or SerialStopBits.OnePointFive or SerialStopBits.Two))
         {
             errorMessage = "无效的停止位，仅支持：One, OnePointFive, Tow";
             return false;
@@ -149,5 +148,59 @@ public sealed record class SerialTransportDescriptor : ITransportDescriptor
 
         errorMessage = null;
         return true;
+    }
+}
+
+
+public enum SerialParity { None, Even, Odd, Mark, Space }
+
+public static class SerialParityExtrensions
+{
+    extension(SerialParity parity)
+    {
+        public RJCP.IO.Ports.Parity ToRjcp() => parity switch
+        {
+            SerialParity.None => RJCP.IO.Ports.Parity.None,
+            SerialParity.Even => RJCP.IO.Ports.Parity.Even,
+            SerialParity.Odd => RJCP.IO.Ports.Parity.Odd,
+            SerialParity.Mark => RJCP.IO.Ports.Parity.Mark,
+            SerialParity.Space => RJCP.IO.Ports.Parity.Space,
+            _ => throw new ArgumentOutOfRangeException(nameof(parity))
+        };
+
+        public System.IO.Ports.Parity ToSystem() => parity switch
+        {
+            SerialParity.None => System.IO.Ports.Parity.None,
+            SerialParity.Even => System.IO.Ports.Parity.Even,
+            SerialParity.Odd => System.IO.Ports.Parity.Odd,
+            SerialParity.Mark => System.IO.Ports.Parity.Mark,
+            SerialParity.Space => System.IO.Ports.Parity.Space,
+            _ => throw new ArgumentOutOfRangeException(nameof(parity))
+        };
+    }
+}
+
+
+public enum SerialStopBits { One, Two, OnePointFive }
+
+public static class SerialStopBitsExtrensions
+{
+    extension(SerialStopBits stopBits)
+    {
+        public RJCP.IO.Ports.StopBits ToRjcp() => stopBits switch
+        {
+            SerialStopBits.One => RJCP.IO.Ports.StopBits.One,
+            SerialStopBits.Two => RJCP.IO.Ports.StopBits.Two,
+            SerialStopBits.OnePointFive => RJCP.IO.Ports.StopBits.One5,
+            _ => throw new ArgumentOutOfRangeException(nameof(stopBits))
+        };
+
+        public System.IO.Ports.StopBits ToSystem() => stopBits switch
+        {
+            SerialStopBits.One => System.IO.Ports.StopBits.One,
+            SerialStopBits.Two => System.IO.Ports.StopBits.Two,
+            SerialStopBits.OnePointFive => System.IO.Ports.StopBits.OnePointFive,
+            _ => throw new ArgumentOutOfRangeException(nameof(stopBits))
+        };
     }
 }

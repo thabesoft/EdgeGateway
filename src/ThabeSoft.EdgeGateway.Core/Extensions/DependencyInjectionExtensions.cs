@@ -19,10 +19,10 @@ public static class DependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {
-        public IServiceCollection AddEdgeGateway(Action<GatewayOptions>? optionsAction = null)
+        public IServiceCollection AddEdgeGateway(GatewayConfiguratorHandler? configuratorHandler = null)
         {
-            if (optionsAction is not null)
-                descriptors.Configure(optionsAction);
+            if (configuratorHandler is not null)
+                descriptors.AddSingleton(configuratorHandler);
 
             // Trigger
             descriptors.TryAddSingleton(TimeProvider.System);
@@ -38,14 +38,18 @@ public static class DependencyInjectionExtensions
             // FactorySelector
             descriptors.TryAddSingleton<TransportConnectionFactorySelector>();
             descriptors.TryAddSingleton<ProtocolAccessorFactorySelector>();
-            descriptors.TryAddSingleton<TriggerFactorySelector>();
+            descriptors.TryAddSingleton<ITriggerFactorySelector, TriggerFactorySelector>();
 
             // Gateway
             descriptors.TryAddSingleton<IGateway, Gateway>();
             descriptors.AddHostedService<ConfiguratorHostedService>();
-            descriptors.AddHostedService<LaunchHostedService>();
 
             return descriptors;
+        }
+
+        public IServiceCollection AddEdgeGatewayHost()
+        {
+            return descriptors.AddHostedService<LaunchHostedService>();
         }
 
         /// <summary>

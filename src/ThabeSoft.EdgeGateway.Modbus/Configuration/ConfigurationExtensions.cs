@@ -20,7 +20,7 @@ public static class ConfigurationExtensions
 
 
         public IDeviceConfigurator AddModbusIpDevice(DeviceId deviceId) =>
-           configurator.AddDevice(deviceId, Modbus.Rtu);
+           configurator.AddDevice(deviceId, Modbus.Ip);
         public IDeviceConfigurator AddModbusIpDevice() =>
             configurator.AddModbusIpDevice(DeviceId.Create());
     }

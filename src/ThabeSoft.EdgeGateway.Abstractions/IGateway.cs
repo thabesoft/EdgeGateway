@@ -5,7 +5,7 @@ using ThabeSoft.EdgeGateway.Transport;
 namespace ThabeSoft.EdgeGateway;
 
 
-public interface IGateway : ILifecycle, IAsyncDisposable
+public interface IGateway : IStatefulLifecycle, IAsyncDisposable
 {
     IReadOnlyDictionary<ConnectionEndpoint, IPort> Ports { get; }
     IPort AddPort(ITransportDescriptor transportDescriptor);

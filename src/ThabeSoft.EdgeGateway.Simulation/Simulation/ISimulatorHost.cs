@@ -6,7 +6,7 @@ using ThabeSoft.EdgeGateway.Transport;
 namespace ThabeSoft.EdgeGateway.Simulation;
 
 
-public interface ISimulatorHost : ILifecycle
+public interface ISimulatorHost : IStatefulLifecycle
 {
     IModbusSimulationNetwork AddNetwork(ModbusSimulatorNetworkDescriptor simulatorDescriptor);
 }
@@ -16,7 +16,7 @@ internal sealed class SimulatorHost(
     ) : ISimulatorHost, IAsyncDisposable
 {
     private readonly CollectionLifecycleStateMachine _stateMachine = Lifecycle.Collection();
-    private readonly ConcurrentDictionary<ConnectionEndpoint, IModbusSimulationNetwork> _items = [];
+    private readonly ConcurrentDictionary<ConnectionEndpoint, IModbusSimulationNetwork> _networks = [];
 
     public LifecycleState State => _stateMachine.State;
 
@@ -25,7 +25,7 @@ internal sealed class SimulatorHost(
     {
         return _stateMachine.Execute
         (
-            state: (Items: _items, Descriptor: simulatorDescriptor, NetworkFactory: simulationNetworkFactory),
+            state: (Items: _networks, Descriptor: simulatorDescriptor, NetworkFactory: simulationNetworkFactory),
             action: static state =>
             {
                 var key = state.Descriptor.Transport.Endpoint;
@@ -43,10 +43,10 @@ internal sealed class SimulatorHost(
 
 
     public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StartAllAsync([.. _items.Values], cancellationToken);
+        _stateMachine.StartAllAsync([.. _networks.Values], cancellationToken);
     public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StopAllAsync([.. _items.Values], cancellationToken);
+        _stateMachine.StopAllAsync([.. _networks.Values], cancellationToken);
     public ValueTask DisposeAsync() =>
-        _stateMachine.StopAllAsync([.. _items.Values]);
+        _stateMachine.StopAllAsync([.. _networks.Values]);
 
 }

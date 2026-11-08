@@ -28,7 +28,7 @@ internal sealed class ModbusSimulationNetworkFactory(IModbusFactory modbusFactor
                 return new ModbusTcpSimulationNetwork(ip, modbusFactory, slaveSimulatorFactory);
 
             if (ip.TransportType == IpTransportType.Udp)
-                return new ModbusUdpSimulator(ip, modbusFactory, slaveSimulatorFactory);
+                return new ModbusUdpSimulationNetwork(ip, modbusFactory, slaveSimulatorFactory);
         }
 
 

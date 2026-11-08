@@ -11,7 +11,7 @@ internal sealed class Port(
         ITransportDescriptor transportDescriptor,
         TransportConnectionFactorySelector transportConnectionFactorySelector,
         DeviceFactory deviceFactory,
-        ILifecycleState gatewayLifecycleState,
+        ILifecycleStateable gatewayLifecycleState,
         ILogger<Port> logger
     ) : IPort
 {

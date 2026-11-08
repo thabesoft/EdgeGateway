@@ -12,7 +12,7 @@ internal sealed class Device(
         DeviceDescriptor deviceDescriptor,
         SubscriptionFactory subscriptionFactory,
         IByteDuplex byteDuplex,
-        ILifecycleState portLifecycleState,
+        ILifecycleStateable portLifecycleState,
         ILogger<Device> logger
     ) : IDevice
 {

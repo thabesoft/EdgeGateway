@@ -15,7 +15,7 @@ internal sealed class Subscription<T>(
         ITriggerFactorySelector triggerFactorySelector,
         IByteDuplex byteDuplex,
         SubscriptionValueReaderFactory subscriptionValueReaderFactory,
-        ILifecycleState deeviceLifecycleState,
+        ILifecycleStateable deeviceLifecycleState,
         ILogger<Subscription<T>> logger
     ) : ISubscription<T> where T : notnull
 {

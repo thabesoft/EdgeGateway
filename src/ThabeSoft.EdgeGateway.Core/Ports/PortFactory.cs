@@ -12,7 +12,7 @@ internal sealed class PortFactory(
         ILoggerFactory loggerFactory
     )
 {
-    public Port Create(ITransportDescriptor transportDescriptor, ILifecycleState gatewayLifecycleState)
+    public Port Create(ITransportDescriptor transportDescriptor, ILifecycleStateable gatewayLifecycleState)
     {
         return new
         (

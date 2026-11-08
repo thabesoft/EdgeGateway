@@ -5,7 +5,7 @@ using ThabeSoft.EdgeGateway.Transport;
 namespace ThabeSoft.EdgeGateway.Ports;
 
 
-public interface IPort : ILifecycle, IAsyncDisposable
+public interface IPort : IStatefulLifecycle, IAsyncDisposable
 {
     ConnectionEndpoint Endpoint { get; }
 

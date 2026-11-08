@@ -14,13 +14,18 @@ internal sealed class ModbusSimulatedSlave(
         byte unitId,
         IModbusFactory modbusFactory,
         ITriggerFactorySelector triggerFactorySelector
-    ) : LifecycleStateMachine, IModbusSimulatedSlave
+    ) : IModbusSimulatedSlave
 {
+    private readonly LifecycleStateMachineA _stateMachine = Lifecycle.Normal();
     private readonly TaskManager _taskManager = new();
     private readonly ConcurrentDictionary<Guid, ITrigger> _triggers = [];
 
+
     public byte UnitId => unitId;
     public IModbusSlave Slave { get; } = modbusFactory.CreateSlave(unitId);
+    public LifecycleState State => _stateMachine.State;
+
+
 
 
     public IDisposable Value<T>(TagDescriptor<T> tagDescriptor, ITriggerDescriptor triggerDescriptor, IValueGenerator<T> generator)
@@ -53,6 +58,7 @@ internal sealed class ModbusSimulatedSlave(
         });
     }
 
+
     public void SetCoils(ushort address, params bool[] values)
     {
         Slave.DataStore.CoilInputs.WritePoints(address, values);
@@ -62,15 +68,18 @@ internal sealed class ModbusSimulatedSlave(
         Slave.DataStore.HoldingRegisters.WritePoints(address, values);
     }
 
-    protected override async ValueTask OnStartAsync(CancellationToken cancellationToken) =>
-        await _taskManager.StartAsync(cancellationToken);
-    protected override ValueTask OnStopAsync(CancellationToken cancellationToken) =>
-        _taskManager.StopAsync(cancellationToken);
-    protected override async ValueTask OnDisposeAsync()
+
+    public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
+        _stateMachine.StartAsync(_taskManager, (state, ct) => state.StartAsync(ct), cancellationToken);
+    public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
+        _stateMachine.StopAsync(_taskManager, (state, ct) => state.StopAsync(ct), cancellationToken);
+    public ValueTask DisposeAsync() => _stateMachine.DisposeAsync(async () =>
     {
         foreach (var i in _triggers.Values)
             await i.DisposeAsync();
-    }
+
+        await _taskManager.DisposeAsync();
+    });
 }
 
 

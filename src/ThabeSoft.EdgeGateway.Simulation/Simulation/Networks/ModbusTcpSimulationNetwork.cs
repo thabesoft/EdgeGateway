@@ -27,17 +27,13 @@ internal sealed class ModbusTcpSimulationNetwork : ModbusSimulationNetwork
 
 
 
-    public override IModbusSimulatedSlave AddSlave(byte unitId)
+    protected override void OnAdded(ModbusSimulatedSlave simulated)
     {
-        var item =  base.AddSlave(unitId);
-        _slaveNetWorks.AddSlave(item.Slave);
-
-        return item;
+        _slaveNetWorks.AddSlave(simulated.Slave);
     }
-    public override async Task RemoveSlave(byte unitId)
+    protected override void OnRemoved(ModbusSimulatedSlave slave)
     {
-        await base.RemoveSlave(unitId);
-        _slaveNetWorks.RemoveSlave(unitId);
+        _slaveNetWorks.RemoveSlave(slave.UnitId);
     }
 
 
@@ -51,7 +47,6 @@ internal sealed class ModbusTcpSimulationNetwork : ModbusSimulationNetwork
     protected override async ValueTask OnStopAsync(CancellationToken cancellationToken)
     {
         await base.OnStopAsync(cancellationToken);
-
         _tcpListener.Stop();
     }
     protected override async ValueTask OnDisposeAsync()

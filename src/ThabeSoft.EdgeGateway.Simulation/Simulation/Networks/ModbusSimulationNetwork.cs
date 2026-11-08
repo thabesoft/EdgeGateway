@@ -7,37 +7,56 @@ namespace ThabeSoft.EdgeGateway.Simulation.Networks;
 
 internal abstract class ModbusSimulationNetwork(
         ModbusSimulatedSlaveFactory slaveSimulatorFactory
-    ) : LifecycleStateMachine, IModbusSimulationNetwork
+    ) : IModbusSimulationNetwork
 {
+    private readonly CollectionLifecycleStateMachine _stateMachine = Lifecycle.Collection();
     private readonly ConcurrentDictionary<byte, ModbusSimulatedSlave> _slaves = [];
+
+    public LifecycleState State => _stateMachine.State;
+
 
     public virtual IModbusSimulatedSlave AddSlave(byte unitId)
     {
-        if (_slaves.ContainsKey(unitId))
-            throw new InvalidOperationException("从站已存在");
+        return _stateMachine.Execute((UnitId: unitId, Slaves: _slaves, SimulatorFactory: slaveSimulatorFactory, This: this), static state =>
+        {
+            if (state.Slaves.ContainsKey(state.UnitId))
+                throw new InvalidOperationException("从站已存在");
 
-        var simulator = slaveSimulatorFactory.Create(unitId);
-        _slaves[unitId] = simulator;
+            var simulator = state.SimulatorFactory.Create(state.UnitId);
+            state.Slaves[state.UnitId] = simulator;
 
-        return simulator;
+            state.This.OnAdded(simulator);
+            return simulator;
+        });
     }
-    public virtual async Task RemoveSlave(byte unitId)
+
+    public void RemoveSalve(byte unitId)
     {
-        if (!_slaves.TryRemove(unitId, out var item))
-            return;
+        _stateMachine.Execute((UnitId: unitId, Slaves: _slaves, SimulatorFactory: slaveSimulatorFactory, This: this), static async state =>
+       {
+           if (!state.Slaves.TryRemove(state.UnitId, out var slave))
+               return;
 
-        await item.DisposeAsync();
+           await slave.DisposeAsync();
+           state.This.OnRemoved(slave);
+       });
     }
 
 
-    protected override async ValueTask OnStartAsync(CancellationToken cancellationToken)
-    {
-        foreach (var i in _slaves.Values)
-            await i.StartAsync(cancellationToken);
-    }
-    protected override async ValueTask OnStopAsync(CancellationToken cancellationToken)
-    {
-        foreach (var i in _slaves.Values)
-            await i.StopAsync(cancellationToken);
-    }
+
+    public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
+        _stateMachine.StartAllAsync([Lifecycle.Starter(OnStartAsync), .. _slaves.Values], cancellationToken);
+    public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
+        _stateMachine.StopAllAsync([.. _slaves.Values, Lifecycle.Stoper(OnStopAsync)], cancellationToken);
+    public ValueTask DisposeAsync() =>
+        _stateMachine.DisposeAllAsync([.. _slaves.Values, Lifecycle.Disposer(OnDisposeAsync)]);
+
+
+
+
+    protected virtual void OnAdded(ModbusSimulatedSlave slave) { }
+    protected virtual void OnRemoved(ModbusSimulatedSlave slave) { }
+    protected virtual ValueTask OnStartAsync(CancellationToken cancellationToken) => ValueTask.CompletedTask;
+    protected virtual ValueTask OnStopAsync(CancellationToken cancellationToken) => ValueTask.CompletedTask;
+    protected virtual ValueTask OnDisposeAsync() => ValueTask.CompletedTask;
 }

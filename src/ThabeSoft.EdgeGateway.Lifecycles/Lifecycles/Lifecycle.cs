@@ -48,4 +48,9 @@ public static class Lifecycle
             ItemDisposeTimeout = builder.ItemDisposeTimeout
         };
     }
+
+
+    public static ILifecycle Disposer(Func<ValueTask> callback) => new CallbackLifecycle() { OnDispose = callback };
+    public static ILifecycle Starter(Func<CancellationToken, ValueTask> callback) => new CallbackLifecycle() { OnStart = callback };
+    public static ILifecycle Stoper(Func<CancellationToken, ValueTask> callback) => new CallbackLifecycle() { OnStop = callback };
 }

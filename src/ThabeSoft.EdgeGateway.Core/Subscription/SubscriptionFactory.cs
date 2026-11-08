@@ -17,7 +17,7 @@ internal sealed class SubscriptionFactory(
             SubscriptionDescriptor<T> subscriptionDescriptor,
             IProtocolDescriptor protocolDescriptor,
             IByteDuplex byteDuplex,
-            ILifecycleState deviceLifecycleState
+            ILifecycleStateable deviceLifecycleState
         ) where T : notnull
     {
         return new Subscription<T>

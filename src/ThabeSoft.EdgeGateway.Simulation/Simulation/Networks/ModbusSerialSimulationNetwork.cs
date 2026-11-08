@@ -11,7 +11,7 @@ namespace ThabeSoft.EdgeGateway.Simulation.Networks;
 internal sealed class ModbusSerialSimulationNetwork : ModbusSimulationNetwork
 {
     private readonly SerialPort _serialPort;
-    private IModbusSlaveNetwork _slaveNetwork;
+    private IModbusSlaveNetwork _slaveNetWork;
     private Task? _slaveNetworkTask;
     private readonly CancellationTokenSource _slaveNetworkTaskCts = new();
 
@@ -32,7 +32,7 @@ internal sealed class ModbusSerialSimulationNetwork : ModbusSimulationNetwork
 
         var serialPortAdapter = new SerialPortAdapter(_serialPort);
 
-        _slaveNetwork = modbusFrameFormat switch
+        _slaveNetWork = modbusFrameFormat switch
         {
             ModbusFrameFormat.Rtu => modbusFactory.CreateRtuSlaveNetwork(serialPortAdapter),
             ModbusFrameFormat.Ascii => modbusFactory.CreateAsciiSlaveNetwork(serialPortAdapter),
@@ -59,17 +59,13 @@ internal sealed class ModbusSerialSimulationNetwork : ModbusSimulationNetwork
 
 
 
-    public override IModbusSimulatedSlave AddSlave(byte unitId)
+    protected override void OnAdded(ModbusSimulatedSlave simulated)
     {
-        var item = base.AddSlave(unitId);
-        _slaveNetwork.AddSlave(item.Slave);
-
-        return item;
+        _slaveNetWork.AddSlave(simulated.Slave);
     }
-    public override async Task RemoveSlave(byte unitId)
+    protected override void OnRemoved(ModbusSimulatedSlave slave)
     {
-        await base.RemoveSlave(unitId);
-        _slaveNetwork.RemoveSlave(unitId);
+        _slaveNetWork.RemoveSlave(slave.UnitId);
     }
 
 
@@ -77,7 +73,7 @@ internal sealed class ModbusSerialSimulationNetwork : ModbusSimulationNetwork
     protected override async ValueTask OnStartAsync(CancellationToken cancellationToken)
     {
         _serialPort.Open();
-        _slaveNetworkTask = Task.Run(async () => await _slaveNetwork.ListenAsync(), _slaveNetworkTaskCts.Token);
+        _slaveNetworkTask = Task.Run(async () => await _slaveNetWork.ListenAsync(), _slaveNetworkTaskCts.Token);
 
         await base.OnStartAsync(cancellationToken);
     }
@@ -98,6 +94,6 @@ internal sealed class ModbusSerialSimulationNetwork : ModbusSimulationNetwork
             catch { }
         }
 
-        _slaveNetwork.Dispose();
+        _slaveNetWork.Dispose();
     }
 }

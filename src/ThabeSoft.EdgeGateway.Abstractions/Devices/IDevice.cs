@@ -7,7 +7,7 @@ using ThabeSoft.EdgeGateway.Triggers;
 namespace ThabeSoft.EdgeGateway.Devices;
 
 
-public interface IDevice : ILifecycle, IAsyncDisposable
+public interface IDevice : IStatefulLifecycle, IAsyncDisposable
 {
     DeviceId Id { get; }
     ProtocolType ProtocolType { get; }

@@ -6,48 +6,42 @@ using ThabeSoft.EdgeGateway.Transport;
 namespace ThabeSoft.EdgeGateway.Simulation.Networks;
 
 
-internal sealed class ModbusUdpSimulator : ModbusSimulationNetwork
+internal sealed class ModbusUdpSimulationNetwork : ModbusSimulationNetwork
 {
     private readonly UdpClient _udpClient;
-    private readonly IModbusSlaveNetwork _modbusSlaveNetwork;
+    private readonly IModbusSlaveNetwork _slaveNetWorks;
 
-    public ModbusUdpSimulator(
+    public ModbusUdpSimulationNetwork(
             IpTransportDescriptor ipTransportDescriptor,
             IModbusFactory modbusFactory,
             ModbusSimulatedSlaveFactory modbusSlaveSimulatorFactory
         ) : base(modbusSlaveSimulatorFactory)
     {
         _udpClient = new(ipTransportDescriptor.IPEndPoint);
-        _modbusSlaveNetwork = modbusFactory.CreateSlaveNetwork(_udpClient);
+        _slaveNetWorks = modbusFactory.CreateSlaveNetwork(_udpClient);
     }
 
     public byte UnitId { get; }
 
-
-    public override IModbusSimulatedSlave AddSlave(byte unitId)
+    protected override void OnAdded(ModbusSimulatedSlave simulated)
     {
-        var item = base.AddSlave(unitId);
-        _modbusSlaveNetwork.AddSlave(item.Slave);
-
-        return item;
+        _slaveNetWorks.AddSlave(simulated.Slave);
     }
-    public override async Task RemoveSlave(byte unitId)
+    protected override void OnRemoved(ModbusSimulatedSlave slave)
     {
-        await base.RemoveSlave(unitId);
-        _modbusSlaveNetwork.RemoveSlave(unitId);
+        _slaveNetWorks.RemoveSlave(slave.UnitId);
     }
-
 
     protected override async ValueTask OnStartAsync(CancellationToken cancellationToken)
     {
-        await _modbusSlaveNetwork.ListenAsync(cancellationToken);
+        await _slaveNetWorks.ListenAsync(cancellationToken);
         await base.OnStartAsync(cancellationToken);
     }
     protected override async ValueTask OnDisposeAsync()
     {
         await base.OnDisposeAsync();
 
-        _modbusSlaveNetwork.Dispose();
+        _slaveNetWorks.Dispose();
         _udpClient.Dispose();
     }
 }

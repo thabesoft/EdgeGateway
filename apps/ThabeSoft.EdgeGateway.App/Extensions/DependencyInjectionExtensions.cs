@@ -123,54 +123,56 @@ public sealed class MockTransportFactory(ILoggerFactory loggerFactory) : ITransp
 
     private sealed class MockTransportConnection(ITransportDescriptor transportDescriptor, ILogger<MockTransportConnection> logger) : ITransportConnection
     {
-        //private ILifecycle
+        private IStrictLifecycleStateMachine _stateMachinee = Lifecycle.StrictStateMachine(logger);
 
         public ConnectionEndpoint Endpoint => transportDescriptor.Endpoint;
-        public LifecycleState State => throw new NotImplementedException();
+        public LifecycleState State => _stateMachinee.State;
 
-        
+
 
         public ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
         {
-            logger.LogDebug("读取数据");
-            return ValueTask.FromResult(0);
+            return _stateMachinee.ExecuteAsync(_ =>
+            {
+                logger.LogDebug("读取数据");
+                return ValueTask.FromResult(0);
+            }, cancellationToken);
         }
+        public ValueTask WriteAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
+        {
+            return _stateMachinee.ExecuteAsync(_ =>
+            {
+                logger.LogDebug("写入数据, 长度:{Len}", data.Length);
+                return ValueTask.CompletedTask;
+            }, cancellationToken);
+
+        }
+
 
         public ValueTask StartAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            return _stateMachinee.StartAsync(_ =>
+            {
+                logger.LogDebug("已启动");
+                return ValueTask.CompletedTask;
+            }, cancellationToken);
         }
 
         public ValueTask StopAsync(CancellationToken cancellationToken = default)
         {
-            throw new NotImplementedException();
+            return _stateMachinee.StopAsync(_ =>
+            {
+                logger.LogDebug("已停止");
+                return ValueTask.CompletedTask;
+            }, cancellationToken);
         }
-
-        public ValueTask WriteAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
-        {
-            logger.LogDebug("写入数据, 长度:{Len}", data.Length);
-            return ValueTask.CompletedTask;
-        }
-
-
-
-
-
-
-        protected override ValueTask OnStartAsync(CancellationToken cancellationToken)
-        {
-            logger.LogDebug("已启动");
-            return ValueTask.CompletedTask;
-        }
-        protected override ValueTask OnStopAsync(CancellationToken cancellationToken)
-        {
-            logger.LogDebug("已停止");
-            return ValueTask.CompletedTask;
-        }
-
         public ValueTask DisposeAsync()
         {
-            throw new NotImplementedException();
+            return _stateMachinee.DisposeAsync(() =>
+            {
+                logger.LogDebug("已释放");
+                return ValueTask.CompletedTask;
+            });
         }
     }
 }

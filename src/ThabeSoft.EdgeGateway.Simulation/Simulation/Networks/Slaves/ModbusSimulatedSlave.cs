@@ -16,7 +16,7 @@ internal sealed class ModbusSimulatedSlave(
         ITriggerFactorySelector triggerFactorySelector
     ) : IModbusSimulatedSlave
 {
-    private readonly LifecycleStateMachine _stateMachine = Lifecycle.StrictStateMachine();
+    private readonly IStrictLifecycleStateMachine _stateMachine = Lifecycle.StrictStateMachine();
     private readonly TaskManager _taskManager = new();
     private readonly ConcurrentDictionary<Guid, ITrigger> _triggers = [];
 
@@ -70,9 +70,9 @@ internal sealed class ModbusSimulatedSlave(
 
 
     public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StartAsync(_taskManager, (state, ct) => state.StartAsync(ct), cancellationToken);
+        _stateMachine.StartAsync(_taskManager.StartAsync, cancellationToken);
     public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StopAsync(_taskManager, (state, ct) => state.StopAsync(ct), cancellationToken);
+        _stateMachine.StartAsync(_taskManager.StopAsync, cancellationToken);
     public ValueTask DisposeAsync() => _stateMachine.DisposeAsync(async () =>
     {
         foreach (var i in _triggers.Values)

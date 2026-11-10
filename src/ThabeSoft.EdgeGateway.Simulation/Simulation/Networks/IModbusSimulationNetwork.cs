@@ -5,6 +5,6 @@ namespace ThabeSoft.EdgeGateway.Simulation.Networks;
 
 public interface IModbusSimulationNetwork : ILifecycle, IAsyncDisposable
 {
-    IModbusSimulatedSlave AddSlave(byte unitId);
-    void RemoveSalve(byte unitId);
+    ValueTask<IModbusSimulatedSlave> AddSlaveAsync(byte unitId, CancellationToken cancellationToken = default);
+    ValueTask RemoveSalveAsync(byte unitId, CancellationToken cancellationToken = default);
 }

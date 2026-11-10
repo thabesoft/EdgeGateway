@@ -63,9 +63,9 @@ internal sealed class ModbusSerialSimulationNetwork : ModbusSimulationNetwork
     {
         _slaveNetWork.AddSlave(simulated.Slave);
     }
-    protected override void OnRemoved(ModbusSimulatedSlave slave)
+    protected override void OnRemoved(byte unidId)
     {
-        _slaveNetWork.RemoveSlave(slave.UnitId);
+        _slaveNetWork.RemoveSlave(unidId);
     }
 
 

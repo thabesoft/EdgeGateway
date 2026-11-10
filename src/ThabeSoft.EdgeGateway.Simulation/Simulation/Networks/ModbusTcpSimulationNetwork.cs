@@ -31,9 +31,9 @@ internal sealed class ModbusTcpSimulationNetwork : ModbusSimulationNetwork
     {
         _slaveNetWorks.AddSlave(simulated.Slave);
     }
-    protected override void OnRemoved(ModbusSimulatedSlave slave)
+    protected override void OnRemoved(byte unidId)
     {
-        _slaveNetWorks.RemoveSlave(slave.UnitId);
+        _slaveNetWorks.RemoveSlave(unidId);
     }
 
 

@@ -27,9 +27,9 @@ internal sealed class ModbusUdpSimulationNetwork : ModbusSimulationNetwork
     {
         _slaveNetWorks.AddSlave(simulated.Slave);
     }
-    protected override void OnRemoved(ModbusSimulatedSlave slave)
+    protected override void OnRemoved(byte unidId)
     {
-        _slaveNetWorks.RemoveSlave(slave.UnitId);
+        _slaveNetWorks.RemoveSlave(unidId);
     }
 
     protected override async ValueTask OnStartAsync(CancellationToken cancellationToken)

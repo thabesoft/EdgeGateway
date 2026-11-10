@@ -1,17 +1,14 @@
 ﻿using Avalonia.Data.Converters;
 using CommunityToolkit.Mvvm.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.IO.Ports;
-using System.Net;
 using ThabeSoft.EdgeGateway.Transport;
-using ThabeSoft.EdgeGateway.Ports;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 
 internal sealed partial class SerialPortFormViewModel : ViewModelBase
 {
-    public Parity[] ParitysOptions { get; } = [Parity.None, Parity.Odd, Parity.Even, Parity.Mark, Parity.Space];
-    public StopBits[] StopBitsOptions { get; } = [StopBits.One, StopBits.OnePointFive, StopBits.Two];
+    public SerialParity[] ParitysOptions { get; } = [SerialParity.None, SerialParity.Odd, SerialParity.Even, SerialParity.Mark, SerialParity.Space];
+    public SerialStopBits[] StopBitsOptions { get; } = [SerialStopBits.One, SerialStopBits.OnePointFive, SerialStopBits.Two];
     public int[] BaudRatesOptions { get; } = SerialTransportDescriptor.StandardBaudRates;
     public string[] PortNameOptions => SerialPort.GetPortNames();
 
@@ -31,13 +28,13 @@ internal sealed partial class SerialPortFormViewModel : ViewModelBase
     public partial int BaudRate { get; set; } = 9600;
 
     [ObservableProperty]
-    public partial Parity Parity { get; set; } = Parity.None;
+    public partial SerialParity Parity { get; set; } = SerialParity.None;
 
     [ObservableProperty]
     public partial int DataBits { get; set; } = 8;
 
     [ObservableProperty]
-    public partial StopBits StopBits { get; set; } = StopBits.One;
+    public partial SerialStopBits StopBits { get; set; } = SerialStopBits.One;
 
 
     public static FuncValueConverter<int, string> BaudRateStringConverter { get; } = new
@@ -58,7 +55,7 @@ internal sealed partial class SerialPortFormViewModel : ViewModelBase
         SerialTransportDescriptor.ValidateBaudRate(value, out var errorMessage);
         TrySetPropertyError(nameof(BaudRate), errorMessage);
     }
-    partial void OnParityChanged(Parity value)
+    partial void OnParityChanged(SerialParity value)
     {
         SerialTransportDescriptor.ValidateParity(value, out var errorMessage);
         TrySetPropertyError(nameof(Parity), errorMessage);
@@ -68,7 +65,7 @@ internal sealed partial class SerialPortFormViewModel : ViewModelBase
         SerialTransportDescriptor.ValidateDataBits(value, out var errorMessage);
         TrySetPropertyError(nameof(DataBits), errorMessage);
     }
-    partial void OnStopBitsChanged(StopBits value)
+    partial void OnStopBitsChanged(SerialStopBits value)
     {
         SerialTransportDescriptor.ValidateStopBits(value, out var errorMessage);
         TrySetPropertyError(nameof(StopBits), errorMessage);

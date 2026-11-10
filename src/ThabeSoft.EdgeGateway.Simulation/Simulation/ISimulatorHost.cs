@@ -15,8 +15,9 @@ internal sealed class SimulatorHost(
         ModbusSimulationNetworkFactory simulationNetworkFactory
     ) : ISimulatorHost, IAsyncDisposable
 {
-    private readonly CollectionLifecycleStateMachine _stateMachine = Lifecycle.CollectionStateMachine();
     private readonly ConcurrentDictionary<ConnectionEndpoint, IModbusSimulationNetwork> _networks = [];
+    private readonly IRetryableLifecycleStateMachine _stateMachine = Lifecycle.RetryableStateMachine();
+    private readonly ILifecycleBatchExecutor _batchExecutor = Lifecycle.BatchExecutor();
 
     public LifecycleState State => _stateMachine.State;
 
@@ -25,16 +26,15 @@ internal sealed class SimulatorHost(
     {
         return _stateMachine.Execute
         (
-            state: (Items: _networks, Descriptor: simulatorDescriptor, NetworkFactory: simulationNetworkFactory),
-            action: static state =>
+            action: () =>
             {
-                var key = state.Descriptor.Transport.Endpoint;
+                var key = simulatorDescriptor.Transport.Endpoint;
 
-                if (state.Items.ContainsKey(key))
+                if (_networks.ContainsKey(key))
                     throw new InvalidOperationException("已存在");
 
-                var simulator = state.NetworkFactory.Create(state.Descriptor);
-                state.Items[key] = simulator;
+                var simulator = simulationNetworkFactory.Create(simulatorDescriptor);
+                _networks[key] = simulator;
 
                 return simulator;
             }
@@ -43,10 +43,10 @@ internal sealed class SimulatorHost(
 
 
     public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StartAllAsync([.. _networks.Values], cancellationToken);
+        _stateMachine.StartAsync(ct => _batchExecutor.StartAsync(_networks.Values, ct), cancellationToken);
     public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StopAllAsync([.. _networks.Values], cancellationToken);
+        _stateMachine.StartAsync(ct => _batchExecutor.StopAsync(_networks.Values, ct), cancellationToken);
     public ValueTask DisposeAsync() =>
-        _stateMachine.StopAllAsync([.. _networks.Values]);
+        _stateMachine.DisposeAsync(() => _batchExecutor.DisposeAsync(_networks.Values));
 
 }

@@ -15,7 +15,7 @@ public class DWordCodecTests
     {
         var codec = DWordCodec.ABCD;
 
-        Span<byte> cache = stackalloc byte[DWordCodec.RequiredBytes];
+        Span<byte> cache = stackalloc byte[DWordCodec.ByteLength];
         codec.Encode(value, cache);
         var expected = codec.Decode(cache);
 
@@ -31,7 +31,7 @@ public class DWordCodecTests
     {
         var codec = DWordCodec.BADC;
 
-        Span<byte> cache = stackalloc byte[DWordCodec.RequiredBytes];
+        Span<byte> cache = stackalloc byte[DWordCodec.ByteLength];
         codec.Encode(value, cache);
         var expected = codec.Decode(cache);
 
@@ -47,7 +47,7 @@ public class DWordCodecTests
     {
         var codec = DWordCodec.CDAB;
 
-        Span<byte> cache = stackalloc byte[DWordCodec.RequiredBytes];
+        Span<byte> cache = stackalloc byte[DWordCodec.ByteLength];
         codec.Encode(value, cache);
         var expected = codec.Decode(cache);
 
@@ -63,7 +63,7 @@ public class DWordCodecTests
     {
         var codec = DWordCodec.DCBA;
 
-        Span<byte> cache = stackalloc byte[DWordCodec.RequiredBytes];
+        Span<byte> cache = stackalloc byte[DWordCodec.ByteLength];
         codec.Encode(value, cache);
         var expected = codec.Decode(cache);
 
@@ -81,7 +81,7 @@ public class DWordCodecTests
     public void BigEndian_AsFloat_RoundTrip(float expected)
     {
         var codec = DWordCodec.BigEndian.AsFloat();
-        Span<byte> buffer = stackalloc byte[codec.RequiredBytes];
+        Span<byte> buffer = stackalloc byte[DWordCodec.ByteLength];
 
         codec.Encode(expected, buffer);
         var actual = codec.Decode(buffer);
@@ -94,7 +94,7 @@ public class DWordCodecTests
     public void BigEndian_AsShort_RoundTrip(int expected)
     {
         var codec = DWordCodec.BigEndian.AsInt();
-        Span<byte> buffer = stackalloc byte[codec.RequiredBytes];
+        Span<byte> buffer = stackalloc byte[DWordCodec.ByteLength];
 
         codec.Encode(expected, buffer);
         var actual = codec.Decode(buffer);

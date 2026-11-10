@@ -2,12 +2,12 @@
 
 
 [TestClass]
-public class NormalLifecycleTests
+public class RetryableLifecycleStateMachineTests
 {
     [TestMethod]
     public async Task StateTransitions()
     {
-        var lifecycle = Lifecycle.StrictStateMachine(x => x.Start());
+        var lifecycle = Lifecycle.RetryableStateMachine();
 
         // 启动
         await lifecycle.StartAsync(EmptyMethod, TestContext.CancellationToken);
@@ -49,19 +49,19 @@ public class NormalLifecycleTests
     [TestMethod]
     public async Task Start_Exception_StateToFaulted()
     {
-        var lifecycle = Lifecycle.StrictStateMachine();
+        var lifecycle = Lifecycle.RetryableStateMachine();
 
         await Assert.ThrowsAsync<Exception>(async () =>
             await lifecycle.StartAsync(ExceptionMethod, TestContext.CancellationToken));
 
         // 启动失败
-        Assert.AreEqual(LifecycleState.Running, lifecycle.State);
+        Assert.AreEqual(LifecycleState.Faulted, lifecycle.State);
     }
 
     [TestMethod]
     public async Task Stop_Exception_StateToFaulted()
     {
-        var lifecycle = Lifecycle.StrictStateMachine();
+        var lifecycle = Lifecycle.RetryableStateMachine();
 
         await lifecycle.StartAsync(EmptyMethod, TestContext.CancellationToken);
         Assert.AreEqual(LifecycleState.Running, lifecycle.State);
@@ -70,7 +70,7 @@ public class NormalLifecycleTests
             await lifecycle.StopAsync(ExceptionMethod, TestContext.CancellationToken));
 
         // 启动失败
-        Assert.AreEqual(LifecycleState.Stopped, lifecycle.State);
+        Assert.AreEqual(LifecycleState.Faulted, lifecycle.State);
     }
 
     private static ValueTask EmptyMethod(CancellationToken _) => ValueTask.CompletedTask;

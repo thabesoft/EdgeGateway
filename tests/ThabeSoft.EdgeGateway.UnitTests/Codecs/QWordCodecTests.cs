@@ -15,7 +15,7 @@ public class QWordCodecTests
     {
         var codec = QWordCodec.BigEndian;
 
-        Span<byte> cache = stackalloc byte[QWordCodec.RequiredBytes];
+        Span<byte> cache = stackalloc byte[QWordCodec.ByteLength];
         codec.Encode(value, cache);
         var expected = codec.Decode(cache);
 
@@ -31,7 +31,7 @@ public class QWordCodecTests
     {
         var codec = QWordCodec.LittleEndian;
 
-        Span<byte> cache = stackalloc byte[QWordCodec.RequiredBytes];
+        Span<byte> cache = stackalloc byte[QWordCodec.ByteLength];
         codec.Encode(value, cache);
         var expected = codec.Decode(cache);
 
@@ -46,7 +46,7 @@ public class QWordCodecTests
     public void BigEndian_AsDouble_RoundTrip(double expected)
     {
         var codec = QWordCodec.BigEndian.AsDouble();
-        Span<byte> buffer = stackalloc byte[codec.RequiredBytes];
+        Span<byte> buffer = stackalloc byte[QWordCodec.ByteLength];
 
         codec.Encode(expected, buffer);
         var actual = codec.Decode(buffer);
@@ -60,7 +60,7 @@ public class QWordCodecTests
     public void BigEndian_AsLong_RoundTrip(long expected)
     {
         var codec = QWordCodec.BigEndian.AsLong();
-        Span<byte> buffer = stackalloc byte[codec.RequiredBytes];
+        Span<byte> buffer = stackalloc byte[QWordCodec.ByteLength];
 
         codec.Encode(expected, buffer);
         var actual = codec.Decode(buffer);

@@ -8,14 +8,11 @@ using ThabeSoft.EdgeGateway.Subscription;
 namespace ThabeSoft.EdgeGateway.App.Features.Gateway;
 
 
-internal sealed partial class DeviceViewModel(IDevice device, ISukiToastManager sukiToastManager) : LifecycleViewModel(device, sukiToastManager), IAsyncDisposable
+internal sealed partial class DeviceViewModel(IDevice device, ISukiToastManager sukiToastManager) : LifecycleViewModel(device, sukiToastManager)
 {
-    private readonly AvaloniaDictionary<SubscriptionId, SubscriptionViewModeel> _subscription = new(
-        device.Subscriptions.Values
+    private readonly AvaloniaDictionary<SubscriptionId, SubscriptionViewModeel> _subscription = new(device.Subscriptions.Values
             .Select(x => KeyValuePair.Create(x.Id, new SubscriptionViewModeel(x, sukiToastManager)))
-            .ToDictionary()
-    );
-
+            .ToDictionary());
 
     public DeviceId Id => device.Id;
     public ProtocolType ProtocolType => device.ProtocolType;
@@ -23,9 +20,9 @@ internal sealed partial class DeviceViewModel(IDevice device, ISukiToastManager 
 
 
     [RelayCommand]
-    private void AddSubscription(SubscriptionDescriptor<int> subscriptionDescriptor)
+    private async Task AddSubscription(SubscriptionDescriptor<int> subscriptionDescriptor)
     {
-        var subscription = device.AddSubscriptionAsync(subscriptionDescriptor);
+        var subscription = await device.AddSubscriptionAsync(subscriptionDescriptor);
         _subscription[subscription.Id] = new SubscriptionViewModeel(subscription, sukiToastManager);
     }
 
@@ -35,7 +32,4 @@ internal sealed partial class DeviceViewModel(IDevice device, ISukiToastManager 
         if (_subscription.TryGetValue(subscriptionId, out var vm))
             vm.Dispose();
     }
-
-
-    public ValueTask DisposeAsync() => device.DisposeAsync();
 }

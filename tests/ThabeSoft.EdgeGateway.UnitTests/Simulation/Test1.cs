@@ -1,10 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Net;
-using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Simulation;
 using ThabeSoft.EdgeGateway.Simulation.ValueGenerators;
-using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Triggers;
 
 namespace ThabeSoft.EdgeGateway.Simulator;
@@ -22,12 +20,7 @@ public class Test1
         var app = Host.CreateDefaultBuilder()
             .ConfigureServices(x => x
                 .AddSimulation()
-                .AddEdgeGateway(x => x
-                    .AddTcpPort(address.IPEndPoint)
-                        .AddModbusIpDevice()
-                            .AddSubscription(tag, trigger)
-                                .Subscribe(x => TestContext.WriteLine(x.ToString()), ex => TestContext.WriteLine(ex.Message))
-                )
+                .AddEdgeGateway()
                 .AddModbus()
                 .AddSerial()
                 .AddEthernet()
@@ -38,7 +31,7 @@ public class Test1
         var gateway = app.Services.GetRequiredService<IGateway>();
 
         var network = simulatorHost.AddNetwork(Modbus.IpSimulationNetwork(address));
-        var slave = network.AddSlave(1);
+        var slave = await network.AddSlaveAsync(1);
         slave.Value(tag, trigger, ValueGenerator.SineWave(1, 0.1));
 
         await app.StartAsync(TestContext.CancellationToken);

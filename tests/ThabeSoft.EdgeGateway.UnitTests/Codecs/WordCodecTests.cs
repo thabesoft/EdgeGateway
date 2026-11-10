@@ -46,7 +46,7 @@ public class WordCodecTests
     public void BigEndian_AsChar_RoundTrip(char expected)
     {
         var codec = WordCodec.BigEndian.AsChar();
-        Span<byte> buffer = stackalloc byte[codec.RequiredBytes];
+        Span<byte> buffer = stackalloc byte[WordCodec.RequiredBytes];
 
         codec.Encode(expected, buffer);
         var actual = codec.Decode(buffer);
@@ -59,7 +59,7 @@ public class WordCodecTests
     public void BigEndian_AsShort_RoundTrip(short expected)
     {
         var codec = WordCodec.BigEndian.AsShort();
-        Span<byte> buffer = stackalloc byte[codec.RequiredBytes];
+        Span<byte> buffer = stackalloc byte[WordCodec.RequiredBytes];
 
         codec.Encode(expected, buffer);
         var actual = codec.Decode(buffer);

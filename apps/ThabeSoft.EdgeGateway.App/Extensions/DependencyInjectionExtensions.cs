@@ -5,19 +5,15 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SukiUI.Dialogs;
 using SukiUI.Toasts;
-using System.Net;
-using ThabeSoft.EdgeGateway;
 using ThabeSoft.EdgeGateway.App;
 using ThabeSoft.EdgeGateway.App.Common;
 using ThabeSoft.EdgeGateway.App.Features.Dashboard;
 using ThabeSoft.EdgeGateway.App.Features.Gateway;
 using ThabeSoft.EdgeGateway.App.Features.Topology;
 using ThabeSoft.EdgeGateway.App.Services;
-using ThabeSoft.EdgeGateway.Configuration;
-using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Port;
 using ThabeSoft.EdgeGateway.Transport;
-using ThabeSoft.EdgeGateway.Triggers;
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
 namespace ThabeSoft.EdgeGateway;
@@ -35,37 +31,18 @@ public static class DependencyInjectionExtensions
 
             builder.ConfigureServices(services =>
             {
-                services.AddEdgeGateway(x => x.DisabledAutoLauch());
+                services.AddEdgeGateway();
                 services.AddSerial();
                 services.AddEthernet();
                 services.AddModbus();
                 services.AddApp();
 
-#if DEBUG
-                services.ConfigureGateway(gateway =>
-                {
-                    gateway.AddSerialPort("COM2")
-                        .AddModbusRtuDevice()
-                            .AddSubscription(Modbus.HoldingRegister(1, 0, Codec.Int16), Trigger.Interval(100))
-                                .Subscribe(x =>
-                                    Console.WriteLine(x)
-                                );
-
-                    //gateway.AddTcpPort(IPAddress.Loopback, 1)
-                    //    .AddModbusIpDevice(DeviceId.From("Ip_Tcp_Device"))
-                    //        .AddSubscription(Modbus.Coil(1, 0), Trigger.Interval(10));
-
-                    //gateway.AddUdpPort(IPAddress.Loopback, 2)
-                    //    .AddModbusIpDevice(DeviceId.From("Ip_Udp_Device"))
-                    //        .AddSubscription(Modbus.Coil(1, 0), Trigger.Interval(10));
-                });
-#endif
-
-                if (Design.IsDesignMode)
+                if (Design.IsDesignMode || true)
                 {
                     // 模拟底层传输
                     services.RemoveAll<ITransportConnectionFactory>();
                     services.AddSingleton<ITransportConnectionFactory, MockTransportFactory>();
+                    services.AddHostedService<GatewayDesignData>();
                 }
             });
 
@@ -177,3 +154,16 @@ public sealed class MockTransportFactory(ILoggerFactory loggerFactory) : ITransp
     }
 }
 
+internal sealed class GatewayDesignData(IGateway gateway) : IHostedService
+{
+    public async Task StartAsync(CancellationToken cancellationToken)
+    {
+        var port = await gateway.AddSerialPort("COm2", cancellationToken: cancellationToken);
+        var device = await port.AddModbusRtuDeviceAsync(cancellationToken);
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+}

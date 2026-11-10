@@ -1,37 +1,48 @@
 ﻿using Avalonia.Collections;
 using CommunityToolkit.Mvvm.Input;
 using SukiUI.Toasts;
+using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Transport;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Gateway;
 
 
-internal sealed partial class GatewayViewModel(IGateway gateway, ISukiToastManager sukiToastManager) : LifecycleViewModel(gateway, sukiToastManager)
+internal sealed partial class GatewayViewModel : LifecycleViewModel
 {
-    private readonly AvaloniaDictionary<ConnectionEndpoint, PortViewModele> _viewModels = new(
-        gateway.Ports.Values
-            .Select(x => KeyValuePair.Create(x.Endpoint, new PortViewModele(x, sukiToastManager)))
-            .ToDictionary()
-    );
+    private readonly AvaloniaDictionary<ConnectionEndpoint, PortViewModel> _viewModels;
+    private readonly IGateway _gateway;
+    private readonly ISukiToastManager _sukiToastManager;
 
 
-    public IAvaloniaReadOnlyDictionary<ConnectionEndpoint, PortViewModele> Ports => _viewModels;
+    public GatewayViewModel(IGateway gateway, ISukiToastManager sukiToastManager) : base(gateway, sukiToastManager)
+    {
+        _gateway = gateway;
+        _sukiToastManager = sukiToastManager;
+
+        _viewModels = new(gateway.Ports.Values
+            .Select(port => KeyValuePair.Create(port.Endpoint, CreatePortViewModel(port)))
+            .ToDictionary());
+    }
+
+    public IAvaloniaReadOnlyDictionary<ConnectionEndpoint, PortViewModel> Ports => _viewModels;
 
 
 
     [RelayCommand]
-    private void AddPort(ITransportDescriptor transportDescriptor)
+    private async Task AddPort(ITransportDescriptor transportDescriptor)
     {
-        var port = gateway.AddPortAsync(transportDescriptor);
-        _viewModels[transportDescriptor.Endpoint] = new PortViewModele(port, sukiToastManager);
+        var port = await _gateway.AddPortAsync(transportDescriptor);
+        _viewModels.TryAdd(transportDescriptor.Endpoint, CreatePortViewModel(port));
     }
 
     [RelayCommand]
     private async Task RemovePort(ConnectionEndpoint connectionEndpoint)
     {
-        if (_viewModels.TryGetValue(connectionEndpoint, out var vm))
-            await vm.DisposeAsync();
-
+        await _gateway.RemovePortAsync(connectionEndpoint);
         _viewModels.Remove(connectionEndpoint);
     }
+
+
+    private PortViewModel CreatePortViewModel(IPort port) =>
+         new(port, _sukiToastManager);
 }

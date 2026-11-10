@@ -1,16 +1,20 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SukiUI.Toasts;
+using ThabeSoft.EdgeGateway.App.Services;
 using ThabeSoft.EdgeGateway.Lifecycles;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Gateway;
 
 
-internal partial class LifecycleViewModel(ILifecycle lifecycle, ISukiToastManager sukiToastManager) : ObservableObject
+internal partial class LifecycleViewModel(
+        ILifecycleWithState lifecycle,
+        ISukiToastManager sukiToastManager
+    ) : ObservableObject
 {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsRunning))]
-    public partial LifecycleState State { get; set; }
+    public partial LifecycleState State { get; set; } = lifecycle.State;
 
     public bool IsRunning => State == LifecycleState.Running;
 
@@ -18,35 +22,21 @@ internal partial class LifecycleViewModel(ILifecycle lifecycle, ISukiToastManage
     [RelayCommand]
     private async Task StartAsync()
     {
-        try
-        {
-            await lifecycle.StartAsync();
-            State = lifecycle.State;
-        }
-        catch(Exception ex)
-        {
-            sukiToastManager.CreateToast()
-               .OfType(Avalonia.Controls.Notifications.NotificationType.Error)
-               .WithTitle("启动失败")
-               .WithContent(ex.Message)
-               .Queue();
-        }
+        await sukiToastManager
+            .QueueWithCatchExceptionAsync(async () =>
+            {
+                await lifecycle.StartAsync();
+                State = lifecycle.State;
+            }, "启动失败");
     }
     [RelayCommand]
     private async Task StopAsync()
     {
-        try
-        {
-            await lifecycle.StopAsync();
-            State = lifecycle.State;
-        }
-        catch (Exception ex)
-        {
-            sukiToastManager.CreateToast()
-                .OfType(Avalonia.Controls.Notifications.NotificationType.Error)
-                .WithTitle("停止失败")
-                .WithContent(ex.Message)
-                .Queue();
-        }
+        await sukiToastManager
+            .QueueWithCatchExceptionAsync(async () =>
+            {
+                await lifecycle.StopAsync();
+                State = lifecycle.State;
+            }, "停止失败");
     }
 }

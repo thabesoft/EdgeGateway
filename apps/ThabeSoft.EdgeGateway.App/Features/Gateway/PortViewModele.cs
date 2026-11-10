@@ -8,34 +8,44 @@ using ThabeSoft.EdgeGateway.Transport;
 namespace ThabeSoft.EdgeGateway.App.Features.Gateway;
 
 
-internal sealed partial class PortViewModele(IPort port, ISukiToastManager sukiToastManager) : LifecycleViewModel(port, sukiToastManager), IAsyncDisposable
+internal sealed partial class PortViewModel : LifecycleViewModel
 {
-    private readonly AvaloniaDictionary<DeviceId, DeviceViewModel> _viewModels = new(
-       port.Devices.Values
-           .Select(x => KeyValuePair.Create(x.Id, new DeviceViewModel(x, sukiToastManager)))
-           .ToDictionary()
-   );
+    private readonly AvaloniaDictionary<DeviceId, DeviceViewModel> _viewModels;
+    private readonly IPort _port;
+    private readonly ISukiToastManager _sukiToastManager;
 
 
-    public ConnectionEndpoint Endpoint => port.Endpoint;
+    public PortViewModel(IPort port, ISukiToastManager sukiToastManager) : base(port, sukiToastManager)
+    {
+        _port = port;
+        _sukiToastManager = sukiToastManager;
+
+        _viewModels = new(port.Devices.Values
+           .Select(x => KeyValuePair.Create(x.Id, CreatePortViewModel(x)))
+           .ToDictionary());
+    }
+
+    public ConnectionEndpoint Endpoint => _port.Endpoint;
     public IAvaloniaReadOnlyDictionary<DeviceId, DeviceViewModel> Devices => _viewModels;
 
 
+
     [RelayCommand]
-    private void AddDevice(DeviceDescriptor deviceDescriptor)
+    private async Task AddDeviceAsync(DeviceDescriptor deviceDescriptor)
     {
-        var device = port.AddDeviceAsync(deviceDescriptor);
-        _viewModels[deviceDescriptor.Id] = new DeviceViewModel(device, sukiToastManager);
+        var device = await _port.AddDeviceAsync(deviceDescriptor);
+        _viewModels.TryAdd(deviceDescriptor.Id, CreatePortViewModel(device));
     }
 
     [RelayCommand]
-    private async Task RemoveDevice(DeviceId deviceId)
+    private async Task RemoveDeviceAsync(DeviceId deviceId)
     {
-        if (_viewModels.TryGetValue(deviceId, out var vm))
-            await vm.DisposeAsync();
-
+        await _port.RemoveDeviceAsync(deviceId);
         _viewModels.Remove(deviceId);
     }
 
-    public ValueTask DisposeAsync() => port.DisposeAsync();
+
+
+    private DeviceViewModel CreatePortViewModel(IDevice device) =>
+        new(device, _sukiToastManager);
 }

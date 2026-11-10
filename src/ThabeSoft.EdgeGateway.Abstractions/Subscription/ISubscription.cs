@@ -4,7 +4,7 @@ using ThabeSoft.EdgeGateway.Lifecycles;
 namespace ThabeSoft.EdgeGateway.Subscription;
 
 
-public interface ISubscription : ILifecycle, IObservable<Reading>
+public interface ISubscription : ILifecycleWithState, IObservable<Reading>
 {
     SubscriptionId Id { get; }
     IDataAddress Address { get; }

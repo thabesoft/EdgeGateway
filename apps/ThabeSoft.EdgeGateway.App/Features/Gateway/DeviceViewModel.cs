@@ -8,22 +8,32 @@ using ThabeSoft.EdgeGateway.Subscription;
 namespace ThabeSoft.EdgeGateway.App.Features.Gateway;
 
 
-internal sealed partial class DeviceViewModel(IDevice device, ISukiToastManager sukiToastManager) : LifecycleViewModel(device, sukiToastManager)
+internal sealed partial class DeviceViewModel : LifecycleViewModel
 {
-    private readonly AvaloniaDictionary<SubscriptionId, SubscriptionViewModeel> _subscription = new(device.Subscriptions.Values
-            .Select(x => KeyValuePair.Create(x.Id, new SubscriptionViewModeel(x, sukiToastManager)))
-            .ToDictionary());
+    private readonly AvaloniaDictionary<SubscriptionId, SubscriptionViewModel> _subscription;
+    private readonly IDevice _device;
+    private readonly ISukiToastManager _sukiToastManager;
 
-    public DeviceId Id => device.Id;
-    public ProtocolType ProtocolType => device.ProtocolType;
-    public IAvaloniaReadOnlyDictionary<SubscriptionId, SubscriptionViewModeel> Subscriptions => _subscription;
+    public DeviceViewModel(IDevice device, ISukiToastManager sukiToastManager) : base(device, sukiToastManager)
+    {
+        _device = device;
+        _sukiToastManager = sukiToastManager;
+
+        _subscription = new(device.Subscriptions.Values
+            .Select(x => KeyValuePair.Create(x.Id, CreateSubscriptionViewModel(x)))
+            .ToDictionary());
+    }
+
+    public DeviceId Id => _device.Id;
+    public ProtocolType ProtocolType => _device.ProtocolType;
+    public IAvaloniaReadOnlyDictionary<SubscriptionId, SubscriptionViewModel> Subscriptions => _subscription;
 
 
     [RelayCommand]
     private async Task AddSubscription(SubscriptionDescriptor<int> subscriptionDescriptor)
     {
-        var subscription = await device.AddSubscriptionAsync(subscriptionDescriptor);
-        _subscription[subscription.Id] = new SubscriptionViewModeel(subscription, sukiToastManager);
+        var subscription = await _device.AddSubscriptionAsync(subscriptionDescriptor);
+        _subscription.TryAdd(subscription.Id, CreateSubscriptionViewModel(subscription));
     }
 
     [RelayCommand]
@@ -31,5 +41,11 @@ internal sealed partial class DeviceViewModel(IDevice device, ISukiToastManager 
     {
         if (_subscription.TryGetValue(subscriptionId, out var vm))
             vm.Dispose();
+
+        _subscription.Remove(subscriptionId);
     }
+
+
+    private SubscriptionViewModel CreateSubscriptionViewModel(ISubscription subscription) =>
+         new(subscription, _sukiToastManager);
 }

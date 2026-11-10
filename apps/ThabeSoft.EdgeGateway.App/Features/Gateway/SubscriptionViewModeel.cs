@@ -6,13 +6,13 @@ using ThabeSoft.EdgeGateway.Subscription;
 namespace ThabeSoft.EdgeGateway.App.Features.Gateway;
 
 
-internal sealed partial class SubscriptionViewModeel : LifecycleViewModel, IDisposable
+internal sealed partial class SubscriptionViewModel : LifecycleViewModel, IDisposable
 {
     private readonly ISubscription _subscription;
     private readonly IDisposable _subscriptionHandle;
 
 
-    public SubscriptionViewModeel(ISubscription subscription, ISukiToastManager sukiToastManager) : base(subscription, sukiToastManager)
+    public SubscriptionViewModel(ISubscription subscription, ISukiToastManager sukiToastManager) : base(subscription, sukiToastManager)
     {
         _subscription = subscription;
         Latest = subscription.Latest;

@@ -32,7 +32,6 @@ public static class CodecExtensions
 
 
 
-
     extension<T>(ICodec<T> codec) where T : notnull
     {
         public T DecodeBits(ReadOnlySpan<bool> bits)

@@ -6,7 +6,6 @@ namespace ThabeSoft.EdgeGateway.Lifecycles;
 
 public interface IBackgroundLifecycle : ILifecycle, IAsyncDisposable;
 
-
 internal sealed class BackgroundLifecycle : IBackgroundLifecycle
 {
     private int _disposed;

@@ -5,8 +5,6 @@ using Material.Icons;
 using SukiUI.Dialogs;
 using SukiUI.Toasts;
 using ThabeSoft.EdgeGateway.App.Features.Gateway;
-using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Ports;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 
@@ -28,7 +26,7 @@ internal sealed partial class TopologyViewModel(
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsSelecteedPort))]
-    public partial PortViewModele? SelectedPort { get; set; }
+    public partial PortViewModel? SelectedPort { get; set; }
     public bool IsSelecteedPort => SelectedPort is not null;
 
 
@@ -67,7 +65,7 @@ internal sealed partial class TopologyViewModel(
         SelectedPort = nextItem;
 
 
-        static PortViewModele? GetNextItem(PortViewModele[] items, PortViewModele item)
+        static PortViewModel? GetNextItem(PortViewModel[] items, PortViewModel item)
         {
             for (int i = 0; i < items.Length; i++)
             {
@@ -116,7 +114,7 @@ internal sealed partial class TopologyViewModel(
     {
         if (value is null) return;
 
-        if (value.Content is PortViewModele port)
+        if (value.Content is PortViewModel port)
         {
             SelectedPort = port;
             SelectedDevice = null;

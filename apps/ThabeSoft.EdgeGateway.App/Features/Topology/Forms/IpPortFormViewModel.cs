@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.ComponentModel;
 using System.Net;
 using ThabeSoft.EdgeGateway.Transport;
 

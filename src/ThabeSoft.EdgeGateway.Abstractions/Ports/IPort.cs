@@ -5,7 +5,7 @@ using ThabeSoft.EdgeGateway.Transport;
 namespace ThabeSoft.EdgeGateway.Ports;
 
 
-public interface IPort : ILifecycle, ILifecycleStateable
+public interface IPort : ILifecycleWithState
 {
     ConnectionEndpoint Endpoint { get; }
     IReadOnlyDictionary<DeviceId, IDevice> Devices { get; }

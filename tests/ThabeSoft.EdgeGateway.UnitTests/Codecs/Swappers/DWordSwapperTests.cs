@@ -1,4 +1,6 @@
-﻿namespace ThabeSoft.EdgeGateway.Codecs.Swappers;
+﻿using ThabeSoft.EdgeGateway.Swappers;
+
+namespace ThabeSoft.EdgeGateway.Codecs.Swappers;
 
 
 [TestClass]

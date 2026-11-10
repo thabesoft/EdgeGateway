@@ -13,7 +13,7 @@ internal sealed class SubscriptionFactory(
         ILoggerFactory loggerFactory
     )
 {
-    public ISubscription<T> Create<T>(
+    public Subscription<T> Create<T>(
             SubscriptionDescriptor<T> subscriptionDescriptor,
             IProtocolDescriptor protocolDescriptor,
             IByteDuplex byteDuplex,
@@ -26,7 +26,7 @@ internal sealed class SubscriptionFactory(
             protocolDescriptor: protocolDescriptor,
             triggerFactorySelector: triggerFactorySelector,
             byteDuplex: byteDuplex,
-            deeviceLifecycleState: deviceLifecycleState,
+            deviceLifecycleState: deviceLifecycleState,
             subscriptionValueReaderFactory: subscriptionValueReaderFactory,
             logger: loggerFactory.CreateLogger<Subscription<T>>()
         );

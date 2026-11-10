@@ -1,9 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Hosting;
-using ThabeSoft.EdgeGateway.Options;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
@@ -19,11 +17,8 @@ public static class DependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {
-        public IServiceCollection AddEdgeGateway(GatewayConfiguratorHandler? configuratorHandler = null)
+        public IServiceCollection AddEdgeGateway()
         {
-            if (configuratorHandler is not null)
-                descriptors.AddSingleton(configuratorHandler);
-
             // Trigger
             descriptors.TryAddSingleton(TimeProvider.System);
             descriptors.TryAddSingleton<ITriggerFactory, FixedIntervalTriggerFactory>();
@@ -42,7 +37,6 @@ public static class DependencyInjectionExtensions
 
             // Gateway
             descriptors.TryAddSingleton<IGateway, Gateway>();
-            descriptors.AddHostedService<ConfiguratorHostedService>();
 
             return descriptors;
         }
@@ -50,14 +44,6 @@ public static class DependencyInjectionExtensions
         public IServiceCollection AddEdgeGatewayHost()
         {
             return descriptors.AddHostedService<LaunchHostedService>();
-        }
-
-        /// <summary>
-        /// 添加网关配置
-        /// </summary>
-        public IServiceCollection ConfigureGateway(GatewayConfiguratorHandler configuratorHandler)
-        {
-            return descriptors.AddSingleton(configuratorHandler);
         }
     }
 }

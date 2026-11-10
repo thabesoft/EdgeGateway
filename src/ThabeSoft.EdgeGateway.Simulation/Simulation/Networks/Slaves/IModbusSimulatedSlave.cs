@@ -6,7 +6,7 @@ using ThabeSoft.EdgeGateway.Triggers;
 
 namespace ThabeSoft.EdgeGateway.Simulation.Networks.Slaves;
 
-public interface IModbusSimulatedSlave : IStatefulLifecycle, IAsyncDisposable
+public interface IModbusSimulatedSlave : ILifecycle, IAsyncDisposable
 {
     internal IModbusSlave Slave { get; }
     IDisposable Value<T>(TagDescriptor<T> tagDescriptor, ITriggerDescriptor triggerDescriptor, IValueGenerator<T> generator) where T : notnull;

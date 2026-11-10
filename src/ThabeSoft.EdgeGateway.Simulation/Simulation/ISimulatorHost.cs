@@ -6,7 +6,7 @@ using ThabeSoft.EdgeGateway.Transport;
 namespace ThabeSoft.EdgeGateway.Simulation;
 
 
-public interface ISimulatorHost : IStatefulLifecycle
+public interface ISimulatorHost : ILifecycle
 {
     IModbusSimulationNetwork AddNetwork(ModbusSimulatorNetworkDescriptor simulatorDescriptor);
 }
@@ -15,7 +15,7 @@ internal sealed class SimulatorHost(
         ModbusSimulationNetworkFactory simulationNetworkFactory
     ) : ISimulatorHost, IAsyncDisposable
 {
-    private readonly CollectionLifecycleStateMachine _stateMachine = Lifecycle.Collection();
+    private readonly CollectionLifecycleStateMachine _stateMachine = Lifecycle.CollectionStateMachine();
     private readonly ConcurrentDictionary<ConnectionEndpoint, IModbusSimulationNetwork> _networks = [];
 
     public LifecycleState State => _stateMachine.State;

@@ -6,13 +6,13 @@ using Microsoft.Extensions.Logging;
 using SukiUI.Dialogs;
 using SukiUI.Toasts;
 using System.Net;
+using ThabeSoft.EdgeGateway;
 using ThabeSoft.EdgeGateway.App;
 using ThabeSoft.EdgeGateway.App.Common;
 using ThabeSoft.EdgeGateway.App.Features.Dashboard;
 using ThabeSoft.EdgeGateway.App.Features.Gateway;
 using ThabeSoft.EdgeGateway.App.Features.Topology;
 using ThabeSoft.EdgeGateway.App.Services;
-using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
@@ -121,20 +121,41 @@ public sealed class MockTransportFactory(ILoggerFactory loggerFactory) : ITransp
         new MockTransportConnection(descriptor, loggerFactory.CreateLogger<MockTransportConnection>());
 
 
-    private sealed class MockTransportConnection(ITransportDescriptor transportDescriptor, ILogger<MockTransportConnection> logger) : LifecycleStateMachine, ITransportConnection
+    private sealed class MockTransportConnection(ITransportDescriptor transportDescriptor, ILogger<MockTransportConnection> logger) : ITransportConnection
     {
+        //private ILifecycle
+
         public ConnectionEndpoint Endpoint => transportDescriptor.Endpoint;
+        public LifecycleState State => throw new NotImplementedException();
+
+        
 
         public ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
         {
             logger.LogDebug("读取数据");
             return ValueTask.FromResult(0);
         }
+
+        public ValueTask StartAsync(CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ValueTask StopAsync(CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
         public ValueTask WriteAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
         {
             logger.LogDebug("写入数据, 长度:{Len}", data.Length);
             return ValueTask.CompletedTask;
         }
+
+
+
+
+
 
         protected override ValueTask OnStartAsync(CancellationToken cancellationToken)
         {
@@ -145,6 +166,11 @@ public sealed class MockTransportFactory(ILoggerFactory loggerFactory) : ITransp
         {
             logger.LogDebug("已停止");
             return ValueTask.CompletedTask;
+        }
+
+        public ValueTask DisposeAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 }

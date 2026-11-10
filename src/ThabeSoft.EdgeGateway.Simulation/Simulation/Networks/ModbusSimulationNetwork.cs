@@ -9,7 +9,7 @@ internal abstract class ModbusSimulationNetwork(
         ModbusSimulatedSlaveFactory slaveSimulatorFactory
     ) : IModbusSimulationNetwork
 {
-    private readonly CollectionLifecycleStateMachine _stateMachine = Lifecycle.Collection();
+    private readonly CollectionLifecycleStateMachine _stateMachine = Lifecycle.CollectionStateMachine();
     private readonly ConcurrentDictionary<byte, ModbusSimulatedSlave> _slaves = [];
 
     public LifecycleState State => _stateMachine.State;

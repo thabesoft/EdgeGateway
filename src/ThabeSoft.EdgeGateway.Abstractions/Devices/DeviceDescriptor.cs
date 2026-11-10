@@ -30,16 +30,16 @@ public static class PortExtensions
 {
     extension(IPort port)
     {
-        public IDevice AddDevice(DeviceId deviceId, IProtocolDescriptor protocolDescriptor)
+        public ValueTask<IDevice> AddDeviceAsync(DeviceId deviceId, IProtocolDescriptor protocolDescriptor, CancellationToken cancellationToken = default)
         {
             ArgumentNullException.ThrowIfNull(deviceId);
             ArgumentNullException.ThrowIfNull(protocolDescriptor);
 
 
-            return port.AddDevice(DeviceDescriptor.Create(deviceId, protocolDescriptor));
+            return port.AddDeviceAsync(DeviceDescriptor.Create(deviceId, protocolDescriptor), cancellationToken);
         }
 
-        public IDevice AddDevice(IProtocolDescriptor protocolDescriptor) =>
-            port.AddDevice(DeviceId.Create(), protocolDescriptor);
+        public ValueTask<IDevice> AddDeviceAsync(IProtocolDescriptor protocolDescriptor, CancellationToken cancellationToken = default) =>
+            port.AddDeviceAsync(DeviceId.Create(), protocolDescriptor, cancellationToken);
     }
 }

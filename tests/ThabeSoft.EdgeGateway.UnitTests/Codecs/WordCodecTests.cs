@@ -1,4 +1,6 @@
-﻿namespace ThabeSoft.EdgeGateway.Codecs;
+﻿using ThabeSoft.EdgeGateway.Codecs.Words;
+
+namespace ThabeSoft.EdgeGateway.Codecs;
 
 
 [TestClass]

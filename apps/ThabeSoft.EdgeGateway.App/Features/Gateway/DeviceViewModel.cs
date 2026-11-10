@@ -25,7 +25,7 @@ internal sealed partial class DeviceViewModel(IDevice device, ISukiToastManager 
     [RelayCommand]
     private void AddSubscription(SubscriptionDescriptor<int> subscriptionDescriptor)
     {
-        var subscription = device.AddSubscription(subscriptionDescriptor);
+        var subscription = device.AddSubscriptionAsync(subscriptionDescriptor);
         _subscription[subscription.Id] = new SubscriptionViewModeel(subscription, sukiToastManager);
     }
 

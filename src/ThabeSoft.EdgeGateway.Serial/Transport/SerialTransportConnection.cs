@@ -6,20 +6,29 @@ using ThabeSoft.EdgeGateway.Transport.Byte;
 namespace ThabeSoft.EdgeGateway.Transport;
 
 
-internal sealed class SerialTransportConnection(
-        SerialTransportDescriptor descriptor,
-        ILogger logger
-    ) : ITransportConnection, IReadBufferDiscardable
+internal sealed class SerialTransportConnection : ITransportConnection, IReadBufferDiscardable
 {
-    private readonly LifecycleStateMachineA _stateMachine = Lifecycle.Normal(x => x.Start(30).Stop(15), logger: logger);
-    private readonly SerialPortStream _serialPort = new(
-        port: descriptor.PortName,
-        baud: descriptor.BaudRate,
-        data: descriptor.DataBits,
-        parity: descriptor.Parity.ToRjcp(),
-        stopbits: descriptor.StopBits.ToRjcp());
+    private readonly IStrictLifecycleStateMachine _stateMachine;
+    private readonly SerialPortStream _serialPort;
 
-    public ConnectionEndpoint Endpoint { get; } = descriptor.Endpoint;
+    public SerialTransportConnection(
+        SerialTransportDescriptor descriptor,
+        ILogger? logger = null)
+    {
+        ArgumentNullException.ThrowIfNull(descriptor);
+
+        _serialPort = new(
+            port: descriptor.PortName,
+            baud: descriptor.BaudRate,
+            data: descriptor.DataBits,
+            parity: descriptor.Parity.ToRjcp(),
+            stopbits: descriptor.StopBits.ToRjcp());
+
+        _stateMachine = Lifecycle.StrictStateMachine(logger);
+        Endpoint = descriptor.Endpoint;
+    }
+
+    public ConnectionEndpoint Endpoint { get; }
     public LifecycleState State => throw new NotImplementedException();
 
 
@@ -27,8 +36,7 @@ internal sealed class SerialTransportConnection(
     {
         return _stateMachine.ExecuteAsync
         (
-            state: (SerialPort: _serialPort, Buffer: buffer),
-            action: static (state, ct) => state.SerialPort.ReadAsync(state.Buffer, ct),
+            action: ct => _serialPort.ReadAsync(buffer, ct),
             cancellationToken: cancellationToken
         );
     }
@@ -36,8 +44,7 @@ internal sealed class SerialTransportConnection(
     {
         return _stateMachine.ExecuteAsync
         (
-            state: (SerialPort: _serialPort, Data: data),
-            action: static (state, ct) => state.SerialPort.WriteAsync(state.Data, ct),
+            action: ct => _serialPort.WriteAsync(data, ct),
             cancellationToken: cancellationToken
         );
     }
@@ -75,22 +82,4 @@ internal sealed class SerialTransportConnection(
         await _serialPort.DisposeAsync();
 #endif
     }
-
-
-    private static RJCP.IO.Ports.Parity ToRjcp(SerialParity parity) => parity switch
-    {
-        SerialParity.None => RJCP.IO.Ports.Parity.None,
-        SerialParity.Even => RJCP.IO.Ports.Parity.Even,
-        SerialParity.Odd => RJCP.IO.Ports.Parity.Odd,
-        SerialParity.Mark => RJCP.IO.Ports.Parity.Mark,
-        SerialParity.Space => RJCP.IO.Ports.Parity.Space,
-        _ => throw new ArgumentOutOfRangeException(nameof(parity))
-    };
-    public static RJCP.IO.Ports.StopBits ToRjcp(SerialStopBits stopBits) => stopBits switch
-    {
-        SerialStopBits.One => RJCP.IO.Ports.StopBits.One,
-        SerialStopBits.Two => RJCP.IO.Ports.StopBits.Two,
-        SerialStopBits.OnePointFive => RJCP.IO.Ports.StopBits.One5,
-        _ => throw new ArgumentOutOfRangeException(nameof(stopBits))
-    };
 }

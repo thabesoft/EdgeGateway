@@ -24,7 +24,7 @@ internal sealed partial class PortViewModele(IPort port, ISukiToastManager sukiT
     [RelayCommand]
     private void AddDevice(DeviceDescriptor deviceDescriptor)
     {
-        var device = port.AddDevice(deviceDescriptor);
+        var device = port.AddDeviceAsync(deviceDescriptor);
         _viewModels[deviceDescriptor.Id] = new DeviceViewModel(device, sukiToastManager);
     }
 

@@ -16,7 +16,7 @@ internal sealed class ModbusSimulatedSlave(
         ITriggerFactorySelector triggerFactorySelector
     ) : IModbusSimulatedSlave
 {
-    private readonly LifecycleStateMachineA _stateMachine = Lifecycle.Normal();
+    private readonly LifecycleStateMachine _stateMachine = Lifecycle.StrictStateMachine();
     private readonly TaskManager _taskManager = new();
     private readonly ConcurrentDictionary<Guid, ITrigger> _triggers = [];
 

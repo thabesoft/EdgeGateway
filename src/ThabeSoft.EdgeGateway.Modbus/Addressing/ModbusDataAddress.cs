@@ -2,6 +2,7 @@
 
 namespace ThabeSoft.EdgeGateway.Addressing;
 
+
 public sealed class ModbusDataAddress : IDataAddress, IRequiredBits
 {
     public required byte SlaveId { get; init; }

@@ -22,7 +22,7 @@ internal sealed partial class GatewayViewModel(IGateway gateway, ISukiToastManag
     [RelayCommand]
     private void AddPort(ITransportDescriptor transportDescriptor)
     {
-        var port = gateway.AddPort(transportDescriptor);
+        var port = gateway.AddPortAsync(transportDescriptor);
         _viewModels[transportDescriptor.Endpoint] = new PortViewModele(port, sukiToastManager);
     }
 

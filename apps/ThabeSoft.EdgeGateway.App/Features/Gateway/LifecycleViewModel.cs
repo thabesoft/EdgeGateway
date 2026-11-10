@@ -6,7 +6,7 @@ using ThabeSoft.EdgeGateway.Lifecycles;
 namespace ThabeSoft.EdgeGateway.App.Features.Gateway;
 
 
-internal partial class LifecycleViewModel(IStatefulLifecycle lifecycle, ISukiToastManager sukiToastManager) : ObservableObject
+internal partial class LifecycleViewModel(ILifecycle lifecycle, ISukiToastManager sukiToastManager) : ObservableObject
 {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsRunning))]

@@ -33,14 +33,14 @@ public static class Modbus
     #region --标签--
 
     public static TagDescriptor<bool> Coil(byte slaveId, ushort address, int bitOffset = 0) =>
-        TagDescriptor.Create(ModbusDataAddress.Coil(slaveId, address, 1), BoolCodec.BitOffset(bitOffset));
+        TagDescriptor.Create(ModbusDataAddress.Coil(slaveId, address, 1), Codec.Bool(bitOffset));
     public static TagDescriptor<BitArray> Coils(byte slaveId, ushort address, ushort quantity) =>
-        TagDescriptor.Create(ModbusDataAddress.Coil(slaveId, address, quantity), BitsCodec.LsbFirst(quantity));
+        TagDescriptor.Create(ModbusDataAddress.Coil(slaveId, address, quantity), Codec.BitsLsbFirst(quantity));
 
     public static TagDescriptor<bool> DiscreteInput(byte slaveId, ushort address) =>
-        TagDescriptor.Create(ModbusDataAddress.DiscreteInput(slaveId, address, 1), BoolCodec.BitOffset(0));
+        TagDescriptor.Create(ModbusDataAddress.DiscreteInput(slaveId, address, 1), Codec.Bool(0));
     public static TagDescriptor<BitArray> DiscreteInputs(byte slaveId, ushort address, ushort quantity) =>
-        TagDescriptor.Create(ModbusDataAddress.DiscreteInput(slaveId, address, quantity), BitsCodec.LsbFirst(quantity));
+        TagDescriptor.Create(ModbusDataAddress.DiscreteInput(slaveId, address, quantity), Codec.BitsLsbFirst(quantity));
 
 
     public static TagDescriptor<T> HoldingRegister<T>(byte slaveId, ushort address, ICodec<T> codec) where T : unmanaged

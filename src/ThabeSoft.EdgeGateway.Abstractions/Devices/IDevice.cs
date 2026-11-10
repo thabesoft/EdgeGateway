@@ -7,27 +7,35 @@ using ThabeSoft.EdgeGateway.Triggers;
 namespace ThabeSoft.EdgeGateway.Devices;
 
 
-public interface IDevice : IStatefulLifecycle, IAsyncDisposable
+public interface IDevice : ILifecycle, ILifecycleStateable
 {
     DeviceId Id { get; }
     ProtocolType ProtocolType { get; }
-
-
     IReadOnlyDictionary<SubscriptionId, ISubscription> Subscriptions { get; }
-    ISubscription<T> AddSubscription<T>(SubscriptionDescriptor<T> subscriptionDescriptor) where T : notnull;
+
+
+    ValueTask<ISubscription<T>> AddSubscriptionAsync<T>(
+        SubscriptionDescriptor<T> subscriptionDescriptor,
+        CancellationToken cancellationToken = default
+    ) where T : notnull;
+
+    ValueTask<bool> RemoveSubscriptionAsync(
+        SubscriptionId subscriptionId,
+        CancellationToken cancellationToken = default);
 }
 
 public static class DeviceExtensions
 {
     extension(IDevice device)
     {
-        public ISubscription<T> AddSubscription<T>(
+        public ValueTask<ISubscription<T>> AddSubscriptionAsync<T>(
                 TagDescriptor<T> tagDescriptor,
-                ITriggerDescriptor triggerDescriptor
+                ITriggerDescriptor triggerDescriptor,
+                CancellationToken cancellationToken = default
             ) where T : notnull
         {
             var descriptor = SubscriptionDescriptor.Create(tagDescriptor, triggerDescriptor);
-            return device.AddSubscription(descriptor);
+            return device.AddSubscriptionAsync(descriptor, cancellationToken);
         }
     }
 }

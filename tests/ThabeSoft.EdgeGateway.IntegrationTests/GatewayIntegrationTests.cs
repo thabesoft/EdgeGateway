@@ -48,8 +48,8 @@ public class GatewayIntegrationTests
         var simulationNetwork = Simulator.AddNetwork(Modbus.IpSimulationNetwork(transportDescriptor));
         await simulationNetwork.StartAsync(TestContext.CancellationToken);
 
-        var port = Gateway.AddPort(transportDescriptor);
-        var device = port.AddDevice(protocolDescriptor);
+        var port = await Gateway.AddPortAsync(transportDescriptor);
+        var device = await port.AddDeviceAsync(protocolDescriptor);
 
         // 端口未启动, 启动设备则异常
         await Assert.ThrowsAsync<InvalidOperationException>(async () =>
@@ -61,16 +61,10 @@ public class GatewayIntegrationTests
         Assert.AreEqual(LifecycleState.Running, port.State);
         Assert.AreEqual(LifecycleState.Running, device.State);
 
-        // 端口释放, 设备同步释放
-        await port.DisposeAsync();
+        // 删除端口, 停止并释放所有资源
+        await Gateway.RemovePortAsync(port.Endpoint);
         Assert.AreEqual(LifecycleState.Disposed, port.State);
         Assert.AreEqual(LifecycleState.Disposed, device.State);
-
-        // 网关释放, 所有资源不可用
-        await Gateway.DisposeAsync();
-        Assert.AreEqual(LifecycleState.Disposed, Gateway.State);
-        Assert.Throws<ObjectDisposedException>(() =>
-            port.AddDevice(Modbus.Ip));
     }
 
     public TestContext TestContext { get; set; }

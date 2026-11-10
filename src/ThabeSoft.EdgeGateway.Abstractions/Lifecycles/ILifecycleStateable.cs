@@ -1,5 +1,9 @@
 ﻿namespace ThabeSoft.EdgeGateway.Lifecycles;
 
+
+/// <summary>
+/// 生命周期状态
+/// </summary>
 public interface ILifecycleStateable
 {
     LifecycleState State { get; }

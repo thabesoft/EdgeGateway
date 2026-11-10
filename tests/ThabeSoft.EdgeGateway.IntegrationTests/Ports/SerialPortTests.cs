@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Hosting;
-using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Triggers;
 

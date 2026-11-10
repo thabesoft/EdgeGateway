@@ -3,26 +3,19 @@
 namespace ThabeSoft.EdgeGateway.Codecs;
 
 
-public sealed class BitsCodec : ICodec<BitArray>, IRequiredBits
+internal sealed class BitsCodec : ICodec<BitArray>, IRequiredBits
 {
-    public static BitsCodec LsbFirst(int bitCount)
+    public BitsCodec(int bitCount, BitOrder bitOrder)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(bitCount);
-        return new(bitCount, BitOrder.LsbFirst);
-    }
-    public static BitsCodec MsbFirst(int bitCount)
-    {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(bitCount);
-        return new(bitCount, BitOrder.MsbFirst);
-    }
+        if (BitOrder is not (BitOrder.LsbFirst or BitOrder.MsbFirst))
+            throw new ArgumentOutOfRangeException(nameof(bitOrder), bitCount, "不支持的位序");
 
-
-    private BitsCodec(int bitCount, BitOrder bitOrder)
-    {
         BitOrder = bitOrder;
         RequiredBits = bitCount;
         RequiredBytes = (bitCount + 7) / 8;
     }
+
 
     public BitOrder BitOrder { get; }
     public int RequiredBytes { get; }
@@ -72,7 +65,7 @@ public sealed class BitsCodec : ICodec<BitArray>, IRequiredBits
 }
 
 
-public enum BitOrder
+internal enum BitOrder
 {
     LsbFirst,
     MsbFirst

@@ -5,8 +5,9 @@ using ThabeSoft.EdgeGateway.Transport;
 namespace ThabeSoft.EdgeGateway;
 
 
-public interface IGateway : IStatefulLifecycle, IAsyncDisposable
+public interface IGateway : ILifecycle, ILifecycleStateable
 {
     IReadOnlyDictionary<ConnectionEndpoint, IPort> Ports { get; }
-    IPort AddPort(ITransportDescriptor transportDescriptor);
+    ValueTask<IPort> AddPortAsync(ITransportDescriptor transportDescriptor, CancellationToken cancellationToken = default);
+    ValueTask<bool> RemovePortAsync(ConnectionEndpoint connectionEndpoint, CancellationToken cancellationToken = default);
 }

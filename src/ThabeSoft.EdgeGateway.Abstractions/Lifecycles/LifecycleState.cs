@@ -1,7 +1,8 @@
 ﻿namespace ThabeSoft.EdgeGateway.Lifecycles;
 
+
 /// <summary>
-/// 组件的生命周期状态。
+/// 生命周期状态
 /// </summary>
 public enum LifecycleState : byte
 {

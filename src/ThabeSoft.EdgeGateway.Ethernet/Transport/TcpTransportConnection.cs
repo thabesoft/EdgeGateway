@@ -10,7 +10,7 @@ internal sealed class TcpTransportConnection(
         ILogger<TcpTransportConnection> logger
     ) : ITransportConnection
 {
-    private readonly LifecycleStateMachineA _stateMachine = Lifecycle.Normal(x => x.StartStop(15), logger: logger);
+    private readonly LifecycleStateMachine _stateMachine = Lifecycle.StrictStateMachine(x => x.StartStop(15), logger: logger);
     private readonly TcpClient _tcpClient = new();
 
 

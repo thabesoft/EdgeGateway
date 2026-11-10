@@ -10,7 +10,7 @@ internal sealed class TcpTransportConnection(
         ILogger<TcpTransportConnection> logger
     ) : ITransportConnection
 {
-    private readonly LifecycleStateMachine _stateMachine = Lifecycle.StrictStateMachine(x => x.StartStop(15), logger: logger);
+    private readonly IStrictLifecycleStateMachine _stateMachine = Lifecycle.StrictStateMachine(logger);
     private readonly TcpClient _tcpClient = new();
 
 
@@ -26,8 +26,7 @@ internal sealed class TcpTransportConnection(
 
         return _stateMachine.ExecuteAsync
         (
-            state: (TcpClient: _tcpClient, Buffer: buffer),
-            action: static (state, ct) => state.TcpClient.GetStream().ReadAsync(state.Buffer, ct),
+            action: ct => _tcpClient.GetStream().ReadAsync(buffer, ct),
             cancellationToken: cancellationToken
         );
     }
@@ -38,8 +37,7 @@ internal sealed class TcpTransportConnection(
 
         return _stateMachine.ExecuteAsync
         (
-            state: (TcpClient: _tcpClient, Data: data),
-            action: static (state, ct) => state.TcpClient.GetStream().WriteAsync(state.Data, ct),
+            action: ct => _tcpClient.GetStream().WriteAsync(data, ct),
             cancellationToken: cancellationToken
         );
     }

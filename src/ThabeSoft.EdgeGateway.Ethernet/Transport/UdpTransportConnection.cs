@@ -10,7 +10,7 @@ internal sealed class UdpTransportConnection(
         ILogger<UdpTransportConnection> logger
     ) : ITransportConnection
 {
-    private readonly LifecycleStateMachine _stateMachine = Lifecycle.StrictStateMachine(x => x.StartStop(15), logger: logger);
+    private readonly IStrictLifecycleStateMachine _stateMachine = Lifecycle.StrictStateMachine(logger);
     private readonly UdpClient _udpClient = new();
 
     private Task? _receiveLoop;
@@ -28,20 +28,19 @@ internal sealed class UdpTransportConnection(
     {
         return _stateMachine.ExecuteAsync
         (
-            state: (UdpClient: _udpClient, Buffer: buffer, Datagrams: _datagrams),
-            action: static async (state, ct) =>
+            action: async ct =>
             {
-                if (state.Datagrams is null)
+                if (_datagrams is null)
                     return 0;   // 未启动
 
-                if (!await state.Datagrams.Reader.WaitToReadAsync(ct))
+                if (!await _datagrams.Reader.WaitToReadAsync(ct))
                     return 0;   // Channel 已完成（Stop 了）
 
-                if (!state.Datagrams.Reader.TryRead(out var datagram))
+                if (!_datagrams.Reader.TryRead(out var datagram))
                     return 0;
 
-                var length = Math.Min(datagram.Length, state.Buffer.Length);
-                datagram.AsSpan(0, length).CopyTo(state.Buffer.Span);
+                var length = Math.Min(datagram.Length, buffer.Length);
+                datagram.AsSpan(0, length).CopyTo(buffer.Span);
                 return length;
             },
             cancellationToken: cancellationToken
@@ -49,11 +48,9 @@ internal sealed class UdpTransportConnection(
     }
     public async ValueTask WriteAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
     {
-        // 返回的是 ValueTask<int>
         await _stateMachine.ExecuteAsync
         (
-            state: (UdpClient: _udpClient, Data: data),
-            action: static (state, ct) => state.UdpClient.SendAsync(state.Data, ct),
+            action: ct => _udpClient.SendAsync(data, ct),
             cancellationToken: cancellationToken
         );
     }

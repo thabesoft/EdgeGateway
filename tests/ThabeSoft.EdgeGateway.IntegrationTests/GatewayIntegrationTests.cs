@@ -1,9 +1,14 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Time.Testing;
+using System.Collections.Concurrent;
 using System.Net;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Simulation;
+using ThabeSoft.EdgeGateway.Simulation.ValueGenerators;
+using ThabeSoft.EdgeGateway.Subscription;
+using ThabeSoft.EdgeGateway.Triggers;
 
 namespace ThabeSoft.EdgeGateway;
 
@@ -13,6 +18,7 @@ public class GatewayIntegrationTests
 {
     private IHost? _app;
 
+    protected FakeTimeProvider TimeProvider { get; } = new();
     protected IGateway Gateway { get; private set; } = null!;
     protected ISimulator Simulator { get; private set; } = null!;
 
@@ -22,6 +28,7 @@ public class GatewayIntegrationTests
     {
         _app = Host.CreateDefaultBuilder()
             .ConfigureServices(x => x
+                .AddSingleton<TimeProvider>(TimeProvider)
                 .AddSimulation()
                 .AddEdgeGateway()
                 .AddModbus()
@@ -44,27 +51,27 @@ public class GatewayIntegrationTests
     {
         var transportDescriptor = Ethernet.Tcp(IPAddress.Loopback, 2333);
         var protocolDescriptor = Modbus.Ip;
+        var tag = Modbus.HoldingRegister(1, 0, Codec.Double);
+        var triggr = Trigger.Interval(100);
 
         var simulationNetwork = Simulator.AddModbusNetwork(Modbus.IpSimulationNetwork(transportDescriptor));
+        var slave = await simulationNetwork.AddSlaveAsync(1, TestContext.CancellationToken);
+        using var _ = slave.Value(tag, triggr, ValueGenerator.SineWave(1, 0.1));
+
+        // 模拟器 启动
         await simulationNetwork.StartAsync(TestContext.CancellationToken);
+
+        ConcurrentQueue<double> _values = [];
 
         var port = await Gateway.AddPortAsync(transportDescriptor);
         var device = await port.AddDeviceAsync(protocolDescriptor);
+        var subscription = await device.AddSubscriptionAsync(tag, triggr, TestContext.CancellationToken);
+        subscription.Subscribe(x => _values.Enqueue(x.Value));
 
-        // 端口未启动, 启动设备则异常
-        await Assert.ThrowsAsync<InvalidOperationException>(async () =>
-             await device.StartAsync(TestContext.CancellationToken));
-        Assert.AreEqual(LifecycleState.Faulted, device.State);
-
-        // 启动网关, 端口设备一起启动
         await Gateway.StartAsync(TestContext.CancellationToken);
-        Assert.AreEqual(LifecycleState.Running, port.State);
-        Assert.AreEqual(LifecycleState.Running, device.State);
 
-        // 删除端口, 停止并释放所有资源
-        await Gateway.RemovePortAsync(port.Endpoint);
-        Assert.AreEqual(LifecycleState.Disposed, port.State);
-        Assert.AreEqual(LifecycleState.Disposed, device.State);
+        TimeProvider.Advance(TimeSpan.FromSeconds(1));
+        Assert.IsGreaterThan(1, _values.Count);
     }
 
     public TestContext TestContext { get; set; }

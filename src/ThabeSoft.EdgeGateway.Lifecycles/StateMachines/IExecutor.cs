@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Lifecycles;
+﻿namespace ThabeSoft.EdgeGateway.StateMachines;
 
 
 /// <summary>

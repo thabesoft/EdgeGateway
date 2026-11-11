@@ -1,6 +1,7 @@
-﻿using ThabeSoft.EdgeGateway.Codecs;
+﻿using ThabeSoft.EdgeGateway.Addressing;
+using ThabeSoft.EdgeGateway.Codecs;
 
-namespace ThabeSoft.EdgeGateway.Addressing;
+namespace ThabeSoft.EdgeGateway.Modbus;
 
 
 public sealed class ModbusDataAddress : IDataAddress, IRequiredBits

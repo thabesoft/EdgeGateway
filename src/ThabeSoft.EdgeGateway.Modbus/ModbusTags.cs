@@ -1,37 +1,11 @@
 ﻿using System.Collections;
-using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Codecs;
-using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Tags;
-using ThabeSoft.EdgeGateway.Transport;
 
-namespace ThabeSoft.EdgeGateway;
+namespace ThabeSoft.EdgeGateway.Modbus;
 
-
-public static class Modbus
+public static class ModbusTags
 {
-    #region --协议--
-
-    public static ModbusProtocolDescriptor Rtu { get; } = new()
-    {
-        Connection = ConnectionType.Serial,
-        FrameFormat = ModbusFrameFormat.Rtu
-    };
-    public static ModbusProtocolDescriptor Ascii { get; } = new()
-    {
-        Connection = ConnectionType.Serial,
-        FrameFormat = ModbusFrameFormat.Ascii
-    };
-    public static ModbusProtocolDescriptor Ip { get; } = new()
-    {
-        Connection = ConnectionType.Ethernet,
-        FrameFormat = ModbusFrameFormat.Ip
-    };
-
-    #endregion
-
-    #region --标签--
-
     public static TagDescriptor<bool> Coil(byte slaveId, ushort address, int bitOffset = 0) =>
         TagDescriptor.Create(ModbusDataAddress.Coil(slaveId, address, 1), Codec.Bool(bitOffset));
     public static TagDescriptor<BitArray> Coils(byte slaveId, ushort address, ushort quantity) =>
@@ -82,6 +56,4 @@ public static class Modbus
         var dataAddress = ModbusDataAddress.InputRegister(slaveId, address, (ushort)wordCount);
         return TagDescriptor.Create(dataAddress, codec);
     }
-
-    #endregion
 }

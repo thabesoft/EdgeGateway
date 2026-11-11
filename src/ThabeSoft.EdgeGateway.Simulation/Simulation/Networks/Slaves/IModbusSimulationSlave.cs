@@ -2,9 +2,9 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using NModbus;
 using System.Collections.Concurrent;
-using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway.Simulation.ValueGenerators;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Triggers;

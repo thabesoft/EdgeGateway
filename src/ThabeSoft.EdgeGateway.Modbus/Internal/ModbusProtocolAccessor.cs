@@ -1,11 +1,10 @@
 ﻿using NModbus;
-using System.Buffers;
 using System.Buffers.Binary;
-using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Tags;
 
-namespace ThabeSoft.EdgeGateway.Tags;
+namespace ThabeSoft.EdgeGateway.Modbus.Internal;
 
 
 internal sealed class ModbusProtocolAccessor(IModbusMaster master) : IProtocolAccessor

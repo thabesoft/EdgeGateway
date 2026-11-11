@@ -2,7 +2,6 @@
 using NModbus;
 using NModbus.Serial;
 using System.IO.Ports;
-using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Simulation.Networks.Slaves;
 using ThabeSoft.EdgeGateway.Transport;
 

@@ -9,6 +9,7 @@ public class FixedIntervalTriggerTests
     [TestMethod]
     public async Task WaitForNextTickAsync_TriggersAfterInterval()
     {
+        var a = Modbus.ModbusProtocols.Ascii;
 
         var fakeTime = new FakeTimeProvider();
         var factory = new FixedIntervalTriggerFactory(fakeTime);

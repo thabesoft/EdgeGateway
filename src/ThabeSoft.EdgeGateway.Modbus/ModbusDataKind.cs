@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Addressing;
+﻿namespace ThabeSoft.EdgeGateway.Modbus;
 
 
 public enum ModbusDataKind

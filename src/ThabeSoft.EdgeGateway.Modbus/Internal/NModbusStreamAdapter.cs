@@ -1,7 +1,8 @@
 ﻿using NModbus.IO;
 using ThabeSoft.EdgeGateway.Transport.Byte;
 
-namespace ThabeSoft.EdgeGateway.IO;
+namespace ThabeSoft.EdgeGateway.Modbus.Internal;
+
 
 internal sealed class NModbusStreamAdapter(IByteDuplex byteChannel) : IStreamResource
 {

@@ -1,6 +1,7 @@
-﻿using ThabeSoft.EdgeGateway.Transport;
+﻿using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Transport;
 
-namespace ThabeSoft.EdgeGateway.Protocols;
+namespace ThabeSoft.EdgeGateway.Modbus;
 
 
 public sealed class ModbusProtocolDescriptor : IProtocolDescriptor

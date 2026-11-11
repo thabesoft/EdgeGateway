@@ -4,6 +4,14 @@ using System.Collections;
 using ThabeSoft.EdgeGateway.Codecs.Internal.DWords;
 using ThabeSoft.EdgeGateway.Codecs.Internal.Qword;
 using ThabeSoft.EdgeGateway.Codecs.Internal.Words;
+
+<<<<<<< TODO: 项目“ThabeSoft.EdgeGateway.UnitTests (net11.0)”的未合并的更改, 在此之前:
+using ThabeSoft.EdgeGateway.Tags;
+=======
+using ThabeSoft.EdgeGateway.Modbus;
+using ThabeSoft.EdgeGateway.Modbus.Modbus;
+using ThabeSoft.EdgeGateway.Tags;
+>>>>>>> 晚于
 using ThabeSoft.EdgeGateway.Tags;
 
 namespace ThabeSoft.EdgeGateway.Protocol;

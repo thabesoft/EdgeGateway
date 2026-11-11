@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Codecs.DWords;
+﻿namespace ThabeSoft.EdgeGateway.Codecs.Internal.DWords;
 
 
 internal sealed class IntCodec<TDWordCodec>(TDWordCodec codec) : ICodec<int>, IRequiredBits

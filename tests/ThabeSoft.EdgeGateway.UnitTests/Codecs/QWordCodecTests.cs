@@ -1,4 +1,4 @@
-﻿using ThabeSoft.EdgeGateway.Codecs.Qword;
+﻿using ThabeSoft.EdgeGateway.Codecs.Internal.Qword;
 
 namespace ThabeSoft.EdgeGateway.Codecs;
 

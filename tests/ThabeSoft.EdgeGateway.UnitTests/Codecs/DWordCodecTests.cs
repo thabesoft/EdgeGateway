@@ -1,4 +1,4 @@
-﻿using ThabeSoft.EdgeGateway.Codecs.DWords;
+﻿using ThabeSoft.EdgeGateway.Codecs.Internal.DWords;
 
 namespace ThabeSoft.EdgeGateway.Codecs;
 

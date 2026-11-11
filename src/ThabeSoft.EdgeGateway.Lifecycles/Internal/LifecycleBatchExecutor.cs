@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Diagnostics;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles.Internals;
+namespace ThabeSoft.EdgeGateway.Lifecycles.Internal;
 
 
 internal sealed class LifecycleBatchExecutor(ILogger? logger = null) : ILifecycleBatchExecutor

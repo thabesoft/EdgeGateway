@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Swappers;
+﻿namespace ThabeSoft.EdgeGateway.Codecs.Internal.Qword;
 
 
 internal sealed class QWordSwapper : ISwapper

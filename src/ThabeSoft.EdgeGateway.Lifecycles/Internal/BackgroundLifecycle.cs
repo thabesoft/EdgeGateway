@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles.Internals;
+namespace ThabeSoft.EdgeGateway.Lifecycles.Internal;
 
 
 internal sealed class BackgroundLifecycle : IBackgroundLifecycle

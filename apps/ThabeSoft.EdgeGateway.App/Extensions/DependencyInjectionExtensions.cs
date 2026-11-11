@@ -12,6 +12,7 @@ using ThabeSoft.EdgeGateway.App.Features.Dashboard;
 using ThabeSoft.EdgeGateway.App.Features.Gateway;
 using ThabeSoft.EdgeGateway.App.Features.Topology;
 using ThabeSoft.EdgeGateway.App.Services;
+using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;

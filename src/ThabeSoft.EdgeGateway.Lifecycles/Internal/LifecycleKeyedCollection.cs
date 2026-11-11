@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Collections.Concurrent;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles.Internals;
+namespace ThabeSoft.EdgeGateway.Lifecycles.Internal;
 
 
 internal sealed class LifecycleKeyedCollection<TKey, TLifecycle> : ILifecycleKeyedCollection<TKey, TLifecycle>

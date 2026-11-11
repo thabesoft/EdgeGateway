@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Net;
+using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Simulation;
 using ThabeSoft.EdgeGateway.Simulation.ValueGenerators;
 using ThabeSoft.EdgeGateway.Triggers;

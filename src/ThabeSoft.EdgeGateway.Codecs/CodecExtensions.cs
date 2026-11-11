@@ -1,8 +1,8 @@
 ﻿using System.Buffers;
 using System.Buffers.Binary;
-using ThabeSoft.EdgeGateway.Codecs.DWords;
-using ThabeSoft.EdgeGateway.Codecs.Qword;
-using ThabeSoft.EdgeGateway.Codecs.Words;
+using ThabeSoft.EdgeGateway.Codecs.Internal.DWords;
+using ThabeSoft.EdgeGateway.Codecs.Internal.Qword;
+using ThabeSoft.EdgeGateway.Codecs.Internal.Words;
 
 namespace ThabeSoft.EdgeGateway.Codecs;
 

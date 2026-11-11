@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using ThabeSoft.EdgeGateway.Lifecycles.Internals;
+using ThabeSoft.EdgeGateway.Lifecycles.Internal;
 
 namespace ThabeSoft.EdgeGateway.Lifecycles;
 

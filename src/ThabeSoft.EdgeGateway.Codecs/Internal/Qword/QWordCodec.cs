@@ -1,7 +1,6 @@
 ﻿using System.Buffers.Binary;
-using ThabeSoft.EdgeGateway.Swappers;
 
-namespace ThabeSoft.EdgeGateway.Codecs.Qword;
+namespace ThabeSoft.EdgeGateway.Codecs.Internal.Qword;
 
 
 internal sealed class QWordCodec(QWordSwapper qwordSwapper) : ICodec<ulong>, IRequiredBits

@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Codecs.Words;
+﻿namespace ThabeSoft.EdgeGateway.Codecs.Internal.Words;
 
 internal sealed class ShortCodec<TWordCodec>(TWordCodec codec) : ICodec<short>, IRequiredBits
     where TWordCodec : ICodec<ushort>, IRequiredBits

@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Codecs.Bytes;
+﻿namespace ThabeSoft.EdgeGateway.Codecs.Internal.Bytes;
 
 
 internal sealed class ByteCodec : ICodec<byte>, IRequiredBits

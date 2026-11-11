@@ -1,11 +1,11 @@
 ﻿using System.Collections;
-using ThabeSoft.EdgeGateway.Codecs;
-using ThabeSoft.EdgeGateway.Codecs.Bytes;
-using ThabeSoft.EdgeGateway.Codecs.DWords;
-using ThabeSoft.EdgeGateway.Codecs.Qword;
-using ThabeSoft.EdgeGateway.Codecs.Words;
+using ThabeSoft.EdgeGateway.Codecs.Internal;
+using ThabeSoft.EdgeGateway.Codecs.Internal.Bytes;
+using ThabeSoft.EdgeGateway.Codecs.Internal.DWords;
+using ThabeSoft.EdgeGateway.Codecs.Internal.Qword;
+using ThabeSoft.EdgeGateway.Codecs.Internal.Words;
 
-namespace ThabeSoft.EdgeGateway;
+namespace ThabeSoft.EdgeGateway.Codecs;
 
 
 public static class Codec

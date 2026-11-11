@@ -15,7 +15,7 @@ internal abstract class SimulationPortBase : ISimulationPort
     private readonly ILogger _logger;
 
 
-    protected SimulationPortBase(SimulationDeviceFactorySelector deviceFactorySelector, ILogger? logger)
+    protected SimulationPortBase(SimulationDeviceFactorySelector deviceFactorySelector, ILogger? logger = null)
     {
         _deviceFactorySelector = deviceFactorySelector;
         _logger = logger ?? NullLogger.Instance;
@@ -42,7 +42,6 @@ internal abstract class SimulationPortBase : ISimulationPort
 
         }, cancellationToken);
     }
-
     public ValueTask RemoveDeviceAsync(ISimulationDeviceId id, CancellationToken cancellationToken = default)
     {
         return _stateMachine.ExecuteAsync(async _ =>

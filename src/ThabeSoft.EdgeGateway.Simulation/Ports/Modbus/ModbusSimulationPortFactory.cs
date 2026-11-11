@@ -1,10 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using NModbus;
 using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Devices.Modbus;
 using ThabeSoft.EdgeGateway.Networks.Modbus;
 using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.EdgeGateway.Slaves.Modbus;
 using ThabeSoft.EdgeGateway.Transport;
 
 namespace ThabeSoft.EdgeGateway.Ports.Modbus;

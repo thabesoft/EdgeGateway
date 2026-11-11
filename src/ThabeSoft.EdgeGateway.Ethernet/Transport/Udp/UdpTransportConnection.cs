@@ -3,7 +3,7 @@ using System.Net.Sockets;
 using System.Threading.Channels;
 using ThabeSoft.EdgeGateway.Lifecycles;
 
-namespace ThabeSoft.EdgeGateway.Transport;
+namespace ThabeSoft.EdgeGateway.Transport.Udp;
 
 
 internal sealed class UdpTransportConnection(

@@ -1,5 +1,7 @@
 ﻿using ThabeSoft.EdgeGateway.Transport;
 using Microsoft.Extensions.DependencyInjection;
+using ThabeSoft.EdgeGateway.Transport.Tcp;
+using ThabeSoft.EdgeGateway.Transport.Udp;
 
 namespace ThabeSoft.EdgeGateway;
 

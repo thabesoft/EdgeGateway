@@ -2,7 +2,7 @@
 using System.Net.Sockets;
 using ThabeSoft.EdgeGateway.Lifecycles;
 
-namespace ThabeSoft.EdgeGateway.Transport;
+namespace ThabeSoft.EdgeGateway.Transport.Tcp;
 
 
 internal sealed class TcpTransportConnection(

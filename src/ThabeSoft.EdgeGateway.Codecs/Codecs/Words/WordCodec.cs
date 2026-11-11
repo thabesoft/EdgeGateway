@@ -1,6 +1,6 @@
 ﻿using System.Buffers.Binary;
 
-namespace ThabeSoft.EdgeGateway.Codecs.Internal.Words;
+namespace ThabeSoft.EdgeGateway.Codecs.Words;
 
 
 internal sealed class WordCodec : ICodec<ushort>, IRequiredBits

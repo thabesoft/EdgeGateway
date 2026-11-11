@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Codecs.Internal;
+﻿namespace ThabeSoft.EdgeGateway.Codecs;
 
 internal interface ISwapper
 {

@@ -1,9 +1,11 @@
 using Moq;
 using NModbus;
 using System.Collections;
-using ThabeSoft.EdgeGateway.Codecs.Internal.DWords;
-using ThabeSoft.EdgeGateway.Codecs.Internal.Qword;
-using ThabeSoft.EdgeGateway.Codecs.Internal.Words;
+using ThabeSoft.EdgeGateway.Codecs.DWords;
+using ThabeSoft.EdgeGateway.Codecs.Qword;
+using ThabeSoft.EdgeGateway.Codecs.Words;
+
+
 
 <<<<<<< TODO: 项目“ThabeSoft.EdgeGateway.UnitTests (net11.0)”的未合并的更改, 在此之前:
 using ThabeSoft.EdgeGateway.Tags;

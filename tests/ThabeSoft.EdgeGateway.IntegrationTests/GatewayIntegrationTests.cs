@@ -3,8 +3,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Time.Testing;
 using System.Collections.Concurrent;
 using System.Net;
-using ThabeSoft.EdgeGateway;
-using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Simulation;

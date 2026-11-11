@@ -1,6 +1,6 @@
 ﻿using System.Buffers.Binary;
 
-namespace ThabeSoft.EdgeGateway.Codecs.Internal.DWords;
+namespace ThabeSoft.EdgeGateway.Codecs.DWords;
 
 
 internal sealed class DWordCodec : ICodec<uint>, IRequiredBits

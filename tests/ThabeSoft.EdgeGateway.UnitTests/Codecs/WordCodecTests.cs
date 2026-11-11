@@ -1,4 +1,4 @@
-﻿using ThabeSoft.EdgeGateway.Codecs.Internal.Words;
+﻿using ThabeSoft.EdgeGateway.Codecs.Words;
 
 namespace ThabeSoft.EdgeGateway.Codecs;
 

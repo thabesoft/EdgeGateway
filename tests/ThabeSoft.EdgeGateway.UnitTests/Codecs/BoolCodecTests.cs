@@ -1,5 +1,4 @@
 ﻿using ThabeSoft.EdgeGateway.Codecs.Bytes;
-using ThabeSoft.EdgeGateway.Codecs.Internal.Bytes;
 
 namespace ThabeSoft.EdgeGateway.Codecs;
 

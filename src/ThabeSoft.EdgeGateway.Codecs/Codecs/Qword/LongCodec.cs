@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Codecs.Internal.Qword;
+﻿namespace ThabeSoft.EdgeGateway.Codecs.Qword;
 
 internal sealed class LongCodec<TQWordCodec>(TQWordCodec codec) : ICodec<long>, IRequiredBits
     where TQWordCodec : ICodec<ulong>, IRequiredBits

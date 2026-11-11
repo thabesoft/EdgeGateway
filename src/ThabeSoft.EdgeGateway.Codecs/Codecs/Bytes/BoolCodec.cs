@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-namespace ThabeSoft.EdgeGateway.Codecs.Internal.Bytes;
+namespace ThabeSoft.EdgeGateway.Codecs.Bytes;
 
 
 internal sealed class BoolCodec : ICodec<bool>, IRequiredBits

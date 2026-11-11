@@ -1,10 +1,11 @@
 ﻿using System.Buffers;
 using System.Buffers.Binary;
-using ThabeSoft.EdgeGateway.Codecs.Internal.DWords;
-using ThabeSoft.EdgeGateway.Codecs.Internal.Qword;
-using ThabeSoft.EdgeGateway.Codecs.Internal.Words;
+using ThabeSoft.EdgeGateway.Codecs;
+using ThabeSoft.EdgeGateway.Codecs.DWords;
+using ThabeSoft.EdgeGateway.Codecs.Qword;
+using ThabeSoft.EdgeGateway.Codecs.Words;
 
-namespace ThabeSoft.EdgeGateway.Codecs;
+namespace ThabeSoft.EdgeGateway;
 
 
 public static class CodecExtensions

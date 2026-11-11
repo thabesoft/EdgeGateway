@@ -16,6 +16,7 @@ using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway.Modbus.ModbusProtocols;
 using ThabeSoft.EdgeGateway.Modbus.ModbusProtocols.Modbus;
 using ThabeSoft.EdgeGateway.Modbus.ModbusProtocols.Modbus.Modbus;

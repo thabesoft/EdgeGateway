@@ -2,6 +2,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Net;
 using ThabeSoft.EdgeGateway.Codecs;
+using ThabeSoft.EdgeGateway.Modbus;
+
 
 <<<<<<< TODO: 项目“ThabeSoft.EdgeGateway.UnitTests (net11.0)”的未合并的更改, 在此之前:
 using ThabeSoft.EdgeGateway.Simulation;

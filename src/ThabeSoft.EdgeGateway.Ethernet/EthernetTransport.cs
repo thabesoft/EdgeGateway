@@ -1,10 +1,9 @@
 ﻿using System.Net;
-using ThabeSoft.EdgeGateway.Transport;
 
-namespace ThabeSoft.EdgeGateway;
+namespace ThabeSoft.EdgeGateway.Ethernet;
 
 
-public static class Ethernet
+public static class EthernetTransport
 {
     public static IpTransportDescriptor Tcp(IPEndPoint iPEndPoint)
         => IpTransportDescriptor.Create(IpTransportType.Tcp, iPEndPoint);

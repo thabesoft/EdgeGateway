@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Serial;
+﻿namespace ThabeSoft.EdgeGateway.Transport;
 
 public enum SerialStopBits
 {

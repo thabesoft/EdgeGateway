@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using NModbus;
 using System.Net.Sockets;
+using ThabeSoft.EdgeGateway.Ethernet;
 using ThabeSoft.EdgeGateway.Simulation.Networks.Slaves;
-using ThabeSoft.EdgeGateway.Transport;
 
 namespace ThabeSoft.EdgeGateway.Simulation.Networks;
 

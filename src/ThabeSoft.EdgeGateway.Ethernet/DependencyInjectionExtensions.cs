@@ -1,9 +1,8 @@
 ﻿using ThabeSoft.EdgeGateway.Transport;
 using Microsoft.Extensions.DependencyInjection;
+using ThabeSoft.EdgeGateway.Ethernet.Internal;
 
-#pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
-namespace ThabeSoft.EdgeGateway;
-#pragma warning restore IDE0130 // 命名空间与文件夹结构不匹配
+namespace ThabeSoft.EdgeGateway.Ethernet;
 
 public static class DependencyInjectionExtensions
 {

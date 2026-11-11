@@ -9,6 +9,8 @@
 		<Nullable>enable</Nullable>
 		<LangVersion>preview</LangVersion>
 
+		<RootNamespace>ThabeSoft.EdgeGateway</RootNamespace>
+
 	</PropertyGroup>
 
 

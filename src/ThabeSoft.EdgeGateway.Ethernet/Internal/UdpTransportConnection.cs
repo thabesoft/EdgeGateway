@@ -2,8 +2,10 @@
 using System.Net.Sockets;
 using System.Threading.Channels;
 using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Transport;
 
-namespace ThabeSoft.EdgeGateway.Transport;
+namespace ThabeSoft.EdgeGateway.Ethernet.Internal;
+
 
 internal sealed class UdpTransportConnection(
         IpTransportDescriptor descriptor,

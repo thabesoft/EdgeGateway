@@ -1,7 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Net;
+using ThabeSoft.EdgeGateway.Transport;
 
-namespace ThabeSoft.EdgeGateway.Transport;
+namespace ThabeSoft.EdgeGateway.Ethernet;
 
 
 public sealed record IpTransportDescriptor : ITransportDescriptor
@@ -15,7 +16,6 @@ public sealed record IpTransportDescriptor : ITransportDescriptor
 
 
     private IpTransportDescriptor() { }
-
     // Tcp(192.168.1.1:1234)
     public override string ToString() => $"{TransportType}({IPEndPoint})";
 

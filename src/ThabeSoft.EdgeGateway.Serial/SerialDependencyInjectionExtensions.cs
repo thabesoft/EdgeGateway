@@ -1,11 +1,10 @@
 ﻿using ThabeSoft.EdgeGateway.Transport;
 using Microsoft.Extensions.DependencyInjection;
-using ThabeSoft.EdgeGateway.Serial.Internal;
 
-namespace ThabeSoft.EdgeGateway.Serial;
+namespace ThabeSoft.EdgeGateway;
 
 
-public static class DependencyInjectionExtensions
+public static class SerialDependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {

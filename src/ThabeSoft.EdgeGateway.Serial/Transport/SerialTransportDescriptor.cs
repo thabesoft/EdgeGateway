@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using ThabeSoft.EdgeGateway.Transport;
 
-namespace ThabeSoft.EdgeGateway.Serial;
+namespace ThabeSoft.EdgeGateway.Transport;
 
 
 public sealed record class SerialTransportDescriptor : ITransportDescriptor

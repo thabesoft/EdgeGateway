@@ -1,14 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
 using RJCP.IO.Ports;
 using ThabeSoft.EdgeGateway.Lifecycles;
-using ThabeSoft.EdgeGateway.Transport;
 using ThabeSoft.EdgeGateway.Transport.Byte;
 
 using RJCPStopBit = RJCP.IO.Ports.StopBits;
 using RJCPParity = RJCP.IO.Ports.Parity;
 
 
-namespace ThabeSoft.EdgeGateway.Serial.Internal;
+namespace ThabeSoft.EdgeGateway.Transport;
 
 
 internal sealed class SerialTransportConnection : ITransportConnection, IReadBufferDiscardable

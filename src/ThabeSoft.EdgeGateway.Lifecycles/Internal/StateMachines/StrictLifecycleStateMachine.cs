@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Diagnostics;
+using ThabeSoft.EdgeGateway.Extensions;
 
 namespace ThabeSoft.EdgeGateway.Lifecycles.Internal;
 

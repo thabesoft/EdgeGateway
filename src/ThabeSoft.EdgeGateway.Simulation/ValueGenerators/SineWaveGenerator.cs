@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Simulation.ValueGenerators;
+﻿namespace ThabeSoft.EdgeGateway.ValueGenerators;
 
 
 /// <summary>

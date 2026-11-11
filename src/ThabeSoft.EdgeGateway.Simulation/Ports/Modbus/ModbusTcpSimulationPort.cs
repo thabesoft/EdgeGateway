@@ -2,44 +2,52 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using NModbus;
 using System.Net.Sockets;
-using ThabeSoft.EdgeGateway.Simulation.Networks.Slaves;
+using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Devices.Modbus;
+using ThabeSoft.EdgeGateway.Slaves.Modbus;
 using ThabeSoft.EdgeGateway.Transport;
 
-namespace ThabeSoft.EdgeGateway.Simulation.Networks;
+namespace ThabeSoft.EdgeGateway.Ports.Modbus;
 
 
-internal sealed class ModbusTcpSimulationNetwork : ModbusSimulationNetwork
+internal sealed class ModbusTcpSimulationPort : SimulationPortBase
 {
     private readonly TcpListener _tcpListener;
     private Task? _listenTask;
-    private readonly IModbusTcpSlaveNetwork _slaveNetWorks;
+    private readonly IModbusTcpSlaveNetwork _slaveNetWork;
     private readonly IpTransportDescriptor _ipTransportDescriptor;
-    private readonly ILogger<ModbusTcpSimulationNetwork> _logger;
+    private readonly ILogger<ModbusTcpSimulationPort> _logger;
 
-    public ModbusTcpSimulationNetwork(
+    public ModbusTcpSimulationPort(
             IpTransportDescriptor ipTransportDescriptor,
             IModbusFactory modbusFactory,
-            ModbusSimulatedSlaveFactory slaveSimulatorFactory,
-            ILogger<ModbusTcpSimulationNetwork>? logger = null
-        ) : base(slaveSimulatorFactory, logger)
+            SimulationDeviceFactorySelector deviceFactorySelector,
+            ILogger<ModbusTcpSimulationPort>? logger = null
+        ) : base(deviceFactorySelector, logger)
     {
         _tcpListener = new(ipTransportDescriptor.IPEndPoint);
-        _slaveNetWorks = modbusFactory.CreateSlaveNetwork(_tcpListener);
+        _slaveNetWork = modbusFactory.CreateSlaveNetwork(_tcpListener);
         _ipTransportDescriptor = ipTransportDescriptor;
-        _logger = logger ?? NullLogger<ModbusTcpSimulationNetwork>.Instance;
+        _logger = logger ?? NullLogger<ModbusTcpSimulationPort>.Instance;
     }
 
     public byte UnitId { get; }
 
 
 
-    protected override void OnAdded(ModbusSimulationSlave simulated)
+    protected override void OnAdded(ISimulationDevice device)
     {
-        _slaveNetWorks.AddSlave(simulated.Slave);
+        if (device is not ModbusSimulationDevice modbus)
+            return;
+
+        _slaveNetWork.AddSlave(modbus.Slave);
     }
-    protected override void OnRemoved(byte unidId)
+    protected override void OnRemoved(ISimulationDeviceId deviceId)
     {
-        _slaveNetWorks.RemoveSlave(unidId);
+        if (deviceId is not ModbusSimulationDeviceId modbus)
+            return;
+
+        _slaveNetWork.RemoveSlave(modbus.Value);
     }
 
 
@@ -50,7 +58,7 @@ internal sealed class ModbusTcpSimulationNetwork : ModbusSimulationNetwork
         _listenTask = Task.Run(() =>
         {
             _logger.LogInformation("Tcp从站网络开始监听: {Address}", _ipTransportDescriptor.Endpoint);
-            _slaveNetWorks.ListenAsync(cancellationToken);
+            _slaveNetWork.ListenAsync(cancellationToken);
 
         }, cancellationToken);
 
@@ -65,7 +73,7 @@ internal sealed class ModbusTcpSimulationNetwork : ModbusSimulationNetwork
     {
         await base.OnDisposeAsync();
 
-        _slaveNetWorks.Dispose();
+        _slaveNetWork.Dispose();
 
 #if NETSTANDARD2_0
         _tcpListener?.Stop();

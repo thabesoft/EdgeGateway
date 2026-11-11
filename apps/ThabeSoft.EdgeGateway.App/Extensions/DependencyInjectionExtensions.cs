@@ -15,11 +15,10 @@ using ThabeSoft.EdgeGateway.App.Services;
 using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
-using ThabeSoft.EdgeGateway.Simulation;
-using ThabeSoft.EdgeGateway.Simulation.ValueGenerators;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transport;
 using ThabeSoft.EdgeGateway.Triggers;
+using ThabeSoft.EdgeGateway.ValueGenerators;
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
 namespace ThabeSoft.EdgeGateway;
@@ -106,9 +105,9 @@ internal sealed class GatewayDesignData(IGateway gateway, ISimulator simulatorSe
         var trigger = Trigger.Interval(2000);
 
         // 从站模拟
-        var network = simulatorService.AddModbusNetwork(Modbus.IpSimulationNetwork(transportDescriptor));
+        var network = simulatorService.AddPort(Modbus.IpSimulationNetwork(transportDescriptor));
         var slave = await network.AddSlaveAsync(1, cancellationToken);
-        slave.Value(tag, trigger, ValueGenerator.SineWave(1, 0.2));
+        slave.Value(tag, trigger, ValueGenerators.Simulation.SineWave(1, 0.2));
 
         await simulatorService.StartAsync(cancellationToken);
 

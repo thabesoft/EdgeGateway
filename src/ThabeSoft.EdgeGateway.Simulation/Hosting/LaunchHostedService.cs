@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
 
-namespace ThabeSoft.EdgeGateway.Simulation.Hosting;
+namespace ThabeSoft.EdgeGateway.Hosting;
 
 
 internal sealed class LaunchHostedService(ISimulator simulatorHost) : IHostedService

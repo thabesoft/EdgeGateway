@@ -5,10 +5,9 @@ using System.Collections.Concurrent;
 using System.Net;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
-using ThabeSoft.EdgeGateway.Simulation;
-using ThabeSoft.EdgeGateway.Simulation.ValueGenerators;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Triggers;
+using ThabeSoft.EdgeGateway.ValueGenerators;
 
 namespace ThabeSoft.EdgeGateway;
 
@@ -54,9 +53,9 @@ public class GatewayIntegrationTests
         var tag = Modbus.HoldingRegister(1, 0, Codec.Double);
         var triggr = Trigger.Interval(100);
 
-        var simulationNetwork = Simulator.AddModbusNetwork(Modbus.IpSimulationNetwork(transportDescriptor));
+        var simulationNetwork = Simulator.AddPort(Modbus.IpSimulationNetwork(transportDescriptor));
         var slave = await simulationNetwork.AddSlaveAsync(1, TestContext.CancellationToken);
-        using var _ = slave.Value(tag, triggr, ValueGenerator.SineWave(1, 0.1));
+        using var _ = slave.Value(tag, triggr, ValueGenerators.Simulation.SineWave(1, 0.1));
 
         // 模拟器 启动
         await simulationNetwork.StartAsync(TestContext.CancellationToken);

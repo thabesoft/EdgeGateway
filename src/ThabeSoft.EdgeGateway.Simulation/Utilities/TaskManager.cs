@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-namespace ThabeSoft.EdgeGateway.Simulation.Networks.Slaves;
+namespace ThabeSoft.EdgeGateway.Utilities;
 
 
 internal sealed class TaskManager

@@ -1,31 +1,25 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using ThabeSoft.EdgeGateway.Lifecycles;
-using ThabeSoft.EdgeGateway.Simulation.Networks;
+using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Transport;
 
-namespace ThabeSoft.EdgeGateway.Simulation;
-
-
-public interface ISimulator : ILifecycle
-{
-    IModbusSimulationNetwork AddModbusNetwork(ModbusSimulatorNetworkDescriptor simulatorDescriptor);
-}
+namespace ThabeSoft.EdgeGateway;
 
 
 internal sealed class Simulator(
-        ModbusSimulationNetworkFactory simulationNetworkFactory,
+        SimulationPortFactorySelector factorySelector,
         ILogger<Simulator>? logger
     ) : ISimulator, IAsyncDisposable
 {
-    private readonly ConcurrentDictionary<ConnectionEndpoint, IModbusSimulationNetwork> _networks = [];
+    private readonly ConcurrentDictionary<ConnectionEndpoint, ISimulationPort> _ports = [];
     private readonly IRetryableLifecycleStateMachine _stateMachine = Lifecycle.RetryableStateMachine(logger);
     private readonly ILifecycleBatchExecutor _batchExecutor = Lifecycle.BatchExecutor(logger);
 
     public LifecycleState State => _stateMachine.State;
 
 
-    public IModbusSimulationNetwork AddModbusNetwork(ModbusSimulatorNetworkDescriptor simulatorDescriptor)
+    public ISimulationPort AddPort(SimulatorPortDescriptor simulatorDescriptor)
     {
         return _stateMachine.Execute
         (
@@ -33,11 +27,11 @@ internal sealed class Simulator(
             {
                 var key = simulatorDescriptor.Transport.Endpoint;
 
-                if (_networks.ContainsKey(key))
+                if (_ports.ContainsKey(key))
                     throw new InvalidOperationException("已存在");
 
-                var simulator = simulationNetworkFactory.Create(simulatorDescriptor);
-                _networks[key] = simulator;
+                var simulator = factorySelector.Create(simulatorDescriptor);
+                _ports[key] = simulator;
 
                 return simulator;
             }
@@ -46,10 +40,9 @@ internal sealed class Simulator(
 
 
     public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StartAsync(ct => _batchExecutor.StartAsync(_networks.Values, ct), cancellationToken);
+        _stateMachine.StartAsync(ct => _batchExecutor.StartAsync(_ports.Values, ct), cancellationToken);
     public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StartAsync(ct => _batchExecutor.StopAsync(_networks.Values, ct), cancellationToken);
+        _stateMachine.StartAsync(ct => _batchExecutor.StopAsync(_ports.Values, ct), cancellationToken);
     public ValueTask DisposeAsync() =>
-        _stateMachine.DisposeAsync(() => _batchExecutor.DisposeAsync(_networks.Values));
-
+        _stateMachine.DisposeAsync(() => _batchExecutor.DisposeAsync(_ports.Values));
 }

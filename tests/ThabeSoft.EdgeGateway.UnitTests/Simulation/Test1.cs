@@ -2,33 +2,31 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Net;
 
+
+
+
 <<<<<<< TODO: 项目“ThabeSoft.EdgeGateway.UnitTests (net11.0)”的未合并的更改, 在此之前:
 =======
 using ThabeSoft.EdgeGateway.Ethernet;
 using ThabeSoft.EdgeGateway.Modbus;
 >>>>>>> 晚于
-
 <<<<<<< TODO: 项目“ThabeSoft.EdgeGateway.UnitTests (net11.0)”的未合并的更改, 在此之前:
 using ThabeSoft.EdgeGateway.Ethernet.Ethernet;
 using ThabeSoft.EdgeGateway.Ethernet.Ethernet.Ethernet;
+
 =======
 using ThabeSoft.EdgeGateway.Ethernet;
 using ThabeSoft.EdgeGateway.Ethernet.Ethernet;
 using ThabeSoft.EdgeGateway.Modbus;
 >>>>>>> 晚于
-
-
-
 <<<<<<< TODO: 项目“ThabeSoft.EdgeGateway.UnitTests (net11.0)”的未合并的更改, 在此之前:
-using ThabeSoft.EdgeGateway.Simulation;
 =======
 using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway.Modbus.Modbus;
 using ThabeSoft.EdgeGateway.Simulation;
 >>>>>>> 晚于
-using ThabeSoft.EdgeGateway.Simulation;
-using ThabeSoft.EdgeGateway.Simulation.ValueGenerators;
 using ThabeSoft.EdgeGateway.Triggers;
+using ThabeSoft.EdgeGateway.ValueGenerators;
 
 namespace ThabeSoft.EdgeGateway.Simulator;
 
@@ -55,9 +53,9 @@ public class Test1
         var simulatorHost = app.Services.GetRequiredService<ISimulator>();
         var gateway = app.Services.GetRequiredService<IGateway>();
 
-        var network = simulatorHost.AddModbusNetwork(Modbus.IpSimulationNetwork(address));
+        var network = simulatorHost.AddPort(Modbus.IpSimulationNetwork(address));
         var slave = await network.AddSlaveAsync(1);
-        slave.Value(tag, trigger, ValueGenerator.SineWave(1, 0.1));
+        slave.Value(tag, trigger, ValueGenerators.Simulation.SineWave(1, 0.1));
 
         await app.StartAsync(TestContext.CancellationToken);
 

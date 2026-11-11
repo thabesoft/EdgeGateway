@@ -1,10 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using ThabeSoft.EdgeGateway.Extensions;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles;
+namespace ThabeSoft.EdgeGateway.Lifecycles.Internals;
 
-public interface IBackgroundLifecycle : ILifecycle, IAsyncDisposable;
 
 internal sealed class BackgroundLifecycle : IBackgroundLifecycle
 {

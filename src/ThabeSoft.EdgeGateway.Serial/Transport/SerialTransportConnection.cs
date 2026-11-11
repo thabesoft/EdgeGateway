@@ -36,7 +36,7 @@ internal sealed class SerialTransportConnection : ITransportConnection, IReadBuf
     {
         return _stateMachine.ExecuteAsync
         (
-            action: ct => _serialPort.ReadAsync(buffer, ct),
+            method: ct => _serialPort.ReadAsync(buffer, ct),
             cancellationToken: cancellationToken
         );
     }
@@ -44,7 +44,7 @@ internal sealed class SerialTransportConnection : ITransportConnection, IReadBuf
     {
         return _stateMachine.ExecuteAsync
         (
-            action: ct => _serialPort.WriteAsync(data, ct),
+            method: ct => _serialPort.WriteAsync(data, ct),
             cancellationToken: cancellationToken
         );
     }

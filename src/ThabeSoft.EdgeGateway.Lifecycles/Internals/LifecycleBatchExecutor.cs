@@ -1,20 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Diagnostics;
-using ThabeSoft.EdgeGateway.Extensions;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles;
+namespace ThabeSoft.EdgeGateway.Lifecycles.Internals;
 
-
-/// <summary>
-/// 生命中周期批量处理器
-/// </summary>
-public interface ILifecycleBatchExecutor
-{
-    ValueTask StartAsync(IEnumerable<ILifecycle> lifecycles, CancellationToken cancellationToken = default);
-    ValueTask StopAsync(IEnumerable<ILifecycle> lifecycles, CancellationToken cancellationToken = default);
-    ValueTask DisposeAsync<TLifecycle>(IEnumerable<TLifecycle> lifecycles) where TLifecycle : ILifecycle, IAsyncDisposable;
-}
 
 internal sealed class LifecycleBatchExecutor(ILogger? logger = null) : ILifecycleBatchExecutor
 {

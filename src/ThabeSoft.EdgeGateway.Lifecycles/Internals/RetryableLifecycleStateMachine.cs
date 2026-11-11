@@ -1,19 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Diagnostics;
-using ThabeSoft.EdgeGateway.Extensions;
-using ThabeSoft.EdgeGateway.StateMachines;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles;
-
-/// <summary>
-/// 可以多次连续启动和多次连续停止的状态机
-/// </summary>
-public interface IRetryableLifecycleStateMachine :
-    ILifecycleStateMachine,
-    IExecutor,
-    IAsyncExecutor,
-    IAsyncDisposable;
+namespace ThabeSoft.EdgeGateway.Lifecycles.Internals;
 
 
 internal sealed class RetryableLifecycleStateMachine(ILogger? logger = null) :

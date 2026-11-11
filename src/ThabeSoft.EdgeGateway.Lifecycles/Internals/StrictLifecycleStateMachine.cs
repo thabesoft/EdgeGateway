@@ -1,20 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Diagnostics;
-using ThabeSoft.EdgeGateway.Extensions;
-using ThabeSoft.EdgeGateway.StateMachines;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles;
-
-
-/// <summary>
-/// 严格生命周期状态机, 不可连续重复启动, 不可连续重复停止
-/// </summary>
-public interface IStrictLifecycleStateMachine :
-    ILifecycleStateMachine,
-    IExecutor,
-    IAsyncExecutor,
-    IAsyncDisposable;
+namespace ThabeSoft.EdgeGateway.Lifecycles.Internals;
 
 
 internal sealed class StrictLifecycleStateMachine(ILogger? logger = null) :

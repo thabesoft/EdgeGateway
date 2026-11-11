@@ -14,7 +14,7 @@ public class GatewayIntegrationTests
     private IHost? _app;
 
     protected IGateway Gateway { get; private set; } = null!;
-    protected ISimulatorService Simulator { get; private set; } = null!;
+    protected ISimulator Simulator { get; private set; } = null!;
 
 
     [TestInitialize]
@@ -29,7 +29,7 @@ public class GatewayIntegrationTests
             .Build();
 
         Gateway = _app.Services.GetRequiredService<IGateway>();
-        Simulator = _app.Services.GetRequiredService<ISimulatorService>();
+        Simulator = _app.Services.GetRequiredService<ISimulator>();
     }
 
     [TestCleanup]
@@ -45,7 +45,7 @@ public class GatewayIntegrationTests
         var transportDescriptor = Ethernet.Tcp(IPAddress.Loopback, 2333);
         var protocolDescriptor = Modbus.Ip;
 
-        var simulationNetwork = Simulator.AddNetwork(Modbus.IpSimulationNetwork(transportDescriptor));
+        var simulationNetwork = Simulator.AddModbusNetwork(Modbus.IpSimulationNetwork(transportDescriptor));
         await simulationNetwork.StartAsync(TestContext.CancellationToken);
 
         var port = await Gateway.AddPortAsync(transportDescriptor);

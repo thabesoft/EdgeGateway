@@ -1,4 +1,5 @@
-﻿using NModbus;
+﻿using Microsoft.Extensions.Logging;
+using NModbus;
 using System.Net.Sockets;
 using ThabeSoft.EdgeGateway.Simulation.Networks.Slaves;
 using ThabeSoft.EdgeGateway.Transport;
@@ -16,8 +17,9 @@ internal sealed class ModbusTcpSimulationNetwork : ModbusSimulationNetwork
     public ModbusTcpSimulationNetwork(
             IpTransportDescriptor ipTransportDescriptor,
             IModbusFactory modbusFactory,
-            ModbusSimulatedSlaveFactory slaveSimulatorFactory
-        ) : base(slaveSimulatorFactory)
+            ModbusSimulatedSlaveFactory slaveSimulatorFactory,
+            ILogger<ModbusTcpSimulationNetwork>? logger = null
+        ) : base(slaveSimulatorFactory, logger)
     {
         _tcpListener = new(ipTransportDescriptor.IPEndPoint);
         _slaveNetWorks = modbusFactory.CreateSlaveNetwork(_tcpListener);
@@ -27,7 +29,7 @@ internal sealed class ModbusTcpSimulationNetwork : ModbusSimulationNetwork
 
 
 
-    protected override void OnAdded(ModbusSimulatedSlave simulated)
+    protected override void OnAdded(ModbusSimulationSlave simulated)
     {
         _slaveNetWorks.AddSlave(simulated.Slave);
     }

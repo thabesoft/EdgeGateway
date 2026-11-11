@@ -3,7 +3,7 @@
 namespace ThabeSoft.EdgeGateway.Simulation.Hosting;
 
 
-internal sealed class LaunchHostedService(ISimulatorService simulatorHost) : IHostedService
+internal sealed class LaunchHostedService(ISimulator simulatorHost) : IHostedService
 {
     public async Task StartAsync(CancellationToken cancellationToken)
     {

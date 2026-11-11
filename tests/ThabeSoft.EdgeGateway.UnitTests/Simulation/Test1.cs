@@ -27,10 +27,10 @@ public class Test1
                 )
             .Build();
 
-        var simulatorHost = app.Services.GetRequiredService<ISimulatorService>();
+        var simulatorHost = app.Services.GetRequiredService<ISimulator>();
         var gateway = app.Services.GetRequiredService<IGateway>();
 
-        var network = simulatorHost.AddNetwork(Modbus.IpSimulationNetwork(address));
+        var network = simulatorHost.AddModbusNetwork(Modbus.IpSimulationNetwork(address));
         var slave = await network.AddSlaveAsync(1);
         slave.Value(tag, trigger, ValueGenerator.SineWave(1, 0.1));
 

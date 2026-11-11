@@ -13,7 +13,7 @@ public sealed class ModbusSimulatorNetworkDescriptor
     public override string ToString() => $"{Protocol}({Transport})";
 
 
-    internal static ModbusSimulatorNetworkDescriptor Create(ITransportDescriptor transportDescriptor, IProtocolDescriptor protocolDescriptor)
+    public static ModbusSimulatorNetworkDescriptor Create(ITransportDescriptor transportDescriptor, IProtocolDescriptor protocolDescriptor)
     {
         ArgumentNullException.ThrowIfNull(transportDescriptor);
         return new() { Protocol = protocolDescriptor, Transport = transportDescriptor };

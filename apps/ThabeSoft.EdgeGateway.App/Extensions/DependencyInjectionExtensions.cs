@@ -98,7 +98,7 @@ public static class DependencyInjectionExtensions
 }
 
 
-internal sealed class GatewayDesignData(IGateway gateway, ISimulatorService simulatorService, ILogger<GatewayDesignData> logger) : IHostedService
+internal sealed class GatewayDesignData(IGateway gateway, ISimulator simulatorService, ILogger<GatewayDesignData> logger) : IHostedService
 {
     public async Task StartAsync(CancellationToken cancellationToken)
     {
@@ -107,7 +107,7 @@ internal sealed class GatewayDesignData(IGateway gateway, ISimulatorService simu
         var trigger = Trigger.Interval(100);
 
         // 从站模拟
-        var network = simulatorService.AddNetwork(Modbus.IpSimulationNetwork(transportDescriptor));
+        var network = simulatorService.AddModbusNetwork(Modbus.IpSimulationNetwork(transportDescriptor));
         var slave = await network.AddSlaveAsync(1, cancellationToken);
         slave.Value(tag, trigger, ValueGenerator.SineWave(1, 0.2));
 

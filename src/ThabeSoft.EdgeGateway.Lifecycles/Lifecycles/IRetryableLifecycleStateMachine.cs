@@ -47,12 +47,12 @@ internal sealed class RetryableLifecycleStateMachine(ILogger? logger = null) :
                 await onStart.InvokeWithTimeoutAsync(StopTimeout, "启动", cancellationToken);
                 _state = LifecycleState.Running;
 
-                _logger.LogTrace("({TypeName}) 已启动", GetType().Name);
+                _logger.LogTrace("已启动");
             }
             catch (Exception ex)
             {
                 _state = LifecycleState.Faulted;
-                _logger.LogError(ex, "({TypeName}) 启动失败", GetType().Name);
+                _logger.LogError(ex, "启动失败");
 
                 throw;
             }
@@ -76,12 +76,12 @@ internal sealed class RetryableLifecycleStateMachine(ILogger? logger = null) :
                 await onStop.InvokeWithTimeoutAsync(StopTimeout, "停止", cancellationToken);
                 _state = LifecycleState.Stopped;
 
-                _logger.LogTrace("({TypeName}) 已停止", GetType().Name);
+                _logger.LogTrace("已停止");
             }
             catch (Exception ex)
             {
                 _state = LifecycleState.Faulted;
-                _logger.LogError(ex, "({TypeName}) 停止失败", GetType().Name);
+                _logger.LogError(ex, "停止失败");
                 throw;
             }
         }
@@ -100,11 +100,11 @@ internal sealed class RetryableLifecycleStateMachine(ILogger? logger = null) :
         try
         {
             await onDispose.InvokeWithTimeoutAsync(ExecuteTimeout, "执行");
-            _logger.LogTrace("({TypeName}) 已释放", GetType().Name);
+            _logger.LogTrace("已释放");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "({TypeName}) 释放失败");
+            _logger.LogError(ex, "释放失败");
         }
     }
     public ValueTask DisposeAsync() => DisposeAsync(() => ValueTask.CompletedTask);

@@ -1,4 +1,5 @@
-﻿using NModbus;
+﻿using Microsoft.Extensions.Logging;
+using NModbus;
 using NModbus.Serial;
 using System.IO.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
@@ -20,8 +21,9 @@ internal sealed class ModbusSerialSimulationNetwork : ModbusSimulationNetwork
             ModbusFrameFormat modbusFrameFormat,
             SerialTransportDescriptor serialTransportDescriptor,
             IModbusFactory modbusFactory,
-            ModbusSimulatedSlaveFactory modbusSlaveSimulatorFactory
-        ) : base(modbusSlaveSimulatorFactory)
+            ModbusSimulatedSlaveFactory modbusSlaveSimulatorFactory,
+            ILogger<ModbusSerialSimulationNetwork>? logger = null
+        ) : base(modbusSlaveSimulatorFactory, logger)
     {
         _serialPort = new(
             portName: serialTransportDescriptor.PortName,
@@ -42,16 +44,26 @@ internal sealed class ModbusSerialSimulationNetwork : ModbusSimulationNetwork
     public static ModbusSerialSimulationNetwork Rtu(
             SerialTransportDescriptor serialTransportDescriptor,
             IModbusFactory modbusFactory,
-            ModbusSimulatedSlaveFactory modbusSlaveSimulatorFactory)
+            ModbusSimulatedSlaveFactory modbusSlaveSimulatorFactory,
+            ILogger<ModbusSerialSimulationNetwork>? logger = null)
     {
-        return new(ModbusFrameFormat.Rtu, serialTransportDescriptor, modbusFactory, modbusSlaveSimulatorFactory);
+        ArgumentNullException.ThrowIfNull(serialTransportDescriptor);
+        ArgumentNullException.ThrowIfNull(modbusFactory);
+        ArgumentNullException.ThrowIfNull(modbusSlaveSimulatorFactory);
+
+        return new(ModbusFrameFormat.Rtu, serialTransportDescriptor, modbusFactory, modbusSlaveSimulatorFactory, logger);
     }
     public static ModbusSerialSimulationNetwork Ascii(
             SerialTransportDescriptor serialTransportDescriptor,
             IModbusFactory modbusFactory,
-            ModbusSimulatedSlaveFactory modbusSlaveSimulatorFactory)
+            ModbusSimulatedSlaveFactory modbusSlaveSimulatorFactory,
+            ILogger<ModbusSerialSimulationNetwork>? logger = null)
     {
-        return new(ModbusFrameFormat.Ascii, serialTransportDescriptor, modbusFactory, modbusSlaveSimulatorFactory);
+        ArgumentNullException.ThrowIfNull(serialTransportDescriptor);
+        ArgumentNullException.ThrowIfNull(modbusFactory);
+        ArgumentNullException.ThrowIfNull(modbusSlaveSimulatorFactory);
+
+        return new(ModbusFrameFormat.Ascii, serialTransportDescriptor, modbusFactory, modbusSlaveSimulatorFactory, logger);
     }
 
 
@@ -59,7 +71,7 @@ internal sealed class ModbusSerialSimulationNetwork : ModbusSimulationNetwork
 
 
 
-    protected override void OnAdded(ModbusSimulatedSlave simulated)
+    protected override void OnAdded(ModbusSimulationSlave simulated)
     {
         _slaveNetWork.AddSlave(simulated.Slave);
     }

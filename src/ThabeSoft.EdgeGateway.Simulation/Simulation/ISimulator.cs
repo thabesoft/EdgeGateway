@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using System.Collections.Concurrent;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Simulation.Networks;
@@ -8,15 +7,16 @@ using ThabeSoft.EdgeGateway.Transport;
 namespace ThabeSoft.EdgeGateway.Simulation;
 
 
-public interface ISimulatorService : ILifecycle
+public interface ISimulator : ILifecycle
 {
-    IModbusSimulationNetwork AddNetwork(ModbusSimulatorNetworkDescriptor simulatorDescriptor);
+    IModbusSimulationNetwork AddModbusNetwork(ModbusSimulatorNetworkDescriptor simulatorDescriptor);
 }
 
-internal sealed class SimulatorService(
+
+internal sealed class Simulator(
         ModbusSimulationNetworkFactory simulationNetworkFactory,
-        ILogger<SimulatorService>? logger
-    ) : ISimulatorService, IAsyncDisposable
+        ILogger<Simulator>? logger
+    ) : ISimulator, IAsyncDisposable
 {
     private readonly ConcurrentDictionary<ConnectionEndpoint, IModbusSimulationNetwork> _networks = [];
     private readonly IRetryableLifecycleStateMachine _stateMachine = Lifecycle.RetryableStateMachine(logger);
@@ -25,7 +25,7 @@ internal sealed class SimulatorService(
     public LifecycleState State => _stateMachine.State;
 
 
-    public IModbusSimulationNetwork AddNetwork(ModbusSimulatorNetworkDescriptor simulatorDescriptor)
+    public IModbusSimulationNetwork AddModbusNetwork(ModbusSimulatorNetworkDescriptor simulatorDescriptor)
     {
         return _stateMachine.Execute
         (

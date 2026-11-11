@@ -14,7 +14,7 @@ public class GatewayIntegrationTests
     private IHost? _app;
 
     protected IGateway Gateway { get; private set; } = null!;
-    protected ISimulatorHost Simulator { get; private set; } = null!;
+    protected ISimulatorService Simulator { get; private set; } = null!;
 
 
     [TestInitialize]
@@ -29,7 +29,7 @@ public class GatewayIntegrationTests
             .Build();
 
         Gateway = _app.Services.GetRequiredService<IGateway>();
-        Simulator = _app.Services.GetRequiredService<ISimulatorHost>();
+        Simulator = _app.Services.GetRequiredService<ISimulatorService>();
     }
 
     [TestCleanup]

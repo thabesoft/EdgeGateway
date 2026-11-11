@@ -10,9 +10,9 @@ public static class GatewayExtensions
     {
         public ValueTask<IPort> AddTcpPortAsync(IPEndPoint iPEndPoint, CancellationToken cancellationToken = default) =>
             gateway.AddPortAsync(Ethernet.Tcp(iPEndPoint), cancellationToken);
-        public ValueTask<IPort> AddTcpPort(IPAddress ip, int port, CancellationToken cancellationToken = default) =>
+        public ValueTask<IPort> AddTcpPortAsync(IPAddress ip, int port, CancellationToken cancellationToken = default) =>
             gateway.AddPortAsync(Ethernet.Tcp(ip, port), cancellationToken);
-        public ValueTask<IPort> AddTcpPort(string ip, int port, CancellationToken cancellationToken = default) =>
+        public ValueTask<IPort> AddTcpPortAsync(string ip, int port, CancellationToken cancellationToken = default) =>
             gateway.AddPortAsync(Ethernet.Tcp(ip, port), cancellationToken);
 
 

@@ -14,8 +14,8 @@ public interface IRetryableLifecycleStateMachine :
     IAsyncDisposable;
 
 
-internal sealed class RetryableLifecycleStateMachine(ILogger? logger = null
-    ) : IRetryableLifecycleStateMachine
+internal sealed class RetryableLifecycleStateMachine(ILogger? logger = null) :
+    IRetryableLifecycleStateMachine
 {
     private readonly SemaphoreSlim _lock = new(1, 1);
     private readonly ILogger _logger = logger ?? NullLogger.Instance;
@@ -33,6 +33,8 @@ internal sealed class RetryableLifecycleStateMachine(ILogger? logger = null
 
     public async ValueTask StartAsync(Func<CancellationToken, ValueTask> onStart, CancellationToken cancellationToken = default)
     {
+        ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);
+
         await _lock.WaitWithTimeoutAsync(LockTimeout, cancellationToken);
         try
         {
@@ -44,10 +46,14 @@ internal sealed class RetryableLifecycleStateMachine(ILogger? logger = null
                 _state = LifecycleState.Starting;
                 await onStart.InvokeWithTimeoutAsync(StopTimeout, "启动", cancellationToken);
                 _state = LifecycleState.Running;
+
+                _logger.LogTrace("({TypeName}) 已启动", GetType().Name);
             }
-            catch
+            catch (Exception ex)
             {
                 _state = LifecycleState.Faulted;
+                _logger.LogError(ex, "({TypeName}) 启动失败", GetType().Name);
+
                 throw;
             }
         }
@@ -55,6 +61,9 @@ internal sealed class RetryableLifecycleStateMachine(ILogger? logger = null
     }
     public async ValueTask StopAsync(Func<CancellationToken, ValueTask> onStop, CancellationToken cancellationToken = default)
     {
+        ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);
+
+
         await _lock.WaitWithTimeoutAsync(LockTimeout, cancellationToken);
         try
         {
@@ -66,10 +75,13 @@ internal sealed class RetryableLifecycleStateMachine(ILogger? logger = null
                 _state = LifecycleState.Stopping;
                 await onStop.InvokeWithTimeoutAsync(StopTimeout, "停止", cancellationToken);
                 _state = LifecycleState.Stopped;
+
+                _logger.LogTrace("({TypeName}) 已停止", GetType().Name);
             }
-            catch
+            catch (Exception ex)
             {
                 _state = LifecycleState.Faulted;
+                _logger.LogError(ex, "({TypeName}) 停止失败", GetType().Name);
                 throw;
             }
         }
@@ -88,10 +100,11 @@ internal sealed class RetryableLifecycleStateMachine(ILogger? logger = null
         try
         {
             await onDispose.InvokeWithTimeoutAsync(ExecuteTimeout, "执行");
+            _logger.LogTrace("({TypeName}) 已释放", GetType().Name);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "释放超时或失败");
+            _logger.LogError(ex, "({TypeName}) 释放失败");
         }
     }
     public ValueTask DisposeAsync() => DisposeAsync(() => ValueTask.CompletedTask);
@@ -102,6 +115,8 @@ internal sealed class RetryableLifecycleStateMachine(ILogger? logger = null
         Func<CancellationToken, ValueTask> action,
         CancellationToken cancellationToken = default)
     {
+        ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);
+
         await _lock.WaitWithTimeoutAsync(LockTimeout, cancellationToken);
         try
         {
@@ -114,6 +129,8 @@ internal sealed class RetryableLifecycleStateMachine(ILogger? logger = null
         Func<CancellationToken, ValueTask<TResult>> action,
         CancellationToken cancellationToken = default)
     {
+        ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);
+
         await _lock.WaitWithTimeoutAsync(LockTimeout, cancellationToken);
         try
         {

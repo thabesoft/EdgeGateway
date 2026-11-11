@@ -5,15 +5,22 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SukiUI.Dialogs;
 using SukiUI.Toasts;
+using System.Net;
 using ThabeSoft.EdgeGateway.App;
 using ThabeSoft.EdgeGateway.App.Common;
 using ThabeSoft.EdgeGateway.App.Features.Dashboard;
 using ThabeSoft.EdgeGateway.App.Features.Gateway;
 using ThabeSoft.EdgeGateway.App.Features.Topology;
 using ThabeSoft.EdgeGateway.App.Services;
+using ThabeSoft.EdgeGateway.Configuration;
+using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Port;
+using ThabeSoft.EdgeGateway.Simulation;
+using ThabeSoft.EdgeGateway.Simulation.ValueGenerators;
+using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transport;
+using ThabeSoft.EdgeGateway.Triggers;
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
 namespace ThabeSoft.EdgeGateway;
@@ -31,19 +38,19 @@ public static class DependencyInjectionExtensions
 
             builder.ConfigureServices(services =>
             {
+                if (Design.IsDesignMode || true)
+                    services.AddHostedService<GatewayDesignData>();
+
+
+                services.AddSimulation();
+                //services.AddSimulationHost();
+
                 services.AddEdgeGateway();
+                //services.AddEdgeGatewayHost();
                 services.AddSerial();
                 services.AddEthernet();
                 services.AddModbus();
                 services.AddApp();
-
-                if (Design.IsDesignMode || true)
-                {
-                    // 模拟底层传输
-                    services.RemoveAll<ITransportConnectionFactory>();
-                    services.AddSingleton<ITransportConnectionFactory, MockTransportFactory>();
-                    services.AddHostedService<GatewayDesignData>();
-                }
             });
 
             return builder;
@@ -91,7 +98,40 @@ public static class DependencyInjectionExtensions
 }
 
 
-public sealed class MockTransportFactory(ILoggerFactory loggerFactory) : ITransportConnectionFactory
+internal sealed class GatewayDesignData(IGateway gateway, ISimulatorService simulatorService, ILogger<GatewayDesignData> logger) : IHostedService
+{
+    public async Task StartAsync(CancellationToken cancellationToken)
+    {
+        var transportDescriptor = Ethernet.Tcp(IPAddress.Loopback, 1234);
+        var tag = Modbus.HoldingRegister(1, 123, Codec.Double);
+        var trigger = Trigger.Interval(100);
+
+        // 从站模拟
+        var network = simulatorService.AddNetwork(Modbus.IpSimulationNetwork(transportDescriptor));
+        var slave = await network.AddSlaveAsync(1, cancellationToken);
+        slave.Value(tag, trigger, ValueGenerator.SineWave(1, 0.2));
+
+
+        // 网关默认数据
+        var port = await gateway.AddTcpPortAsync(transportDescriptor.IPEndPoint, cancellationToken: cancellationToken);
+        var device = await port.AddModbusRtuDeviceAsync(cancellationToken);
+        var subscription = await device.AddSubscriptionAsync(tag, trigger, cancellationToken);
+        subscription.Subscribe(x => logger.LogDebug("数据回调: {V}", x));
+
+
+        await simulatorService.StartAsync(cancellationToken);
+
+        await Task.Delay(1000, cancellationToken);
+
+        await gateway.StartAsync(cancellationToken);
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
+    }
+}
+internal sealed class MockTransportFactory(ILoggerFactory loggerFactory) : ITransportConnectionFactory
 {
     public bool CanCreate(ITransportDescriptor descriptor) => true;
     public ITransportConnection Create(ITransportDescriptor descriptor) =>
@@ -151,19 +191,5 @@ public sealed class MockTransportFactory(ILoggerFactory loggerFactory) : ITransp
                 return ValueTask.CompletedTask;
             });
         }
-    }
-}
-
-internal sealed class GatewayDesignData(IGateway gateway) : IHostedService
-{
-    public async Task StartAsync(CancellationToken cancellationToken)
-    {
-        var port = await gateway.AddSerialPort("COm2", cancellationToken: cancellationToken);
-        var device = await port.AddModbusRtuDeviceAsync(cancellationToken);
-    }
-
-    public Task StopAsync(CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
     }
 }

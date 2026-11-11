@@ -27,7 +27,7 @@ public class Test1
                 )
             .Build();
 
-        var simulatorHost = app.Services.GetRequiredService<ISimulatorHost>();
+        var simulatorHost = app.Services.GetRequiredService<ISimulatorService>();
         var gateway = app.Services.GetRequiredService<IGateway>();
 
         var network = simulatorHost.AddNetwork(Modbus.IpSimulationNetwork(address));

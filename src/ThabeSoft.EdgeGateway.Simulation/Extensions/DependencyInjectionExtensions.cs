@@ -21,9 +21,13 @@ public static class DependencyInjectionExtensions
             descriptors.TryAddSingleton<ModbusSimulationNetworkFactory>();
             descriptors.TryAddSingleton<ModbusSimulatedSlaveFactory>();
 
-            descriptors.AddSingleton<ISimulatorHost, SimulatorHost>();
-            descriptors.AddHostedService<LaunchHostedService>();
+            descriptors.AddSingleton<ISimulatorService, SimulatorService>();
+            return descriptors;
+        }
 
+        public IServiceCollection AddSimulationHost()
+        {
+            descriptors.AddHostedService<LaunchHostedService>();
             return descriptors;
         }
     }

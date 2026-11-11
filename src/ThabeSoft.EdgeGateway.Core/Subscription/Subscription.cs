@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using System.Collections.Concurrent;
 using System.Net;
 using ThabeSoft.EdgeGateway.Addressing;
@@ -23,7 +24,7 @@ internal sealed class Subscription<T> : ISubscription<T>, IAsyncDisposeSubscript
     private readonly ConcurrentDictionary<Guid, IObserver<Reading<T>>> _observers = [];
 
     private readonly SubscriptionDescriptor<T> _subscriptionDescriptor;
-    private readonly ILogger<Subscription<T>> logger;
+    private readonly ILogger<Subscription<T>> _logger;
 
 
     private readonly ILifecycleStateable _deviceLifecycleState;
@@ -39,16 +40,17 @@ internal sealed class Subscription<T> : ISubscription<T>, IAsyncDisposeSubscript
             IByteDuplex byteDuplex,
             SubscriptionValueReaderFactory subscriptionValueReaderFactory,
             ILifecycleStateable deviceLifecycleState,
-            ILogger<Subscription<T>> logger
-    )
+            ILogger<Subscription<T>>? logger = null)
     {
+        _logger = logger ?? NullLogger<Subscription<T>>.Instance;
         _subscriptionDescriptor = subscriptionDescriptor;
         _deviceLifecycleState = deviceLifecycleState;
+
         _trigegr = triggerFactorySelector.Create(subscriptionDescriptor.Trigger);
         _subscriptionValueReader = subscriptionValueReaderFactory.Create(subscriptionDescriptor, protocolDescriptor, byteDuplex);
-        _stateMachine = Lifecycle.RetryableStateMachine(logger);
 
         _triggerLifecycle = Lifecycle.Background(TriggerTask, logger);
+        _stateMachine = Lifecycle.RetryableStateMachine(logger);
     }
 
 
@@ -118,8 +120,8 @@ internal sealed class Subscription<T> : ISubscription<T>, IAsyncDisposeSubscript
         {
             var value = await _subscriptionValueReader.WaitNextAsync(cancellationToken);
 
-            if (logger.IsEnabled(LogLevel.Trace))
-                logger.LogTrace("订阅 [{Id}] 新值 [{Value}] 已发布", Id, value);
+            if (_logger.IsEnabled(LogLevel.Trace))
+                _logger.LogTrace("订阅 [{Id}] 新值 [{Value}] 已发布", Id, value);
 
             var reading = Reading.Good(value);
             Latest = reading;
@@ -133,8 +135,8 @@ internal sealed class Subscription<T> : ISubscription<T>, IAsyncDisposeSubscript
         }
         catch (Exception ex)
         {
-            if (logger.IsEnabled(LogLevel.Trace))
-                logger.LogTrace(ex, "订阅 [{Id}] 异常已发布", Id);
+            if (_logger.IsEnabled(LogLevel.Trace))
+                _logger.LogTrace(ex, "订阅 [{Id}] 异常已发布", Id);
 
             OnError(ex);
         }

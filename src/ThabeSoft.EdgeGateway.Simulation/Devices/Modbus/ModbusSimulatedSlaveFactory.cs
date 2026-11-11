@@ -13,14 +13,14 @@ internal sealed class ModbusSimulatedSlaveFactory(
         ILoggerFactory loggerFactory
     ) : ISimulationDeviceFactory
 {
-    public bool CanCreate(ISimulationDeviceDescriptor descriptor)
+    public bool CanCreate(SimulationDeviceDescriptor descriptor)
     {
         return descriptor.Id is ModbusSimulationDeviceId;
     }
 
-    public ISimulationDevice Create(ISimulationDeviceDescriptor descriptor)
+    public ISimulationDevice Create(SimulationDeviceDescriptor descriptor)
     {
-        if (descriptor is not ModbusSimulationDeviceDescriptor modbus)
+        if (descriptor.Id is not ModbusSimulationDeviceId modbus)
             throw new InvalidOperationException("不支持的从站Id");
 
         return new ModbusSimulationDevice

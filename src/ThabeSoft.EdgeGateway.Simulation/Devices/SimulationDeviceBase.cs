@@ -14,7 +14,7 @@ namespace ThabeSoft.EdgeGateway.Devices;
 
 
 internal abstract class SimulationDeviceBase(
-        ModbusSimulationDeviceDescriptor descriptor,
+        ModbusSimulationDeviceId id,
         ITriggerFactorySelector triggerFactorySelector,
         ILogger? logger = null
     ) : ISimulationDevice
@@ -25,7 +25,7 @@ internal abstract class SimulationDeviceBase(
     private ILogger _logger = logger ?? NullLogger.Instance;
 
 
-    public ISimulationDeviceId Id => descriptor.Id;
+    public ISimulationDeviceId Id => id;
     public LifecycleState State => _stateMachine.State;
 
 

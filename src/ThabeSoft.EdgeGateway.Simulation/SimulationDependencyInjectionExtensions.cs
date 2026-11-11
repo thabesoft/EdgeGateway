@@ -17,6 +17,7 @@ public static class SimulationDependencyInjectionExtensions
         public IServiceCollection AddSimulation()
         {
             descriptors.TryAddSingleton<SimulationDeviceFactorySelector>();
+            descriptors.TryAddSingleton<SimulationPortFactorySelector>();
             descriptors.TryAddSingleton<ISimulator, Simulator>();
             return descriptors;
         }

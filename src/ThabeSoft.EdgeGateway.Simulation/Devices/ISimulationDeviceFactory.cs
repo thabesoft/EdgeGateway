@@ -3,6 +3,6 @@
 
 public interface ISimulationDeviceFactory
 {
-    bool CanCreate(ISimulationDeviceDescriptor descriptor);
-    ISimulationDevice Create(ISimulationDeviceDescriptor descriptor);
+    bool CanCreate(SimulationDeviceDescriptor descriptor);
+    ISimulationDevice Create(SimulationDeviceDescriptor descriptor);
 }

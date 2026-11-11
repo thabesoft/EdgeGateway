@@ -9,14 +9,6 @@ public class FixedIntervalTriggerTests
     [TestMethod]
     public async Task WaitForNextTickAsync_TriggersAfterInterval()
     {
-
-<<<<<<< TODO: 项目“ThabeSoft.EdgeGateway.UnitTests (net11.0)”的未合并的更改, 在此之前:
-        var a = Modbus.Modbus.Ascii;
-=======
-        var a = Modbus.Ascii;
->>>>>>> 晚于
-        var a = EdgeGateway.Modbus.Ascii;
-
         var fakeTime = new FakeTimeProvider();
         var factory = new FixedIntervalTriggerFactory(fakeTime);
         var trigger = factory.Create(Trigger.Interval(100));

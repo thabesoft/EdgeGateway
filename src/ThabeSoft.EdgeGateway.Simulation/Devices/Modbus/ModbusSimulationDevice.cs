@@ -9,17 +9,17 @@ namespace ThabeSoft.EdgeGateway.Devices.Modbus;
 
 
 internal sealed class ModbusSimulationDevice(
-        ModbusSimulationDeviceDescriptor descriptor,
+        ModbusSimulationDeviceId id,
         IModbusFactory modbusFactory,
         ITriggerFactorySelector triggerFactorySelector,
         ILogger<ModbusSimulationDevice>? logger = null
-    ) : SimulationDeviceBase(descriptor, triggerFactorySelector, logger)
+    ) : SimulationDeviceBase(id, triggerFactorySelector, logger)
 {
 
     private readonly ILogger<ModbusSimulationDevice> _logger = logger ?? NullLogger<ModbusSimulationDevice>.Instance;
-    private byte _unitId = descriptor.Id.Value;
+    private byte _unitId = id.Value;
 
-    public IModbusSlave Slave { get; } = modbusFactory.CreateSlave(descriptor.Id.Value);
+    public IModbusSlave Slave { get; } = modbusFactory.CreateSlave(id.Value);
 
 
     protected override ValueTask OnValueAsync<T>(TagDescriptor<T> tag, T value, CancellationToken cancellationToken)

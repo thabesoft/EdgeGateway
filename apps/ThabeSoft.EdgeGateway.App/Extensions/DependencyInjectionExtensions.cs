@@ -1,6 +1,5 @@
 ﻿using Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SukiUI.Dialogs;
@@ -12,13 +11,11 @@ using ThabeSoft.EdgeGateway.App.Features.Dashboard;
 using ThabeSoft.EdgeGateway.App.Features.Gateway;
 using ThabeSoft.EdgeGateway.App.Features.Topology;
 using ThabeSoft.EdgeGateway.App.Services;
-using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transport;
 using ThabeSoft.EdgeGateway.Triggers;
-using ThabeSoft.EdgeGateway.ValueGenerators;
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
 namespace ThabeSoft.EdgeGateway;
@@ -105,9 +102,9 @@ internal sealed class GatewayDesignData(IGateway gateway, ISimulator simulatorSe
         var trigger = Trigger.Interval(2000);
 
         // 从站模拟
-        var network = simulatorService.AddPort(Modbus.IpSimulationNetwork(transportDescriptor));
-        var slave = await network.AddSlaveAsync(1, cancellationToken);
-        slave.Value(tag, trigger, ValueGenerators.Simulation.SineWave(1, 0.2));
+        var network = simulatorService.AddPort(Simulation.ModbusIpPort(transportDescriptor));
+        var slave = await network.AddDeviceAsync(Simulation.ModbusDevice(1), cancellationToken);
+        slave.Value(tag, trigger, Simulation.SineWaveValue(1, 0.2));
 
         await simulatorService.StartAsync(cancellationToken);
 
@@ -115,10 +112,10 @@ internal sealed class GatewayDesignData(IGateway gateway, ISimulator simulatorSe
         // 网关默认数据
         await gateway.StartAsync(cancellationToken);
 
-        var port = await gateway.AddTcpPortAsync(transportDescriptor.IPEndPoint, cancellationToken: cancellationToken);
+        var port = await gateway.AddPortAsync(Ethernet.Tcp(transportDescriptor.IPEndPoint), cancellationToken: cancellationToken);
         await port.StartAsync(cancellationToken);
 
-        var device = await port.AddModbusRtuDeviceAsync(cancellationToken);
+        var device = await port.AddDeviceAsync(Modbus.Ip, cancellationToken);
         await device.StartAsync(cancellationToken);
 
         var subscription = await device.AddSubscriptionAsync(tag, trigger, cancellationToken);
@@ -127,7 +124,7 @@ internal sealed class GatewayDesignData(IGateway gateway, ISimulator simulatorSe
 
         try
         {
-            
+
 
             await Task.Delay(1000, cancellationToken);
 

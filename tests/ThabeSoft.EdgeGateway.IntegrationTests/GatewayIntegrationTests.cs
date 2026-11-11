@@ -53,17 +53,17 @@ public class GatewayIntegrationTests
         var tag = Modbus.HoldingRegister(1, 0, Codec.Double);
         var triggr = Trigger.Interval(100);
 
-        var simulationNetwork = Simulator.AddPort(Modbus.IpSimulationNetwork(transportDescriptor));
-        var slave = await simulationNetwork.AddSlaveAsync(1, TestContext.CancellationToken);
-        using var _ = slave.Value(tag, triggr, ValueGenerators.Simulation.SineWave(1, 0.1));
+        var simulationNetwork = Simulator.AddPort(Simulation.ModbusIpPort(transportDescriptor));
+        var slave = await simulationNetwork.AddDeviceAsync(Simulation.ModbusDevice(1), TestContext.CancellationToken);
+        using var _ = slave.Value(tag, triggr, Simulation.SineWaveValue(1, 0.1));
 
         // 模拟器 启动
         await simulationNetwork.StartAsync(TestContext.CancellationToken);
 
         ConcurrentQueue<double> _values = [];
 
-        var port = await Gateway.AddPortAsync(transportDescriptor);
-        var device = await port.AddDeviceAsync(protocolDescriptor);
+        var port = await Gateway.AddPortAsync(transportDescriptor, TestContext.CancellationToken);
+        var device = await port.AddDeviceAsync(protocolDescriptor, TestContext.CancellationToken);
         var subscription = await device.AddSubscriptionAsync(tag, triggr, TestContext.CancellationToken);
         subscription.Subscribe(x => _values.Enqueue(x.Value));
 

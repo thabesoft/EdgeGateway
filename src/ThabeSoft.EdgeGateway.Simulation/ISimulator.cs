@@ -4,7 +4,7 @@ using ThabeSoft.EdgeGateway.Ports;
 namespace ThabeSoft.EdgeGateway;
 
 
-public interface ISimulator : ILifecycle
+public interface ISimulator : ILifecycle, ILifecycleStateable
 {
     ISimulationPort AddPort(SimulatorPortDescriptor simulatorDescriptor);
 }

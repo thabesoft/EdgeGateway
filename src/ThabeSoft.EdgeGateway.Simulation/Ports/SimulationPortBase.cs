@@ -30,7 +30,7 @@ internal abstract class SimulationPortBase : ISimulationPort
 
 
 
-    public ValueTask<ISimulationDevice> AddDeviceAsync(ISimulationDeviceDescriptor simulationDeviceDescriptor, CancellationToken cancellationToken = default)
+    public ValueTask<ISimulationDevice> AddDeviceAsync(SimulationDeviceDescriptor simulationDeviceDescriptor, CancellationToken cancellationToken = default)
     {
         return _stateMachine.ExecuteAsync(async ct =>
         {

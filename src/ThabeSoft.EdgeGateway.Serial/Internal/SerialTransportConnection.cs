@@ -1,9 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
 using RJCP.IO.Ports;
 using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Transport;
 using ThabeSoft.EdgeGateway.Transport.Byte;
 
-namespace ThabeSoft.EdgeGateway.Transport;
+using RJCPStopBit = RJCP.IO.Ports.StopBits;
+using RJCPParity = RJCP.IO.Ports.Parity;
+
+
+namespace ThabeSoft.EdgeGateway.Serial.Internal;
 
 
 internal sealed class SerialTransportConnection : ITransportConnection, IReadBufferDiscardable
@@ -21,8 +26,8 @@ internal sealed class SerialTransportConnection : ITransportConnection, IReadBuf
             port: descriptor.PortName,
             baud: descriptor.BaudRate,
             data: descriptor.DataBits,
-            parity: descriptor.Parity.ToRjcp(),
-            stopbits: descriptor.StopBits.ToRjcp());
+            parity: Parse(descriptor.Parity),
+            stopbits: Parse(descriptor.StopBits));
 
         _stateMachine = Lifecycle.StrictStateMachine(logger);
         Endpoint = descriptor.Endpoint;
@@ -82,4 +87,24 @@ internal sealed class SerialTransportConnection : ITransportConnection, IReadBuf
         await _serialPort.DisposeAsync();
 #endif
     }
+
+
+
+    public static RJCPParity Parse(SerialParity parity) => parity switch
+    {
+        SerialParity.None => RJCPParity.None,
+        SerialParity.Even => RJCPParity.Even,
+        SerialParity.Odd => RJCPParity.Odd,
+        SerialParity.Mark => RJCPParity.Mark,
+        SerialParity.Space => RJCPParity.Space,
+        _ => throw new ArgumentOutOfRangeException(nameof(parity))
+    };
+
+    public static RJCPStopBit Parse(SerialStopBits stopBits) => stopBits switch
+    {
+        SerialStopBits.One => RJCPStopBit.One,
+        SerialStopBits.Two => RJCPStopBit.Two,
+        SerialStopBits.OnePointFive => RJCPStopBit.One5,
+        _ => throw new ArgumentOutOfRangeException(nameof(stopBits))
+    };
 }

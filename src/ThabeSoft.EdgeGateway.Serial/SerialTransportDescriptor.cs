@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using ThabeSoft.EdgeGateway.Transport;
 
-namespace ThabeSoft.EdgeGateway.Transport;
+namespace ThabeSoft.EdgeGateway.Serial;
 
 
 public sealed record class SerialTransportDescriptor : ITransportDescriptor
@@ -14,27 +15,29 @@ public sealed record class SerialTransportDescriptor : ITransportDescriptor
 
 
     private SerialTransportDescriptor() { }
-
     // COM2(9600, 8N5)
-    public override string ToString() => $"{PortName}({BaudRate}, {DataBits}{ParityChar}{StopBitsChar})";
-
-    private char ParityChar => Parity switch
+    public override string ToString()
     {
-        SerialParity.None => 'N',
-        SerialParity.Even => 'E',
-        SerialParity.Odd => 'O',
-        SerialParity.Mark => 'M',
-        SerialParity.Space => 'S',
-        _ => '?'
-    };
-    private char StopBitsChar => StopBits switch
-    {
-        SerialStopBits.One => '1',
-        SerialStopBits.Two => '2',
-        SerialStopBits.OnePointFive => '5',
-        _ => '?'
-    };
+        var parityChar = Parity switch
+        {
+            SerialParity.None => 'N',
+            SerialParity.Even => 'E',
+            SerialParity.Odd => 'O',
+            SerialParity.Mark => 'M',
+            SerialParity.Space => 'S',
+            _ => '?'
+        };
 
+        var stopBitsChar = StopBits switch
+        {
+            SerialStopBits.One => '1',
+            SerialStopBits.Two => '2',
+            SerialStopBits.OnePointFive => '5',
+            _ => '?'
+        };
+
+        return $"{PortName}({BaudRate}, {DataBits}{parityChar}{stopBitsChar})";
+    }
 
 
     public static SerialTransportDescriptor Create(string portName, int baudRate, SerialParity parity, int dataBits, SerialStopBits stopBits)
@@ -148,59 +151,5 @@ public sealed record class SerialTransportDescriptor : ITransportDescriptor
 
         errorMessage = null;
         return true;
-    }
-}
-
-
-public enum SerialParity { None, Even, Odd, Mark, Space }
-
-public static class SerialParityExtrensions
-{
-    extension(SerialParity parity)
-    {
-        public RJCP.IO.Ports.Parity ToRjcp() => parity switch
-        {
-            SerialParity.None => RJCP.IO.Ports.Parity.None,
-            SerialParity.Even => RJCP.IO.Ports.Parity.Even,
-            SerialParity.Odd => RJCP.IO.Ports.Parity.Odd,
-            SerialParity.Mark => RJCP.IO.Ports.Parity.Mark,
-            SerialParity.Space => RJCP.IO.Ports.Parity.Space,
-            _ => throw new ArgumentOutOfRangeException(nameof(parity))
-        };
-
-        public System.IO.Ports.Parity ToSystem() => parity switch
-        {
-            SerialParity.None => System.IO.Ports.Parity.None,
-            SerialParity.Even => System.IO.Ports.Parity.Even,
-            SerialParity.Odd => System.IO.Ports.Parity.Odd,
-            SerialParity.Mark => System.IO.Ports.Parity.Mark,
-            SerialParity.Space => System.IO.Ports.Parity.Space,
-            _ => throw new ArgumentOutOfRangeException(nameof(parity))
-        };
-    }
-}
-
-
-public enum SerialStopBits { One, Two, OnePointFive }
-
-public static class SerialStopBitsExtrensions
-{
-    extension(SerialStopBits stopBits)
-    {
-        public RJCP.IO.Ports.StopBits ToRjcp() => stopBits switch
-        {
-            SerialStopBits.One => RJCP.IO.Ports.StopBits.One,
-            SerialStopBits.Two => RJCP.IO.Ports.StopBits.Two,
-            SerialStopBits.OnePointFive => RJCP.IO.Ports.StopBits.One5,
-            _ => throw new ArgumentOutOfRangeException(nameof(stopBits))
-        };
-
-        public System.IO.Ports.StopBits ToSystem() => stopBits switch
-        {
-            SerialStopBits.One => System.IO.Ports.StopBits.One,
-            SerialStopBits.Two => System.IO.Ports.StopBits.Two,
-            SerialStopBits.OnePointFive => System.IO.Ports.StopBits.OnePointFive,
-            _ => throw new ArgumentOutOfRangeException(nameof(stopBits))
-        };
     }
 }

@@ -3,7 +3,6 @@ using NModbus;
 using NModbus.Serial;
 using System.IO.Ports;
 using ThabeSoft.EdgeGateway.Simulation.Networks.Slaves;
-using ThabeSoft.EdgeGateway.Transport;
 
 namespace ThabeSoft.EdgeGateway.Simulation.Networks;
 

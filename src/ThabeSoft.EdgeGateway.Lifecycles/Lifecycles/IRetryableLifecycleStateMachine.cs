@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using System.Diagnostics;
 using ThabeSoft.EdgeGateway.Extensions;
 
 namespace ThabeSoft.EdgeGateway.Lifecycles;
@@ -23,14 +24,23 @@ internal sealed class RetryableLifecycleStateMachine(ILogger? logger = null) :
 
 
     public LifecycleState State => _state;
+
+#if DEBUG
+    public TimeSpan StartTimeout { get; init; } = TimeSpan.FromMinutes(5);
+    public TimeSpan StopTimeout { get; init; } = TimeSpan.FromMinutes(5);
+    public TimeSpan DisposeTimeout { get; init; } = TimeSpan.FromMinutes(5);
+    public TimeSpan ExecuteTimeout { get; init; } = TimeSpan.FromMinutes(5);
+    public TimeSpan LockTimeout { get; init; } = TimeSpan.FromMinutes(5);
+#else
     public TimeSpan StartTimeout { get; init; } = TimeSpan.FromSeconds(30);
     public TimeSpan StopTimeout { get; init; } = TimeSpan.FromSeconds(15);
     public TimeSpan DisposeTimeout { get; init; } = TimeSpan.FromSeconds(10);
     public TimeSpan ExecuteTimeout { get; init; } = TimeSpan.FromSeconds(30);
     public TimeSpan LockTimeout { get; init; } = TimeSpan.FromSeconds(30);
+#endif
 
 
-
+    [DebuggerStepThrough]
     public async ValueTask StartAsync(Func<CancellationToken, ValueTask> onStart, CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);
@@ -59,6 +69,8 @@ internal sealed class RetryableLifecycleStateMachine(ILogger? logger = null) :
         }
         finally { _lock.Release(); }
     }
+
+    [DebuggerStepThrough]
     public async ValueTask StopAsync(Func<CancellationToken, ValueTask> onStop, CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);
@@ -110,7 +122,7 @@ internal sealed class RetryableLifecycleStateMachine(ILogger? logger = null) :
     public ValueTask DisposeAsync() => DisposeAsync(() => ValueTask.CompletedTask);
 
 
-
+    [DebuggerStepThrough]
     public async ValueTask ExecuteAsync(
         Func<CancellationToken, ValueTask> action,
         CancellationToken cancellationToken = default)
@@ -125,6 +137,8 @@ internal sealed class RetryableLifecycleStateMachine(ILogger? logger = null) :
         }
         finally { _lock.Release(); }
     }
+
+    [DebuggerStepThrough]
     public async ValueTask<TResult> ExecuteAsync<TResult>(
         Func<CancellationToken, ValueTask<TResult>> action,
         CancellationToken cancellationToken = default)
@@ -140,6 +154,7 @@ internal sealed class RetryableLifecycleStateMachine(ILogger? logger = null) :
         finally { _lock.Release(); }
     }
 
+    [DebuggerStepThrough]
     public void Execute(Action action)
     {
         ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);
@@ -155,6 +170,8 @@ internal sealed class RetryableLifecycleStateMachine(ILogger? logger = null) :
             _lock.Release();
         }
     }
+
+    [DebuggerStepThrough]
     public TResult Execute<TResult>(Func<TResult> action)
     {
         ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);

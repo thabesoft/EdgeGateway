@@ -60,6 +60,7 @@ internal sealed class ModbusSimulationSlave(
                     return;
 
                 var value = generator.Next();
+                _logger.LogTrace("从站({Id}) 已生成值({Value})", UnitId, value);
 
                 if (dataAddrss.Kind == ModbusDataKind.HoldingRegister)
                 {

@@ -104,26 +104,45 @@ internal sealed class GatewayDesignData(IGateway gateway, ISimulator simulatorSe
     {
         var transportDescriptor = Ethernet.Tcp(IPAddress.Loopback, 1234);
         var tag = Modbus.HoldingRegister(1, 123, Codec.Double);
-        var trigger = Trigger.Interval(100);
+        var trigger = Trigger.Interval(2000);
 
         // 从站模拟
         var network = simulatorService.AddModbusNetwork(Modbus.IpSimulationNetwork(transportDescriptor));
         var slave = await network.AddSlaveAsync(1, cancellationToken);
         slave.Value(tag, trigger, ValueGenerator.SineWave(1, 0.2));
 
-
-        // 网关默认数据
-        var port = await gateway.AddTcpPortAsync(transportDescriptor.IPEndPoint, cancellationToken: cancellationToken);
-        var device = await port.AddModbusRtuDeviceAsync(cancellationToken);
-        var subscription = await device.AddSubscriptionAsync(tag, trigger, cancellationToken);
-        subscription.Subscribe(x => logger.LogDebug("数据回调: {V}", x));
-
-
         await simulatorService.StartAsync(cancellationToken);
 
-        await Task.Delay(1000, cancellationToken);
 
+        // 网关默认数据
         await gateway.StartAsync(cancellationToken);
+
+        var port = await gateway.AddTcpPortAsync(transportDescriptor.IPEndPoint, cancellationToken: cancellationToken);
+        await port.StartAsync(cancellationToken);
+
+        var device = await port.AddModbusRtuDeviceAsync(cancellationToken);
+        await device.StartAsync(cancellationToken);
+
+        var subscription = await device.AddSubscriptionAsync(tag, trigger, cancellationToken);
+        subscription.Subscribe(x => logger.LogDebug("数据回调: {V}", x));
+        await subscription.StartAsync(cancellationToken);
+
+        try
+        {
+            
+
+            await Task.Delay(1000, cancellationToken);
+
+
+
+
+            await gateway.StartAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "启动失败");
+        }
+
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

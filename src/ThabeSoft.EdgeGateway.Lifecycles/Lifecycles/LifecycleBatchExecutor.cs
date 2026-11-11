@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using System.Diagnostics;
 using ThabeSoft.EdgeGateway.Extensions;
 
 namespace ThabeSoft.EdgeGateway.Lifecycles;
@@ -9,11 +10,18 @@ internal sealed class LifecycleBatchExecutor(ILogger? logger = null) : ILifecycl
 {
     private readonly ILogger _logger = logger ?? NullLogger.Instance;
 
+#if DEBUG
+    public TimeSpan ItemStartTimeout { get; init; } = TimeSpan.FromMinutes(5);
+    public TimeSpan ItemStopTimeout { get; init; } = TimeSpan.FromMinutes(5);
+    public TimeSpan ItemDisposeTimeout { get; init; } = TimeSpan.FromMinutes(5);
+#else
     public TimeSpan ItemStartTimeout { get; init; } = TimeSpan.FromSeconds(30);
     public TimeSpan ItemStopTimeout { get; init; } = TimeSpan.FromSeconds(15);
     public TimeSpan ItemDisposeTimeout { get; init; } = TimeSpan.FromSeconds(10);
+#endif
 
 
+    [DebuggerStepThrough]
     public async ValueTask StartAsync(IEnumerable<ILifecycle> lifecycles, CancellationToken cancellationToken = default)
     {
         List<Exception> errors = [];
@@ -34,8 +42,10 @@ internal sealed class LifecycleBatchExecutor(ILogger? logger = null) : ILifecycl
         }
 
         if (errors.Count == 0) return;
-        throw new AggregateException($"部分启动失败, 共 {errors.Count} 个", errors);
+        throw new AggregateException(errors);
     }
+
+    [DebuggerStepThrough]
     public async ValueTask StopAsync(IEnumerable<ILifecycle> lifecycles, CancellationToken cancellationToken)
     {
         List<Exception> errors = [];
@@ -56,8 +66,10 @@ internal sealed class LifecycleBatchExecutor(ILogger? logger = null) : ILifecycl
         }
 
         if (errors.Count == 0) return;
-        throw new AggregateException($"部分停止失败, 共 {errors.Count} 个", errors);
+        throw new AggregateException(errors);
     }
+
+    [DebuggerStepThrough]
     public async ValueTask DisposeAsync<TLifecycle>(IEnumerable<TLifecycle> lifecycles) where TLifecycle : ILifecycle, IAsyncDisposable
     {
         foreach (var lifecycle in lifecycles)

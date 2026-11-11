@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using NModbus;
 using System.Net.Sockets;
 using ThabeSoft.EdgeGateway.Simulation.Networks.Slaves;
@@ -12,7 +13,8 @@ internal sealed class ModbusTcpSimulationNetwork : ModbusSimulationNetwork
     private readonly TcpListener _tcpListener;
     private Task? _listenTask;
     private readonly IModbusTcpSlaveNetwork _slaveNetWorks;
-
+    private readonly IpTransportDescriptor _ipTransportDescriptor;
+    private readonly ILogger<ModbusTcpSimulationNetwork> _logger;
 
     public ModbusTcpSimulationNetwork(
             IpTransportDescriptor ipTransportDescriptor,
@@ -23,6 +25,8 @@ internal sealed class ModbusTcpSimulationNetwork : ModbusSimulationNetwork
     {
         _tcpListener = new(ipTransportDescriptor.IPEndPoint);
         _slaveNetWorks = modbusFactory.CreateSlaveNetwork(_tcpListener);
+        _ipTransportDescriptor = ipTransportDescriptor;
+        _logger = logger ?? NullLogger<ModbusTcpSimulationNetwork>.Instance;
     }
 
     public byte UnitId { get; }
@@ -42,7 +46,13 @@ internal sealed class ModbusTcpSimulationNetwork : ModbusSimulationNetwork
     protected override async ValueTask OnStartAsync(CancellationToken cancellationToken)
     {
         _tcpListener.Start();
-        _listenTask = Task.Run(() => _slaveNetWorks.ListenAsync(cancellationToken), cancellationToken);
+
+        _listenTask = Task.Run(() =>
+        {
+            _logger.LogInformation("Tcp从站网络开始监听: {Address}", _ipTransportDescriptor.Endpoint);
+            _slaveNetWorks.ListenAsync(cancellationToken);
+
+        }, cancellationToken);
 
         await base.OnStartAsync(cancellationToken);
     }

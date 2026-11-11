@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using NModbus;
-using ThabeSoft.EdgeGateway.Ethernet;
 using ThabeSoft.EdgeGateway.Simulation.Networks;
+using ThabeSoft.EdgeGateway.Transport;
 
 namespace ThabeSoft.EdgeGateway.Simulation;
 

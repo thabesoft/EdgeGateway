@@ -26,7 +26,7 @@ using ThabeSoft.EdgeGateway.Modbus.ModbusProtocols;
 using ThabeSoft.EdgeGateway.Modbus.ModbusProtocols.Modbus;
 using ThabeSoft.EdgeGateway.Modbus.ModbusProtocols.Modbus.Modbus;
 using ThabeSoft.EdgeGateway.Simulation.Networks;
-using ThabeSoft.EdgeGateway.Ethernet;
+using ThabeSoft.EdgeGateway.Transport;
 
 namespace ThabeSoft.EdgeGateway;
 

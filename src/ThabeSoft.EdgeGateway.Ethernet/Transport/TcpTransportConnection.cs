@@ -1,10 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Net.Sockets;
-using ThabeSoft.EdgeGateway.Ethernet;
 using ThabeSoft.EdgeGateway.Lifecycles;
-using ThabeSoft.EdgeGateway.Transport;
 
-namespace ThabeSoft.EdgeGateway.Ethernet.Internal;
+namespace ThabeSoft.EdgeGateway.Transport;
 
 
 internal sealed class TcpTransportConnection(

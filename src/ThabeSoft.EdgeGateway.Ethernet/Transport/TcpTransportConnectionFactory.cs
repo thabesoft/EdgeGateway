@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using ThabeSoft.EdgeGateway.Transport;
 
-namespace ThabeSoft.EdgeGateway.Ethernet.Internal;
+namespace ThabeSoft.EdgeGateway.Transport;
 
 
 internal sealed class TcpTransportConnectionFactory(ILoggerFactory loggerFactory) : ITransportConnectionFactory

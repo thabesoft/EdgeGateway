@@ -1,12 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using NModbus;
-using ThabeSoft.EdgeGateway.Modbus.Internal;
 using ThabeSoft.EdgeGateway.Protocols;
 
-namespace ThabeSoft.EdgeGateway.Modbus;
+namespace ThabeSoft.EdgeGateway;
 
 
-public static class DependencyInjectionExtensions
+public static class ModbusDependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {

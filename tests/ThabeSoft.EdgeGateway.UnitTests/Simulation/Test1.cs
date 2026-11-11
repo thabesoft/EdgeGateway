@@ -4,7 +4,6 @@ using System.Net;
 using ThabeSoft.EdgeGateway.Codecs;
 
 <<<<<<< TODO: 项目“ThabeSoft.EdgeGateway.UnitTests (net11.0)”的未合并的更改, 在此之前:
-using ThabeSoft.EdgeGateway.Modbus;
 =======
 using ThabeSoft.EdgeGateway.Ethernet;
 using ThabeSoft.EdgeGateway.Modbus;
@@ -13,13 +12,11 @@ using ThabeSoft.EdgeGateway.Modbus;
 <<<<<<< TODO: 项目“ThabeSoft.EdgeGateway.UnitTests (net11.0)”的未合并的更改, 在此之前:
 using ThabeSoft.EdgeGateway.Ethernet.Ethernet;
 using ThabeSoft.EdgeGateway.Ethernet.Ethernet.Ethernet;
-using ThabeSoft.EdgeGateway.Modbus;
 =======
 using ThabeSoft.EdgeGateway.Ethernet;
 using ThabeSoft.EdgeGateway.Ethernet.Ethernet;
 using ThabeSoft.EdgeGateway.Modbus;
 >>>>>>> 晚于
-using ThabeSoft.EdgeGateway.Modbus;
 
 
 
@@ -33,6 +30,7 @@ using ThabeSoft.EdgeGateway.Simulation;
 using ThabeSoft.EdgeGateway.Simulation;
 using ThabeSoft.EdgeGateway.Simulation.ValueGenerators;
 using ThabeSoft.EdgeGateway.Triggers;
+using ThabeSoft.EdgeGateway;
 
 namespace ThabeSoft.EdgeGateway.Simulator;
 

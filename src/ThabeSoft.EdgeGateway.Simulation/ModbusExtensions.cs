@@ -22,9 +22,32 @@ using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway.Modbus.Modbus;
 using ThabeSoft.EdgeGateway.Simulation.Networks;
 >>>>>>> 晚于
-using ThabeSoft.EdgeGateway.Modbus.ModbusProtocols;
-using ThabeSoft.EdgeGateway.Modbus.ModbusProtocols.Modbus;
-using ThabeSoft.EdgeGateway.Modbus.ModbusProtocols.Modbus.Modbus;
+
+<<<<<<< TODO: 项目“ThabeSoft.EdgeGateway.Simulation (netstandard2.0)”的未合并的更改, 在此之前:
+using ThabeSoft.EdgeGateway.Modbus.Modbus;
+=======
+using ThabeSoft.EdgeGateway.Modbus;
+using ThabeSoft.EdgeGateway.Modbus.Modbus;
+>>>>>>> 晚于
+
+<<<<<<< TODO: 项目“ThabeSoft.EdgeGateway.Simulation (net11.0)”的未合并的更改, 在此之前:
+using ThabeSoft.EdgeGateway.Modbus.Modbus;
+using ThabeSoft.EdgeGateway.Modbus.Modbus.Modbus;
+using ThabeSoft.EdgeGateway.Modbus.Modbus.Modbus.Modbus;
+using ThabeSoft.EdgeGateway.Simulation.Networks;
+=======
+using ThabeSoft.EdgeGateway.Modbus;
+using ThabeSoft.EdgeGateway.Modbus;
+using ThabeSoft.EdgeGateway.Modbus.Modbus;
+using ThabeSoft.EdgeGateway.Simulation.Networks;
+>>>>>>> 晚于
+
+<<<<<<< TODO: 项目“ThabeSoft.EdgeGateway.Simulation (netstandard2.0)”的未合并的更改, 在此之前:
+using ThabeSoft.EdgeGateway.Modbus.Modbus.Modbus.Modbus;
+using ThabeSoft.EdgeGateway.Simulation.Networks;
+=======
+using ThabeSoft.EdgeGateway.Simulation.Networks;
+>>>>>>> 晚于
 using ThabeSoft.EdgeGateway.Simulation.Networks;
 using ThabeSoft.EdgeGateway.Transport;
 

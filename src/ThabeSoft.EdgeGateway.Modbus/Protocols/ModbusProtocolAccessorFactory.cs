@@ -1,9 +1,9 @@
 ﻿using NModbus;
 using NModbus.IO;
-using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.IO;
 using ThabeSoft.EdgeGateway.Transport.Byte;
 
-namespace ThabeSoft.EdgeGateway.Modbus.Internal;
+namespace ThabeSoft.EdgeGateway.Protocols;
 
 
 internal sealed class ModbusProtocolAccessorFactory(IModbusFactory modbusFactory) : IProtocolAccessorFactory

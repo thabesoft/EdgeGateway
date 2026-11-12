@@ -62,8 +62,7 @@ internal sealed class LaunchHostedService(
             var tag = Modbus.HoldingRegister(id, (ushort)(i * 4), Codec.Double);
 
             // 模拟从站写入
-            slave.Value(tag, trigger, generators[i]);
-
+            await slave.ValueAsync(tag, trigger, generators[i], cancellationToken);
             // 网关订阅
             await device.AddSubscriptionAsync(SubscriptionDescriptor.Create(tag, trigger), cancellationToken);
         }

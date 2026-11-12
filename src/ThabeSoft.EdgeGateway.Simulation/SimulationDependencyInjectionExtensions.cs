@@ -18,6 +18,7 @@ public static class SimulationDependencyInjectionExtensions
         {
             descriptors.TryAddSingleton<SimulationDeviceFactorySelector>();
             descriptors.TryAddSingleton<SimulationPortFactorySelector>();
+            descriptors.TryAddSingleton<TriggerManager>();
             descriptors.TryAddSingleton<ISimulator, Simulator>();
             return descriptors;
         }

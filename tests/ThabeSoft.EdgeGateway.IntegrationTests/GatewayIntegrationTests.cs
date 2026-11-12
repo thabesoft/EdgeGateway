@@ -65,7 +65,7 @@ public class GatewayIntegrationTests
     {
         var port = Simulator.AddPort(Simulation.ModbusIpPort(_transportDescriptor));
         var device = await port.AddDeviceAsync(Simulation.ModbusDevice(1), TestContext.CancellationToken);
-        device.Value(_tag, _trigger, Simulation.SineWaveValue(1, 0.1));
+        device.ValueAsync(_tag, _trigger, Simulation.SineWaveValue(1, 0.1));
 
         // 模拟器 启动
         await port.StartAsync(TestContext.CancellationToken);

@@ -9,7 +9,7 @@ namespace ThabeSoft.EdgeGateway.Slaves.Modbus;
 
 internal sealed class ModbusSimulatedSlaveFactory(
         IModbusFactory modbusFactory,
-        ITriggerFactorySelector triggerFactorySelector,
+        TriggerManager triggerManager,
         ILoggerFactory loggerFactory
     ) : ISimulationDeviceFactory
 {
@@ -27,7 +27,7 @@ internal sealed class ModbusSimulatedSlaveFactory(
         (
             modbus,
             modbusFactory: modbusFactory,
-            triggerFactorySelector: triggerFactorySelector,
+            triggerManager: triggerManager,
             logger: loggerFactory.CreateLogger<ModbusSimulationDevice>()
         );
     }

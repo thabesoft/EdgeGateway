@@ -16,13 +16,13 @@ namespace ThabeSoft.EdgeGateway.Devices;
 
 internal abstract class SimulationDeviceBase(
         ModbusSimulationDeviceId id,
-        ITriggerFactorySelector triggerFactorySelector,
+        TriggerManager triggerManager,
         ILogger? logger = null
     ) : ISimulationDevice
 {
     private readonly IStrictLifecycleStateMachine _stateMachine = Lifecycle.StrictStateMachine();
     private readonly TaskManager _taskManager = new();
-    private readonly ConcurrentDictionary<Guid, ITrigger> _triggers = [];
+    //private readonly ConcurrentDictionary<Guid, ITrigger> _triggers = [];
     private ILogger _logger = logger ?? NullLogger.Instance;
 
 
@@ -36,14 +36,11 @@ internal abstract class SimulationDeviceBase(
         _stateMachine.StartAsync(_taskManager.StopAsync, cancellationToken);
     public ValueTask DisposeAsync() => _stateMachine.DisposeAsync(async () =>
     {
-        foreach (var i in _triggers.Values)
-            await i.DisposeAsync();
-
         await _taskManager.DisposeAsync();
     });
 
 
-    public IDisposable Value<T>(TagDescriptor<T> tagDescriptor, ITriggerDescriptor triggerDescriptor, IValueGenerator<T> generator)
+    public async ValueTask<IDisposable> ValueAsync<T>(TagDescriptor<T> tagDescriptor, ITriggerDescriptor triggerDescriptor, IValueGenerator<T> generator, CancellationToken cancellationToken = default)
         where T : notnull
     {
         if (tagDescriptor.Address is not ModbusDataAddress dataAddrss)
@@ -52,26 +49,34 @@ internal abstract class SimulationDeviceBase(
         if (tagDescriptor.Codec is not IRequiredBits requiredBits)
             throw new InvalidOperationException("不支持的标签");
 
-        var trigger = triggerFactorySelector.Create(triggerDescriptor);
-        _triggers[Guid.NewGuid()] = trigger;
-
-
-        return _taskManager.AddTask(async ct =>
+        var scheduler = await triggerManager.GetSchedulerAsync(triggerDescriptor, cancellationToken);
+        return scheduler.Subcribe(() =>
         {
-            _logger.LogTrace("添加生成值");
+            var value = generator.Next();
+            _logger.LogTrace("设备({Id}) 已生成值({Value})", Id, value);
 
-            while (!ct.IsCancellationRequested)
-            {
-                if (!await trigger.WaitForNextTickAsync(ct))
-                    return;
-
-                var value = generator.Next();
-                _logger.LogTrace("设备({Id}) 已生成值({Value})", Id, value);
-
-                await OnValueAsync(tagDescriptor, value, ct);
-            }
+            OnValue(tagDescriptor, value);
         });
     }
 
-    protected abstract ValueTask OnValueAsync<T>(TagDescriptor<T> tag, T value, CancellationToken cancellationToken) where T : notnull;
+    protected abstract void OnValue<T>(TagDescriptor<T> tag, T value) where T : notnull;
+}
+
+
+internal class TriggerManager(ITriggerFactorySelector triggerFactorySelector, ILoggerFactory loggerFactory)
+{
+    private readonly ConcurrentDictionary<ITriggerDescriptor, TriggerScheduler> _entries = [];
+
+    public async ValueTask<TriggerScheduler> GetSchedulerAsync(ITriggerDescriptor triggerDescriptor, CancellationToken cancellationToken)
+    {
+        var scheduler = _entries.GetOrAdd(triggerDescriptor, x =>
+        {
+            var trigger = triggerFactorySelector.Create(x);
+            return new TriggerScheduler(trigger, loggerFactory.CreateLogger<TriggerScheduler>());
+        });
+
+        await scheduler.StartAsync(cancellationToken);
+        return scheduler;
+    }
+
 }

@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NModbus;
 using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Tags;
-using ThabeSoft.EdgeGateway.Triggers;
 
 namespace ThabeSoft.EdgeGateway.Devices.Modbus;
 
@@ -11,9 +10,9 @@ namespace ThabeSoft.EdgeGateway.Devices.Modbus;
 internal sealed class ModbusSimulationDevice(
         ModbusSimulationDeviceId id,
         IModbusFactory modbusFactory,
-        ITriggerFactorySelector triggerFactorySelector,
+        TriggerManager triggerManager,
         ILogger<ModbusSimulationDevice>? logger = null
-    ) : SimulationDeviceBase(id, triggerFactorySelector, logger)
+    ) : SimulationDeviceBase(id, triggerManager, logger)
 {
 
     private readonly ILogger<ModbusSimulationDevice> _logger = logger ?? NullLogger<ModbusSimulationDevice>.Instance;
@@ -22,18 +21,16 @@ internal sealed class ModbusSimulationDevice(
     public IModbusSlave Slave { get; } = modbusFactory.CreateSlave(id.Value);
 
 
-    protected override ValueTask OnValueAsync<T>(TagDescriptor<T> tag, T value, CancellationToken cancellationToken)
+    protected override void OnValue<T>(TagDescriptor<T> tag, T value)
     {
         if (tag.Address is not ModbusDataAddress address)
-            return ValueTask.CompletedTask;
+            return;
 
         if (address.Kind == ModbusDataKind.HoldingRegister)
         {
             var words = tag.Codec.EncodeWords(value);
             SetHoldingRegisters(address.StartAddress, words);
         }
-
-        return ValueTask.CompletedTask;
     }
 
 

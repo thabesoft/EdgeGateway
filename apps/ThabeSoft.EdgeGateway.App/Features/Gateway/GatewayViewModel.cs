@@ -1,6 +1,7 @@
 ﻿using Avalonia.Collections;
 using CommunityToolkit.Mvvm.Input;
 using SukiUI.Toasts;
+using ThabeSoft.EdgeGateway.App.Services;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Transport;
 
@@ -29,19 +30,36 @@ internal sealed partial class GatewayViewModel : LifecycleViewModel
 
 
     [RelayCommand]
-    private async Task AddPort(ITransportDescriptor transportDescriptor)
+    private async Task AddPortAsync(ITransportDescriptor transportDescriptor)
     {
-        var port = await _gateway.AddPortAsync(transportDescriptor);
-        _viewModels.TryAdd(transportDescriptor.Endpoint, CreatePortViewModel(port));
+        await _sukiToastManager.ExecuteWithToastAsync(async ct =>
+            await AddPortAsync(transportDescriptor, ct), "添加端口", TimeSpan.FromSeconds(30));
     }
 
     [RelayCommand]
     private async Task RemovePort(ConnectionEndpoint connectionEndpoint)
     {
-        await _gateway.RemovePortAsync(connectionEndpoint);
-        _viewModels.Remove(connectionEndpoint);
+        await _sukiToastManager.ExecuteWithToastAsync(async ct =>
+           await RemovePortAsync(connectionEndpoint, ct), "删除端口", TimeSpan.FromSeconds(10));
     }
 
+
+
+    public async ValueTask<PortViewModel> AddPortAsync(ITransportDescriptor transportDescriptor, CancellationToken cancellationToken = default)
+    {
+        var model = await _gateway.AddPortAsync(transportDescriptor);
+        var viewModel = CreatePortViewModel(model);
+
+        _viewModels[transportDescriptor.Endpoint] = viewModel;
+        return viewModel;
+    }
+    public async ValueTask<bool> RemovePortAsync(ConnectionEndpoint connectionEndpoint, CancellationToken cancellationToken = default)
+    {
+        var result = await _gateway.RemovePortAsync(connectionEndpoint);
+        _viewModels.Remove(connectionEndpoint);
+
+        return result;
+    }
 
     private PortViewModel CreatePortViewModel(IPort port) =>
          new(port, _sukiToastManager);

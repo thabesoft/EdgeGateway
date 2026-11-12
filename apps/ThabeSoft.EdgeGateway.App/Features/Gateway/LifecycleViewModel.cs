@@ -23,9 +23,9 @@ internal partial class LifecycleViewModel(
     private async Task StartAsync()
     {
         await sukiToastManager
-            .QueueWithCatchExceptionAsync(async () =>
+            .ExecuteWithToastAsync(async ct =>
             {
-                await lifecycle.StartAsync();
+                await lifecycle.StartAsync(ct);
                 State = lifecycle.State;
             }, "启动失败");
     }
@@ -33,9 +33,9 @@ internal partial class LifecycleViewModel(
     private async Task StopAsync()
     {
         await sukiToastManager
-            .QueueWithCatchExceptionAsync(async () =>
+            .ExecuteWithToastAsync(async ct =>
             {
-                await lifecycle.StopAsync();
+                await lifecycle.StopAsync(ct);
                 State = lifecycle.State;
             }, "停止失败");
     }

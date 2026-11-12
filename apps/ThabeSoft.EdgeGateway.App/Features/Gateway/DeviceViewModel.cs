@@ -30,7 +30,7 @@ internal sealed partial class DeviceViewModel : LifecycleViewModel
 
 
     [RelayCommand]
-    private async Task AddSubscription(SubscriptionDescriptor<int> subscriptionDescriptor)
+    private async Task AddSubscription(SubscriptionDescriptor<double> subscriptionDescriptor)
     {
         var subscription = await _device.AddSubscriptionAsync(subscriptionDescriptor);
         _subscription.TryAdd(subscription.Id, CreateSubscriptionViewModel(subscription));

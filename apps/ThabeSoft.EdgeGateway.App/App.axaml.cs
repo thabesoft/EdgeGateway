@@ -10,6 +10,7 @@ using ThabeSoft.EdgeGateway.App.Common;
 
 namespace ThabeSoft.EdgeGateway.App;
 
+
 public class App : Application
 {
     private readonly IHost _host;
@@ -33,28 +34,34 @@ public class App : Application
         AvaloniaXamlLoader.Load(this);
     }
 
-    public override async void OnFrameworkInitializationCompleted()
+    public override void OnFrameworkInitializationCompleted()
     {
-        try
-        {
-            await _host.StartAsync();
-        }
-        catch(Exception ex)
-        {
-            _logger.LogError(ex, "Host启动失败");
-            await _host.StopAsync();
-            return;
-        }
+        var viewFactory = Services.GetRequiredService<ViewFactory>();
+        var viewLocator = Services.GetRequiredService<ViewLocator>();
+
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var viewFactory = Services.GetRequiredService<ViewFactory>();
-            var viewLocator = Services.GetRequiredService<ViewLocator>();
-
             DataTemplates.Add(viewLocator);
-
-            Dispatcher.Invoke(() =>
-                desktop.MainWindow = viewFactory.CreateView<MainWindowViewModel>() as Window);
+            desktop.MainWindow = viewFactory.CreateView<MainWindowViewModel>() as Window;
         }
+
+        Task.Run(async () =>
+        {
+            try
+            {
+                await _host.StartAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Host启动失败");
+
+                await Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                        desktop.Shutdown(-1);
+                });
+            }
+        });
     }
 }

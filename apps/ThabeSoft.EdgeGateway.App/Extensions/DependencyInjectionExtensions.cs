@@ -26,7 +26,7 @@ public static class DependencyInjectionExtensions
         public IHostBuilder UseEdgeGatewayApp()
         {
             builder.ConfigureLogging((_, builder) => builder
-                .SetMinimumLevel(LogLevel.Trace));
+                .SetMinimumLevel(LogLevel.Information));
 
             builder.ConfigureServices(services =>
             {
@@ -64,7 +64,7 @@ public static class DependencyInjectionExtensions
 
 
             // Views
-            descriptors.AddSingleton<ViewLocator>();
+            descriptors.AddSingleton<App.Common.ViewLocator>();
             descriptors.AddSingleton<ViewFactory>();
 
 

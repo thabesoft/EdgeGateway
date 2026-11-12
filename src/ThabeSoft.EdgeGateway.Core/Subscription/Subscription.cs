@@ -34,10 +34,8 @@ internal sealed class Subscription<T> : ISubscription<T>, IAsyncDisposeSubscript
 
     public Subscription(
             SubscriptionDescriptor<T> subscriptionDescriptor,
-            IProtocolDescriptor protocolDescriptor,
             ITriggerFactorySelector triggerFactorySelector,
-            IByteDuplex byteDuplex,
-            SubscriptionValueReaderFactory subscriptionValueReaderFactory,
+            IProtocolAccessor protocolAccessor,
             ILifecycleStateable deviceLifecycleState,
             ILogger<Subscription<T>>? logger = null)
     {
@@ -46,7 +44,7 @@ internal sealed class Subscription<T> : ISubscription<T>, IAsyncDisposeSubscript
         _deviceLifecycleState = deviceLifecycleState;
 
         _trigegr = triggerFactorySelector.Create(subscriptionDescriptor.Trigger);
-        _subscriptionValueReader = subscriptionValueReaderFactory.Create(subscriptionDescriptor, protocolDescriptor, byteDuplex);
+        _subscriptionValueReader = new(subscriptionDescriptor, protocolAccessor);
 
         _triggerLifecycle = Lifecycle.Background(TriggerTask, logger);
         _stateMachine = Lifecycle.RetryableStateMachine(logger);

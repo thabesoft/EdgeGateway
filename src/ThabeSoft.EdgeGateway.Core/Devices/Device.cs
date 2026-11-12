@@ -14,8 +14,8 @@ internal sealed class Device : IDevice, IAsyncDisposable
 {
     private readonly DeviceDescriptor _deviceDescriptor;
     private readonly SubscriptionFactory _subscriptionFactory;
-    private readonly IByteDuplex _byteDuplex;
     private readonly ILifecycleStateable _portLifecycleState;
+    private readonly IProtocolAccessor _protocolAccessor;
 
 
     private readonly ILifecycleDictionary<SubscriptionId, IAsyncDisposeSubscription> _subscriptions;
@@ -28,13 +28,14 @@ internal sealed class Device : IDevice, IAsyncDisposable
             SubscriptionFactory subscriptionFactory,
             IByteDuplex byteDuplex,
             ILifecycleStateable portLifecycleState,
+            ProtocolAccessorFactorySelector protocolAccessorFactorySelector,
             ILogger<Device> logger
     )
     {
         _deviceDescriptor = deviceDescriptor;
         _subscriptionFactory = subscriptionFactory;
-        _byteDuplex = byteDuplex;
         _portLifecycleState = portLifecycleState;
+        _protocolAccessor = protocolAccessorFactorySelector.Create(deviceDescriptor.Protocol, byteDuplex);
 
 
         _subscriptions = Lifecycle.KeyedCollection<SubscriptionId, IAsyncDisposeSubscription>(this, logger);
@@ -76,7 +77,7 @@ internal sealed class Device : IDevice, IAsyncDisposable
         var item = await _stateMachine.ExecuteAsync(
            ct => _subscriptions.AddAsync(
                subscriptionDescriptor.Id,
-               () => _subscriptionFactory.Create(subscriptionDescriptor, _deviceDescriptor.Protocol, _byteDuplex, this),
+               () => _subscriptionFactory.Create(subscriptionDescriptor, _protocolAccessor, this),
                ct),
            cancellationToken);
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transport.Byte;
 
@@ -8,6 +9,7 @@ namespace ThabeSoft.EdgeGateway.Devices;
 
 internal sealed class DeviceFactory(
     SubscriptionFactory subscriptionFactory,
+    ProtocolAccessorFactorySelector protocolAccessorFactorySelector,
     ILoggerFactory loggerFactory)
 {
     public Device Create(DeviceDescriptor deviceDescriptor, ILifecycleStateable portLifecycleState, IByteDuplex byteDuplex)
@@ -16,8 +18,9 @@ internal sealed class DeviceFactory(
         (
             deviceDescriptor: deviceDescriptor,
             subscriptionFactory: subscriptionFactory,
-            portLifecycleState: portLifecycleState,
             byteDuplex: byteDuplex,
+            portLifecycleState: portLifecycleState,
+            protocolAccessorFactorySelector: protocolAccessorFactorySelector,
             logger: loggerFactory.CreateLogger<Device>()
         );
     }

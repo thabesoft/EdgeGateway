@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using ReactiveUI.Primitives;
+using ReactiveUI.Primitives.Concurrency;
 using SukiUI.Toasts;
 using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Subscription;
@@ -16,9 +18,11 @@ internal sealed partial class SubscriptionViewModel : LifecycleViewModel, IDispo
     {
         _subscription = subscription;
         Latest = subscription.Latest;
-        _subscriptionHandle = subscription.Subscribe(
-            onNext: value => Latest = value,
-            onError: _ => Latest = Reading.Bad(Latest?.Value ?? default!));
+        _subscriptionHandle = subscription
+            .ObserveOn(AvaloniaScheduler.Instance)
+            .Subscribe(
+                onNext: value => Latest = value,
+                onError: _ => Latest = Reading.Bad(Latest?.Value ?? default!));
     }
 
     public SubscriptionId Id => _subscription.Id;

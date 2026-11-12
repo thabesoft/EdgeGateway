@@ -51,7 +51,7 @@ public class App : Application
 
 
         var viewFactory = Services.GetRequiredService<ViewFactory>();
-        var viewLocator = Services.GetRequiredService<ViewLocator>();
+        var viewLocator = Services.GetRequiredService<Common.ViewLocator>();
 
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)

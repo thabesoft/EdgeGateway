@@ -24,6 +24,7 @@ public class App : Application
             .Build();
 
         _logger = _host.Services.GetRequiredService<ILogger<App>>();
+
     }
 
 
@@ -36,6 +37,19 @@ public class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        Dispatcher.UIThread.UnhandledException += (s, e) =>
+        {
+            _logger.LogError(e.Exception, "UI线程未处理异常");
+            e.Handled = true;
+        };
+        TaskScheduler.UnobservedTaskException += (s, e) =>
+        {
+            _logger.LogError(e.Exception, "未观察到的Task异常");
+            e.SetObserved();
+        };
+
+
+
         var viewFactory = Services.GetRequiredService<ViewFactory>();
         var viewLocator = Services.GetRequiredService<ViewLocator>();
 

@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -6,6 +7,7 @@ using SukiUI.Dialogs;
 using SukiUI.Toasts;
 using ThabeSoft.EdgeGateway.App;
 using ThabeSoft.EdgeGateway.App.Common;
+using ThabeSoft.EdgeGateway.App.Features;
 using ThabeSoft.EdgeGateway.App.Features.Dashboard;
 using ThabeSoft.EdgeGateway.App.Features.Gateway;
 using ThabeSoft.EdgeGateway.App.Features.Topology;
@@ -87,6 +89,25 @@ public static class DependencyInjectionExtensions
         {
             descriptors.AddHostedService<LaunchHostedService>();
             return descriptors;
+        }
+
+
+        public IServiceCollection AddViewMapping<TView, TViewModel>(ServiceLifetime lifetime)
+            where TView : IDataContextProvider, new()
+            where TViewModel : ObservableObject
+        {
+            var viewModelType = typeof(TViewModel);
+
+            if (viewModelType.IsAssignableTo(typeof(PageViewModel)))
+            {
+                descriptors.Add(ServiceDescriptor.Describe(typeof(PageViewModel), viewModelType, lifetime));
+            }
+            else
+            {
+                descriptors.Add(ServiceDescriptor.Describe(viewModelType, viewModelType, lifetime));
+            }
+
+            return descriptors.AddSingleton(ViewMapping.Create<TView, TViewModel>());
         }
     }
 }

@@ -10,7 +10,6 @@
     <Project Path="src/ThabeSoft.EdgeGateway.Compatibility/ThabeSoft.EdgeGateway.Compatibility.csproj" Id="708c6812-6f16-4fff-ab61-0b476512348d" />
     <Project Path="src/ThabeSoft.EdgeGateway.Core/ThabeSoft.EdgeGateway.Core.csproj" Id="281c23f7-8a53-4f1c-b41e-7f06a7892373" />
     <Project Path="src/ThabeSoft.EdgeGateway.Lifecycles/ThabeSoft.EdgeGateway.Lifecycles.csproj" Id="d8d47bb5-b6ac-43ec-89f6-092ef1dbb6dd" />
-    <Project Path="src/ThabeSoft.EdgeGateway.Observable/ThabeSoft.EdgeGateway.Observable.csproj" Id="396cc24b-5c8a-4408-9c6b-11c54e5dc8af" />
   </Folder>
   <Folder Name="/Modules/">
     <Project Path="src/ThabeSoft.EdgeGateway.Simulation/ThabeSoft.EdgeGateway.Simulation.csproj" />

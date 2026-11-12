@@ -23,27 +23,3 @@ public sealed class ViewMapping
         };
     }
 }
-
-public static class ViewMappingExtensions
-{
-    extension(IServiceCollection descriptors)
-    {
-        public IServiceCollection AddViewMapping<TView, TViewModel>(ServiceLifetime lifetime)
-            where TView : IDataContextProvider, new()
-            where TViewModel : ObservableObject
-        {
-            var viewModelType = typeof(TViewModel);
-
-            if (viewModelType.IsAssignableTo(typeof(PageViewModel)))
-            {
-                descriptors.Add(ServiceDescriptor.Describe(typeof(PageViewModel), viewModelType, lifetime));
-            }
-            else
-            {
-                descriptors.Add(ServiceDescriptor.Describe(viewModelType, viewModelType, lifetime));
-            }
-
-            return descriptors.AddSingleton(ViewMapping.Create<TView, TViewModel>());
-        }
-    }
-}

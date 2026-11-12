@@ -16,25 +16,33 @@ internal sealed class LaunchHostedService(
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         var transportDescriptor = Ethernet.Tcp(IPAddress.Loopback, 1234);
-        var tag = Modbus.HoldingRegister(1, 123, Codec.Double);
-        var trigger = Trigger.Interval(100);
+        var trigger = Trigger.Interval(5000);
+        var tag1 = Modbus.HoldingRegister(1, 0, Codec.Double);
+        var tag2 = Modbus.HoldingRegister(1, 4, Codec.Double);
+        var tag3 = Modbus.HoldingRegister(1, 8, Codec.Double);
+        var tag4 = Modbus.HoldingRegister(1, 12, Codec.Double);
 
         // 从站模拟
         var network = simulator.AddPort(Simulation.ModbusIpPort(transportDescriptor));
         var slave = await network.AddDeviceAsync(Simulation.ModbusDevice(1), cancellationToken);
-        slave.Value(tag, trigger, Simulation.SineWaveValue(1, 0.2));
+        slave.Value(tag1, trigger, Simulation.SineWaveValue(1, 0.2));
+        slave.Value(tag2, trigger, Simulation.SineWaveValue(2, 0.4));
+        //slave.Value(tag3, trigger, Simulation.SineWaveValue(3, 0.6));
+        //slave.Value(tag4, trigger, Simulation.SineWaveValue(4, 0.8));
 
 
         // 网关默认数据
         var port = await gateway.AddPortAsync(Ethernet.Tcp(transportDescriptor.IPEndPoint), cancellationToken);
-        await port.AddDeviceCommand.ExecuteAsync(DeviceDescriptor.Create(Modbus.Ip));
+        var dvice = await port.AddDeviceAsync(DeviceDescriptor.Create(Modbus.Ip), cancellationToken);
+        await dvice.AddSubscriptionAsync(SubscriptionDescriptor.Create(tag1, trigger), cancellationToken);
+        await dvice.AddSubscriptionAsync(SubscriptionDescriptor.Create(tag2, trigger), cancellationToken);
+        //await dvice.AddSubscriptionAsync(SubscriptionDescriptor.Create(tag3, trigger), cancellationToken);
+        //await dvice.AddSubscriptionAsync(SubscriptionDescriptor.Create(tag4, trigger), cancellationToken);
 
-        var device = port.Devices.Values.First();
-        await device.AddSubscriptionCommand.ExecuteAsync(SubscriptionDescriptor.Create(tag, trigger));
 
-
+        await Task.Delay(10, cancellationToken);
         await simulator.StartAsync(cancellationToken);
-        await Task.Delay(1000, cancellationToken);
+        await Task.Delay(2000, cancellationToken);
         await gateway.StartCommand.ExecuteAsync(null);
     }
 

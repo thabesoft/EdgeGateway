@@ -16,8 +16,9 @@ internal sealed partial class SubscriptionViewModel : LifecycleViewModel, IDispo
     {
         _subscription = subscription;
         Latest = subscription.Latest;
-        _subscriptionHandle = subscription.Subscribe(value => 
-            Latest = value);
+        _subscriptionHandle = subscription.Subscribe(
+            onNext: value => Latest = value,
+            onError: _ => Latest = Reading.Bad(Latest?.Value ?? default!));
     }
 
     public SubscriptionId Id => _subscription.Id;

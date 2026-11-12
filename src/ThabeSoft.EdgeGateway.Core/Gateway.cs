@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using ThabeSoft.EdgeGateway.Events;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
@@ -13,6 +14,7 @@ namespace ThabeSoft.EdgeGateway;
 internal sealed class Gateway : IGateway, IAsyncDisposable
 {
     private readonly PortFactory _portFactory;
+    private readonly IEventPublisher _eventPublisher;
     private readonly ILogger<Gateway> _logger;
 
     private readonly ILifecycleDictionary<ConnectionEndpoint, Port> _ports;
@@ -20,11 +22,12 @@ internal sealed class Gateway : IGateway, IAsyncDisposable
     private readonly IRetryableLifecycleStateMachine _stateMachine;
 
 
-    public Gateway(PortFactory portFactory, ILogger<Gateway>? logger = null)
+    public Gateway(PortFactory portFactory, IEventPublisher eventPublisher, ILogger<Gateway>? logger = null)
     {
         ArgumentNullException.ThrowIfNull(portFactory);
 
         _portFactory = portFactory;
+        this._eventPublisher = eventPublisher;
         _logger ??= NullLogger<Gateway>.Instance;
 
         _ports = Lifecycle.KeyedCollection<ConnectionEndpoint, Port>(this, logger);
@@ -62,6 +65,8 @@ internal sealed class Gateway : IGateway, IAsyncDisposable
                 cancellationToken);
 
             _logger.LogDebug("端口已添加 ({Endpoint})", port.Endpoint);
+            _eventPublisher.Publish(new GatewayPortAddedEvent(port));
+
             return port;
         }
         catch (Exception ex)
@@ -81,9 +86,14 @@ internal sealed class Gateway : IGateway, IAsyncDisposable
                 cancellationToken);
 
             if (isRemove)
+            {
                 _logger.LogDebug("端口 ({Endpoint}) 删除成功", connectionEndpoint);
+                _eventPublisher.Publish(new GatewayPortRemovedEvent(connectionEndpoint));
+            }
             else
+            {
                 _logger.LogDebug("端口 ({Endpoint}) 不存在，无需删除", connectionEndpoint);
+            }
 
             return isRemove;
         }

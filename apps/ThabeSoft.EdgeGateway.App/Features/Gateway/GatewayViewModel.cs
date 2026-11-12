@@ -19,10 +19,7 @@ internal sealed partial class GatewayViewModel : LifecycleViewModel
     {
         _gateway = gateway;
         _sukiToastManager = sukiToastManager;
-
-        _viewModels = new(gateway.Ports.Values
-            .Select(port => KeyValuePair.Create(port.Endpoint, CreatePortViewModel(port)))
-            .ToDictionary());
+        _viewModels = new(gateway.Ports.ToDictionary(k => k.Key, v => CreateViewModel(v.Value)));
     }
 
     public IAvaloniaReadOnlyDictionary<ConnectionEndpoint, PortViewModel> Ports => _viewModels;
@@ -43,12 +40,10 @@ internal sealed partial class GatewayViewModel : LifecycleViewModel
            await RemovePortAsync(connectionEndpoint, ct), "删除端口", TimeSpan.FromSeconds(10));
     }
 
-
-
     public async ValueTask<PortViewModel> AddPortAsync(ITransportDescriptor transportDescriptor, CancellationToken cancellationToken = default)
     {
         var model = await _gateway.AddPortAsync(transportDescriptor);
-        var viewModel = CreatePortViewModel(model);
+        var viewModel = CreateViewModel(model);
 
         _viewModels[transportDescriptor.Endpoint] = viewModel;
         return viewModel;
@@ -61,6 +56,5 @@ internal sealed partial class GatewayViewModel : LifecycleViewModel
         return result;
     }
 
-    private PortViewModel CreatePortViewModel(IPort port) =>
-         new(port, _sukiToastManager);
+    private PortViewModel CreateViewModel(IPort port) => new(port, _sukiToastManager);
 }

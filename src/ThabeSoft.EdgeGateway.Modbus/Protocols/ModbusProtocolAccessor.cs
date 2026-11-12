@@ -8,33 +8,43 @@ namespace ThabeSoft.EdgeGateway.Protocols;
 
 internal sealed class ModbusProtocolAccessor(IModbusMaster master) : IProtocolAccessor
 {
+    private readonly SemaphoreSlim _lock = new(1, 1);
+
     public async ValueTask<T> ReadAsync<T>(TagDescriptor<T> tag, CancellationToken cancellationToken = default)
         where T : notnull
     {
         if (tag.Address is not ModbusDataAddress mosbus)
             throw new InvalidOperationException("不是有效的Modbus地址");
 
+        await _lock.WaitAsync();
 
-        if (mosbus.Kind == ModbusDataKind.Coil)
+        try
         {
-            var bits = await master.ReadCoilsAsync(mosbus.SlaveId, mosbus.StartAddress, mosbus.Quantity);
-            return tag.Codec.DecodeBits(bits);
-        }
-        if (mosbus.Kind == ModbusDataKind.DiscreteInput)
-        {
-            var bits = await master.ReadInputsAsync(mosbus.SlaveId, mosbus.StartAddress, mosbus.Quantity);
-            return tag.Codec.DecodeBits(bits);
-        }
+            if (mosbus.Kind == ModbusDataKind.Coil)
+            {
+                var bits = await master.ReadCoilsAsync(mosbus.SlaveId, mosbus.StartAddress, mosbus.Quantity);
+                return tag.Codec.DecodeBits(bits);
+            }
+            if (mosbus.Kind == ModbusDataKind.DiscreteInput)
+            {
+                var bits = await master.ReadInputsAsync(mosbus.SlaveId, mosbus.StartAddress, mosbus.Quantity);
+                return tag.Codec.DecodeBits(bits);
+            }
 
-        if (mosbus.Kind == ModbusDataKind.HoldingRegister)
-        {
-            var words = await master.ReadHoldingRegistersAsync(mosbus.SlaveId, mosbus.StartAddress, mosbus.Quantity);
-            return tag.Codec.DecodeWords(words);
+            if (mosbus.Kind == ModbusDataKind.HoldingRegister)
+            {
+                var words = await master.ReadHoldingRegistersAsync(mosbus.SlaveId, mosbus.StartAddress, mosbus.Quantity);
+                return tag.Codec.DecodeWords(words);
+            }
+            if (mosbus.Kind == ModbusDataKind.InputRegister)
+            {
+                var words = await master.ReadInputRegistersAsync(mosbus.SlaveId, mosbus.StartAddress, mosbus.Quantity);
+                return tag.Codec.DecodeWords(words);
+            }
         }
-        if (mosbus.Kind == ModbusDataKind.InputRegister)
+        finally
         {
-            var words = await master.ReadInputRegistersAsync(mosbus.SlaveId, mosbus.StartAddress, mosbus.Quantity);
-            return tag.Codec.DecodeWords(words);
+            _lock.Release();
         }
 
         throw new InvalidProgramException();

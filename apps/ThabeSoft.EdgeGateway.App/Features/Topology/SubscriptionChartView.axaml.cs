@@ -1,7 +1,9 @@
 using Avalonia.Controls;
 using Avalonia.Threading;
+using ReactiveUI.Primitives.Core;
 using ScottPlot.DataSources;
 using ScottPlot.Plottables;
+using System.Runtime.InteropServices;
 using ThabeSoft.EdgeGateway.App.Features.Gateway;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
@@ -31,28 +33,31 @@ public partial class SubscriptionChartView : UserControl
 
         if (_vm is not null)
         {
-            _signal = Plot.Plot.Add.Signal([]);
+            //_signal = Plot.Plot.Add.Signal([]);
 
-            Plot.Plot.Axes.Frameless();
-            Plot.Plot.HideGrid();
-            Plot.Plot.Axes.AutoScale();
+            //Plot.Plot.Axes.Frameless();
+            //Plot.Plot.HideGrid();
+            //Plot.Plot.Axes.AutoScale();
 
-            Plot.Plot.FigureBackground.Color = ScottPlot.Colors.Transparent;
-            Plot.Plot.DataBackground.Color = ScottPlot.Colors.Transparent;
+            //Plot.Plot.FigureBackground.Color = ScottPlot.Colors.Transparent;
+            //Plot.Plot.DataBackground.Color = ScottPlot.Colors.Transparent;
         }
     }
 
     /// <summary>由页面级定时器调用，读 Buffer 快照并刷新波形。</summary>
     public void RefreshPlot()
     {
-        if (_vm is null || _signal is null) return;
+        //if (_vm is null || _signal is null) return;
 
-        var data = _vm.Buffer.Snapshot();
-        if (data.Length < 2) return;
+        //var data = _vm.Buffer.Snapshot();
+        //if (data.Length < 2) return;
 
-        _signal.Data = new SignalSourceDouble(data, 1);
-        Plot.Plot.Axes.SetLimitsX(0, data.Length);
-        Plot.Refresh();
+        //_signal.Data = new SignalSourceDouble(data, 1);
+        //Plot.Plot.Axes.SetLimitsX(0, data.Length);
+        //Plot.Refresh();
+
+
+        Sparkline.InvalidateVisual();
     }
 }
 

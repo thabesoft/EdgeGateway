@@ -1,13 +1,17 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:ScottPlot="using:ScottPlot.Avalonia"
+             xmlns:controls="using:ThabeSoft.EdgeGateway.App.Controls"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:gateway="using:ThabeSoft.EdgeGateway.App.Features.Gateway"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:DataType="gateway:SubscriptionViewModel"
              x:Class="ThabeSoft.EdgeGateway.App.Features.Topology.SubscriptionChartView">
     <Grid>
-        <ScottPlot:AvaPlot Name="Plot"
+        <!--<ScottPlot:AvaPlot Name="Plot"
                            HorizontalAlignment="Stretch"
-                           VerticalAlignment="Stretch" />
+                           VerticalAlignment="Stretch" />-->
+        <controls:SparklineControl Name="Sparkline" Buffer="{Binding Buffer}" />
     </Grid>
 </UserControl>

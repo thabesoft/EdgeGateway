@@ -29,14 +29,22 @@ internal sealed class LaunchHostedService(
         // 从站模拟
         var network = simulator.AddPort(Simulation.ModbusIpPort(transportDescriptor));
         var slave = await network.AddDeviceAsync(Simulation.ModbusDevice(1), cancellationToken);
-        slave.Value(tag1, trigger, Simulation.SineWaveValue(1, 0.1));
-        slave.Value(tag2, trigger, Simulation.SineWaveValue(2, 0.2));
-        slave.Value(tag3, trigger, Simulation.SineWaveValue(3, 0.3));
-        slave.Value(tag4, trigger, Simulation.SineWaveValue(4, 0.4));
-        slave.Value(tag5, trigger, Simulation.SineWaveValue(5, 0.5));
-        slave.Value(tag6, trigger, Simulation.SineWaveValue(6, 0.6));
-        slave.Value(tag7, trigger, Simulation.SineWaveValue(7, 0.7));
-        slave.Value(tag8, trigger, Simulation.SineWaveValue(8, 0.8));
+        // 1. 正弦波：振幅 1，step = 2π/20 ≈ 0.314，约 20 个采样点一个周期
+        slave.Value(tag1, trigger, Simulation.SineWaveValue(1, 2 * Math.PI / 20));
+        // 2. 方波：低 -1、高 1、周期 10 点、占空比 0.3
+        slave.Value(tag2, trigger, Simulation.SquareWaveValue(-1, 1, 10, 0.3));
+        // 3. 三角波：-1 ~ 1，周期 20 点
+        slave.Value(tag3, trigger, Simulation.TriangleWaveValue(-1, 1, 20));
+        // 4. 锯齿波：0 ~ 100，周期 20 点
+        slave.Value(tag4, trigger, Simulation.SawtoothWaveValue(0, 100, 20));
+        // 5. 随机值：0 ~ 100，固定种子 42 可重现
+        slave.Value(tag5, trigger, Simulation.RandomValue(0, 100, seed: 42));
+        // 6. 阶梯：从 0 开始，每步 +1，超过 50 回绕
+        slave.Value(tag6, trigger, Simulation.StepValue(0, 1, 50));
+        // 7. 常量：固定 3.14
+        slave.Value(tag7, trigger, Simulation.ConstantValue(3.14));
+        // 8. 带噪声的正弦波：振幅 1、偏置 0、周期 20、噪声 0.2
+        slave.Value(tag8, trigger, Simulation.NoisySineWaveValue(1, 0, 20, 0.2));
 
 
         // 网关默认数据

@@ -25,8 +25,13 @@ internal partial class LifecycleViewModel(
         await sukiToastManager
             .ExecuteWithToastAsync(async ct =>
             {
+                await OnStartingAsync(ct);
+
                 await lifecycle.StartAsync(ct);
                 State = lifecycle.State;
+
+                await OnStartedAsync(ct);
+
             }, "启动失败");
     }
     [RelayCommand]
@@ -35,8 +40,18 @@ internal partial class LifecycleViewModel(
         await sukiToastManager
             .ExecuteWithToastAsync(async ct =>
             {
+                await OnStartingAsync(ct);
+
                 await lifecycle.StopAsync(ct);
                 State = lifecycle.State;
+
+                await OnStopedAsync(ct);
             }, "停止失败");
     }
+
+
+    protected virtual ValueTask OnStartingAsync(CancellationToken cancellationToken) => ValueTask.CompletedTask;
+    protected virtual ValueTask OnStartedAsync(CancellationToken cancellationToken) => ValueTask.CompletedTask;
+    protected virtual ValueTask OnStopingAsync(CancellationToken cancellationToken) => ValueTask.CompletedTask;
+    protected virtual ValueTask OnStopedAsync(CancellationToken cancellationToken) => ValueTask.CompletedTask;
 }

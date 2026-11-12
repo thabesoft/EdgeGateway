@@ -15,7 +15,7 @@ internal sealed class LaunchHostedService(
 {
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var transportDescriptor = Ethernet.Tcp(IPAddress.Loopback, 1234);
+        var transportDescriptor = Ethernet.Tcp(IPAddress.Loopback, 2333);
         var trigger = Trigger.Interval(10);
         var tag1 = Modbus.HoldingRegister(1, 0, Codec.Double);
         var tag2 = Modbus.HoldingRegister(1, 4, Codec.Double);

@@ -7,6 +7,8 @@ internal sealed class FixedIntervalTriggerDescriptor : ITriggerDescriptor
 
     private FixedIntervalTriggerDescriptor() { }
     public override string ToString() => $"FixedInterval({Interval.TotalMilliseconds}ms)";
+    public bool Equals(ITriggerDescriptor other) => 
+        other is FixedIntervalTriggerDescriptor @fixed && @fixed.Interval == Interval;
 
 
     public static FixedIntervalTriggerDescriptor Create(TimeSpan timeSpan)

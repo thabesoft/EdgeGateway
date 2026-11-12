@@ -1,3 +1,3 @@
 ﻿namespace ThabeSoft.EdgeGateway.Triggers;
 
-public interface ITriggerDescriptor;
+public interface ITriggerDescriptor : IEquatable<ITriggerDescriptor>;

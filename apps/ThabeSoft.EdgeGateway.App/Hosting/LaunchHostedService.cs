@@ -17,7 +17,7 @@ internal sealed class LaunchHostedService(
     {
         var transportDescriptor = Ethernet.Tcp(IPAddress.Loopback, 1234);
         var tag = Modbus.HoldingRegister(1, 123, Codec.Double);
-        var trigger = Trigger.Interval(2000);
+        var trigger = Trigger.Interval(100);
 
         // 从站模拟
         var network = simulator.AddPort(Simulation.ModbusIpPort(transportDescriptor));

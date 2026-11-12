@@ -41,7 +41,7 @@ internal sealed class Gateway : IGateway, IAsyncDisposable
         _stateMachine.StartAsync(ct => _batchExecutor.StartAsync(_ports.Values, ct), cancellationToken);
     public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
         _stateMachine.StopAsync(ct => _batchExecutor.StopAsync(_ports.Values, ct), cancellationToken);
-    public ValueTask DisposeAsync() => 
+    public ValueTask DisposeAsync() =>
         _stateMachine.DisposeAsync(() => _batchExecutor.DisposeAsync(_ports.Values));
 
 

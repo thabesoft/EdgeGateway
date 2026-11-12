@@ -2,7 +2,9 @@
 using System.Net;
 using ThabeSoft.EdgeGateway.App.Features.Gateway;
 using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Subscription;
+using ThabeSoft.EdgeGateway.Transport;
 using ThabeSoft.EdgeGateway.Triggers;
 using ThabeSoft.EdgeGateway.ValueGenerators;
 
@@ -16,22 +18,11 @@ internal sealed class LaunchHostedService(
 {
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var transportDescriptor = Ethernet.Tcp(IPAddress.Loopback, 2333);
-
-        // 从站模拟
-        var network = simulator.AddPort(Simulation.ModbusIpPort(transportDescriptor));
-        var slave1 = await network.AddDeviceAsync(Simulation.ModbusDevice(1), cancellationToken);
-        var slave2 = await network.AddDeviceAsync(Simulation.ModbusDevice(2), cancellationToken);
-       
-        // 网关默认数据
-        var port = await gateway.AddPortAsync(Ethernet.Tcp(transportDescriptor.IPEndPoint), cancellationToken);
-        var device1 = await port.AddDeviceAsync(DeviceDescriptor.Create(Modbus.Ip), cancellationToken);
-        var device2 = await port.AddDeviceAsync(DeviceDescriptor.Create(Modbus.Ip), cancellationToken);
-
-
-        // 初始化数据
-        await AddTagAsync(1, slave1, device1, cancellationToken);
-        await AddTagAsync(2, slave2, device2, cancellationToken);
+        await AddPortAsync(Ethernet.Tcp(IPAddress.Loopback, 2333), simulator, gateway, cancellationToken);
+        await AddPortAsync(Ethernet.Tcp(IPAddress.Loopback, 2334), simulator, gateway, cancellationToken);
+        await AddPortAsync(Ethernet.Tcp(IPAddress.Loopback, 2335), simulator, gateway, cancellationToken);
+        await AddPortAsync(Ethernet.Tcp(IPAddress.Loopback, 2336), simulator, gateway, cancellationToken);
+        await AddPortAsync(Ethernet.Tcp(IPAddress.Loopback, 2337), simulator, gateway, cancellationToken);
 
 
         await Task.Delay(10, cancellationToken);
@@ -45,11 +36,24 @@ internal sealed class LaunchHostedService(
         return Task.CompletedTask;
     }
 
-    private static async Task AddTagAsync(byte id, ISimulationDevice slave, DeviceViewModel device, CancellationToken cancellationToken)
+    private static async Task AddPortAsync(IpTransportDescriptor transportDescriptor, ISimulator simulator, GatewayViewModel gateway, CancellationToken cancellationToken)
     {
+        var network = simulator.AddPort(Simulation.ModbusIpPort(transportDescriptor));
+        var port = await gateway.AddPortAsync(Ethernet.Tcp(transportDescriptor.IPEndPoint), cancellationToken);
+
+        const int count = 10;
+
+        for (byte i = 1; i <= count; i++)
+            await AddDeviceAsync(i, network, port, cancellationToken);
+    }
+    private static async Task AddDeviceAsync(byte id, ISimulationPort network, PortViewModel port, CancellationToken cancellationToken)
+    {
+        var slave = await network.AddDeviceAsync(Simulation.ModbusDevice(id), cancellationToken);
+        var device = await port.AddDeviceAsync(DeviceDescriptor.Create(Modbus.Ip), cancellationToken);
+
         var trigger = Trigger.Interval(100);   // 50 个标签，100ms 足够，别用 10ms
 
-        const int count = 1;
+        const int count = 1000;
         var generators = CreateGenerators(count);
 
         for (int i = 0; i < count; i++)

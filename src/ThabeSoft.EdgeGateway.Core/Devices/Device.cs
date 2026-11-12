@@ -4,7 +4,6 @@ using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
-using ThabeSoft.EdgeGateway.Transport.Byte;
 using ThabeSoft.EdgeGateway.Utilities;
 
 namespace ThabeSoft.EdgeGateway.Devices;
@@ -26,16 +25,15 @@ internal sealed class Device : IDevice, IAsyncDisposable
     public Device(
             DeviceDescriptor deviceDescriptor,
             SubscriptionFactory subscriptionFactory,
-            IByteDuplex byteDuplex,
             ILifecycleStateable portLifecycleState,
-            ProtocolAccessorFactorySelector protocolAccessorFactorySelector,
+            IProtocolAccessor protocolAccessor,
             ILogger<Device> logger
     )
     {
         _deviceDescriptor = deviceDescriptor;
         _subscriptionFactory = subscriptionFactory;
         _portLifecycleState = portLifecycleState;
-        _protocolAccessor = protocolAccessorFactorySelector.Create(deviceDescriptor.Protocol, byteDuplex);
+        _protocolAccessor = protocolAccessor;
 
 
         _subscriptions = Lifecycle.KeyedCollection<SubscriptionId, IAsyncDisposeSubscription>(this, logger);

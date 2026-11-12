@@ -3,6 +3,7 @@ using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Transport;
 using ThabeSoft.EdgeGateway.Utilities;
 
@@ -13,6 +14,7 @@ internal sealed class Port : IPort, IAsyncDisposable
 {
     private readonly ITransportConnection _transportConnection;
     private readonly DeviceFactory _deviceFactory;
+    private readonly ProtocolAccessorFactorySelector _protocolAccessorFactorySelector;
     private readonly ILifecycleStateable _gatewayLifecycleState;
     private readonly ILogger<Port> _logger;
 
@@ -26,10 +28,12 @@ internal sealed class Port : IPort, IAsyncDisposable
         ITransportDescriptor transportDescriptor,
         TransportConnectionFactorySelector transportConnectionFactorySelector,
         DeviceFactory deviceFactory,
+        ProtocolAccessorFactorySelector protocolAccessorFactorySelector,
         ILifecycleStateable gatewayLifecycleState,
         ILogger<Port> logger)
     {
         _deviceFactory = deviceFactory;
+        _protocolAccessorFactorySelector = protocolAccessorFactorySelector;
         _gatewayLifecycleState = gatewayLifecycleState;
         _transportConnection = transportConnectionFactorySelector.Create(transportDescriptor);
         _logger = logger;
@@ -56,10 +60,11 @@ internal sealed class Port : IPort, IAsyncDisposable
 
     public async ValueTask<IDevice> AddDeviceAsync(DeviceDescriptor descriptor, CancellationToken cancellationToken = default)
     {
+
         return await _stateMachine.ExecuteAsync(
             ct => _devices.AddAsync(
                 descriptor.Id,
-                () => _deviceFactory.Create(descriptor, this, _transportConnection),
+                () => _deviceFactory.Create(descriptor, this, GetProtocolAccessor(descriptor.Protocol)),
                 ct),
             cancellationToken);
     }
@@ -117,4 +122,18 @@ internal sealed class Port : IPort, IAsyncDisposable
             _logger.LogError(ex, "端口 {Endpoint} 传输器 释放失败", _transportConnection.Endpoint);
         }
     }
+
+
+    private IProtocolAccessor GetProtocolAccessor(IProtocolDescriptor protocolDescriptor)
+    {
+        if (_sss.TryGetValue(protocolDescriptor, out var s))
+            return s;
+
+        s = _protocolAccessorFactorySelector.Create(protocolDescriptor, _transportConnection);
+        _sss[protocolDescriptor] = s;
+
+        return s;
+    }
+
+    private Dictionary<IProtocolDescriptor, IProtocolAccessor> _sss = [];
 }

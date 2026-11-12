@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Transport;
 
 namespace ThabeSoft.EdgeGateway.Ports;
@@ -9,6 +10,7 @@ namespace ThabeSoft.EdgeGateway.Ports;
 internal sealed class PortFactory(
         TransportConnectionFactorySelector transportConnectionFactorySelector,
         DeviceFactory deviceFactory,
+        ProtocolAccessorFactorySelector protocolAccessorFactorySelector,
         ILoggerFactory loggerFactory
     )
 {
@@ -18,8 +20,9 @@ internal sealed class PortFactory(
         (
             transportDescriptor: transportDescriptor,
             transportConnectionFactorySelector: transportConnectionFactorySelector,
-            gatewayLifecycleState: gatewayLifecycleState,
             deviceFactory: deviceFactory,
+            protocolAccessorFactorySelector: protocolAccessorFactorySelector,
+            gatewayLifecycleState: gatewayLifecycleState,
             logger: loggerFactory.CreateLogger<Port>()
         );
     }

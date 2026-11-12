@@ -2,25 +2,22 @@
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
-using ThabeSoft.EdgeGateway.Transport.Byte;
 
 namespace ThabeSoft.EdgeGateway.Devices;
 
 
 internal sealed class DeviceFactory(
     SubscriptionFactory subscriptionFactory,
-    ProtocolAccessorFactorySelector protocolAccessorFactorySelector,
     ILoggerFactory loggerFactory)
 {
-    public Device Create(DeviceDescriptor deviceDescriptor, ILifecycleStateable portLifecycleState, IByteDuplex byteDuplex)
+    public Device Create(DeviceDescriptor deviceDescriptor, ILifecycleStateable portLifecycleState, IProtocolAccessor protocolAccessor)
     {
         return new
         (
             deviceDescriptor: deviceDescriptor,
             subscriptionFactory: subscriptionFactory,
-            byteDuplex: byteDuplex,
             portLifecycleState: portLifecycleState,
-            protocolAccessorFactorySelector: protocolAccessorFactorySelector,
+            protocolAccessor: protocolAccessor,
             logger: loggerFactory.CreateLogger<Device>()
         );
     }

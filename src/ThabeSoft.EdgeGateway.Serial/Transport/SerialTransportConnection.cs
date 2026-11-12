@@ -5,6 +5,7 @@ using ThabeSoft.EdgeGateway.Transport.Byte;
 
 using RJCPStopBit = RJCP.IO.Ports.StopBits;
 using RJCPParity = RJCP.IO.Ports.Parity;
+using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 
 
 namespace ThabeSoft.EdgeGateway.Transport;

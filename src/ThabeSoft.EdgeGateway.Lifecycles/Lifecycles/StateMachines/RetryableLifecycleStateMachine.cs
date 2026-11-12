@@ -3,15 +3,16 @@ using Microsoft.Extensions.Logging.Abstractions;
 using System.Diagnostics;
 using ThabeSoft.EdgeGateway.Extensions;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles.Internal;
+namespace ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 
 
-internal sealed class StrictLifecycleStateMachine(ILogger? logger = null) :
-    IStrictLifecycleStateMachine
+internal sealed class RetryableLifecycleStateMachine(ILogger? logger = null) :
+    IRetryableLifecycleStateMachine
 {
     private readonly SemaphoreSlim _lock = new(1, 1);
     private readonly ILogger _logger = logger ?? NullLogger.Instance;
     private volatile LifecycleState _state = LifecycleState.Created;
+
 
     public LifecycleState State => _state;
 
@@ -30,149 +31,119 @@ internal sealed class StrictLifecycleStateMachine(ILogger? logger = null) :
 #endif
 
 
-    /// <summary>
-    /// 将状态调整至<see cref="LifecycleState.Starting"/> -> onStart() -> <see cref="LifecycleState.Running"/> <br/>
-    /// 如果回调方法发生异常, 则调整为 <see cref="LifecycleState.Faulted"/>
-    /// </summary>
-    /// <exception cref="TimeoutException"></exception>
-    /// <exception cref="ObjectDisposedException"></exception>
     [DebuggerStepThrough]
     public async ValueTask StartAsync(Func<CancellationToken, ValueTask> onStart, CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);
-        ArgumentNullException.ThrowIfNull(onStart);
-
 
         await _lock.WaitWithTimeoutAsync(LockTimeout, cancellationToken);
         try
         {
-            if (_state is LifecycleState.Running or LifecycleState.Starting)
-                throw new InvalidOperationException("已启动, 无法重复启动");
+            ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);
+            if (_state is LifecycleState.Starting) return;
 
             try
             {
                 _state = LifecycleState.Starting;
-                await onStart.InvokeWithTimeoutAsync(StartTimeout, cancellationToken);
+                await onStart.InvokeWithTimeoutAsync(StopTimeout, "启动", cancellationToken);
+
                 _state = LifecycleState.Running;
+                _logger.LogTrace("已启动");
             }
-            catch
+            catch (Exception ex)
             {
                 _state = LifecycleState.Faulted;
+                _logger.LogError(ex, "启动失败");
+
                 throw;
             }
         }
         finally { _lock.Release(); }
     }
-    /// <summary>
-    /// 将状态调整至<see cref="LifecycleState.Stopping"/> -> onStop() -> <see cref="LifecycleState.Stopped"/> <br/>
-    /// 如果回调方法发生异常, 则调整为 <see cref="LifecycleState.Faulted"/>
-    /// </summary>
-    /// <exception cref="TimeoutException"></exception>
-    /// <exception cref="ObjectDisposedException"></exception>
+
     [DebuggerStepThrough]
     public async ValueTask StopAsync(Func<CancellationToken, ValueTask> onStop, CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);
-        ArgumentNullException.ThrowIfNull(onStop);
+
 
         await _lock.WaitWithTimeoutAsync(LockTimeout, cancellationToken);
         try
         {
-            if (_state is LifecycleState.Stopped or LifecycleState.Stopping)
-                throw new InvalidOperationException("已停止, 无法重复停止");
+            ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);
+            if (_state is LifecycleState.Stopping or LifecycleState.Stopped) return;
 
             try
             {
                 _state = LifecycleState.Stopping;
-                await onStop.InvokeWithTimeoutAsync(StopTimeout, cancellationToken);
+                await onStop.InvokeWithTimeoutAsync(StopTimeout, "停止", cancellationToken);
+
                 _state = LifecycleState.Stopped;
+                _logger.LogTrace("已停止");
             }
-            catch
+            catch (Exception ex)
             {
                 _state = LifecycleState.Faulted;
+                _logger.LogError(ex, "停止失败");
                 throw;
             }
         }
         finally { _lock.Release(); }
     }
-    /// <summary>
-    /// 将状态调整至 onDispose() -> <see cref="LifecycleState.Disposed"/>
-    /// </summary>
-    /// <exception cref="TimeoutException"></exception>
-    /// <exception cref="ObjectDisposedException"></exception>
     public async ValueTask DisposeAsync(Func<ValueTask> onDispose)
     {
-        if (_state == LifecycleState.Disposed) return;
-        if (onDispose is null) return;
-
-        var lockAcquired = false;
+        await _lock.WaitWithTimeoutAsync(LockTimeout);
         try
         {
-            await _lock.WaitWithTimeoutAsync(LockTimeout);
-            lockAcquired = true;
-
             if (_state is LifecycleState.Disposed) return;
+
             _state = LifecycleState.Disposed;
         }
-        catch (TimeoutException)
-        {
-            _logger.LogWarning("释放时获取状态机锁超时，跳过状态标记，继续释放");
-        }
-        finally
-        {
-            if (lockAcquired) _lock.Release();
-        }
+        finally { _lock.Release(); }
 
         try
         {
-            await onDispose.InvokeWithTimeoutAsync(DisposeTimeout);
+            await onDispose.InvokeWithTimeoutAsync(ExecuteTimeout, "执行");
+            _logger.LogTrace("已释放");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "释放时发生错误");
+            _logger.LogError(ex, "释放失败");
         }
     }
-
     public ValueTask DisposeAsync() => DisposeAsync(() => ValueTask.CompletedTask);
 
 
-    /// <summary>
-    /// 共享状态锁执行方法
-    /// </summary>
     [DebuggerStepThrough]
-    public async ValueTask ExecuteAsync(Func<CancellationToken, ValueTask> action, CancellationToken cancellationToken = default)
+    public async ValueTask ExecuteAsync(
+        Func<CancellationToken, ValueTask> action,
+        CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);
-        ArgumentNullException.ThrowIfNull(action);
 
+        await _lock.WaitWithTimeoutAsync(LockTimeout, cancellationToken);
         try
         {
-            await _lock.WaitWithTimeoutAsync(LockTimeout, cancellationToken);
-            await action.InvokeWithTimeoutAsync(ExecuteTimeout, cancellationToken);
+            ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);
+            await action.InvokeWithTimeoutAsync(ExecuteTimeout, "执行", cancellationToken);
         }
-        finally
-        {
-            _lock.Release();
-        }
+        finally { _lock.Release(); }
     }
-    /// <summary>
-    /// 共享状态锁执行方法
-    /// </summary>
+
     [DebuggerStepThrough]
-    public async ValueTask<TResult> ExecuteAsync<TResult>(Func<CancellationToken, ValueTask<TResult>> action, CancellationToken cancellationToken = default)
+    public async ValueTask<TResult> ExecuteAsync<TResult>(
+        Func<CancellationToken, ValueTask<TResult>> action,
+        CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);
-        ArgumentNullException.ThrowIfNull(action);
 
+        await _lock.WaitWithTimeoutAsync(LockTimeout, cancellationToken);
         try
         {
-            await _lock.WaitWithTimeoutAsync(LockTimeout, cancellationToken);
-            return await action.InvokeWithTimeoutAsync(ExecuteTimeout, cancellationToken);
+            ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);
+            return await action.InvokeWithTimeoutAsync(ExecuteTimeout, "执行", cancellationToken);
         }
-        finally
-        {
-            _lock.Release();
-        }
+        finally { _lock.Release(); }
     }
 
     [DebuggerStepThrough]

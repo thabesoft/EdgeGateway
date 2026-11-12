@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using System.Diagnostics;
 using ThabeSoft.EdgeGateway.Extensions;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles.Internal;
+namespace ThabeSoft.EdgeGateway.Lifecycles.Collections;
 
 
 internal sealed class LifecycleBatchExecutor(ILogger? logger = null) : ILifecycleBatchExecutor

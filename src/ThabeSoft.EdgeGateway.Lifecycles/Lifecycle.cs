@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
-using ThabeSoft.EdgeGateway.Lifecycles.Internal;
+using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Lifecycles.Collections;
+using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles;
+namespace ThabeSoft.EdgeGateway;
 
 
 public static class Lifecycle
@@ -20,12 +22,12 @@ public static class Lifecycle
     /// <summary>
     /// 带键的生命周集合
     /// </summary>
-    public static ILifecycleKeyedCollection<TKey, TLifecycle> KeyedCollection<TKey, TLifecycle>(ILifecycleStateable lifecycleStateable, ILogger? logger = null)
+    public static ILifecycleDictionary<TKey, TLifecycle> KeyedCollection<TKey, TLifecycle>(ILifecycleStateable lifecycleStateable, ILogger? logger = null)
         where TKey : notnull
         where TLifecycle : ILifecycle, IAsyncDisposable
     {
         ArgumentNullException.ThrowIfNull(lifecycleStateable);
-        return new LifecycleKeyedCollection<TKey, TLifecycle>(lifecycleStateable, logger);
+        return new LifecycleDictionary<TKey, TLifecycle>(lifecycleStateable, logger);
     }
 
     #endregion

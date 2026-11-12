@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Lifecycles.Collections;
+using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Transport;
 using ThabeSoft.EdgeGateway.Utilities;
@@ -13,7 +15,7 @@ internal sealed class Gateway : IGateway, IAsyncDisposable
     private readonly PortFactory _portFactory;
     private readonly ILogger<Gateway> _logger;
 
-    private readonly ILifecycleKeyedCollection<ConnectionEndpoint, Port> _ports;
+    private readonly ILifecycleDictionary<ConnectionEndpoint, Port> _ports;
     private readonly ILifecycleBatchExecutor _batchExecutor;
     private readonly IRetryableLifecycleStateMachine _stateMachine;
 

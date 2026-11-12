@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Lifecycles.Collections;
+using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transport.Byte;
@@ -16,7 +18,7 @@ internal sealed class Device : IDevice, IAsyncDisposable
     private readonly ILifecycleStateable _portLifecycleState;
 
 
-    private readonly ILifecycleKeyedCollection<SubscriptionId, IAsyncDisposeSubscription> _subscriptions;
+    private readonly ILifecycleDictionary<SubscriptionId, IAsyncDisposeSubscription> _subscriptions;
     private readonly ILifecycleBatchExecutor _subscriptionsBatchExecutor;
     private readonly IRetryableLifecycleStateMachine _stateMachine;
 

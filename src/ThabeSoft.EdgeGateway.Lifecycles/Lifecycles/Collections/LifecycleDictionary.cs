@@ -2,10 +2,10 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Collections.Concurrent;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles.Internal;
+namespace ThabeSoft.EdgeGateway.Lifecycles.Collections;
 
 
-internal sealed class LifecycleKeyedCollection<TKey, TLifecycle> : ILifecycleKeyedCollection<TKey, TLifecycle>
+internal sealed class LifecycleDictionary<TKey, TLifecycle> : ILifecycleDictionary<TKey, TLifecycle>
     where TKey : notnull
     where TLifecycle : ILifecycle, IAsyncDisposable
 {
@@ -13,7 +13,7 @@ internal sealed class LifecycleKeyedCollection<TKey, TLifecycle> : ILifecycleKey
     private readonly ILifecycleStateable _stateSource;
     private readonly ILogger _logger;
 
-    public LifecycleKeyedCollection(
+    public LifecycleDictionary(
             ILifecycleStateable stateSource,
             ILogger? logger = null)
     {

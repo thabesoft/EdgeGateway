@@ -1,10 +1,10 @@
-﻿namespace ThabeSoft.EdgeGateway.Lifecycles;
+﻿namespace ThabeSoft.EdgeGateway.Lifecycles.Collections;
 
 
 /// <summary>
 /// 带有 键 的生命周期集合
 /// </summary>
-public interface ILifecycleKeyedCollection<TKey, TLifecycle>
+public interface ILifecycleDictionary<TKey, TLifecycle>
     where TKey : notnull
     where TLifecycle : ILifecycle, IAsyncDisposable
 {
@@ -16,7 +16,7 @@ public interface ILifecycleKeyedCollection<TKey, TLifecycle>
 
 public static class LifecycleKeyedCollectionExtensions
 {
-    extension<TKey, TLifecycle>(ILifecycleKeyedCollection<TKey, TLifecycle> collection)
+    extension<TKey, TLifecycle>(ILifecycleDictionary<TKey, TLifecycle> collection)
         where TKey : notnull
         where TLifecycle : ILifecycle, IAsyncDisposable
     {

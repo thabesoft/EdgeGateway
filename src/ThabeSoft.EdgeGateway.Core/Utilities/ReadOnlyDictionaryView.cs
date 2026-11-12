@@ -9,7 +9,10 @@ internal sealed class ReadOnlyDictionaryView<TKey, TValue, TView>(IReadOnlyDicti
     where TValue : TView
 {
     public IEnumerable<TKey> Keys => items.Keys;
-    public IEnumerable<TView> Values => GetValues();
+    public IEnumerable<TView> Values
+    {
+        get { foreach (var i in items.Values) yield return i; }
+    }
     public int Count => items.Count;
     public TView this[TKey key] => items[key];
 
@@ -29,9 +32,4 @@ internal sealed class ReadOnlyDictionaryView<TKey, TValue, TView>(IReadOnlyDicti
             yield return new KeyValuePair<TKey, TView>(kv.Key, kv.Value);
     }
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    private IEnumerable<TView> GetValues()
-    {
-        foreach (var i in items.Values) yield return i;
-    }
 }

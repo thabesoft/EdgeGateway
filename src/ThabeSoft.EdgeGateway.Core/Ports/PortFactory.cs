@@ -8,9 +8,9 @@ namespace ThabeSoft.EdgeGateway.Ports;
 
 
 internal sealed class PortFactory(
-        TransportConnectionFactorySelector transportConnectionFactorySelector,
+        TransportConnectionFactoryResolver transportConnectionFactoryResolver,
         DeviceFactory deviceFactory,
-        ProtocolAccessorFactorySelector protocolAccessorFactorySelector,
+        ProtocolAccessorFactoryResolver protocolAccessorFactoryResolver,
         ILoggerFactory loggerFactory
     )
 {
@@ -18,11 +18,11 @@ internal sealed class PortFactory(
     {
         return new
         (
-            transportDescriptor: transportDescriptor,
-            transportConnectionFactorySelector: transportConnectionFactorySelector,
-            deviceFactory: deviceFactory,
-            protocolAccessorFactorySelector: protocolAccessorFactorySelector,
             gatewayLifecycleState: gatewayLifecycleState,
+            transportDescriptor: transportDescriptor,
+            transportConnectionFactoryResolver: transportConnectionFactoryResolver,
+            protocolAccessorFactoryResolver: protocolAccessorFactoryResolver,
+            deviceFactory: deviceFactory,
             logger: loggerFactory.CreateLogger<Port>()
         );
     }

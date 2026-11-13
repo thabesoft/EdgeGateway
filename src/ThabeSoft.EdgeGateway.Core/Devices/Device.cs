@@ -3,6 +3,7 @@ using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Recoveries;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Utilities;
 
@@ -15,9 +16,8 @@ internal sealed class Device : IDevice, IAsyncDisposable
     private readonly SubscriptionFactory _subscriptionFactory;
     private readonly ILifecycleStateable _portLifecycleState;
     private readonly IProtocolAccessor _protocolAccessor;
-
-
-    private readonly ILifecycleDictionary<SubscriptionId, IAsyncDisposeSubscription> _subscriptions;
+    private readonly RecoveryHandler _exceptionHandler;
+    private readonly ILifecycleKeyedCollection<SubscriptionId, IAsyncDisposeSubscription> _subscriptions;
     private readonly ILifecycleBatchExecutor _subscriptionsBatchExecutor;
     private readonly IRetryableLifecycleStateMachine _stateMachine;
 
@@ -27,6 +27,7 @@ internal sealed class Device : IDevice, IAsyncDisposable
             SubscriptionFactory subscriptionFactory,
             ILifecycleStateable portLifecycleState,
             IProtocolAccessor protocolAccessor,
+            RecoveryHandler exceptionHandler,
             ILogger<Device> logger
     )
     {
@@ -34,7 +35,7 @@ internal sealed class Device : IDevice, IAsyncDisposable
         _subscriptionFactory = subscriptionFactory;
         _portLifecycleState = portLifecycleState;
         _protocolAccessor = protocolAccessor;
-
+        _exceptionHandler = exceptionHandler;
 
         _subscriptions = Lifecycle.KeyedCollection<SubscriptionId, IAsyncDisposeSubscription>(this, logger);
         Subscriptions = new ReadOnlyDictionaryView<SubscriptionId, IAsyncDisposeSubscription, ISubscription>(_subscriptions.Items);
@@ -75,7 +76,7 @@ internal sealed class Device : IDevice, IAsyncDisposable
         var item = await _stateMachine.ExecuteAsync(
            ct => _subscriptions.AddAsync(
                subscriptionDescriptor.Id,
-               () => _subscriptionFactory.Create(subscriptionDescriptor, _protocolAccessor, this),
+               () => _subscriptionFactory.Create(subscriptionDescriptor, _protocolAccessor, this, _exceptionHandler),
                ct),
            cancellationToken);
 

@@ -4,7 +4,7 @@
 /// <summary>
 /// 带有 键 的生命周期集合
 /// </summary>
-public interface ILifecycleDictionary<TKey, TLifecycle>
+public interface ILifecycleKeyedCollection<TKey, TLifecycle> : IAsyncDisposable
     where TKey : notnull
     where TLifecycle : ILifecycle, IAsyncDisposable
 {
@@ -16,7 +16,7 @@ public interface ILifecycleDictionary<TKey, TLifecycle>
 
 public static class LifecycleKeyedCollectionExtensions
 {
-    extension<TKey, TLifecycle>(ILifecycleDictionary<TKey, TLifecycle> collection)
+    extension<TKey, TLifecycle>(ILifecycleKeyedCollection<TKey, TLifecycle> collection)
         where TKey : notnull
         where TLifecycle : ILifecycle, IAsyncDisposable
     {

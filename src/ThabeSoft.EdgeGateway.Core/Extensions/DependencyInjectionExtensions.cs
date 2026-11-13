@@ -5,6 +5,7 @@ using ThabeSoft.EdgeGateway.Events;
 using ThabeSoft.EdgeGateway.Hosting;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Recoveries;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transport;
 
@@ -25,14 +26,19 @@ public static class DependencyInjectionExtensions
             // Triggers
             descriptors.AddTriggers();
 
+            // Recoveries
+            descriptors.AddSingleton<RecoveryHandler>();
+            descriptors.AddSingleton<IRecoveryPolicyFactory, SocketExceptionRecoveryPolicyFactory>();
+
+
             // Factory
             descriptors.TryAddSingleton<PortFactory>();
             descriptors.TryAddSingleton<DeviceFactory>();
             descriptors.TryAddSingleton<SubscriptionFactory>();
 
             // FactorySelector
-            descriptors.TryAddSingleton<TransportConnectionFactorySelector>();
-            descriptors.TryAddSingleton<ProtocolAccessorFactorySelector>();
+            descriptors.TryAddSingleton<TransportConnectionFactoryResolver>();
+            descriptors.TryAddSingleton<ProtocolAccessorFactoryResolver>();
 
             // Gateway
             descriptors.TryAddSingleton<IGateway, Gateway>();

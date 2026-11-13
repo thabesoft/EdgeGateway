@@ -17,7 +17,7 @@ internal sealed class Gateway : IGateway, IAsyncDisposable
     private readonly IEventPublisher _eventPublisher;
     private readonly ILogger<Gateway> _logger;
 
-    private readonly ILifecycleDictionary<ConnectionEndpoint, Port> _ports;
+    private readonly ILifecycleKeyedCollection<ConnectionEndpoint, Port> _ports;
     private readonly ILifecycleBatchExecutor _batchExecutor;
     private readonly IRetryableLifecycleStateMachine _stateMachine;
 

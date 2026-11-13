@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Recoveries;
 using ThabeSoft.EdgeGateway.Triggers;
 
 namespace ThabeSoft.EdgeGateway.Subscription;
@@ -14,7 +15,8 @@ internal sealed class SubscriptionFactory(
     public Subscription<T> Create<T>(
             SubscriptionDescriptor<T> subscriptionDescriptor,
             IProtocolAccessor protocolAccessor,
-            ILifecycleStateable deviceLifecycleState
+            ILifecycleStateable deviceLifecycleState,
+            RecoveryHandler exceptionHandler
         ) where T : notnull
     {
         return new Subscription<T>
@@ -23,6 +25,7 @@ internal sealed class SubscriptionFactory(
             triggerScheduler: triggerScheduler,
             protocolAccessor: protocolAccessor,
             deviceLifecycleState: deviceLifecycleState,
+            exceptionHandler: exceptionHandler,
             logger: loggerFactory.CreateLogger<Subscription<T>>()
         );
     }

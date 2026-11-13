@@ -5,7 +5,7 @@ using System.Collections.Concurrent;
 namespace ThabeSoft.EdgeGateway.Lifecycles.Collections;
 
 
-internal sealed class LifecycleDictionary<TKey, TLifecycle> : ILifecycleDictionary<TKey, TLifecycle>
+internal sealed class LifecycleKeyedCollection<TKey, TLifecycle> : ILifecycleKeyedCollection<TKey, TLifecycle>
     where TKey : notnull
     where TLifecycle : ILifecycle, IAsyncDisposable
 {
@@ -13,7 +13,7 @@ internal sealed class LifecycleDictionary<TKey, TLifecycle> : ILifecycleDictiona
     private readonly ILifecycleStateable _stateSource;
     private readonly ILogger _logger;
 
-    public LifecycleDictionary(
+    public LifecycleKeyedCollection(
             ILifecycleStateable stateSource,
             ILogger? logger = null)
     {
@@ -67,5 +67,19 @@ internal sealed class LifecycleDictionary<TKey, TLifecycle> : ILifecycleDictiona
         catch (Exception ex) { _logger.LogError(ex, "移除 [{Type}] 时发生错误, 释放失败", key); }
 
         return true;
+    }
+    public async ValueTask DisposeAsync()
+    {
+        foreach(var i in _items.Values)
+        {
+            try
+            {
+                await i.DisposeAsync();
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "生命周期集合释放时发生错误");
+            }
+        }
     }
 }

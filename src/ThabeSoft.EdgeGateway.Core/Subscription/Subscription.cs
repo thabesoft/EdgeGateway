@@ -1,10 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Collections.Concurrent;
+using System.Net.Sockets;
 using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Recoveries;
 using ThabeSoft.EdgeGateway.Triggers;
 using ThabeSoft.EdgeGateway.Utilities;
 
@@ -26,6 +28,7 @@ internal sealed class Subscription<T> : ISubscription<T>, IAsyncDisposeSubscript
 
 
     private readonly ILifecycleStateable _deviceLifecycleState;
+    private readonly RecoveryHandler _exceptionHandler;
     private readonly IDisposable _triggerReleaser;
     private readonly IRetryableLifecycleStateMachine _stateMachine;
 
@@ -35,12 +38,13 @@ internal sealed class Subscription<T> : ISubscription<T>, IAsyncDisposeSubscript
             ITriggerScheduler triggerScheduler,
             IProtocolAccessor protocolAccessor,
             ILifecycleStateable deviceLifecycleState,
+            RecoveryHandler exceptionHandler,
             ILogger<Subscription<T>>? logger = null)
     {
         _logger = logger ?? NullLogger<Subscription<T>>.Instance;
         _subscriptionDescriptor = subscriptionDescriptor;
         _deviceLifecycleState = deviceLifecycleState;
-
+        _exceptionHandler = exceptionHandler;
         _triggerReleaser = triggerScheduler.Register(subscriptionDescriptor.Trigger, TriggerTask);
 
         _subscriptionValueReader = new(subscriptionDescriptor, protocolAccessor);
@@ -115,19 +119,37 @@ internal sealed class Subscription<T> : ISubscription<T>, IAsyncDisposeSubscript
 
             return;
         }
-        catch (OperationCanceledException ex) when (ex.CancellationToken == cancellationToken)
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
 
+        }
+        catch (OperationCanceledException)
+        {
+            OnNext(Reading.Bad(GetLatestValue()));
         }
         catch (Exception ex)
         {
-            if (_logger.IsEnabled(LogLevel.Trace))
-                _logger.LogTrace(ex, "订阅 [{Id}] 异常已发布", Id);
+            bool canRecover;
+            try { canRecover = await _exceptionHandler.HandleAsync(ex, cancellationToken); }
+            catch (Exception handlerEx)
+            {
+                _logger.LogCritical(handlerEx, "异常处理器执行失败！原异常: {OriginalEx}", ex.Message);
+                canRecover = false;
+            }
 
-            OnNext(Reading.Bad(Latest!.Value.Value));
-            //OnError(ex);
-            //throw;
+            // 不可恢复的异常
+            if (!canRecover)
+            {
+                OnError(ex);
+                throw;
+            }
+
+            // 可恢复的
+            OnNext(Reading.Bad(GetLatestValue()));
         }
+
+        // 最新的值
+        T GetLatestValue() => Latest is null ? default! : Latest.Value.Value;
     }
 
     private void OnNext(Reading<T> value)
@@ -135,8 +157,8 @@ internal sealed class Subscription<T> : ISubscription<T>, IAsyncDisposeSubscript
         foreach (var observer in _observers.Values)
         {
             try { observer.OnNext(value); }
-            catch (OperationCanceledException) { throw; }   // 取消传播
-            catch (Exception ex) { /* 记日志，继续 */ }
+            catch (OperationCanceledException) { throw; }
+            catch (Exception ex) { _logger.LogTrace(ex, "订阅({Id})通知时发生错误", Id); }
         }
     }
     private void OnError(Exception exception)
@@ -144,8 +166,8 @@ internal sealed class Subscription<T> : ISubscription<T>, IAsyncDisposeSubscript
         foreach (var observer in _observers.Values)
         {
             try { observer.OnError(exception); }
-            catch (OperationCanceledException) { throw; }   // 取消传播
-            catch (Exception ex) { /* 记日志，继续 */ }
+            catch (OperationCanceledException) { throw; }
+            catch (Exception ex) { _logger.LogTrace(ex, "订阅({Id})异常通知时发生错误", Id); }
         }
     }
     private void OnCompleted()
@@ -153,8 +175,8 @@ internal sealed class Subscription<T> : ISubscription<T>, IAsyncDisposeSubscript
         foreach (var observer in _observers.Values)
         {
             try { observer.OnCompleted(); }
-            catch (OperationCanceledException) { throw; }   // 取消传播
-            catch (Exception ex) { /* 记日志，继续 */ }
+            catch (OperationCanceledException) { throw; }
+            catch (Exception ex) { _logger.LogTrace(ex, "订阅({Id})结束通知时发生错误", Id); }
         }
     }
 

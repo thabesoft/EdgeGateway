@@ -22,12 +22,12 @@ public static class Lifecycle
     /// <summary>
     /// 带键的生命周集合
     /// </summary>
-    public static ILifecycleDictionary<TKey, TLifecycle> KeyedCollection<TKey, TLifecycle>(ILifecycleStateable lifecycleStateable, ILogger? logger = null)
+    public static ILifecycleKeyedCollection<TKey, TLifecycle> KeyedCollection<TKey, TLifecycle>(ILifecycleStateable lifecycleStateable, ILogger? logger = null)
         where TKey : notnull
         where TLifecycle : ILifecycle, IAsyncDisposable
     {
         ArgumentNullException.ThrowIfNull(lifecycleStateable);
-        return new LifecycleDictionary<TKey, TLifecycle>(lifecycleStateable, logger);
+        return new LifecycleKeyedCollection<TKey, TLifecycle>(lifecycleStateable, logger);
     }
 
     #endregion

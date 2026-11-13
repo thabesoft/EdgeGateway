@@ -11,7 +11,7 @@ namespace ThabeSoft.EdgeGateway.Ports;
 
 internal abstract class SimulationPortBase : ISimulationPort
 {
-    private readonly ILifecycleDictionary<ISimulationDeviceId, ISimulationDevice> _devices;
+    private readonly ILifecycleKeyedCollection<ISimulationDeviceId, ISimulationDevice> _devices;
     private readonly IRetryableLifecycleStateMachine _stateMachine;
     private readonly ILifecycleBatchExecutor _batchExecutor;
     private readonly SimulationDeviceFactorySelector _deviceFactorySelector;

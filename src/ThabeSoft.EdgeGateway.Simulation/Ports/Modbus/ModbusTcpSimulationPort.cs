@@ -23,7 +23,7 @@ internal sealed class ModbusTcpSimulationPort : SimulationPortBase
             IModbusFactory modbusFactory,
             SimulationDeviceFactorySelector deviceFactorySelector,
             ILogger<ModbusTcpSimulationPort>? logger = null
-        ) : base(deviceFactorySelector, logger)
+        ) : base(ipTransportDescriptor.Endpoint, deviceFactorySelector, logger)
     {
         _tcpListener = new(ipTransportDescriptor.IPEndPoint);
         _slaveNetWork = modbusFactory.CreateSlaveNetwork(_tcpListener);

@@ -27,7 +27,7 @@ internal sealed class ModbusSerialSimulationPort : SimulationPortBase
             IModbusFactory modbusFactory,
             SimulationDeviceFactorySelector deviceFactorySelector,
             ILogger<ModbusSerialSimulationPort>? logger = null
-        ) : base(deviceFactorySelector, logger)
+        ) : base(serialTransportDescriptor.Endpoint, deviceFactorySelector, logger)
     {
         _serialPort = new(
             portName: serialTransportDescriptor.PortName,

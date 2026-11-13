@@ -38,5 +38,3 @@ for (int port = 2333; port <= 2337; port++)
         }
     }
 }
-
-Console.WriteLine("5000 个点位配置加载完毕！");

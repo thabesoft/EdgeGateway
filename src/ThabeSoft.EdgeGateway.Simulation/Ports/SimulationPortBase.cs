@@ -4,6 +4,7 @@ using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.EdgeGateway.Transport;
 
 namespace ThabeSoft.EdgeGateway.Ports;
 
@@ -17,7 +18,7 @@ internal abstract class SimulationPortBase : ISimulationPort
     private readonly ILogger _logger;
 
 
-    protected SimulationPortBase(SimulationDeviceFactorySelector deviceFactorySelector, ILogger? logger = null)
+    protected SimulationPortBase(ConnectionEndpoint endpoint, SimulationDeviceFactorySelector deviceFactorySelector, ILogger? logger = null)
     {
         _deviceFactorySelector = deviceFactorySelector;
         _logger = logger ?? NullLogger.Instance;
@@ -26,11 +27,12 @@ internal abstract class SimulationPortBase : ISimulationPort
         _batchExecutor = Lifecycle.BatchExecutor(logger);
         _stateMachine = Lifecycle.RetryableStateMachine(logger);
         _devices = Lifecycle.KeyedCollection<ISimulationDeviceId, ISimulationDevice>(_stateMachine, logger);
+
+        Endpoint = endpoint;
     }
 
     public LifecycleState State => _stateMachine.State;
-
-
+    public ConnectionEndpoint Endpoint { get; }
 
     public ValueTask<ISimulationDevice> AddDeviceAsync(SimulationDeviceDescriptor simulationDeviceDescriptor, CancellationToken cancellationToken = default)
     {
@@ -63,7 +65,8 @@ internal abstract class SimulationPortBase : ISimulationPort
         _stateMachine.StopAsync(OnStopAsync, cancellationToken);
     public ValueTask DisposeAsync() =>
         _stateMachine.DisposeAsync(OnDisposeAsync);
-
+    public async void Dispose() =>
+         DisposeAsync().AsTask().GetAwaiter().GetResult();
 
 
 
@@ -82,4 +85,6 @@ internal abstract class SimulationPortBase : ISimulationPort
     {
         return _batchExecutor.DisposeAsync(_devices.Values);
     }
+
+   
 }

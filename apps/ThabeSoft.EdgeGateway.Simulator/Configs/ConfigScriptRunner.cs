@@ -35,8 +35,11 @@ internal sealed class ConfigScriptRunner(ISimulator simulator, IOptions<Simulato
 
         try
         {
-            // 暂停目前所有内容
-            await simulator.StopAsync(cancellationToken);
+            // 清空端口
+            foreach (var i in simulator.Ports)
+            {
+                simulator.RemovePort(i.Endpoint);
+            }
 
             // 3. 执行脚本
             await CSharpScript.RunAsync(
@@ -45,6 +48,9 @@ internal sealed class ConfigScriptRunner(ISimulator simulator, IOptions<Simulato
                 globals: globals,
                 cancellationToken: cancellationToken
             );
+
+            // 重新运行
+            await simulator.StartAsync(cancellationToken);
         }
         catch (CompilationErrorException ex)
         {
@@ -56,12 +62,6 @@ internal sealed class ConfigScriptRunner(ISimulator simulator, IOptions<Simulato
         {
             Console.WriteLine($"脚本执行异常：{ex.Message}");
         }
-    }
-
-
-    private async Task Clear()
-    {
-        //simulator.AddPort
     }
 }
 

@@ -19,7 +19,7 @@ internal sealed class ModbusUdpSimulationPort : SimulationPortBase
             IModbusFactory modbusFactory,
             SimulationDeviceFactorySelector deviceFactorySelector,
             ILogger<ModbusUdpSimulationPort>? logger = null
-        ) : base(deviceFactorySelector, logger)
+        ) : base(ipTransportDescriptor.Endpoint, deviceFactorySelector, logger)
     {
         _udpClient = new(ipTransportDescriptor.IPEndPoint);
         _slaveNetWork = modbusFactory.CreateSlaveNetwork(_udpClient);

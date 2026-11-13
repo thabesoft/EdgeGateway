@@ -19,6 +19,7 @@ internal sealed class Simulator(
     private readonly ILifecycleBatchExecutor _batchExecutor = Lifecycle.BatchExecutor(logger);
 
     public LifecycleState State => _stateMachine.State;
+    public IReadOnlyCollection<ISimulationPort> Ports => [.. _ports.Values];
 
 
     public ISimulationPort AddPort(SimulatorPortDescriptor simulatorDescriptor)
@@ -39,6 +40,17 @@ internal sealed class Simulator(
             }
         );
     }
+    public void RemovePort(ConnectionEndpoint endpoint)
+    {
+        _stateMachine.Execute
+       (
+           action: () =>
+           {
+               if (_ports.TryRemove(endpoint, out var port))
+                   port.Dispose();
+           }
+       );
+    }
 
 
     public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
@@ -47,4 +59,6 @@ internal sealed class Simulator(
         _stateMachine.StartAsync(ct => _batchExecutor.StopAsync(_ports.Values, ct), cancellationToken);
     public ValueTask DisposeAsync() =>
         _stateMachine.DisposeAsync(() => _batchExecutor.DisposeAsync(_ports.Values));
+
+
 }

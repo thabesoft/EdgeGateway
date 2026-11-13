@@ -35,7 +35,7 @@ public static class DependencyInjectionExtensions
             // Factory
             descriptors.TryAddSingleton<PortFactory>();
             descriptors.TryAddSingleton<DeviceFactory>();
-            descriptors.TryAddSingleton<SubscriptionFactory>();
+            descriptors.TryAddSingleton<DeviceSubscriptionFactory>();
 
             // FactorySelector
             descriptors.AddTransport();

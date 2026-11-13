@@ -4,7 +4,7 @@ using ThabeSoft.EdgeGateway.Triggers;
 namespace ThabeSoft.EdgeGateway.Subscription;
 
 
-internal sealed class SubscriptionFactory(
+internal sealed class DeviceSubscriptionFactory(
         ITriggerScheduler triggerScheduler,
         ILoggerFactory loggerFactory
     )

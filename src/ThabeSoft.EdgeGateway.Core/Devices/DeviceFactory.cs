@@ -8,7 +8,7 @@ namespace ThabeSoft.EdgeGateway.Devices;
 
 
 internal sealed class DeviceFactory(
-    SubscriptionFactory subscriptionFactory,
+    DeviceSubscriptionFactory subscriptionFactory,
     ILoggerFactory loggerFactory)
 {
     public Device Create(DeviceDescriptor deviceDescriptor, ILifecycleStateable portLifecycleState, IProtocolAccessor protocolAccessor, RecoveryPolicyHandler recoveryPolicyHandler)

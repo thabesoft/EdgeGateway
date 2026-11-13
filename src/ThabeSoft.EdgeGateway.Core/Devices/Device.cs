@@ -13,7 +13,7 @@ namespace ThabeSoft.EdgeGateway.Devices;
 internal sealed class Device : IDevice, IAsyncDisposable
 {
     private readonly DeviceDescriptor _deviceDescriptor;
-    private readonly SubscriptionFactory _subscriptionFactory;
+    private readonly DeviceSubscriptionFactory _subscriptionFactory;
     private readonly ILifecycleStateable _portLifecycleState;
     private readonly IProtocolAccessor _protocolAccessor;
     private readonly RecoveryPolicyHandler _recoveryPolicyHandler;
@@ -24,7 +24,7 @@ internal sealed class Device : IDevice, IAsyncDisposable
 
     public Device(
             DeviceDescriptor deviceDescriptor,
-            SubscriptionFactory subscriptionFactory,
+            DeviceSubscriptionFactory subscriptionFactory,
             ILifecycleStateable portLifecycleState,
             IProtocolAccessor protocolAccessor,
             RecoveryPolicyHandler recoveryPolicyHandler,

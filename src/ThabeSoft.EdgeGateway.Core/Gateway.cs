@@ -46,11 +46,11 @@ internal sealed class Gateway : IGateway, IAsyncDisposable
 
 
     public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StartAsync(ct => _batchExecutor.StartAsync(_ports.Values, ct), cancellationToken);
+        _stateMachine.StartAsync(OnStartAsync, cancellationToken);
     public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StopAsync(ct => _batchExecutor.StopAsync(_ports.Values, ct), cancellationToken);
+        _stateMachine.StopAsync(OnStopAsync, cancellationToken);
     public ValueTask DisposeAsync() =>
-        _stateMachine.DisposeAsync(() => _batchExecutor.DisposeAsync(_ports.Values));
+        _stateMachine.DisposeAsync(OnDisposeAsync);
 
 
 
@@ -104,5 +104,19 @@ internal sealed class Gateway : IGateway, IAsyncDisposable
             _logger.LogError(ex, "端口 ({Endpoint}) 删除失败", connectionEndpoint);
             throw;
         }
+    }
+
+
+    private ValueTask OnStartAsync(CancellationToken cancellationToken)
+    {
+        return _batchExecutor.StartAsync(_ports.Values, cancellationToken);
+    }
+    private ValueTask OnStopAsync(CancellationToken cancellationToken)
+    {
+        return _batchExecutor.StopAsync(_ports.Values, cancellationToken);
+    }
+    private ValueTask OnDisposeAsync()
+    {
+        return _batchExecutor.DisposeAsync(_ports.Values);
     }
 }

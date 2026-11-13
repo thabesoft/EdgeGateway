@@ -12,107 +12,103 @@ using ThabeSoft.EdgeGateway.Utilities;
 namespace ThabeSoft.EdgeGateway.Subscription;
 
 
-internal interface IAsyncDisposableSubscription : ISubscription, IAsyncDisposable
-{
-    ValueTask UpdateAsync(CancellationToken cancellationToken);
-}
+internal interface IAsyncDisposableSubscription : ISubscription, IAsyncDisposable;
 
 internal sealed class Subscription<T>(
         SubscriptionDescriptor<T> subscriptionDescriptor,
-        ILifecycleStateable deviceLifecycleState,
-        RecoveryPolicyHandler recoveryPolicyHandler,
-        IProtocolAccessor protocolAccessor,
+        SubscriptionReader<T> subscriptionReader,
         ITriggerScheduler triggerScheduler,
         ILogger<Subscription<T>>? logger = null
     ) : ISubscription<T>, IAsyncDisposableSubscription
     where T : notnull
 {
     private IDisposable? _triggerTick;
+    private IStrictLifecycleStateMachine _stateMachine = Lifecycle.StrictStateMachine(logger);
     private readonly ReadingSubject<T> _subject = new(logger);
-    private readonly ILogger<Subscription<T>> _logger = logger ?? NullLogger<Subscription<T>>.Instance;
 
 
     public SubscriptionId Id { get; } = subscriptionDescriptor.Id;
     public IDataAddress Address { get; } = subscriptionDescriptor.Tag.Address;
-    public Reading<T>? Latest { get; private set; }
-    Reading? ISubscription.Latest => Latest;
+    public Reading<T>? Latest => subscriptionReader.Latest;
+    Reading? ISubscription.Latest => subscriptionReader.Latest;
     public IObservable<Reading<T>> Update => _subject;
     IObservable<Reading> ISubscription.Update => _subject;
-    public LifecycleState State { get; private set; }
+    public LifecycleState State => _stateMachine.State;
 
 
 
-    public ValueTask StartAsync(CancellationToken cancellationToken = default)
+    public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
+        _stateMachine.StartAsync(OnStartAsync, cancellationToken);
+    public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
+        _stateMachine.StopAsync(OnStopAsync, cancellationToken);
+    public ValueTask DisposeAsync() =>
+        _stateMachine.DisposeAsync(OnDisposeAsync);
+
+
+    private ValueTask OnStartAsync(CancellationToken cancellationToken)
     {
-        if (deviceLifecycleState.State != LifecycleState.Running)
-            return ValueTask.CompletedTask;
-
         _triggerTick?.Dispose();
         _triggerTick = triggerScheduler.Register(subscriptionDescriptor.Trigger, UpdateAsync);
 
-        State = LifecycleState.Running;
         return ValueTask.CompletedTask;
     }
-    public ValueTask StopAsync(CancellationToken cancellationToken = default)
+    private ValueTask OnStopAsync(CancellationToken cancellationToken)
     {
         _triggerTick?.Dispose();
-        State = LifecycleState.Stopped;
         return ValueTask.CompletedTask;
     }
-    public ValueTask DisposeAsync()
+    private ValueTask OnDisposeAsync()
     {
         _subject.Dispose();
-        State = LifecycleState.Disposed;
         return ValueTask.CompletedTask;
     }
 
-    public async ValueTask UpdateAsync(CancellationToken cancellationToken)
+
+    private async ValueTask UpdateAsync(CancellationToken cancellationToken)
     {
         if (State is not LifecycleState.Running) return;
 
         try
         {
-            var value = await protocolAccessor.ReadAsync(subscriptionDescriptor.Tag, cancellationToken);
-
-            if (_logger.IsEnabled(LogLevel.Trace))
-                _logger.LogTrace("订阅 [{Id}] 新值 [{Value}] 已发布", Id, value);
-
-            var reading = Reading.Good(value);
-            Latest = reading;
+            var reading = await subscriptionReader.ReadAsync(cancellationToken);
             _subject.OnNext(reading);
-
-            return;
-        }
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-        {
-
-        }
-        catch (OperationCanceledException)
-        {
-            _subject.OnNext(Reading.Bad(GetLatestValue()));
         }
         catch (Exception ex)
         {
-            bool canRecover;
-            try { canRecover = recoveryPolicyHandler.Handle(ex); }
-            catch (Exception handlerEx)
-            {
-                _logger.LogCritical(handlerEx, "异常处理器执行失败！原异常: {OriginalEx}", ex.Message);
-                canRecover = false;
-            }
-
-            // 不可恢复的异常
-            if (!canRecover)
-            {
-                _subject.OnError(ex);
-                throw;
-            }
-
-            // 可恢复的
-            _subject.OnNext(Reading.Bad(GetLatestValue()));
+            _subject.OnError(ex);
+            throw;
         }
-
-        // 最新的值
-        T GetLatestValue() => Latest is null ? default! : Latest.Value.Value;
     }
+}
+
+
+
+internal sealed class SubscriptionReader<T>(
+    SubscriptionDescriptor<T> descriptor,
+    IProtocolAccessor protocolAccessor,
+    RecoveryPolicyHandler recoveryPolicyHandler) where T : notnull
+{
+    public Reading<T>? Latest { get; private set; }
+
+    public async ValueTask<Reading<T>> ReadAsync(CancellationToken ct)
+    {
+        try
+        {
+            var value = await protocolAccessor.ReadAsync(descriptor.Tag, ct);
+            var reading = Reading.Good(value);
+            Latest = reading;
+
+            return reading;
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception ex) when (recoveryPolicyHandler.Handle(ex))
+        {
+            return Reading.Bad(GetLatestValue());
+        }
+    }
+
+    private T GetLatestValue() => Latest is null ? default! : Latest.Value.Value;
 }

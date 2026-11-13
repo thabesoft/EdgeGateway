@@ -16,7 +16,7 @@ internal sealed class Device : IDevice, IAsyncDisposable
     private readonly SubscriptionFactory _subscriptionFactory;
     private readonly ILifecycleStateable _portLifecycleState;
     private readonly IProtocolAccessor _protocolAccessor;
-    private readonly RecoveryPolicyHandler _exceptionHandler;
+    private readonly RecoveryPolicyHandler _recoveryPolicyHandler;
     private readonly ILifecycleKeyedCollection<SubscriptionId, IAsyncDisposableSubscription> _subscriptions;
     private readonly ILifecycleBatchExecutor _subscriptionsBatchExecutor;
     private readonly IRetryableLifecycleStateMachine _stateMachine;
@@ -35,7 +35,7 @@ internal sealed class Device : IDevice, IAsyncDisposable
         _subscriptionFactory = subscriptionFactory;
         _portLifecycleState = portLifecycleState;
         _protocolAccessor = protocolAccessor;
-        _exceptionHandler = recoveryPolicyHandler;
+        _recoveryPolicyHandler = recoveryPolicyHandler;
 
         _subscriptions = Lifecycle.KeyedCollection<SubscriptionId, IAsyncDisposableSubscription>(this, logger);
         Subscriptions = new ReadOnlyDictionaryView<SubscriptionId, IAsyncDisposableSubscription, ISubscription>(_subscriptions.Items);
@@ -76,7 +76,7 @@ internal sealed class Device : IDevice, IAsyncDisposable
         var item = await _stateMachine.ExecuteAsync(
            ct => _subscriptions.AddAsync(
                subscriptionDescriptor.Id,
-               () => _subscriptionFactory.Create(subscriptionDescriptor, _protocolAccessor, this, _exceptionHandler),
+               () => _subscriptionFactory.Create(subscriptionDescriptor, new(subscriptionDescriptor, _protocolAccessor, _recoveryPolicyHandler)),
                ct),
            cancellationToken);
 

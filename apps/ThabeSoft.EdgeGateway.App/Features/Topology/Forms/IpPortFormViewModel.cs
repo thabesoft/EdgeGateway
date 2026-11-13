@@ -37,7 +37,7 @@ internal sealed partial class IpPortFormViewModel : ViewModelBase
     }
 
     public IpTransportDescriptor Build() =>
-        IpTransportDescriptor.Create(TransportType, new IPEndPoint(IPAddress.Parse(Ip), Port!.Value));
+        new(TransportType, new IPEndPoint(IPAddress.Parse(Ip), Port!.Value));
 
     public void ValidateAllProperty()
     {

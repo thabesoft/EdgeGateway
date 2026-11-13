@@ -6,15 +6,28 @@ namespace ThabeSoft.EdgeGateway.Transport;
 
 public sealed record IpTransportDescriptor : ITransportDescriptor
 {
-    public required ConnectionEndpoint Endpoint { get; init; }
-    public required IpTransportType TransportType { get; init; }
-    public required IPAddress IPAddress { get; init; }
-    public required int Port { get; init; }
+    public ConnectionEndpoint Endpoint { get; }
+    public IpTransportType TransportType { get; }
+    public IPAddress IPAddress { get; }
+    public int Port { get; }
+    // 由于 Address 和 Port 属性可更改, 所以每次返回新的对象
     public IPEndPoint IPEndPoint => new(IPAddress, Port);
 
 
 
-    private IpTransportDescriptor() { }
+    public IpTransportDescriptor(IpTransportType transportType, IPEndPoint iPEndPoint)
+    {
+        if (!ValidateTransportType(transportType, out var errorMessage))
+            throw new ArgumentOutOfRangeException(nameof(transportType), errorMessage);
+
+        ArgumentNullException.ThrowIfNull(iPEndPoint);
+        ArgumentNullException.ThrowIfNull(iPEndPoint.Address);
+
+        Endpoint = ConnectionEndpoint.Ethernet(iPEndPoint);
+        TransportType = transportType;
+        IPAddress = iPEndPoint.Address;
+        Port = iPEndPoint.Port;
+    }
     public bool Equals(ITransportDescriptor other)
     {
         if (other is not IpTransportDescriptor ip) return false;
@@ -23,23 +36,6 @@ public sealed record IpTransportDescriptor : ITransportDescriptor
     // Tcp(192.168.1.1:1234)
     public override string ToString() => $"{TransportType}({IPEndPoint})";
 
-
-    public static IpTransportDescriptor Create(IpTransportType transportType, IPEndPoint iPEndPoint)
-    {
-        if (!ValidateTransportType(transportType, out var errorMessage))
-            throw new ArgumentOutOfRangeException(nameof(transportType), errorMessage);
-
-        ArgumentNullException.ThrowIfNull(iPEndPoint);
-        ArgumentNullException.ThrowIfNull(iPEndPoint.Address);
-
-        return new()
-        {
-            Endpoint = ConnectionEndpoint.Ethernet(iPEndPoint),
-            TransportType = transportType,
-            IPAddress = iPEndPoint.Address,
-            Port = iPEndPoint.Port
-        };
-    }
 
 
     public static bool ValidateIp(string ipString, [NotNullWhen(false)] out string? errorMessage)

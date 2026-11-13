@@ -7,7 +7,7 @@ namespace ThabeSoft.EdgeGateway;
 public static class Ethernet
 {
     public static IpTransportDescriptor Tcp(IPEndPoint iPEndPoint)
-        => IpTransportDescriptor.Create(IpTransportType.Tcp, iPEndPoint);
+        => new(IpTransportType.Tcp, iPEndPoint);
     public static IpTransportDescriptor Tcp(IPAddress ip, int port)
         => Tcp(new IPEndPoint(ip, port));
     public static IpTransportDescriptor Tcp(string ip, int port)
@@ -15,7 +15,7 @@ public static class Ethernet
 
 
     public static IpTransportDescriptor Udp(IPEndPoint iPEndPoint)
-        => IpTransportDescriptor.Create(IpTransportType.Udp, iPEndPoint);
+        => new(IpTransportType.Udp, iPEndPoint);
     public static IpTransportDescriptor Udp(IPAddress ip, int port)
         => Udp(new IPEndPoint(ip, port));
     public static IpTransportDescriptor Udp(string ip, int port)

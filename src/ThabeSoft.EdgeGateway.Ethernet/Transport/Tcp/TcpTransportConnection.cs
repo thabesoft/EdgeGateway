@@ -12,7 +12,7 @@ internal sealed class TcpTransportConnection(
     ) : ITransportConnection
 {
     private readonly IStrictLifecycleStateMachine _stateMachine = Lifecycle.StrictStateMachine(logger);
-    private readonly TcpClient _tcpClient = new();
+    private TcpClient? _tcpClient;
 
 
     public ConnectionEndpoint Endpoint { get; } = descriptor.Endpoint;
@@ -55,16 +55,29 @@ internal sealed class TcpTransportConnection(
 
     private ValueTask OnStartAsync(CancellationToken cancellationToken)
     {
+        if (_tcpClient?.Connected == true)
+            return ValueTask.CompletedTask;
+
+        _tcpClient?.Close();
+        _tcpClient?.Dispose();
+
+        _tcpClient = new();
         return _tcpClient.ConnectAsync(descriptor.IPAddress, descriptor.Port, cancellationToken);
     }
     private ValueTask OnStopAsync(CancellationToken cancellationToken)
     {
-        _tcpClient.Close();
+        _tcpClient?.Close();
+        _tcpClient?.Dispose();
+        _tcpClient = null;
+
         return ValueTask.CompletedTask;
     }
     private ValueTask OnDisposeAsync()
     {
-        _tcpClient.Dispose();
+        _tcpClient?.Close();
+        _tcpClient?.Dispose();
+        _tcpClient = null;
+
         return ValueTask.CompletedTask;
     }
 }

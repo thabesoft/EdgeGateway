@@ -39,7 +39,7 @@ internal sealed class Port : IPort, IAsyncDisposable
     public Port(
         PortDescriptor portDescriptor,
         ILifecycleStateable gatewayLifecycleState,
-        TransportConnectionFactoryResolver transportConnectionFactoryResolver,
+        ITransportConnectionFactoryResolver transportConnectionFactoryResolver,
         ProtocolAccessorFactoryResolver protocolAccessorFactoryResolver,
         RecoveryPolicyFactoryResolver recoveryPolicyFactoryResolver,
         DeviceFactory deviceFactory,

@@ -38,7 +38,7 @@ public static class DependencyInjectionExtensions
             descriptors.TryAddSingleton<SubscriptionFactory>();
 
             // FactorySelector
-            descriptors.TryAddSingleton<TransportConnectionFactoryResolver>();
+            descriptors.AddTransport();
             descriptors.TryAddSingleton<ProtocolAccessorFactoryResolver>();
 
             // Gateway
@@ -50,6 +50,13 @@ public static class DependencyInjectionExtensions
         public IServiceCollection AddEdgeGatewayHost()
         {
             return descriptors.AddHostedService<LaunchHostedService>();
+        }
+
+
+        public IServiceCollection AddTransport()
+        {
+            descriptors.AddSingleton<ITransportConnectionFactoryResolver, TransportConnectionFactoryResolver>();
+            return descriptors;
         }
     }
 }

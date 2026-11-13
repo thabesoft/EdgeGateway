@@ -1,7 +1,7 @@
 ﻿namespace ThabeSoft.EdgeGateway.Transport;
 
 
-internal sealed class TransportConnectionFactoryResolver(IEnumerable<ITransportConnectionFactory> factories)
+internal sealed class TransportConnectionFactoryResolver(IEnumerable<ITransportConnectionFactory> factories) : ITransportConnectionFactoryResolver
 {
     public ITransportConnection Resolve(ITransportDescriptor transportDescriptor)
     {

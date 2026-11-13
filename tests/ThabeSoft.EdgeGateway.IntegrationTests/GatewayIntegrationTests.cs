@@ -65,7 +65,7 @@ public class GatewayIntegrationTests
     {
         var port = Simulator.AddPort(Simulation.ModbusIpPort(_transportDescriptor));
         var device = await port.AddDeviceAsync(Simulation.ModbusDevice(1), TestContext.CancellationToken);
-        device.ValueAsync(_tag, _trigger, Simulation.SineWaveValue(1, 0.1));
+        await device.ValueAsync(_tag, _trigger, Simulation.SineWaveValue(1, 0.1));
 
         // 模拟器 启动
         await port.StartAsync(TestContext.CancellationToken);
@@ -81,7 +81,7 @@ public class GatewayIntegrationTests
         await StartSimulator();
         ConcurrentQueue<double> _values = [];
 
-        var port = await Gateway.AddPortAsync(_transportDescriptor, TestContext.CancellationToken);
+        var port = await Gateway.AddPortAsync(new(_transportDescriptor), TestContext.CancellationToken);
         var device = await port.AddDeviceAsync(_protocolDescriptor, TestContext.CancellationToken);
         var subscription = await device.AddSubscriptionAsync(_tag, _trigger, TestContext.CancellationToken);
         subscription.Subscribe(x =>

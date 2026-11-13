@@ -27,15 +27,11 @@ internal sealed class LifecycleKeyedCollection<TKey, TLifecycle> : ILifecycleKey
 
     public async ValueTask<TLifecycle> AddAsync(TKey key, Func<TLifecycle> getValueHandler, CancellationToken cancellationToken = default)
     {
-        if (_items.ContainsKey(key))
-            throw new InvalidOperationException($"{key} 已存在, 无法添加");
-
         var item = getValueHandler();
-
         if (!_items.TryAdd(key, item))
         {
-            try { await item.DisposeAsync(); } catch { }
-            throw new InvalidOperationException($"{key} 已存在");
+            await item.DisposeAsync();
+            throw new InvalidOperationException($"{key} 已存在, 无法添加");
         }
 
         if (_stateSource.State == LifecycleState.Running)
@@ -70,13 +66,13 @@ internal sealed class LifecycleKeyedCollection<TKey, TLifecycle> : ILifecycleKey
     }
     public async ValueTask DisposeAsync()
     {
-        foreach(var i in _items.Values)
+        foreach (var i in _items.Values)
         {
             try
             {
                 await i.DisposeAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "生命周期集合释放时发生错误");
             }

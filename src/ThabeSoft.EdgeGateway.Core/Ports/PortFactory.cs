@@ -9,7 +9,7 @@ namespace ThabeSoft.EdgeGateway.Ports;
 
 
 internal sealed class PortFactory(
-        TransportConnectionFactoryResolver transportConnectionFactoryResolver,
+        ITransportConnectionFactoryResolver transportConnectionFactoryResolver,
         RecoveryPolicyFactoryResolver recoveryPolicyFactoryResolver,
         ProtocolAccessorFactoryResolver protocolAccessorFactoryResolver,
         DeviceFactory deviceFactory,

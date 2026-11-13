@@ -68,7 +68,6 @@ internal sealed class Gateway : IGateway, IAsyncDisposable
                 cancellationToken);
 
             _logger.LogDebug("端口已添加 ({Endpoint})", port.Endpoint);
-            _eventPublisher.Publish(new GatewayPortAddedEvent(port));
 
             return port;
         }

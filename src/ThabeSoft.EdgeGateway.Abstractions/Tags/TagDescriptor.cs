@@ -4,21 +4,10 @@ using ThabeSoft.EdgeGateway.Codecs;
 namespace ThabeSoft.EdgeGateway.Tags;
 
 
-public sealed class TagDescriptor<T>
+public sealed class TagDescriptor<T> : IEquatable<TagDescriptor<T>>
      where T : notnull
 {
-    internal TagDescriptor() { }
-    public override string ToString() => $"Tag({Address}, {Codec})";
-
-
-    public required IDataAddress Address { get; init; }
-    public required ICodec<T> Codec { get; init; }
-}
-
-public static class TagDescriptor
-{
-    public static TagDescriptor<T> Create<T>(IDataAddress address, ICodec<T> codec)
-        where T : notnull
+    public TagDescriptor(IDataAddress address, ICodec<T> codec)
     {
         ArgumentNullException.ThrowIfNull(address);
         ArgumentNullException.ThrowIfNull(codec);
@@ -30,10 +19,25 @@ public static class TagDescriptor
                 $"数据位数不匹配, 地址要求读取 {addr.RequiredBits} Bit，但 Codec 要求 {codecRb.RequiredBits} Bit");
         }
 
-        return new()
-        {
-            Address = address,
-            Codec = codec
-        };
+        Address = address;
+        Codec = codec;
     }
+
+
+    public IDataAddress Address { get; }
+    public ICodec<T> Codec { get; }
+
+
+    public bool Equals(TagDescriptor<T> other)
+    {
+        return Address.Equals(other.Address) && Codec.Equals(other.Codec);
+    }
+
+    public override string ToString() => $"Tag({Address}, {Codec})";
+}
+
+public static class TagDescriptor
+{
+    public static TagDescriptor<T> Create<T>(IDataAddress address, ICodec<T> codec) where T : notnull
+        => new(address, codec);
 }

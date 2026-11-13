@@ -57,7 +57,7 @@ internal sealed class ModbusTcpSimulationPort : SimulationPortBase
 
         _listenTask = Task.Run(() =>
         {
-            _logger.LogInformation("Tcp从站网络开始监听: {Address}", _ipTransportDescriptor.Endpoint);
+            _logger.LogInformation("Tcp端口开始监听: {Address}", _ipTransportDescriptor.Endpoint);
             _slaveNetWork.ListenAsync(cancellationToken);
 
         }, cancellationToken);
@@ -68,6 +68,8 @@ internal sealed class ModbusTcpSimulationPort : SimulationPortBase
     {
         await base.OnStopAsync(cancellationToken);
         _tcpListener.Stop();
+
+        _logger.LogInformation("Tcp端口停止监听: {Address}", _ipTransportDescriptor.Endpoint);
     }
     protected override async ValueTask OnDisposeAsync()
     {
@@ -81,5 +83,7 @@ internal sealed class ModbusTcpSimulationPort : SimulationPortBase
 
         _tcpListener?.Dispose();
 #endif
+
+        _logger.LogInformation("Tcp端口释放: {Address}", _ipTransportDescriptor.Endpoint);
     }
 }

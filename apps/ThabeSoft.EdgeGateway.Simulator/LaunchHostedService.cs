@@ -1,47 +1,103 @@
 ﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System.Net;
 using ThabeSoft.EdgeGateway.Ports;
-using ThabeSoft.EdgeGateway.Transport;
 using ThabeSoft.EdgeGateway.Triggers;
 using ThabeSoft.EdgeGateway.ValueGenerators;
 
 namespace ThabeSoft.EdgeGateway.Simulator;
 
 
-internal sealed class LaunchHostedService(ISimulator simulator) : IHostedService
+internal sealed class LaunchHostedService(ISimulator simulator, ILogger<LaunchHostedService> logger) : IHostedService
 {
-    private const int DeviceCount = 10;
-    private const int DeviceValueCount = 1000;
+    private const int DeviceCount = 2;
+    private const int DeviceValueCount = 10;
     private static ITriggerDescriptor TriggerDescriptor { get; } = Trigger.Interval(10);
+
+    private Task? _flakyPortRunningTask;
+    private CancellationTokenSource? _flakyPortRunningTaskCts;
 
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        await AddPortAsync(Ethernet.Tcp(IPAddress.Loopback, 2333), simulator,cancellationToken);
-        await AddPortAsync(Ethernet.Tcp(IPAddress.Loopback, 2334), simulator,cancellationToken);
-        await AddPortAsync(Ethernet.Tcp(IPAddress.Loopback, 2335), simulator,cancellationToken);
-        await AddPortAsync(Ethernet.Tcp(IPAddress.Loopback, 2336), simulator,cancellationToken);
-        await AddPortAsync(Ethernet.Tcp(IPAddress.Loopback, 2337), simulator,cancellationToken);
-
-        await simulator.StartAsync(cancellationToken);
-    }
-
-    public Task StopAsync(CancellationToken cancellationToken)
-    {
-        return Task.CompletedTask;
-    }
-
-    private static async Task AddPortAsync(IpTransportDescriptor transportDescriptor, ISimulator simulator, CancellationToken cancellationToken)
-    {
-        var network = simulator.AddPort(Simulation.ModbusIpPort(transportDescriptor));
-
+        var network = simulator.AddPort(Simulation.ModbusIpPort(Ethernet.Tcp(IPAddress.Loopback, 2333)));
         for (byte i = 1; i <= DeviceCount; i++)
             await AddDeviceAsync(i, network, cancellationToken);
+
+        await simulator.StartAsync(cancellationToken);
+
+        if (_flakyPortRunningTaskCts is not null)
+            await _flakyPortRunningTaskCts.CancelAsync();
+
+        _flakyPortRunningTaskCts = new();
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _flakyPortRunningTaskCts.Token);
+        _flakyPortRunningTask = RunFlakyPortSimulationAsync(cts.Token);
     }
+
+    public async Task StopAsync(CancellationToken cancellationToken)
+    {
+        if (_flakyPortRunningTaskCts is not null)
+            await _flakyPortRunningTaskCts.CancelAsync();
+        _flakyPortRunningTaskCts = null;
+
+        try
+        {
+            if (_flakyPortRunningTask is not null)
+                await _flakyPortRunningTask;
+        }
+        catch (OperationCanceledException)
+        {
+
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "不稳定端口任务异常");
+        }
+        finally
+        {
+            _flakyPortRunningTask = null;
+        }
+    }
+
+
+    private async Task RunFlakyPortSimulationAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                var network = simulator.AddPort(Simulation.ModbusIpPort(Ethernet.Tcp(IPAddress.Loopback, 2334)));
+
+                for (byte i = 1; i <= DeviceCount; i++)
+                    await AddDeviceAsync(i, network, cancellationToken);
+
+
+                // 模拟掉线
+                await network.StartAsync(cancellationToken);
+                await Task.Delay(TimeSpan.FromSeconds(Random.Shared.Next(10, 30)), cancellationToken);
+                await network.StopAsync(cancellationToken);
+
+
+                await network.DisposeAsync();
+                simulator.RemovePort(network.Endpoint);
+                await Task.Delay(Random.Shared.Next(1000, 3000), cancellationToken);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // 正常退出，忽略
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "不稳定的端口模拟挂了");
+        }
+    }
+
+
+
     private static async Task AddDeviceAsync(byte id, ISimulationPort network, CancellationToken cancellationToken)
     {
         var slave = await network.AddDeviceAsync(Simulation.ModbusDevice(id), cancellationToken);
-
         var generators = CreateGenerators(DeviceValueCount);
 
         for (int i = 0; i < DeviceValueCount; i++)
@@ -52,7 +108,6 @@ internal sealed class LaunchHostedService(ISimulator simulator) : IHostedService
             await slave.ValueAsync(tag, TriggerDescriptor, generators[i], cancellationToken);
         }
     }
-
     private static IValueGenerator<double>[] CreateGenerators(int count)
     {
         var generators = new IValueGenerator<double>[count];
@@ -74,4 +129,6 @@ internal sealed class LaunchHostedService(ISimulator simulator) : IHostedService
         }
         return generators;
     }
+
+
 }

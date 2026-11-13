@@ -124,7 +124,9 @@ internal sealed class Subscription<T> : ISubscription<T>, IAsyncDisposeSubscript
             if (_logger.IsEnabled(LogLevel.Trace))
                 _logger.LogTrace(ex, "订阅 [{Id}] 异常已发布", Id);
 
-            OnError(ex);
+            OnNext(Reading.Bad(Latest!.Value.Value));
+            //OnError(ex);
+            //throw;
         }
     }
 

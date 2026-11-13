@@ -1,12 +1,14 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway;
+using ThabeSoft.EdgeGateway.Simulator;
 
 Console.Title = "ModbusSalveSimulator";
 
 
 await Host.CreateDefaultBuilder(args)
-    .ConfigureLogging(x=>x.SetMinimumLevel(LogLevel.Debug))
+    .ConfigureLogging(x => x.SetMinimumLevel(LogLevel.Debug))
     .ConfigureServices(services => services
         // 模拟器
         .AddSimulation()
@@ -14,7 +16,8 @@ await Host.CreateDefaultBuilder(args)
         .AddSimulationHost()
         .AddModbusSimulation()
 
-        // App
-        .AddApp()
+        .AddHostedService<LaunchHostedService>()
+    // App
+    //.AddApp()
     )
     .RunConsoleAsync();

@@ -5,15 +5,39 @@ namespace ThabeSoft.EdgeGateway.Transport;
 
 public sealed record class SerialTransportDescriptor : ITransportDescriptor
 {
-    public required ConnectionEndpoint Endpoint { get; init; }
-    public required string PortName { get; init; }
-    public required int BaudRate { get; init; }
-    public required int DataBits { get; init; }
-    public required SerialParity Parity { get; init; }
-    public required SerialStopBits StopBits { get; init; }
+    public ConnectionEndpoint Endpoint { get; }
+    public string PortName { get; }
+    public int BaudRate { get; }
+    public int DataBits { get; }
+    public SerialParity Parity { get; }
+    public SerialStopBits StopBits { get; }
 
 
-    private SerialTransportDescriptor() { }
+    public SerialTransportDescriptor(string portName, int baudRate, SerialParity parity, int dataBits, SerialStopBits stopBits)
+    {
+        if (!ValidatePortName(portName, out var portNameErrorMessage))
+            throw new ArgumentException(portNameErrorMessage, nameof(portName));
+
+        if (!ValidateBaudRate(baudRate, out var baudRateErrorMessage))
+            throw new ArgumentOutOfRangeException(nameof(baudRate), baudRate, baudRateErrorMessage);
+
+        if (!ValidateParity(parity, out var parityErrorMessage))
+            throw new ArgumentOutOfRangeException(nameof(parity), parity, parityErrorMessage);
+
+        if (!ValidateDataBits(dataBits, out var dataBitsErrorMessage))
+            throw new ArgumentOutOfRangeException(nameof(dataBits), dataBits, dataBitsErrorMessage);
+
+        if (!ValidateStopBits(stopBits, out var stopBitsErrorMessage))
+            throw new ArgumentOutOfRangeException(nameof(stopBits), stopBits, stopBitsErrorMessage);
+
+
+        Endpoint = ConnectionEndpoint.Serial(portName);
+        PortName = portName;
+        BaudRate = baudRate;
+        Parity = parity;
+        DataBits = dataBits;
+        StopBits = stopBits;
+    }
     public bool Equals(ITransportDescriptor other)
     {
         if (other is not SerialTransportDescriptor serial)
@@ -44,37 +68,6 @@ public sealed record class SerialTransportDescriptor : ITransportDescriptor
 
         return $"{PortName}({BaudRate}, {DataBits}{parityChar}{stopBitsChar})";
     }
-
-
-    public static SerialTransportDescriptor Create(string portName, int baudRate, SerialParity parity, int dataBits, SerialStopBits stopBits)
-    {
-        if (!ValidatePortName(portName, out var portNameErrorMessage))
-            throw new ArgumentException(portNameErrorMessage, nameof(portName));
-
-        if (!ValidateBaudRate(baudRate, out var baudRateErrorMessage))
-            throw new ArgumentOutOfRangeException(nameof(baudRate), baudRate, baudRateErrorMessage);
-
-        if (!ValidateParity(parity, out var parityErrorMessage))
-            throw new ArgumentOutOfRangeException(nameof(parity), parity, parityErrorMessage);
-
-        if (!ValidateDataBits(dataBits, out var dataBitsErrorMessage))
-            throw new ArgumentOutOfRangeException(nameof(dataBits), dataBits, dataBitsErrorMessage);
-
-        if (!ValidateStopBits(stopBits, out var stopBitsErrorMessage))
-            throw new ArgumentOutOfRangeException(nameof(stopBits), stopBits, stopBitsErrorMessage);
-
-
-        return new()
-        {
-            Endpoint = ConnectionEndpoint.Serial(portName),
-            PortName = portName,
-            BaudRate = baudRate,
-            Parity = parity,
-            DataBits = dataBits,
-            StopBits = stopBits
-        };
-    }
-
 
 
     public static bool ValidatePortName(ReadOnlySpan<char> portName, [NotNullWhen(false)] out string? errorMessage)

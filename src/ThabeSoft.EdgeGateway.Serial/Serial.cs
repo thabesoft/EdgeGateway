@@ -10,5 +10,5 @@ public static class Serial
         SerialParity parity = SerialParity.None,
         int dataBits = 8,
         SerialStopBits stopBits = SerialStopBits.One
-    ) => SerialTransportDescriptor.Create(portName, baudRate, parity, dataBits, stopBits);
+    ) => new(portName, baudRate, parity, dataBits, stopBits);
 }

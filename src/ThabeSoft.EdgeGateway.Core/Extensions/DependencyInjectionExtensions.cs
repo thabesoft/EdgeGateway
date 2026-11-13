@@ -27,7 +27,8 @@ public static class DependencyInjectionExtensions
             descriptors.AddTriggers();
 
             // Recoveries
-            descriptors.AddSingleton<RecoveryHandler>();
+            descriptors.AddSingleton<RecoveryPolicyHandler>();
+            descriptors.AddSingleton<RecoveryPolicyFactoryResolver>();
             descriptors.AddSingleton<IRecoveryPolicyFactory, SocketExceptionRecoveryPolicyFactory>();
 
 

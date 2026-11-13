@@ -11,7 +11,7 @@ internal sealed class DeviceFactory(
     SubscriptionFactory subscriptionFactory,
     ILoggerFactory loggerFactory)
 {
-    public Device Create(DeviceDescriptor deviceDescriptor, ILifecycleStateable portLifecycleState, IProtocolAccessor protocolAccessor, RecoveryHandler exceptionHandler)
+    public Device Create(DeviceDescriptor deviceDescriptor, ILifecycleStateable portLifecycleState, IProtocolAccessor protocolAccessor, RecoveryPolicyHandler recoveryPolicyHandler)
     {
         return new
         (
@@ -19,7 +19,7 @@ internal sealed class DeviceFactory(
             subscriptionFactory: subscriptionFactory,
             portLifecycleState: portLifecycleState,
             protocolAccessor: protocolAccessor,
-            exceptionHandler: exceptionHandler,
+            recoveryPolicyHandler: recoveryPolicyHandler,
             logger: loggerFactory.CreateLogger<Device>()
         );
     }

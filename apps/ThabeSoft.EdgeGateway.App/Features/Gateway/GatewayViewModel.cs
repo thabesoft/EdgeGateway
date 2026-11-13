@@ -27,10 +27,10 @@ internal sealed partial class GatewayViewModel : LifecycleViewModel
 
 
     [RelayCommand]
-    private async Task AddPortAsync(ITransportDescriptor transportDescriptor)
+    private async Task AddPortAsync(PortDescriptor portDescriptor)
     {
         await _sukiToastManager.ExecuteWithToastAsync(async ct =>
-            await AddPortAsync(transportDescriptor, ct), "添加端口", TimeSpan.FromSeconds(30));
+            await AddPortAsync(portDescriptor, ct), "添加端口", TimeSpan.FromSeconds(30));
     }
 
     [RelayCommand]
@@ -56,12 +56,12 @@ internal sealed partial class GatewayViewModel : LifecycleViewModel
     }
 
 
-    public async ValueTask<PortViewModel> AddPortAsync(ITransportDescriptor transportDescriptor, CancellationToken cancellationToken = default)
+    public async ValueTask<PortViewModel> AddPortAsync(PortDescriptor portDescriptor, CancellationToken cancellationToken = default)
     {
-        var model = await _gateway.AddPortAsync(transportDescriptor);
+        var model = await _gateway.AddPortAsync(portDescriptor);
         var viewModel = CreateViewModel(model);
 
-        _viewModels[transportDescriptor.Endpoint] = viewModel;
+        _viewModels[portDescriptor.Transport.Endpoint] = viewModel;
         return viewModel;
     }
     public async ValueTask<bool> RemovePortAsync(ConnectionEndpoint connectionEndpoint, CancellationToken cancellationToken = default)

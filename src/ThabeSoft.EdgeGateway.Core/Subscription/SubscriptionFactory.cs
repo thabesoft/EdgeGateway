@@ -16,7 +16,7 @@ internal sealed class SubscriptionFactory(
             SubscriptionDescriptor<T> subscriptionDescriptor,
             IProtocolAccessor protocolAccessor,
             ILifecycleStateable deviceLifecycleState,
-            RecoveryHandler exceptionHandler
+            RecoveryPolicyHandler exceptionHandler
         ) where T : notnull
     {
         return new Subscription<T>
@@ -25,7 +25,7 @@ internal sealed class SubscriptionFactory(
             triggerScheduler: triggerScheduler,
             protocolAccessor: protocolAccessor,
             deviceLifecycleState: deviceLifecycleState,
-            exceptionHandler: exceptionHandler,
+            recoveryPolicyHandler: exceptionHandler,
             logger: loggerFactory.CreateLogger<Subscription<T>>()
         );
     }

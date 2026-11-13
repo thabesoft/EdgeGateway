@@ -21,6 +21,7 @@ internal sealed class Port : IPort, IAsyncDisposable
 
 
     // 传输资源
+    private readonly RecoveryPolicyHandler _recoveryPolicyHandler;
     private readonly ITransportConnection _transportConnection;
     private readonly ProtocolAccessorFactoryResolver _protocolAccessorFactoryResolver;
     private readonly ConcurrentDictionary<IProtocolDescriptor, IProtocolAccessor> _protocolAccessors = [];
@@ -28,27 +29,34 @@ internal sealed class Port : IPort, IAsyncDisposable
 
     // 生命周期
     private readonly IRetryableLifecycleStateMachine _lifecycleStateMachine;
+    private readonly PortDescriptor _portDescriptor;
     private readonly ILifecycleStateable _gatewayLifecycleState;
 
 
     // 日志
     private readonly ILogger<Port> _logger;
 
-
     public Port(
+        PortDescriptor portDescriptor,
         ILifecycleStateable gatewayLifecycleState,
-        ITransportDescriptor transportDescriptor,
         TransportConnectionFactoryResolver transportConnectionFactoryResolver,
         ProtocolAccessorFactoryResolver protocolAccessorFactoryResolver,
+        RecoveryPolicyFactoryResolver recoveryPolicyFactoryResolver,
         DeviceFactory deviceFactory,
         ILogger<Port> logger)
     {
+        _portDescriptor = portDescriptor;
         _gatewayLifecycleState = gatewayLifecycleState;
         _deviceFactory = deviceFactory;
         _logger = logger;
 
+
+        // 重试策略
+        _recoveryPolicyHandler = new RecoveryPolicyHandler(_portDescriptor.Recoveries
+            .Select(recoveryPolicyFactoryResolver.Resolve));
+
         // 协议/传输
-        _transportConnection = transportConnectionFactoryResolver.Resolve(transportDescriptor);
+        _transportConnection = transportConnectionFactoryResolver.Resolve(portDescriptor.Transport);
         _protocolAccessorFactoryResolver = protocolAccessorFactoryResolver;
 
         // 设备
@@ -79,7 +87,7 @@ internal sealed class Port : IPort, IAsyncDisposable
         return await _lifecycleStateMachine.ExecuteAsync(
             ct => _devices.AddAsync(
                 descriptor.Id,
-                () => _deviceFactory.Create(descriptor, this, GetProtocolAccessor(descriptor.Protocol), null!),
+                () => _deviceFactory.Create(descriptor, this, GetProtocolAccessor(descriptor.Protocol), _recoveryPolicyHandler),
                 ct),
             cancellationToken);
     }

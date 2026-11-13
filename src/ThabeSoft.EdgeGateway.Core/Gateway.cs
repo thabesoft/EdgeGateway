@@ -22,7 +22,10 @@ internal sealed class Gateway : IGateway, IAsyncDisposable
     private readonly IRetryableLifecycleStateMachine _stateMachine;
 
 
-    public Gateway(PortFactory portFactory, IEventPublisher eventPublisher, ILogger<Gateway>? logger = null)
+    public Gateway(
+        PortFactory portFactory,
+        IEventPublisher eventPublisher,
+        ILogger<Gateway>? logger = null)
     {
         ArgumentNullException.ThrowIfNull(portFactory);
 
@@ -51,16 +54,16 @@ internal sealed class Gateway : IGateway, IAsyncDisposable
 
 
 
-    public async ValueTask<IPort> AddPortAsync(ITransportDescriptor transportDescriptor, CancellationToken cancellationToken = default)
+    public async ValueTask<IPort> AddPortAsync(PortDescriptor descriptor, CancellationToken cancellationToken = default)
     {
-        _logger.LogTrace("添加端口 ({Endpoint})", transportDescriptor.Endpoint);
+        _logger.LogTrace("添加端口 ({Endpoint})", descriptor.Transport.Endpoint);
 
         try
         {
             var port = await _stateMachine.ExecuteAsync(
                 ct => _ports.AddAsync(
-                    transportDescriptor.Endpoint,
-                    () => _portFactory.Create(transportDescriptor, this),
+                    descriptor.Transport.Endpoint,
+                    () => _portFactory.Create(descriptor, this),
                     ct),
                 cancellationToken);
 
@@ -71,7 +74,7 @@ internal sealed class Gateway : IGateway, IAsyncDisposable
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "端口 ({Endpoint}) 添加失败", transportDescriptor.Endpoint);
+            _logger.LogError(ex, "端口 ({Endpoint}) 添加失败", descriptor.Transport.Endpoint);
             throw;
         }
     }

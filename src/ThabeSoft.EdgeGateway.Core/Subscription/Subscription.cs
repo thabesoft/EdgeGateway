@@ -28,7 +28,7 @@ internal sealed class Subscription<T> : ISubscription<T>, IAsyncDisposeSubscript
 
 
     private readonly ILifecycleStateable _deviceLifecycleState;
-    private readonly RecoveryHandler _exceptionHandler;
+    private readonly RecoveryPolicyHandler _recoveryPolicyHandler;
     private readonly IDisposable _triggerReleaser;
     private readonly IRetryableLifecycleStateMachine _stateMachine;
 
@@ -38,13 +38,13 @@ internal sealed class Subscription<T> : ISubscription<T>, IAsyncDisposeSubscript
             ITriggerScheduler triggerScheduler,
             IProtocolAccessor protocolAccessor,
             ILifecycleStateable deviceLifecycleState,
-            RecoveryHandler exceptionHandler,
+            RecoveryPolicyHandler recoveryPolicyHandler,
             ILogger<Subscription<T>>? logger = null)
     {
-        _logger = logger ?? NullLogger<Subscription<T>>.Instance;
         _subscriptionDescriptor = subscriptionDescriptor;
         _deviceLifecycleState = deviceLifecycleState;
-        _exceptionHandler = exceptionHandler;
+        _recoveryPolicyHandler = recoveryPolicyHandler;
+        _logger = logger ?? NullLogger<Subscription<T>>.Instance;
         _triggerReleaser = triggerScheduler.Register(subscriptionDescriptor.Trigger, TriggerTask);
 
         _subscriptionValueReader = new(subscriptionDescriptor, protocolAccessor);
@@ -130,7 +130,7 @@ internal sealed class Subscription<T> : ISubscription<T>, IAsyncDisposeSubscript
         catch (Exception ex)
         {
             bool canRecover;
-            try { canRecover = await _exceptionHandler.HandleAsync(ex, cancellationToken); }
+            try { canRecover = _recoveryPolicyHandler.Handle(ex); }
             catch (Exception handlerEx)
             {
                 _logger.LogCritical(handlerEx, "异常处理器执行失败！原异常: {OriginalEx}", ex.Message);

@@ -2,6 +2,7 @@
 using System.Net;
 using ThabeSoft.EdgeGateway.App.Features.Gateway;
 using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Recoveries;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transport;
 
@@ -26,7 +27,7 @@ internal sealed class LaunchHostedService(GatewayViewModel gateway) :
 
     private static async Task AddPortAsync(IpTransportDescriptor transportDescriptor, GatewayViewModel gateway, CancellationToken cancellationToken)
     {
-        var port = await gateway.AddPortAsync(Ethernet.Tcp(transportDescriptor.IPEndPoint), cancellationToken);
+        var port = await gateway.AddPortAsync(new(transportDescriptor, Recovery.SocketException(5)), cancellationToken);
 
         const int count = 2;
 

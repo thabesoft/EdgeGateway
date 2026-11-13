@@ -6,13 +6,18 @@ namespace ThabeSoft.EdgeGateway.Ports;
 
 public sealed class PortDescriptor : IEquatable<PortDescriptor>
 {
-    public PortDescriptor(ITransportDescriptor transport, IRecoveryPolicyDescriptor[] recoveries)
+    public PortDescriptor(ITransportDescriptor transport, params IRecoveryPolicyDescriptor[] recoveries)
     {
         ArgumentNullException.ThrowIfNull(transport);
 
         Transport = transport;
         Recoveries = recoveries?.Where(x => x is not null).ToArray() ?? [];
     }
+    public PortDescriptor(ITransportDescriptor transport) : this(transport, [])
+    {
+
+    }
+
 
     public ITransportDescriptor Transport { get; init; }
     public IRecoveryPolicyDescriptor[] Recoveries { get; init; }

@@ -7,28 +7,42 @@ namespace ThabeSoft.EdgeGateway.Subscription;
 /// <summary>
 /// 订阅描述
 /// </summary>
-public sealed class SubscriptionDescriptor<T> where T : notnull
+public sealed class SubscriptionDescriptor<T> : IEquatable<SubscriptionDescriptor<T>>
+    where T : notnull
 {
-    public required SubscriptionId Id { get; init; }
-    public required TagDescriptor<T> Tag { get; init; }
-    public required ITriggerDescriptor Trigger { get; init; }
-
-
-    internal SubscriptionDescriptor() { }
-    public override string ToString() => $"Subscription({Id}, {Tag}, {Trigger})";
-}
-
-public static class SubscriptionDescriptor
-{
-    public static SubscriptionDescriptor<T> Create<T>(SubscriptionId id, TagDescriptor<T> tag, ITriggerDescriptor trigger) where T : notnull
+    public SubscriptionDescriptor(SubscriptionId id, TagDescriptor<T> tag, ITriggerDescriptor trigger)
     {
         ArgumentNullException.ThrowIfNull(id);
         ArgumentNullException.ThrowIfNull(tag);
         ArgumentNullException.ThrowIfNull(trigger);
 
-        return new() { Id = id, Trigger = trigger, Tag = tag };
+        Id = id;
+        Tag = tag;
+        Trigger = trigger;
+    }
+    public SubscriptionDescriptor(TagDescriptor<T> tag, ITriggerDescriptor trigger) : this(SubscriptionId.Create(), tag, trigger)
+    {
+
     }
 
+
+    public SubscriptionId Id { get; }
+    public TagDescriptor<T> Tag { get; }
+    public ITriggerDescriptor Trigger { get; }
+
+
+    public bool Equals(SubscriptionDescriptor<T> other)
+    {
+        return Id.Equals(other.Id) && Tag.Equals(other.Tag) && Trigger.Equals(other.Trigger);
+    }
+    public override string ToString() => $"Subscription({Id}, {Tag}, {Trigger})";
+}
+
+public static class SubscriptionDescriptor
+{
+    public static SubscriptionDescriptor<T> Create<T>(SubscriptionId id, TagDescriptor<T> tag, ITriggerDescriptor trigger) where T : notnull =>
+        new(id, tag, trigger);
+
     public static SubscriptionDescriptor<T> Create<T>(TagDescriptor<T> tag, ITriggerDescriptor trigger) where T : notnull =>
-        Create(SubscriptionId.Create(), tag, trigger);
+        new(tag, trigger);
 }

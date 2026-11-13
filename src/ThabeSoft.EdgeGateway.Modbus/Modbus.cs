@@ -12,21 +12,14 @@ public static class Modbus
 {
     #region --协议--
 
-    public static ModbusProtocolDescriptor Rtu { get; } = new()
-    {
-        Connection = ConnectionType.Serial,
-        FrameFormat = ModbusFrameFormat.Rtu
-    };
-    public static ModbusProtocolDescriptor Ascii { get; } = new()
-    {
-        Connection = ConnectionType.Serial,
-        FrameFormat = ModbusFrameFormat.Ascii
-    };
-    public static ModbusProtocolDescriptor Ip { get; } = new()
-    {
-        Connection = ConnectionType.Ethernet,
-        FrameFormat = ModbusFrameFormat.Ip
-    };
+    public static ModbusProtocolDescriptor Rtu { get; } =
+        new(ModbusFrameFormat.Rtu, ConnectionType.Serial);
+
+    public static ModbusProtocolDescriptor Ascii { get; } =
+       new(ModbusFrameFormat.Ascii, ConnectionType.Serial);
+
+    public static ModbusProtocolDescriptor Ip { get; } =
+       new(ModbusFrameFormat.Ip, ConnectionType.Ethernet);
 
     #endregion
 

@@ -8,11 +8,13 @@ Console.Title = "ModbusSalveSimulator";
 await Host.CreateDefaultBuilder(args)
     .ConfigureLogging(x=>x.SetMinimumLevel(LogLevel.Debug))
     .ConfigureServices(services => services
-
         // 模拟器
         .AddSimulation()
         .AddTriggers()
         .AddSimulationHost()
         .AddModbusSimulation()
+
+        // App
+        .AddApp()
     )
     .RunConsoleAsync();

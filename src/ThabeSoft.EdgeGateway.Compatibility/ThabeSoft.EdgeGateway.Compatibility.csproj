@@ -13,15 +13,15 @@
 		<!--TimeProvider-->
 		<PackageReference Include="Microsoft.Bcl.TimeProvider" Version="10.0.14" />
 		<!--ValueTask-->
-		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.14" />
+		<!--<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.14" />-->
 		<!--异步扩展-->
-		<PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
+		<!--<PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.3" />-->
 		<!--HashCode-->
-		<PackageReference Include="Microsoft.Bcl.HashCode" Version="6.0.0" />
+		<!--<PackageReference Include="Microsoft.Bcl.HashCode" Version="6.0.0" />-->
 
 		<!--新版本语法支持, 详情见项目地址 https://github.com/Sergio0694/PolySharp/-->
 		<PackageReference Include="PolySharp" Version="1.16.0" />
 
 	</ItemGroup>
-	
+
 </Project>

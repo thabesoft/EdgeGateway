@@ -15,7 +15,7 @@ internal sealed class Simulator(
     ) : ISimulator, IAsyncDisposable
 {
     private readonly ConcurrentDictionary<ConnectionEndpoint, ISimulationPort> _ports = [];
-    private readonly IRetryableLifecycleStateMachine _stateMachine = Lifecycle.RetryableStateMachine(logger);
+    private readonly ILifecycleStateMachine _stateMachine = Lifecycle.RetryableStateMachine(logger);
     private readonly ILifecycleBatchExecutor _batchExecutor = Lifecycle.BatchExecutor(logger);
 
     public LifecycleState State => _stateMachine.State;

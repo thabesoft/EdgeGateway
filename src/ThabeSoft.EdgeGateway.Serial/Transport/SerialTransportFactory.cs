@@ -15,6 +15,8 @@ internal sealed class SerialTransportFactory(ILoggerFactory loggerFactory) : ITr
         if (descriptor is not SerialTransportDescriptor serial)
             throw new InvalidOperationException();
 
-        return new SerialTransportConnection(serial, loggerFactory.CreateLogger<SerialTransportConnection>());
+        return new SerialTransportConnection(
+            descriptor: serial,
+            stateMachine: Lifecycle.StrictStateMachine());
     }
 }

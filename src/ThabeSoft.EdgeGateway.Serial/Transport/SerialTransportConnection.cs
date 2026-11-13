@@ -1,11 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-using RJCP.IO.Ports;
+﻿using RJCP.IO.Ports;
 using ThabeSoft.EdgeGateway.Lifecycles;
-using ThabeSoft.EdgeGateway.Transport.Byte;
-
-using RJCPStopBit = RJCP.IO.Ports.StopBits;
-using RJCPParity = RJCP.IO.Ports.Parity;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.EdgeGateway.Transport.Byte;
+using RJCPParity = RJCP.IO.Ports.Parity;
+using RJCPStopBit = RJCP.IO.Ports.StopBits;
 
 
 namespace ThabeSoft.EdgeGateway.Transport;
@@ -13,14 +11,15 @@ namespace ThabeSoft.EdgeGateway.Transport;
 
 internal sealed class SerialTransportConnection : ITransportConnection, IReadBufferDiscardable
 {
-    private readonly IStrictLifecycleStateMachine _stateMachine;
+    private readonly ILifecycleStateMachine _stateMachine;
     private readonly SerialPortStream _serialPort;
 
     public SerialTransportConnection(
         SerialTransportDescriptor descriptor,
-        ILogger? logger = null)
+        ILifecycleStateMachine stateMachine)
     {
         ArgumentNullException.ThrowIfNull(descriptor);
+        ArgumentNullException.ThrowIfNull(stateMachine);
 
         _serialPort = new(
             port: descriptor.PortName,
@@ -29,7 +28,7 @@ internal sealed class SerialTransportConnection : ITransportConnection, IReadBuf
             parity: Parse(descriptor.Parity),
             stopbits: Parse(descriptor.StopBits));
 
-        _stateMachine = Lifecycle.StrictStateMachine(logger);
+        _stateMachine = stateMachine;
         Endpoint = descriptor.Endpoint;
     }
 
@@ -73,7 +72,6 @@ internal sealed class SerialTransportConnection : ITransportConnection, IReadBuf
         _serialPort.Open();
         return ValueTask.CompletedTask;
     }
-
     private ValueTask OnStopAsync(CancellationToken cancellationToken)
     {
         _serialPort.Close();

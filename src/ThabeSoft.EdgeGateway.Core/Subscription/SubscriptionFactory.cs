@@ -19,6 +19,7 @@ internal sealed class SubscriptionFactory(
             subscriptionDescriptor: subscriptionDescriptor,
             subscriptionReader: subscriptionReader,
             triggerScheduler: triggerScheduler,
+            stateMachine: Lifecycle.StrictStateMachine(),
             logger: loggerFactory.CreateLogger<Subscription<T>>()
         );
     }

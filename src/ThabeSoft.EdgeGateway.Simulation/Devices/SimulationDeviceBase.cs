@@ -20,7 +20,7 @@ internal abstract class SimulationDeviceBase(
         ILogger? logger = null
     ) : ISimulationDevice
 {
-    private readonly IStrictLifecycleStateMachine _stateMachine = Lifecycle.StrictStateMachine();
+    private readonly ILifecycleStateMachine _stateMachine = Lifecycle.StrictStateMachine();
     private readonly TaskManager _taskManager = new();
     //private readonly ConcurrentDictionary<Guid, ITrigger> _triggers = [];
     private ILogger _logger = logger ?? NullLogger.Instance;

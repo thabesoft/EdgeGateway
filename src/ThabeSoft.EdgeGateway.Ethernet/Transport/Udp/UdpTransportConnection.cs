@@ -12,7 +12,7 @@ internal sealed class UdpTransportConnection(
         ILogger<UdpTransportConnection> logger
     ) : ITransportConnection
 {
-    private readonly IStrictLifecycleStateMachine _stateMachine = Lifecycle.StrictStateMachine(logger);
+    private readonly ILifecycleStateMachine _stateMachine = Lifecycle.StrictStateMachine(logger);
     private readonly UdpClient _udpClient = new();
 
     private Task? _receiveLoop;

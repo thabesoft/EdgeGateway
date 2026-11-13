@@ -7,7 +7,7 @@ namespace ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 
 
 internal sealed class StrictLifecycleStateMachine(ILogger? logger = null) :
-    IStrictLifecycleStateMachine
+    ILifecycleStateMachine
 {
     private readonly SemaphoreSlim _lock = new(1, 1);
     private readonly ILogger _logger = logger ?? NullLogger.Instance;

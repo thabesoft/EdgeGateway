@@ -37,13 +37,13 @@ public static class Lifecycle
     /// <summary>
     /// 标准 启动->停止->释放 状态机
     /// </summary>
-    public static IStrictLifecycleStateMachine StrictStateMachine(ILogger? logger = null) =>
+    public static ILifecycleStateMachine StrictStateMachine(ILogger? logger = null) =>
         new StrictLifecycleStateMachine(logger);
 
     /// <summary>
     /// 可以连续重复启动的状态机
     /// </summary>
-    public static IRetryableLifecycleStateMachine RetryableStateMachine(ILogger? logger = null) =>
+    public static ILifecycleStateMachine RetryableStateMachine(ILogger? logger = null) =>
         new RetryableLifecycleStateMachine(logger);
 
     #endregion

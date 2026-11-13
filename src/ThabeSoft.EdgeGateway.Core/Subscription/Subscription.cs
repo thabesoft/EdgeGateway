@@ -18,12 +18,12 @@ internal sealed class Subscription<T>(
         SubscriptionDescriptor<T> subscriptionDescriptor,
         SubscriptionReader<T> subscriptionReader,
         ITriggerScheduler triggerScheduler,
+        ILifecycleStateMachine stateMachine,
         ILogger<Subscription<T>>? logger = null
     ) : ISubscription<T>, IAsyncDisposableSubscription
     where T : notnull
 {
     private IDisposable? _triggerTick;
-    private IStrictLifecycleStateMachine _stateMachine = Lifecycle.StrictStateMachine(logger);
     private readonly ReadingSubject<T> _subject = new(logger);
 
 
@@ -33,16 +33,16 @@ internal sealed class Subscription<T>(
     Reading? ISubscription.Latest => subscriptionReader.Latest;
     public IObservable<Reading<T>> Update => _subject;
     IObservable<Reading> ISubscription.Update => _subject;
-    public LifecycleState State => _stateMachine.State;
+    public LifecycleState State => stateMachine.State;
 
 
 
     public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StartAsync(OnStartAsync, cancellationToken);
+        stateMachine.StartAsync(OnStartAsync, cancellationToken);
     public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StopAsync(OnStopAsync, cancellationToken);
+        stateMachine.StopAsync(OnStopAsync, cancellationToken);
     public ValueTask DisposeAsync() =>
-        _stateMachine.DisposeAsync(OnDisposeAsync);
+        stateMachine.DisposeAsync(OnDisposeAsync);
 
 
     private ValueTask OnStartAsync(CancellationToken cancellationToken)
@@ -73,42 +73,16 @@ internal sealed class Subscription<T>(
             var reading = await subscriptionReader.ReadAsync(cancellationToken);
             _subject.OnNext(reading);
         }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+
+        }
         catch (Exception ex)
         {
             _subject.OnError(ex);
-            throw;
+
+            _triggerTick?.Dispose();
+            _triggerTick = null;
         }
     }
-}
-
-
-
-internal sealed class SubscriptionReader<T>(
-    SubscriptionDescriptor<T> descriptor,
-    IProtocolAccessor protocolAccessor,
-    RecoveryPolicyHandler recoveryPolicyHandler) where T : notnull
-{
-    public Reading<T>? Latest { get; private set; }
-
-    public async ValueTask<Reading<T>> ReadAsync(CancellationToken ct)
-    {
-        try
-        {
-            var value = await protocolAccessor.ReadAsync(descriptor.Tag, ct);
-            var reading = Reading.Good(value);
-            Latest = reading;
-
-            return reading;
-        }
-        catch (OperationCanceledException) when (ct.IsCancellationRequested)
-        {
-            throw;
-        }
-        catch (Exception ex) when (recoveryPolicyHandler.Handle(ex))
-        {
-            return Reading.Bad(GetLatestValue());
-        }
-    }
-
-    private T GetLatestValue() => Latest is null ? default! : Latest.Value.Value;
 }

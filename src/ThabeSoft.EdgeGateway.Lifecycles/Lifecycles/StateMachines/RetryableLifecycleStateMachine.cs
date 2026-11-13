@@ -7,7 +7,7 @@ namespace ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 
 
 internal sealed class RetryableLifecycleStateMachine(ILogger? logger = null) :
-    IRetryableLifecycleStateMachine
+    ILifecycleStateMachine
 {
     private readonly SemaphoreSlim _lock = new(1, 1);
     private readonly ILogger _logger = logger ?? NullLogger.Instance;
@@ -128,6 +128,7 @@ internal sealed class RetryableLifecycleStateMachine(ILogger? logger = null) :
             await action.InvokeWithTimeoutAsync(ExecuteTimeout, "执行", cancellationToken);
         }
         finally { _lock.Release(); }
+
     }
 
     [DebuggerStepThrough]
@@ -144,6 +145,7 @@ internal sealed class RetryableLifecycleStateMachine(ILogger? logger = null) :
             return await action.InvokeWithTimeoutAsync(ExecuteTimeout, "执行", cancellationToken);
         }
         finally { _lock.Release(); }
+
     }
 
     [DebuggerStepThrough]

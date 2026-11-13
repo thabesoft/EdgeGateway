@@ -28,7 +28,7 @@ internal sealed class Port : IPort, IAsyncDisposable
 
 
     // 生命周期
-    private readonly IRetryableLifecycleStateMachine _lifecycleStateMachine;
+    private readonly ILifecycleStateMachine _lifecycleStateMachine;
     private readonly PortDescriptor _portDescriptor;
     private readonly ILifecycleStateable _gatewayLifecycleState;
 

@@ -14,15 +14,3 @@ public interface IAsyncExecutor
         Func<CancellationToken, ValueTask<TResult>> method,
         CancellationToken cancellationToken = default);
 }
-
-
-public static class AsyncExecutorExtensions
-{
-    extension<TResult>(Func<CancellationToken, ValueTask<TResult>> method)
-    {
-        public Func<CancellationToken, ValueTask<TResult>> WithExecutor(IAsyncExecutor executor)
-        {
-            return ct => executor.ExecuteAsync(ct => method(ct), ct);
-        }
-    }
-}

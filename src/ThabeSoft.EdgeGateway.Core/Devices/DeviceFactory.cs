@@ -20,6 +20,7 @@ internal sealed class DeviceFactory(
             portLifecycleState: portLifecycleState,
             protocolAccessor: protocolAccessor,
             recoveryPolicyHandler: recoveryPolicyHandler,
+            stateMachine: Lifecycle.RetryableStateMachine(),
             logger: loggerFactory.CreateLogger<Device>()
         );
     }

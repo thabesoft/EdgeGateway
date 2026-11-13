@@ -19,7 +19,7 @@ internal sealed class Gateway : IGateway, IAsyncDisposable
 
     private readonly ILifecycleKeyedCollection<ConnectionEndpoint, Port> _ports;
     private readonly ILifecycleBatchExecutor _batchExecutor;
-    private readonly IRetryableLifecycleStateMachine _stateMachine;
+    private readonly ILifecycleStateMachine _stateMachine;
 
 
     public Gateway(

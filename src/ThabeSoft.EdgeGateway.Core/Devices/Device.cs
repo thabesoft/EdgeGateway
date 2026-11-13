@@ -19,7 +19,7 @@ internal sealed class Device : IDevice, IAsyncDisposable
     private readonly RecoveryPolicyHandler _recoveryPolicyHandler;
     private readonly ILifecycleKeyedCollection<SubscriptionId, IAsyncDisposableSubscription> _subscriptions;
     private readonly ILifecycleBatchExecutor _subscriptionsBatchExecutor;
-    private readonly IRetryableLifecycleStateMachine _stateMachine;
+    private readonly ILifecycleStateMachine _stateMachine;
 
 
     public Device(
@@ -28,8 +28,8 @@ internal sealed class Device : IDevice, IAsyncDisposable
             ILifecycleStateable portLifecycleState,
             IProtocolAccessor protocolAccessor,
             RecoveryPolicyHandler recoveryPolicyHandler,
-            ILogger<Device> logger
-    )
+            ILifecycleStateMachine stateMachine,
+            ILogger<Device>? logger = null)
     {
         _deviceDescriptor = deviceDescriptor;
         _subscriptionFactory = subscriptionFactory;
@@ -41,7 +41,7 @@ internal sealed class Device : IDevice, IAsyncDisposable
         Subscriptions = new ReadOnlyDictionaryView<SubscriptionId, IAsyncDisposableSubscription, ISubscription>(_subscriptions.Items);
 
         _subscriptionsBatchExecutor = Lifecycle.BatchExecutor(logger);
-        _stateMachine = Lifecycle.RetryableStateMachine(logger);
+        _stateMachine = stateMachine;//Lifecycle.RetryableStateMachine(logger);
     }
 
     public DeviceId Id => _deviceDescriptor.Id;
@@ -51,21 +51,12 @@ internal sealed class Device : IDevice, IAsyncDisposable
 
 
 
-    public ValueTask StartAsync(CancellationToken cancellationToken = default)
-    {
-        return _stateMachine.StartAsync(ct =>
-        {
-            if (_portLifecycleState.State is not (LifecycleState.Starting or LifecycleState.Running))
-                throw new InvalidOperationException("设备启动失败, 端口未启动");
-
-            return _subscriptionsBatchExecutor.StartAsync(_subscriptions.Values, ct);
-
-        }, cancellationToken);
-    }
+    public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
+        _stateMachine.StartAsync(OnStartAsync, cancellationToken);
     public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StopAsync(ct => _subscriptionsBatchExecutor.StopAsync(_subscriptions.Values, ct), cancellationToken);
+        _stateMachine.StopAsync(OnStopAsync, cancellationToken);
     public ValueTask DisposeAsync() =>
-        _stateMachine.DisposeAsync(() => _subscriptionsBatchExecutor.DisposeAsync(_subscriptions.Values));
+        _stateMachine.DisposeAsync(OnDisposeAsync);
 
 
     public async ValueTask<ISubscription<T>> AddSubscriptionAsync<T>(
@@ -73,11 +64,11 @@ internal sealed class Device : IDevice, IAsyncDisposable
             CancellationToken cancellationToken)
         where T : notnull
     {
-        var item = await _stateMachine.ExecuteAsync(
-           ct => _subscriptions.AddAsync(
-               subscriptionDescriptor.Id,
-               () => _subscriptionFactory.Create(subscriptionDescriptor, new(subscriptionDescriptor, _protocolAccessor, _recoveryPolicyHandler)),
-               ct),
+        var item = await _stateMachine.ExecuteAsync(ct =>
+            _subscriptions.AddAsync(
+                subscriptionDescriptor.Id,
+                () => _subscriptionFactory.Create(subscriptionDescriptor, new(subscriptionDescriptor, _protocolAccessor, _recoveryPolicyHandler)),
+                ct),
            cancellationToken);
 
         return (Subscription<T>)item;
@@ -86,8 +77,26 @@ internal sealed class Device : IDevice, IAsyncDisposable
         SubscriptionId subscriptionId,
         CancellationToken cancellationToken = default)
     {
-        return _stateMachine.ExecuteAsync(
-          ct => _subscriptions.RemoveAsync(subscriptionId, ct),
-          cancellationToken);
+        return _stateMachine.ExecuteAsync(ct =>
+            _subscriptions.RemoveAsync(subscriptionId, ct),
+            cancellationToken);
+    }
+
+
+
+    private ValueTask OnStartAsync(CancellationToken cancellationToken)
+    {
+        if (_portLifecycleState.State is not (LifecycleState.Starting or LifecycleState.Running))
+            throw new InvalidOperationException("设备启动失败, 端口未启动");
+
+        return _subscriptionsBatchExecutor.StartAsync(_subscriptions.Values, cancellationToken);
+    }
+    private ValueTask OnStopAsync(CancellationToken cancellationToken)
+    {
+        return _subscriptionsBatchExecutor.StopAsync(_subscriptions.Values, cancellationToken);
+    }
+    private ValueTask OnDisposeAsync()
+    {
+        return _subscriptionsBatchExecutor.DisposeAsync(_subscriptions.Values);
     }
 }

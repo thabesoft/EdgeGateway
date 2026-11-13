@@ -15,6 +15,11 @@ public sealed record IpTransportDescriptor : ITransportDescriptor
 
 
     private IpTransportDescriptor() { }
+    public bool Equals(ITransportDescriptor other)
+    {
+        if (other is not IpTransportDescriptor ip) return false;
+        return ip.Equals(this);
+    }
     // Tcp(192.168.1.1:1234)
     public override string ToString() => $"{TransportType}({IPEndPoint})";
 

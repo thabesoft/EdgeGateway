@@ -14,6 +14,13 @@ public sealed record class SerialTransportDescriptor : ITransportDescriptor
 
 
     private SerialTransportDescriptor() { }
+    public bool Equals(ITransportDescriptor other)
+    {
+        if (other is not SerialTransportDescriptor serial)
+            return false;
+
+        return serial.Equals(this);
+    }
     // COM2(9600, 8N5)
     public override string ToString()
     {

@@ -18,7 +18,7 @@ internal sealed partial class SubscriptionViewModel : LifecycleViewModel, IDispo
     {
         _subscription = subscription;
         Latest = subscription.Latest;
-        _subscriptionHandle = subscription
+        _subscriptionHandle = subscription.Update
             .ObserveOn(AvaloniaScheduler.Instance)
             .Subscribe(
                 onNext: value =>

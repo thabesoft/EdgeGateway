@@ -4,17 +4,19 @@ using ThabeSoft.EdgeGateway.Lifecycles;
 namespace ThabeSoft.EdgeGateway.Subscription;
 
 
-public interface ISubscription : ILifecycleWithState, IObservable<Reading>
+public interface ISubscription : ILifecycleWithState
 {
     SubscriptionId Id { get; }
     IDataAddress Address { get; }
     Reading? Latest { get; }
+    IObservable<Reading> Update { get; }
 }
 
-public interface ISubscription<T> : ISubscription, IObservable<Reading<T>>
+public interface ISubscription<T> : ISubscription
     where T : notnull
 {
     new Reading<T>? Latest { get; }
+    new IObservable<Reading<T>> Update { get; }
 }
 
 
@@ -22,12 +24,16 @@ public static class SubscriptionExtensions
 {
     extension<T>(ISubscription<T> configurator) where T : notnull
     {
+        public IDisposable Subscribe(IObserver<Reading<T>> observer) =>
+            configurator.Update.Subscribe(observer);
         public IDisposable Subscribe(Action<Reading<T>> onNext, Action<Exception>? onError = null, Action? onCompleted = null) =>
             configurator.Subscribe(new Observer<Reading<T>>() { Next = onNext, Error = onError, Completed = onCompleted });
     }
 
     extension(ISubscription configurator)
     {
+        public IDisposable Subscribe(IObserver<Reading> observer) =>
+            configurator.Update.Subscribe(observer);
         public IDisposable Subscribe(Action<Reading> onNext, Action<Exception>? onError = null, Action? onCompleted = null) =>
             configurator.Subscribe(new Observer<Reading>() { Next = onNext, Error = onError, Completed = onCompleted });
     }

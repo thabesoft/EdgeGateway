@@ -17,7 +17,7 @@ internal sealed class Device : IDevice, IAsyncDisposable
     private readonly ILifecycleStateable _portLifecycleState;
     private readonly IProtocolAccessor _protocolAccessor;
     private readonly RecoveryPolicyHandler _exceptionHandler;
-    private readonly ILifecycleKeyedCollection<SubscriptionId, IAsyncDisposeSubscription> _subscriptions;
+    private readonly ILifecycleKeyedCollection<SubscriptionId, IAsyncDisposableSubscription> _subscriptions;
     private readonly ILifecycleBatchExecutor _subscriptionsBatchExecutor;
     private readonly IRetryableLifecycleStateMachine _stateMachine;
 
@@ -37,8 +37,8 @@ internal sealed class Device : IDevice, IAsyncDisposable
         _protocolAccessor = protocolAccessor;
         _exceptionHandler = recoveryPolicyHandler;
 
-        _subscriptions = Lifecycle.KeyedCollection<SubscriptionId, IAsyncDisposeSubscription>(this, logger);
-        Subscriptions = new ReadOnlyDictionaryView<SubscriptionId, IAsyncDisposeSubscription, ISubscription>(_subscriptions.Items);
+        _subscriptions = Lifecycle.KeyedCollection<SubscriptionId, IAsyncDisposableSubscription>(this, logger);
+        Subscriptions = new ReadOnlyDictionaryView<SubscriptionId, IAsyncDisposableSubscription, ISubscription>(_subscriptions.Items);
 
         _subscriptionsBatchExecutor = Lifecycle.BatchExecutor(logger);
         _stateMachine = Lifecycle.RetryableStateMachine(logger);

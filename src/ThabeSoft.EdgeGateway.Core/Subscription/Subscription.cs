@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Collections.Concurrent;
-using System.Net.Sockets;
 using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
@@ -13,109 +12,74 @@ using ThabeSoft.EdgeGateway.Utilities;
 namespace ThabeSoft.EdgeGateway.Subscription;
 
 
-internal interface IAsyncDisposeSubscription : ISubscription, IAsyncDisposable;
+internal interface IAsyncDisposableSubscription : ISubscription, IAsyncDisposable
+{
+    ValueTask UpdateAsync(CancellationToken cancellationToken);
+}
 
-internal sealed class Subscription<T> : ISubscription<T>, IAsyncDisposeSubscription
+internal sealed class Subscription<T>(
+        SubscriptionDescriptor<T> subscriptionDescriptor,
+        ILifecycleStateable deviceLifecycleState,
+        RecoveryPolicyHandler recoveryPolicyHandler,
+        IProtocolAccessor protocolAccessor,
+        ITriggerScheduler triggerScheduler,
+        ILogger<Subscription<T>>? logger = null
+    ) : ISubscription<T>, IAsyncDisposableSubscription
     where T : notnull
 {
-    public delegate ValueTask<T> GetValueHandler(CancellationToken cancellationToken = default);
-
-    private SubscriptionValueReader<T> _subscriptionValueReader;
-    private readonly ConcurrentDictionary<Guid, IObserver<Reading<T>>> _observers = [];
-
-    private readonly SubscriptionDescriptor<T> _subscriptionDescriptor;
-    private readonly ILogger<Subscription<T>> _logger;
+    private IDisposable? _triggerTick;
+    private readonly ReadingSubject<T> _subject = new(logger);
+    private readonly ILogger<Subscription<T>> _logger = logger ?? NullLogger<Subscription<T>>.Instance;
 
 
-    private readonly ILifecycleStateable _deviceLifecycleState;
-    private readonly RecoveryPolicyHandler _recoveryPolicyHandler;
-    private readonly IDisposable _triggerReleaser;
-    private readonly IRetryableLifecycleStateMachine _stateMachine;
-
-
-    public Subscription(
-            SubscriptionDescriptor<T> subscriptionDescriptor,
-            ITriggerScheduler triggerScheduler,
-            IProtocolAccessor protocolAccessor,
-            ILifecycleStateable deviceLifecycleState,
-            RecoveryPolicyHandler recoveryPolicyHandler,
-            ILogger<Subscription<T>>? logger = null)
-    {
-        _subscriptionDescriptor = subscriptionDescriptor;
-        _deviceLifecycleState = deviceLifecycleState;
-        _recoveryPolicyHandler = recoveryPolicyHandler;
-        _logger = logger ?? NullLogger<Subscription<T>>.Instance;
-        _triggerReleaser = triggerScheduler.Register(subscriptionDescriptor.Trigger, TriggerTask);
-
-        _subscriptionValueReader = new(subscriptionDescriptor, protocolAccessor);
-        _stateMachine = Lifecycle.RetryableStateMachine(logger);
-    }
-
-
-    public SubscriptionId Id => _subscriptionDescriptor.Id;
-    public IDataAddress Address => _subscriptionDescriptor.Tag.Address;
+    public SubscriptionId Id { get; } = subscriptionDescriptor.Id;
+    public IDataAddress Address { get; } = subscriptionDescriptor.Tag.Address;
     public Reading<T>? Latest { get; private set; }
     Reading? ISubscription.Latest => Latest;
-    public LifecycleState State => _stateMachine.State;
+    public IObservable<Reading<T>> Update => _subject;
+    IObservable<Reading> ISubscription.Update => _subject;
+    public LifecycleState State { get; private set; }
 
-
-    public IDisposable Subscribe(IObserver<Reading<T>> observer)
-    {
-        return _stateMachine.Execute(() =>
-        {
-            var id = Guid.NewGuid();
-            _observers[id] = observer;
-
-            return Disposer.From(() => _observers.TryRemove(id, out _));
-        });
-    }
-    public IDisposable Subscribe(IObserver<Reading> observer)
-    {
-        return Subscribe(new ObserverWapper(observer));
-    }
 
 
     public ValueTask StartAsync(CancellationToken cancellationToken = default)
     {
-        return _stateMachine.StartAsync(async ct =>
-        {
-            if (_deviceLifecycleState.State is not (LifecycleState.Starting or LifecycleState.Running))
-                throw new InvalidOperationException("订阅启动失败, 设备未启动");
-        }, cancellationToken);
+        if (deviceLifecycleState.State != LifecycleState.Running)
+            return ValueTask.CompletedTask;
+
+        _triggerTick?.Dispose();
+        _triggerTick = triggerScheduler.Register(subscriptionDescriptor.Trigger, UpdateAsync);
+
+        State = LifecycleState.Running;
+        return ValueTask.CompletedTask;
     }
-    public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StopAsync(_ => ValueTask.CompletedTask, cancellationToken);
+    public ValueTask StopAsync(CancellationToken cancellationToken = default)
+    {
+        _triggerTick?.Dispose();
+        State = LifecycleState.Stopped;
+        return ValueTask.CompletedTask;
+    }
     public ValueTask DisposeAsync()
     {
-        return _stateMachine.DisposeAsync(async () =>
-        {
-            _triggerReleaser.Dispose();
-
-            OnCompleted();
-            _observers.Clear();
-        });
+        _subject.Dispose();
+        State = LifecycleState.Disposed;
+        return ValueTask.CompletedTask;
     }
 
-
-
-
-    private async ValueTask TriggerTask(CancellationToken cancellationToken)
+    public async ValueTask UpdateAsync(CancellationToken cancellationToken)
     {
         if (State is not LifecycleState.Running) return;
-        await OnPublishAsync(cancellationToken);
-    }
-    private async ValueTask OnPublishAsync(CancellationToken cancellationToken)
-    {
+
         try
         {
-            var value = await _subscriptionValueReader.WaitNextAsync(cancellationToken);
+            var value = await protocolAccessor.ReadAsync(subscriptionDescriptor.Tag, cancellationToken);
 
             if (_logger.IsEnabled(LogLevel.Trace))
                 _logger.LogTrace("订阅 [{Id}] 新值 [{Value}] 已发布", Id, value);
 
             var reading = Reading.Good(value);
             Latest = reading;
-            OnNext(reading);
+            _subject.OnNext(reading);
 
             return;
         }
@@ -125,12 +89,12 @@ internal sealed class Subscription<T> : ISubscription<T>, IAsyncDisposeSubscript
         }
         catch (OperationCanceledException)
         {
-            OnNext(Reading.Bad(GetLatestValue()));
+            _subject.OnNext(Reading.Bad(GetLatestValue()));
         }
         catch (Exception ex)
         {
             bool canRecover;
-            try { canRecover = _recoveryPolicyHandler.Handle(ex); }
+            try { canRecover = recoveryPolicyHandler.Handle(ex); }
             catch (Exception handlerEx)
             {
                 _logger.LogCritical(handlerEx, "异常处理器执行失败！原异常: {OriginalEx}", ex.Message);
@@ -140,50 +104,15 @@ internal sealed class Subscription<T> : ISubscription<T>, IAsyncDisposeSubscript
             // 不可恢复的异常
             if (!canRecover)
             {
-                OnError(ex);
+                _subject.OnError(ex);
                 throw;
             }
 
             // 可恢复的
-            OnNext(Reading.Bad(GetLatestValue()));
+            _subject.OnNext(Reading.Bad(GetLatestValue()));
         }
 
         // 最新的值
         T GetLatestValue() => Latest is null ? default! : Latest.Value.Value;
-    }
-
-    private void OnNext(Reading<T> value)
-    {
-        foreach (var observer in _observers.Values)
-        {
-            try { observer.OnNext(value); }
-            catch (OperationCanceledException) { throw; }
-            catch (Exception ex) { _logger.LogTrace(ex, "订阅({Id})通知时发生错误", Id); }
-        }
-    }
-    private void OnError(Exception exception)
-    {
-        foreach (var observer in _observers.Values)
-        {
-            try { observer.OnError(exception); }
-            catch (OperationCanceledException) { throw; }
-            catch (Exception ex) { _logger.LogTrace(ex, "订阅({Id})异常通知时发生错误", Id); }
-        }
-    }
-    private void OnCompleted()
-    {
-        foreach (var observer in _observers.Values)
-        {
-            try { observer.OnCompleted(); }
-            catch (OperationCanceledException) { throw; }
-            catch (Exception ex) { _logger.LogTrace(ex, "订阅({Id})结束通知时发生错误", Id); }
-        }
-    }
-
-    private sealed class ObserverWapper(IObserver<Reading> observer) : IObserver<Reading<T>>
-    {
-        public void OnNext(Reading<T> value) => observer.OnNext(value);
-        public void OnCompleted() => observer.OnCompleted();
-        public void OnError(Exception error) => observer.OnError(error);
     }
 }

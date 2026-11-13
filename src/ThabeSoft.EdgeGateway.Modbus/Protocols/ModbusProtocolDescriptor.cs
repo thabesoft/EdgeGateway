@@ -26,6 +26,11 @@ public sealed class ModbusProtocolDescriptor : IProtocolDescriptor
         FrameFormat = frameFormat;
         ConnectionType = connectionType;
     }
+    public bool Equals(IProtocolDescriptor other)
+    {
+        if (other is not ModbusProtocolDescriptor modbus) return false;
+        return modbus.FrameFormat == FrameFormat && modbus.ConnectionType == ConnectionType;
+    }
 
     // Modbus(Rtu, Serial)
     public override string ToString() => $"Modbus({FrameFormat}, {ConnectionType})";

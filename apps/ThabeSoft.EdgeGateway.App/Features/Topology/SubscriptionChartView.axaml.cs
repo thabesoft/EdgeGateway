@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using ReactiveUI.Primitives.Core;
 using ScottPlot.DataSources;
@@ -63,9 +64,10 @@ public partial class SubscriptionChartView : UserControl
 
 internal static class ChartRefreshScheduler
 {
+    private const int FPS = 30;
     private static readonly DispatcherTimer Timer = new()
     {
-        Interval = TimeSpan.FromMilliseconds(100)
+        Interval = TimeSpan.FromSeconds(1 / FPS)
     };
 
     private static readonly HashSet<SubscriptionChartView> Charts = new();

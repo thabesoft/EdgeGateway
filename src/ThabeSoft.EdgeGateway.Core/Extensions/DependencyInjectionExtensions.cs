@@ -7,7 +7,6 @@ using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transport;
-using ThabeSoft.EdgeGateway.Triggers;
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
 namespace ThabeSoft.EdgeGateway;
@@ -23,10 +22,8 @@ public static class DependencyInjectionExtensions
             // Events
             descriptors.TryAddSingleton<IEventPublisher, EventPublisher>();
 
-            // Trigger
-            descriptors.TryAddSingleton(TimeProvider.System);
-            descriptors.TryAddSingleton<ITriggerFactory, FixedIntervalTriggerFactory>();
-            descriptors.TryAddSingleton<ITriggerFactory, SignalTriggerFactory>();
+            // Triggers
+            descriptors.AddTriggers();
 
             // Factory
             descriptors.TryAddSingleton<PortFactory>();
@@ -36,7 +33,6 @@ public static class DependencyInjectionExtensions
             // FactorySelector
             descriptors.TryAddSingleton<TransportConnectionFactorySelector>();
             descriptors.TryAddSingleton<ProtocolAccessorFactorySelector>();
-            descriptors.TryAddSingleton<ITriggerFactorySelector, TriggerFactorySelector>();
 
             // Gateway
             descriptors.TryAddSingleton<IGateway, Gateway>();

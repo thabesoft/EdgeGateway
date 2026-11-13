@@ -1,4 +1,5 @@
 ﻿#pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
+using Avalonia;
 using Avalonia.Controls.Notifications;
 using SukiUI.Toasts;
 
@@ -46,11 +47,17 @@ internal static class SukiToastManagerExtensions
 
 
 
-        private void ShowToast(NotificationType type, string title, string content) => sukiToastManager
-            .CreateToast()
-            .OfType(type)
-            .WithTitle(title)
-            .WithContent(content)
-            .Queue();
+        private void ShowToast(NotificationType type, string title, string content)
+        {
+            Application.Current?.Dispatcher.Post(() =>
+            {
+                sukiToastManager
+                    .CreateToast()
+                    .OfType(type)
+                    .WithTitle(title)
+                    .WithContent(content)
+                    .Queue();
+            });
+        }
     }
 }

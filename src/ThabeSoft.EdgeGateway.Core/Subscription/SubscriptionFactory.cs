@@ -7,7 +7,7 @@ namespace ThabeSoft.EdgeGateway.Subscription;
 
 
 internal sealed class SubscriptionFactory(
-        ITriggerFactorySelector triggerFactorySelector,
+        ITriggerScheduler triggerScheduler,
         ILoggerFactory loggerFactory
     )
 {
@@ -20,7 +20,7 @@ internal sealed class SubscriptionFactory(
         return new Subscription<T>
         (
             subscriptionDescriptor: subscriptionDescriptor,
-            triggerFactorySelector: triggerFactorySelector,
+            triggerScheduler: triggerScheduler,
             protocolAccessor: protocolAccessor,
             deviceLifecycleState: deviceLifecycleState,
             logger: loggerFactory.CreateLogger<Subscription<T>>()

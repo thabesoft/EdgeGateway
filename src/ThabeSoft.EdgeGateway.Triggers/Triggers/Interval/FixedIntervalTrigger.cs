@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Triggers;
+﻿namespace ThabeSoft.EdgeGateway.Triggers.Interval;
 
 
 internal sealed class FixedIntervalTrigger(FixedIntervalTriggerDescriptor descriptor, TimeProvider timeProvider) : ITrigger

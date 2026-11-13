@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Triggers;
+﻿namespace ThabeSoft.EdgeGateway.Triggers.Signal;
 
 internal sealed class SignalTriggerFactory : ITriggerFactory
 {

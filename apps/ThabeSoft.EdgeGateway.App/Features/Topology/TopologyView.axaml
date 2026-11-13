@@ -12,8 +12,9 @@
              x:Class="ThabeSoft.EdgeGateway.App.Features.Topology.TopologyView"
              x:DataType="local:TopologyViewModel">
 
-    <suki:GlassCard ClipToBounds="True">
+    <suki:GlassCard ClipToBounds="True" Margin="5" Padding="0">
         <suki:SukiSideMenu ItemsSource="{Binding MenuItemsSource}"
+                           Background="Transparent"
                            IsToggleButtonVisible="False"
                            IsSearchEnabled="True"
                            SelectedItem="{Binding SelectedMenu}"
@@ -21,7 +22,8 @@
             <!--菜单-->
             <suki:SukiSideMenu.ItemTemplate>
                 <DataTemplate>
-                    <suki:SukiSideMenuItem Header="{Binding Header}" ItemsSource="{Binding ChildItemsSource}" Icon="{avalonia:MaterialIconExt Kind=Person}">
+                    <suki:SukiSideMenuItem Width="250" Header="{Binding Header}" ItemsSource="{Binding ChildItemsSource}">
+
                         <suki:SukiSideMenuItem.ItemTemplate>
                             <DataTemplate>
                                 <suki:SukiSideMenuItem Header="{Binding Header}"></suki:SukiSideMenuItem>
@@ -33,7 +35,7 @@
 
             <!--内容页-->
             <suki:SukiSideMenu.Content>
-                <Panel>
+                <Panel Margin="10">
 
                     <!--端口页面-->
                     <DockPanel IsVisible="{Binding IsSelecteedPort}">
@@ -168,13 +170,13 @@
                                     <DataGridTemplateColumn Header="图表"  Width="*">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
-                                                <local:SubscriptionChartView DataContext="{Binding}" Width="120" Height="40" />
+                                                <local:SubscriptionChartView DataContext="{Binding}" Height="30" Margin="5 3" />
                                                 <!--<controls:SparklineControl Buffer="{Binding Buffer}"
-                                                                           Height="60"
-                                                                           Width="200"
-                                                                           MinHeight="60"
-                                                                           MinWidth="200"
-                                                                            />-->
+                                                Height="60"
+                                                Width="200"
+                                                MinHeight="60"
+                                                MinWidth="200"
+                                                />-->
                                             </DataTemplate>
                                         </DataGridTemplateColumn.CellTemplate>
                                     </DataGridTemplateColumn>

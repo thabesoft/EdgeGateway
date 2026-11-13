@@ -42,6 +42,20 @@ internal sealed partial class DeviceViewModel : LifecycleViewModel
           await RemoveSubscriptionAsync(subscriptionId, ct), "删除设备", TimeSpan.FromSeconds(10));
     }
 
+    public override async ValueTask StartAsync(CancellationToken cancellationToken = default)
+    {
+        await base.StartAsync(cancellationToken);
+
+        foreach (var i in _viewModels.Values)
+            i.OnUpdateState();
+    }
+    public override async ValueTask StopAsync(CancellationToken cancellationToken = default)
+    {
+        await base.StopAsync(cancellationToken);
+
+        foreach (var i in _viewModels.Values)
+            i.OnUpdateState();
+    }
 
     public async ValueTask<SubscriptionViewModel> AddSubscriptionAsync<T>(SubscriptionDescriptor<T> subscriptionDescriptor, CancellationToken cancellationToken = default)
         where T : notnull

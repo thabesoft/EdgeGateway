@@ -25,7 +25,7 @@ internal static class DesignHost
 
         _host = builder.Build();
         _services = _host.Services;
-        _ = _host.StartAsync();
+        _host.Start();
     }
 
 #endif

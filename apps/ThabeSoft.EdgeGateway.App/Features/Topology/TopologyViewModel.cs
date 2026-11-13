@@ -94,12 +94,12 @@ internal sealed partial class TopologyViewModel(
         var ports = gatewayViewModel.Ports.Values
             .Select(port => new MenuItemViewModel()
             {
-                Header = port.Endpoint.ToString(),
+                Header = port.Endpoint.Address,
                 Content = port,
                 ChildItemsSource = new AvaloniaList<MenuItemViewModel>(port.Devices.Values
                      .Select(device => new MenuItemViewModel()
                      {
-                         Header = device.Id.ToString(),
+                         Header = device.ProtocolType.ToString(),
                          Content = device
                      }))
             });

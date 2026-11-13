@@ -1,5 +1,6 @@
 ﻿namespace ThabeSoft.EdgeGateway.Triggers;
 
+
 public interface ITriggerFactorySelector
 {
     ITriggerFactory Select(ITriggerDescriptor triggerDescriptor);

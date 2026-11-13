@@ -1,7 +1,7 @@
-﻿namespace ThabeSoft.EdgeGateway.Triggers;
+﻿namespace ThabeSoft.EdgeGateway.Triggers.Signal;
 
 
-internal sealed class SignalTriggerDescriptor : ITriggerDescriptor, ISignal
+public sealed class SignalTriggerDescriptor : ITriggerDescriptor, ISignal
 {
     public SemaphoreSlim Signal { get; } = new(0);
 

@@ -47,7 +47,10 @@ internal sealed class StrictLifecycleStateMachine(ILogger? logger = null) :
         try
         {
             if (_state is LifecycleState.Running or LifecycleState.Starting)
-                throw new InvalidOperationException("已启动, 无法重复启动");
+            {
+                _logger.LogWarning("已启动, 无法重复启动");
+                return;
+            }
 
             try
             {
@@ -79,7 +82,10 @@ internal sealed class StrictLifecycleStateMachine(ILogger? logger = null) :
         try
         {
             if (_state is LifecycleState.Stopped or LifecycleState.Stopping)
-                throw new InvalidOperationException("已停止, 无法重复停止");
+            {
+                _logger.LogWarning("已停止, 无法重复停止");
+                return;
+            }
 
             try
             {

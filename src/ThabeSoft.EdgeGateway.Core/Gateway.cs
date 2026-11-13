@@ -27,7 +27,7 @@ internal sealed class Gateway : IGateway, IAsyncDisposable
         ArgumentNullException.ThrowIfNull(portFactory);
 
         _portFactory = portFactory;
-        this._eventPublisher = eventPublisher;
+        _eventPublisher = eventPublisher;
         _logger ??= NullLogger<Gateway>.Instance;
 
         _ports = Lifecycle.KeyedCollection<ConnectionEndpoint, Port>(this, logger);

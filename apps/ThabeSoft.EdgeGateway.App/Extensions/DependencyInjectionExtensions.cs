@@ -30,10 +30,6 @@ public static class DependencyInjectionExtensions
 
             builder.ConfigureServices(services =>
             {
-                services.AddSimulation();
-                services.AddModbusSimulation();
-                //services.AddSimulationHost();
-
                 services.AddEdgeGateway();
                 //services.AddEdgeGatewayHost();
                 services.AddSerial();

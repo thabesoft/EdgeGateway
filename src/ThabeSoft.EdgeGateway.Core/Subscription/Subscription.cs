@@ -5,7 +5,6 @@ using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.EdgeGateway.Transport.Byte;
 using ThabeSoft.EdgeGateway.Triggers;
 using ThabeSoft.EdgeGateway.Utilities;
 
@@ -27,14 +26,13 @@ internal sealed class Subscription<T> : ISubscription<T>, IAsyncDisposeSubscript
 
 
     private readonly ILifecycleStateable _deviceLifecycleState;
-    private readonly ITrigger _trigegr;
-    private readonly IBackgroundLifecycle _triggerLifecycle;
+    private readonly IDisposable _triggerReleaser;
     private readonly IRetryableLifecycleStateMachine _stateMachine;
 
 
     public Subscription(
             SubscriptionDescriptor<T> subscriptionDescriptor,
-            ITriggerFactorySelector triggerFactorySelector,
+            ITriggerScheduler triggerScheduler,
             IProtocolAccessor protocolAccessor,
             ILifecycleStateable deviceLifecycleState,
             ILogger<Subscription<T>>? logger = null)
@@ -43,10 +41,9 @@ internal sealed class Subscription<T> : ISubscription<T>, IAsyncDisposeSubscript
         _subscriptionDescriptor = subscriptionDescriptor;
         _deviceLifecycleState = deviceLifecycleState;
 
-        _trigegr = triggerFactorySelector.Create(subscriptionDescriptor.Trigger);
-        _subscriptionValueReader = new(subscriptionDescriptor, protocolAccessor);
+        _triggerReleaser = triggerScheduler.Register(subscriptionDescriptor.Trigger, TriggerTask);
 
-        _triggerLifecycle = Lifecycle.Background(TriggerTask, logger);
+        _subscriptionValueReader = new(subscriptionDescriptor, protocolAccessor);
         _stateMachine = Lifecycle.RetryableStateMachine(logger);
     }
 
@@ -80,18 +77,15 @@ internal sealed class Subscription<T> : ISubscription<T>, IAsyncDisposeSubscript
         {
             if (_deviceLifecycleState.State is not (LifecycleState.Starting or LifecycleState.Running))
                 throw new InvalidOperationException("订阅启动失败, 设备未启动");
-
-            await _triggerLifecycle.StartAsync(ct);
-
         }, cancellationToken);
     }
     public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StopAsync(_triggerLifecycle.StopAsync, cancellationToken);
+        _stateMachine.StopAsync(_ => ValueTask.CompletedTask, cancellationToken);
     public ValueTask DisposeAsync()
     {
         return _stateMachine.DisposeAsync(async () =>
         {
-            await _triggerLifecycle.DisposeAsync();
+            _triggerReleaser.Dispose();
 
             OnCompleted();
             _observers.Clear();
@@ -101,15 +95,10 @@ internal sealed class Subscription<T> : ISubscription<T>, IAsyncDisposeSubscript
 
 
 
-    private async Task TriggerTask(CancellationToken cancellationToken)
+    private async ValueTask TriggerTask(CancellationToken cancellationToken)
     {
-        while (!cancellationToken.IsCancellationRequested)
-        {
-            if (!await _trigegr.WaitForNextTickAsync(cancellationToken))
-                return;
-
-            await OnPublishAsync(cancellationToken);
-        }
+        if (State is not LifecycleState.Running) return;
+        await OnPublishAsync(cancellationToken);
     }
     private async ValueTask OnPublishAsync(CancellationToken cancellationToken)
     {

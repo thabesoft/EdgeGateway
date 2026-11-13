@@ -23,35 +23,38 @@ internal partial class LifecycleViewModel(
     private async Task StartAsync()
     {
         await sukiToastManager
-            .ExecuteWithToastAsync(async ct =>
-            {
-                await OnStartingAsync(ct);
-
-                await lifecycle.StartAsync(ct);
-                State = lifecycle.State;
-
-                await OnStartedAsync(ct);
-
-            }, "启动失败");
+            .ExecuteWithToastAsync(StartAsync, "启动失败", TimeSpan.FromSeconds(60));
     }
     [RelayCommand]
     private async Task StopAsync()
     {
         await sukiToastManager
-            .ExecuteWithToastAsync(async ct =>
-            {
-                await OnStartingAsync(ct);
-
-                await lifecycle.StopAsync(ct);
-                State = lifecycle.State;
-
-                await OnStopedAsync(ct);
-            }, "停止失败");
+            .ExecuteWithToastAsync(StopAsync, "停止失败", TimeSpan.FromSeconds(60));
     }
 
 
-    protected virtual ValueTask OnStartingAsync(CancellationToken cancellationToken) => ValueTask.CompletedTask;
-    protected virtual ValueTask OnStartedAsync(CancellationToken cancellationToken) => ValueTask.CompletedTask;
-    protected virtual ValueTask OnStopingAsync(CancellationToken cancellationToken) => ValueTask.CompletedTask;
-    protected virtual ValueTask OnStopedAsync(CancellationToken cancellationToken) => ValueTask.CompletedTask;
+    public virtual async ValueTask StartAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            await lifecycle.StartAsync(cancellationToken);
+        }
+        finally
+        {
+            OnUpdateState();
+        }
+    }
+    public virtual async ValueTask StopAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            await lifecycle.StopAsync(cancellationToken);
+        }
+        finally
+        {
+            OnUpdateState();
+        }
+    }
+
+    public void OnUpdateState() => State = lifecycle.State;
 }

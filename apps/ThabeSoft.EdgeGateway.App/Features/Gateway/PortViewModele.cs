@@ -43,6 +43,21 @@ internal sealed partial class PortViewModel : LifecycleViewModel
     }
 
 
+    public override async ValueTask StartAsync(CancellationToken cancellationToken = default)
+    {
+        await base.StartAsync(cancellationToken);
+
+        foreach (var i in _viewModels.Values)
+            i.OnUpdateState();
+    }
+    public override async ValueTask StopAsync(CancellationToken cancellationToken = default)
+    {
+        await base.StopAsync(cancellationToken);
+
+        foreach (var i in _viewModels.Values)
+            i.OnUpdateState();
+    }
+
     public async ValueTask<DeviceViewModel> AddDeviceAsync(DeviceDescriptor deviceDescriptor, CancellationToken cancellationToken = default)
     {
         var model = await _port.AddDeviceAsync(deviceDescriptor);

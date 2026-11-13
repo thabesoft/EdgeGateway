@@ -35,7 +35,7 @@ internal sealed class LaunchHostedService(GatewayViewModel gateway) :
     }
     private static async Task AddDeviceAsync(byte id, PortViewModel port, CancellationToken cancellationToken)
     {
-        var device = await port.AddDeviceAsync(DeviceDescriptor.Create(Modbus.Ip), cancellationToken);
+        var device = await port.AddDeviceAsync(new(Modbus.Ip), cancellationToken);
 
         var trigger = Trigger.Interval(100);
 

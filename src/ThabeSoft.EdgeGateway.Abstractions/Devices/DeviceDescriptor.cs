@@ -4,25 +4,30 @@ using ThabeSoft.EdgeGateway.Protocols;
 namespace ThabeSoft.EdgeGateway.Devices;
 
 
-public sealed class DeviceDescriptor
+public sealed class DeviceDescriptor : IEquatable<DeviceDescriptor>
 {
-    public required DeviceId Id { get; init; }
-    public required IProtocolDescriptor Protocol { get; init; }
+    public DeviceId Id { get; }
+    public IProtocolDescriptor Protocol { get; }
 
 
-    private DeviceDescriptor() { }
-    public override string ToString() => $"{Id} @ {Protocol}";
-
-
-    public static DeviceDescriptor Create(DeviceId deviceId, IProtocolDescriptor protocolDescriptor)
+    public DeviceDescriptor(DeviceId deviceId, IProtocolDescriptor protocolDescriptor)
     {
         ArgumentNullException.ThrowIfNull(deviceId);
         ArgumentNullException.ThrowIfNull(protocolDescriptor);
 
-        return new() { Id = deviceId, Protocol = protocolDescriptor };
+        Id = deviceId;
+        Protocol = protocolDescriptor;
     }
-    public static DeviceDescriptor Create(IProtocolDescriptor protocolDescriptor) =>
-        Create(DeviceId.Create(), protocolDescriptor);
+    public DeviceDescriptor(IProtocolDescriptor protocolDescriptor) : this(DeviceId.Create(), protocolDescriptor)
+    {
+
+    }
+
+    public bool Equals(DeviceDescriptor other)
+    {
+        return Id.Equals(other.Id) && Protocol.Equals(other.Protocol);
+    }
+    public override string ToString() => $"{Id} @ {Protocol}";
 }
 
 
@@ -36,10 +41,10 @@ public static class PortExtensions
             ArgumentNullException.ThrowIfNull(protocolDescriptor);
 
 
-            return port.AddDeviceAsync(DeviceDescriptor.Create(deviceId, protocolDescriptor), cancellationToken);
+            return port.AddDeviceAsync(new(deviceId, protocolDescriptor), cancellationToken);
         }
 
         public ValueTask<IDevice> AddDeviceAsync(IProtocolDescriptor protocolDescriptor, CancellationToken cancellationToken = default) =>
-            port.AddDeviceAsync(DeviceId.Create(), protocolDescriptor, cancellationToken);
+            port.AddDeviceAsync(new(protocolDescriptor), cancellationToken);
     }
 }

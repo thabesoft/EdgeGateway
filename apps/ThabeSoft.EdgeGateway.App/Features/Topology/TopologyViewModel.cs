@@ -5,12 +5,13 @@ using Material.Icons;
 using SukiUI.Dialogs;
 using SukiUI.Toasts;
 using ThabeSoft.EdgeGateway.App.Features.Gateway;
+using ThabeSoft.EdgeGateway.App.Services;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 
 
 internal sealed partial class TopologyViewModel(
-        ISukiDialogManager sukiDialog,
+        ISukiDialogManager sukiDialogManager,
         ISukiToastManager sukiToastManager,
         GatewayViewModel gatewayViewModel
     ) : PageViewModel("拓扑", MaterialIconKind.Dog)
@@ -37,11 +38,27 @@ internal sealed partial class TopologyViewModel(
 
 
 
+    [RelayCommand]
+    private async Task ChangeGatewayAsync()
+    {
+        await sukiToastManager.ExecuteWithToastAsync(async _ =>
+        {
+            if (gatewayViewModel.IsRunning)
+            {
+                await gatewayViewModel.StopCommand.ExecuteAsync(null);
+            }
+            else
+            {
+                await gatewayViewModel.StartCommand.ExecuteAsync(null);
+            }
+        }, "切换网关状态");
+    }
+
 
     [RelayCommand]
     private void ShowAddPortDialog()
     {
-        sukiDialog.CreateDialog()
+        sukiDialogManager.CreateDialog()
             .WithTitle("创建端口")
             .WithViewModel(dialog => new AddPortViewModel(dialog, sukiToastManager, gatewayViewModel), false)
             .WithActionButton("取消", dialog => dialog.Dismiss(), false, "Flat")

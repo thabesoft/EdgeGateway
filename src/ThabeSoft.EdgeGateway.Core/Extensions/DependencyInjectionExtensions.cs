@@ -32,7 +32,8 @@ public static class DependencyInjectionExtensions
 
 
             // Gateway
-            descriptors.TryAddSingleton<IGateway, Gateway>();
+            descriptors.TryAddSingleton<GatewayFactory>();
+            descriptors.TryAddSingleton<IGateway>(sp => sp.GetRequiredService<GatewayFactory>().Create());
             return descriptors;
         }
 
@@ -52,7 +53,7 @@ public static class DependencyInjectionExtensions
         {
             descriptors.TryAddSingleton<PortRecoveryPolicyHandler>();
             descriptors.TryAddSingleton<RecoveryPolicyFactoryResolver>();
-            descriptors.TryAddSingleton<IRecoveryPolicyFactory, SocketExceptionRecoveryPolicyFactory>();
+            descriptors.TryAddSingleton<IRecoveryPolicyFactory, IOExceptionRecoveryPolicyFactory>();
 
             return descriptors;
         }

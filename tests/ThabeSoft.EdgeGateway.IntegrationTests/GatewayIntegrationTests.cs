@@ -88,7 +88,7 @@ public class GatewayIntegrationTests
             _values.Enqueue(x.Value));
 
         await Gateway.StartAsync(TestContext.CancellationToken);
-        await Task.Delay(1000);
+        await Task.Delay(1000, TestContext.CancellationToken);
 
         Assert.IsGreaterThan(1, _values.Count);
     }

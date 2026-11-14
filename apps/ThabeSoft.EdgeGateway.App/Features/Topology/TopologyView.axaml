@@ -19,6 +19,10 @@
                            IsSearchEnabled="True"
                            SelectedItem="{Binding SelectedMenu}"
                            UseCustomContent="True">
+
+            <suki:SukiSideMenu.HeaderContent>
+                <Button Command="{Binding ChangeGatewayCommand}"></Button>
+            </suki:SukiSideMenu.HeaderContent>
             <!--菜单-->
             <suki:SukiSideMenu.ItemTemplate>
                 <DataTemplate>
@@ -29,6 +33,7 @@
                                 <suki:SukiSideMenuItem Header="{Binding Header}"></suki:SukiSideMenuItem>
                             </DataTemplate>
                         </suki:SukiSideMenuItem.ItemTemplate>
+
                     </suki:SukiSideMenuItem>
                 </DataTemplate>
             </suki:SukiSideMenu.ItemTemplate>

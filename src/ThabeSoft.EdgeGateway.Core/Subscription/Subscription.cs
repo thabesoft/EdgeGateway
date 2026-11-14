@@ -50,7 +50,7 @@ internal sealed class Subscription<T>(
 
     private ValueTask OnStartAsync(CancellationToken cancellationToken)
     {
-        if (deviceLifecycleState.State != LifecycleState.Running)
+        if (deviceLifecycleState.State is not (LifecycleState.Starting or LifecycleState.Running))
             throw new InvalidOperationException("设备未启动");
 
         _triggerTick?.Dispose();

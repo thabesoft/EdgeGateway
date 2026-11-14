@@ -1,33 +1,14 @@
-﻿using ThabeSoft.EdgeGateway.Ports;
+﻿using ThabeSoft.EdgeGateway.Compatibility;
+using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
 
 namespace ThabeSoft.EdgeGateway.Devices;
 
 
-public sealed class DeviceDescriptor : IEquatable<DeviceDescriptor>
+public sealed record class DeviceDescriptor : IEquatable<DeviceDescriptor>
 {
-    public DeviceId Id { get; }
-    public IProtocolDescriptor Protocol { get; }
-
-
-    public DeviceDescriptor(DeviceId deviceId, IProtocolDescriptor protocolDescriptor)
-    {
-        ArgumentNullException.ThrowIfNull(deviceId);
-        ArgumentNullException.ThrowIfNull(protocolDescriptor);
-
-        Id = deviceId;
-        Protocol = protocolDescriptor;
-    }
-    public DeviceDescriptor(IProtocolDescriptor protocolDescriptor) : this(DeviceId.Create(), protocolDescriptor)
-    {
-
-    }
-
-    public bool Equals(DeviceDescriptor other)
-    {
-        return Id.Equals(other.Id) && Protocol.Equals(other.Protocol);
-    }
-    public override string ToString() => $"{Id} @ {Protocol}";
+    public DeviceId Id { get; init => field = value.Required(); } = DeviceId.Create();
+    public required IProtocolDescriptor Protocol { get; init => field = value.Required(); }
 }
 
 
@@ -41,10 +22,10 @@ public static class PortExtensions
             ArgumentNullException.ThrowIfNull(protocolDescriptor);
 
 
-            return port.AddDeviceAsync(new(deviceId, protocolDescriptor), cancellationToken);
+            return port.AddDeviceAsync(new() { Id = deviceId, Protocol = protocolDescriptor }, cancellationToken);
         }
 
         public ValueTask<IDevice> AddDeviceAsync(IProtocolDescriptor protocolDescriptor, CancellationToken cancellationToken = default) =>
-            port.AddDeviceAsync(new(protocolDescriptor), cancellationToken);
+            port.AddDeviceAsync(new() { Protocol = protocolDescriptor }, cancellationToken);
     }
 }

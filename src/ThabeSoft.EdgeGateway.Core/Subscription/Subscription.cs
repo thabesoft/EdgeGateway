@@ -1,13 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using System.Collections.Concurrent;
 using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
-using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.EdgeGateway.Recoveries;
 using ThabeSoft.EdgeGateway.Triggers;
-using ThabeSoft.EdgeGateway.Utilities;
 
 namespace ThabeSoft.EdgeGateway.Subscription;
 
@@ -84,7 +79,8 @@ internal sealed class Subscription<T>(
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-
+            _triggerTick?.TryDispose(logger);
+            _triggerTick = null;
         }
         catch (Exception ex)
         {

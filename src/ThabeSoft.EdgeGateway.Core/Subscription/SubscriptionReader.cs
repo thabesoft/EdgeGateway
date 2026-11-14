@@ -18,7 +18,7 @@ internal sealed class SubscriptionReader<T>(
         try
         {
             var value = await protocolAccessor.ReadAsync(tagDescriptor, ct);
-            
+
             var reading = Reading.Good(value);
             Latest = reading;
 
@@ -28,8 +28,9 @@ internal sealed class SubscriptionReader<T>(
         {
             throw;
         }
-        catch (Exception ex) when (recovery.Invoke(ex))
+        catch (Exception ex)
         {
+            //    if(recovery.Invoke(ex))
             return Reading.Bad(GetLatestValue());
         }
     }

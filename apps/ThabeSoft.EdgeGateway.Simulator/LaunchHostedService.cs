@@ -113,8 +113,9 @@ internal sealed class LaunchHostedService(ISimulator simulator, ILogger<LaunchHo
         var generators = new IValueGenerator<double>[count];
         for (int i = 0; i < count; i++)
         {
+            var index = Random.Shared.Next(0, 7);
             // 8 种生成器循环复用
-            generators[i] = (i % 8) switch
+            generators[i] = /*(index % 8)*/ index switch
             {
                 0 => Simulation.SineWaveValue(1, 2 * Math.PI / 20),
                 1 => Simulation.SquareWaveValue(-1, 1, 10, 0.3),

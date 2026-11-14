@@ -11,11 +11,14 @@ internal sealed class TcpTransportConnection : ITransportConnection
 {
     private readonly ILifecycleStateMachine _stateMachine;
     private TcpClient? _tcpClient;
-    private readonly SemaphoreSlim _reconnectSignal = new(0, 1);
+    private readonly AsyncGate _reconnectGate = new();
+
     private readonly RetryBackoff _retryBackoff;
     private readonly IpTransportDescriptor _descriptor;
     private readonly ILogger<TcpTransportConnection> _logger;
-    private IDisposableLifecycle _reconnectBackgroundLifecycle;
+    private readonly IDisposableLifecycle _reconnectBackgroundLifecycle;
+
+
 
     public TcpTransportConnection(
             IpTransportDescriptor descriptor,
@@ -37,7 +40,10 @@ internal sealed class TcpTransportConnection : ITransportConnection
     public async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
     {
         if (_tcpClient?.Connected != true)
-            throw new InvalidOperationException($"TCP 连接未建立，无法写入: {Endpoint}");
+        {
+            _reconnectGate.Open();
+            throw new ArgumentNullException($"TCP({Endpoint})连接未建立，无法读取");
+        }
 
         try
         {
@@ -49,14 +55,17 @@ internal sealed class TcpTransportConnection : ITransportConnection
         }
         catch (Exception ex) when (ex is IOException or TimeoutException or SocketException)
         {
-            _reconnectSignal.Release();
+            _reconnectGate.Open();
             throw;
         }
     }
     public async ValueTask WriteAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
     {
         if (_tcpClient?.Connected != true)
-            throw new InvalidOperationException($"TCP 连接未建立，无法写入: {Endpoint}");
+        {
+            _reconnectGate.Open();
+            throw new ArgumentNullException($"TCP({Endpoint})连接未建立，无法写入");
+        }
 
         try
         {
@@ -68,7 +77,7 @@ internal sealed class TcpTransportConnection : ITransportConnection
         }
         catch (Exception ex) when (ex is IOException or TimeoutException or SocketException)
         {
-            _reconnectSignal.Release();
+            _reconnectGate.Open();
             throw;
         }
     }
@@ -88,7 +97,7 @@ internal sealed class TcpTransportConnection : ITransportConnection
         if (_tcpClient?.Connected == true) return;
 
         await _reconnectBackgroundLifecycle.StartAsync(cancellationToken);
-        _reconnectSignal.Release();
+        _reconnectGate.Open();
     }
     private async ValueTask OnStopAsync(CancellationToken cancellationToken)
     {
@@ -104,29 +113,94 @@ internal sealed class TcpTransportConnection : ITransportConnection
     {
         while (!cancellationToken.IsCancellationRequested)
         {
-            await _reconnectSignal.WaitAsync(cancellationToken);
+            await _reconnectGate.WaitAsync(cancellationToken);
+            _reconnectGate.Close();
+
+            if (cancellationToken.IsCancellationRequested)
+                break;
 
             while (!cancellationToken.IsCancellationRequested)
             {
                 try
                 {
-                    await _stateMachine.StartAsync(async ct =>
-                    {
-                        _tcpClient?.Close();
-                        _tcpClient?.Dispose();
+                    _tcpClient?.Close();
+                    _tcpClient?.Dispose();
 
-                        _tcpClient = new();
-                        await _tcpClient.ConnectAsync(_descriptor.IP, _descriptor.Port, ct);
+                    _tcpClient = new();
+                    await _tcpClient.ConnectAsync(_descriptor.IP, _descriptor.Port, cancellationToken);
+                    _logger.LogInformation("TCP({Endpoint})客户端已连接", Endpoint);
 
-                    }, cancellationToken);
+                    _retryBackoff.Reset();
+                    break;
+                }
+                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                {
+                    break;
                 }
                 catch (Exception ex)
                 {
                     var time = _retryBackoff.GetNextInterval();
-                    _logger.LogWarning("TCP 连接失败，(Time)秒后重试: {Msg}", time.TotalSeconds, ex.Message);
+                    _logger.LogWarning("TCP({Endpoint}) 连接失败，({Time})秒后重试: {Msg}", Endpoint, time.TotalSeconds, ex.Message);
                     await Task.Delay(time, cancellationToken);
                 }
             }
+        }
+    }
+}
+
+
+/// <summary>
+/// 门闩锁
+/// </summary>
+public class AsyncGate : IDisposable
+{
+    private readonly object _sync = new();
+    private bool _open;
+    private TaskCompletionSource<bool> _openedTcs = new(
+        TaskCreationOptions.RunContinuationsAsynchronously);
+
+
+    public void Open()
+    {
+        TaskCompletionSource<bool>? toRelease = null;
+        lock (_sync)
+        {
+            if (_open) return;
+            _open = true;
+            toRelease = _openedTcs;
+        }
+        toRelease.TrySetResult(true);
+    }
+
+    public void Close()
+    {
+        lock (_sync)
+        {
+            if (!_open) return;
+            _open = false;
+            _openedTcs = new TaskCompletionSource<bool>(
+                TaskCreationOptions.RunContinuationsAsynchronously);
+        }
+    }
+
+
+    public async Task WaitAsync(CancellationToken cancellationToken = default)
+    {
+        Task waitTask;
+        lock (_sync)
+        {
+            if (_open) return;
+            waitTask = _openedTcs.Task;
+        }
+
+        await waitTask.WaitAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    public void Dispose()
+    {
+        lock (_sync)
+        {
+            _openedTcs.TrySetCanceled();
         }
     }
 }

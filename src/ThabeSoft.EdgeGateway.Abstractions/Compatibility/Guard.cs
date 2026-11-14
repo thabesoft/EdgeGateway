@@ -92,7 +92,7 @@ public static class Guard
             string? errroMessage = null,
             [CallerArgumentExpression(nameof(param))] string? paramName = null)
         {
-            if (Enum.IsDefined(param))
+            if (!Enum.IsDefined(param))
                 throw new ArgumentOutOfRangeException(paramName, param, errroMessage ?? $"必须在定义的枚举中");
 
             return param;

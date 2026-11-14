@@ -1,38 +1,35 @@
 ﻿using NModbus.IO;
+using System.Diagnostics;
 using ThabeSoft.EdgeGateway.Transport.Byte;
 
 namespace ThabeSoft.EdgeGateway.IO;
 
 
-internal sealed class NModbusStreamAdapter(IByteDuplex byteChannel) : IStreamResource
+internal sealed class NModbusStreamAdapter(IByteDuplex byteDuplex) : IStreamResource
 {
+    private readonly object _lock = new();
     public int InfiniteTimeout { get; set; } = -1;
     public int ReadTimeout { get; set; } = 3000;
     public int WriteTimeout { get; set; } = 3000;
-    private SemaphoreSlim _lock = new(1, 1);
 
 
     public int Read(byte[] buffer, int offset, int count)
     {
-        _lock.Wait();
+        var targetSlice = buffer.AsMemory(offset, count);
 
+        using var cts = new CancellationTokenSource(ReadTimeout);
         try
         {
-            var targetSlice = buffer.AsMemory(offset, count);
-
-            using var cts = new CancellationTokenSource(ReadTimeout);
-            try
-            {
-                return byteChannel.ReadAsync(targetSlice, cts.Token).AsTask().GetAwaiter().GetResult();
-            }
-            catch (OperationCanceledException) when (cts.IsCancellationRequested)
-            {
-                throw new TimeoutException($"Read timed out after {ReadTimeout} ms.");
-            }
+            return byteDuplex.ReadAsync(targetSlice, cts.Token).AsTask().GetAwaiter().GetResult();
         }
-        finally
+        catch (OperationCanceledException) when (cts.IsCancellationRequested)
         {
-            _lock.Release();
+            throw new TimeoutException($"Read timed out after {ReadTimeout} ms.");
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+            throw;
         }
     }
 
@@ -43,17 +40,22 @@ internal sealed class NModbusStreamAdapter(IByteDuplex byteChannel) : IStreamRes
         using var cts = new CancellationTokenSource(WriteTimeout);
         try
         {
-            byteChannel.WriteAsync(targetSlice, cts.Token).AsTask().GetAwaiter().GetResult();
+            byteDuplex.WriteAsync(targetSlice, cts.Token).AsTask().GetAwaiter().GetResult();
         }
         catch (OperationCanceledException) when (cts.IsCancellationRequested)
         {
             throw new TimeoutException($"Write timed out after {WriteTimeout} ms.");
         }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+            throw;
+        }
     }
 
     public void DiscardInBuffer()
     {
-        (byteChannel as IReadBufferDiscardable)?.DiscardInputBuffer();
+        (byteDuplex as IReadBufferDiscardable)?.DiscardInputBuffer();
     }
 
     public void Dispose()

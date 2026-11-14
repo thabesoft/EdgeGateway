@@ -16,8 +16,8 @@ internal sealed class ModbusProtocolAccessor(IModbusMaster master) : IProtocolAc
         if (tag.Address is not ModbusDataAddress mosbus)
             throw new InvalidOperationException("不是有效的Modbus地址");
 
-        await _lock.WaitAsync();
 
+        await _lock.WaitAsync(cancellationToken);
         try
         {
             if (mosbus.Kind == ModbusDataKind.Coil)
@@ -53,48 +53,56 @@ internal sealed class ModbusProtocolAccessor(IModbusMaster master) : IProtocolAc
     public async ValueTask WriteAsync<T>(TagDescriptor<T> tag, T value, CancellationToken cancellationToken = default)
         where T : notnull
     {
-        if (tag.Address is not ModbusDataAddress modbus)
-            throw new InvalidOperationException("不是有效的Modbus地址");
-
-
-        if (modbus.Kind == ModbusDataKind.Coil)
+        await _lock.WaitAsync(cancellationToken);
+        try
         {
-            Span<byte> cache = stackalloc byte[(modbus.Quantity + 7) / 8];
-            tag.Codec.Encode(value, cache);
+            if (tag.Address is not ModbusDataAddress modbus)
+                throw new InvalidOperationException("不是有效的Modbus地址");
 
 
-            if (modbus.Quantity == 1)
+            if (modbus.Kind == ModbusDataKind.Coil)
             {
-                bool coil = (cache[0] & 1) != 0;
-                await master.WriteSingleCoilAsync(modbus.SlaveId, modbus.StartAddress, coil);
+                Span<byte> cache = stackalloc byte[(modbus.Quantity + 7) / 8];
+                tag.Codec.Encode(value, cache);
+
+
+                if (modbus.Quantity == 1)
+                {
+                    bool coil = (cache[0] & 1) != 0;
+                    await master.WriteSingleCoilAsync(modbus.SlaveId, modbus.StartAddress, coil);
+                }
+                else
+                {
+                    var bits = new bool[modbus.Quantity];
+                    // ToBtis
+                    for (int i = 0; i < bits.Length; i++) bits[i] = (cache[i / 8] & (1 << (i % 8))) != 0;
+                    // Write
+                    await master.WriteMultipleCoilsAsync(modbus.SlaveId, modbus.StartAddress, bits);
+                }
+                return;
             }
-            else
+
+            if (modbus.Kind == ModbusDataKind.HoldingRegister)
             {
-                var bits = new bool[modbus.Quantity];
-                // ToBtis
-                for (int i = 0; i < bits.Length; i++) bits[i] = (cache[i / 8] & (1 << (i % 8))) != 0;
+                Span<byte> cache = stackalloc byte[modbus.Quantity * 2];
+                tag.Codec.Encode(value, cache);
+
+                // Words
+                var words = new ushort[modbus.Quantity];
+                for (int i = 0; i < words.Length; i++)
+                    words[i] = BinaryPrimitives.ReadUInt16BigEndian(cache[(i * 2)..]);
+
                 // Write
-                await master.WriteMultipleCoilsAsync(modbus.SlaveId, modbus.StartAddress, bits);
+                if (words.Length == 1)
+                    await master.WriteSingleRegisterAsync(modbus.SlaveId, modbus.StartAddress, words[0]);
+                else
+                    await master.WriteMultipleRegistersAsync(modbus.SlaveId, modbus.StartAddress, words);
+                return;
             }
-            return;
         }
-
-        if (modbus.Kind == ModbusDataKind.HoldingRegister)
+        finally
         {
-            Span<byte> cache = stackalloc byte[modbus.Quantity * 2];
-            tag.Codec.Encode(value, cache);
-
-            // Words
-            var words = new ushort[modbus.Quantity];
-            for (int i = 0; i < words.Length; i++)
-                words[i] = BinaryPrimitives.ReadUInt16BigEndian(cache[(i * 2)..]);
-
-            // Write
-            if (words.Length == 1)
-                await master.WriteSingleRegisterAsync(modbus.SlaveId, modbus.StartAddress, words[0]);
-            else
-                await master.WriteMultipleRegistersAsync(modbus.SlaveId, modbus.StartAddress, words);
-            return;
+            _lock.Release();
         }
 
         throw new InvalidOperationException("不可写的数据类别。");

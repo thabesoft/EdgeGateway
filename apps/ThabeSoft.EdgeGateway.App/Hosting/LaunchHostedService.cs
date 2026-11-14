@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using System.Net;
 using ThabeSoft.EdgeGateway.App.Features.Gateway;
+using ThabeSoft.EdgeGateway.Recoveries;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transport;
 
@@ -25,7 +26,7 @@ internal sealed class LaunchHostedService(GatewayViewModel gateway) :
 
     private static async Task AddPortAsync(IpTransportDescriptor transportDescriptor, GatewayViewModel gateway, CancellationToken cancellationToken)
     {
-        var port = await gateway.AddPortAsync(new() { Transport = transportDescriptor }, cancellationToken);
+        var port = await gateway.AddPortAsync(new() { Transport = transportDescriptor, Recoveries = [Recovery.IO(100)] }, cancellationToken);
 
         const int count = 2;
 
@@ -36,7 +37,7 @@ internal sealed class LaunchHostedService(GatewayViewModel gateway) :
     {
         var device = await port.AddDeviceAsync(new() { Protocol = Modbus.Ip }, cancellationToken);
 
-        var trigger = Trigger.Interval(100);
+        var trigger = Trigger.Interval(10);
 
         for (int i = 0; i < 10; i++)
         {

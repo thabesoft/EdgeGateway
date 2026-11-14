@@ -28,7 +28,7 @@ internal sealed class TriggerBatchPublisher : IAsyncDisposable
     private readonly ConcurrentDictionary<Guid, Func<CancellationToken, ValueTask>> _actions = [];
     private readonly ITrigger _trigger;
     private readonly ILogger<TriggerBatchPublisher> _logger;
-    private Func<CancellationToken, ValueTask>[] _snapshot = [];
+    private Func<CancellationToken, ValueTask>[] _tickSnapshots = [];
     private readonly Task _loopTask;
     private readonly CancellationTokenSource _loopTaskCts = new();
 
@@ -46,7 +46,7 @@ internal sealed class TriggerBatchPublisher : IAsyncDisposable
         lock (_lock)
         {
             _actions[id] = onTick;
-            _snapshot = [.. _actions.Values];
+            _tickSnapshots = [.. _actions.Values];
         }
 
         return new Releaser(() =>
@@ -54,7 +54,7 @@ internal sealed class TriggerBatchPublisher : IAsyncDisposable
             lock (_lock)
             {
                 if (_actions.TryRemove(id, out _))
-                    _snapshot = [.. _actions.Values];
+                    _tickSnapshots = [.. _actions.Values];
             }
         });
     }
@@ -66,8 +66,17 @@ internal sealed class TriggerBatchPublisher : IAsyncDisposable
             if (!await _trigger.WaitForNextTickAsync(cancellationToken))
                 return;
 
-            foreach (var i in _snapshot)
-                await i.Invoke(cancellationToken);
+            foreach (var tick in _tickSnapshots)
+            {
+                try
+                {
+                    await tick.Invoke(cancellationToken);
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogError(ex, "触发器回调执行失败");
+                }
+            }
         }
     }
 

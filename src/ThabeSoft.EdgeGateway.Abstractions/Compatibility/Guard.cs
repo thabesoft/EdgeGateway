@@ -63,4 +63,21 @@ public static class Guard
             return param;
         }
     }
+
+    extension<T>(T param) where T : struct, Enum
+    {
+        /// <summary>
+        /// 必须是已定义的枚举
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public T Defined(
+            string? errroMessage = null,
+            [CallerArgumentExpression(nameof(param))] string? paramName = null)
+        {
+            if (Enum.IsDefined(param))
+                throw new ArgumentOutOfRangeException(paramName, param, errroMessage ?? $"必须在定义的枚举中");
+
+            return param;
+        }
+    }
 }

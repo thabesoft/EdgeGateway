@@ -8,12 +8,12 @@ namespace ThabeSoft.EdgeGateway.Protocols;
 
 internal sealed class ModbusProtocolAccessorFactory(IModbusFactory modbusFactory) : IProtocolAccessorFactory
 {
-    public bool CanCreate(IProtocolDescriptor descriptor)
+    public bool CanCreate(ProtocolDescriptor descriptor)
     {
         return descriptor is ModbusProtocolDescriptor;
     }
 
-    public IProtocolAccessor Create(IProtocolDescriptor descriptor, IByteDuplex byteStream)
+    public IProtocolAccessor Create(ProtocolDescriptor descriptor, IByteDuplex byteStream)
     {
         if (descriptor is not ModbusProtocolDescriptor modbus)
             throw new ArgumentException("描述不是 Modbus RTU。", nameof(descriptor));

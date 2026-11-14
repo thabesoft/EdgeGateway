@@ -4,6 +4,6 @@ namespace ThabeSoft.EdgeGateway.Protocols;
 
 public interface IProtocolAccessorFactory
 {
-    bool CanCreate(IProtocolDescriptor protocolDescriptor);
-    IProtocolAccessor Create(IProtocolDescriptor protocolDescriptor, IByteDuplex byteStream);
+    bool CanCreate(ProtocolDescriptor protocolDescriptor);
+    IProtocolAccessor Create(ProtocolDescriptor protocolDescriptor, IByteDuplex byteStream);
 }

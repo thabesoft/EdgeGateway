@@ -3,9 +3,9 @@
 namespace ThabeSoft.EdgeGateway.Protocols;
 
 
-public sealed class ModbusProtocolDescriptor : IProtocolDescriptor
+public sealed record class ModbusProtocolDescriptor : ProtocolDescriptor
 {
-    public ProtocolType Type { get; } = ProtocolType.Modbus;
+    public override ProtocolType Type { get; } = ProtocolType.Modbus;
     public ModbusFrameFormat FrameFormat { get; }
     public ConnectionType ConnectionType { get; }
 
@@ -26,12 +26,4 @@ public sealed class ModbusProtocolDescriptor : IProtocolDescriptor
         FrameFormat = frameFormat;
         ConnectionType = connectionType;
     }
-    public bool Equals(IProtocolDescriptor other)
-    {
-        if (other is not ModbusProtocolDescriptor modbus) return false;
-        return modbus.FrameFormat == FrameFormat && modbus.ConnectionType == ConnectionType;
-    }
-
-    // Modbus(Rtu, Serial)
-    public override string ToString() => $"Modbus({FrameFormat}, {ConnectionType})";
 }

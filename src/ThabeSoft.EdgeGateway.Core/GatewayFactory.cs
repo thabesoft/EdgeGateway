@@ -35,7 +35,7 @@ internal sealed class GatewayFactory(
             // 创建端口
             var portState = Lifecycle.RetryableStateMachine();
             var transport = transportResolver.Resolve(descriptor.Transport);
-            var protocolAccessors = new ConcurrentDictionary<IProtocolDescriptor, IProtocolAccessor>();
+            var protocolAccessors = new ConcurrentDictionary<ProtocolDescriptor, IProtocolAccessor>();
             var recoverHandler = new PortRecoveryPolicyHandler(descriptor.Recoveries.Select(recoveryPolicyFactoryResolver.Resolve));
             var deviceCollection = new DeviceCollection(portState, DeviceCreator);
 

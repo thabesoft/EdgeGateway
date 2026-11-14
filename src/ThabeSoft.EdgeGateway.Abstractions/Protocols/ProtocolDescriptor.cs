@@ -1,6 +1,4 @@
-﻿using ThabeSoft.EdgeGateway.Compatibility;
-
-namespace ThabeSoft.EdgeGateway.Protocols;
+﻿namespace ThabeSoft.EdgeGateway.Protocols;
 
 public abstract record ProtocolDescriptor : IEquatable<ProtocolDescriptor>
 {

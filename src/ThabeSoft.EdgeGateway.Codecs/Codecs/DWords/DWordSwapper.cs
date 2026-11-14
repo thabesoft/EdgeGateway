@@ -1,19 +1,28 @@
-﻿namespace ThabeSoft.EdgeGateway.Codecs.DWords;
+﻿using System.Collections.Immutable;
+
+namespace ThabeSoft.EdgeGateway.Codecs.DWords;
 
 
-internal sealed class DWordSwapper : ISwapper
+internal sealed record class DWordSwapper : ISwapper
 {
-    public static DWordSwapper BigEndian { get; } = new([]);
-    public static DWordSwapper LittleEndian { get; } = new([DWordSwap.Word, DWordSwap.Byte]);
+    public static ISwapper BigEndian { get; } = new DWordSwapper([]);
+    public static ISwapper LittleEndian { get; } = new DWordSwapper([DWordSwap.Word, DWordSwap.Byte]);
 
-    public static DWordSwapper ABCD { get; } = BigEndian;
-    public static DWordSwapper DCBA { get; } = LittleEndian;
-    public static DWordSwapper CDAB { get; } = new([DWordSwap.Word]);
-    public static DWordSwapper BADC { get; } = new([DWordSwap.Byte]);
+    public static ISwapper ABCD { get; } = BigEndian;
+    public static ISwapper DCBA { get; } = LittleEndian;
+    public static ISwapper CDAB { get; } = new DWordSwapper([DWordSwap.Word]);
+    public static ISwapper BADC { get; } = new DWordSwapper([DWordSwap.Byte]);
+
+
+    private readonly ImmutableArray<DWordSwap> _swaps;
+    private DWordSwapper(IEnumerable<DWordSwap> swaps)
+    {
+        _swaps = [.. swaps];
+    }
+
 
     private const int ByteLength = 4;
-    private readonly IReadOnlyList<DWordSwap> _swaps = [];
-    private DWordSwapper(IReadOnlyList<DWordSwap> swaps) => _swaps = swaps;
+    public int RequiredBits { get; } = ByteLength * 8;
 
 
     public void Swap(Span<byte> bytes)
@@ -52,10 +61,4 @@ internal sealed class DWordSwapper : ISwapper
         (bytes[0], bytes[1], bytes[2], bytes[3]) =
         (bytes[1], bytes[0], bytes[3], bytes[2]);
     }
-}
-
-public enum DWordSwap
-{
-    Byte,
-    Word,
 }

@@ -34,7 +34,7 @@ internal sealed partial class SubscriptionViewModel : LifecycleViewModel, IDispo
     }
 
     public SubscriptionId Id => _subscription.Id;
-    public IDataAddress Address => _subscription.Address;
+    public DataAddress Address => _subscription.Address;
     [ObservableProperty] public partial Reading? Latest { get; set; }
     public RingBuffer<double> Buffer => _buffer;
 

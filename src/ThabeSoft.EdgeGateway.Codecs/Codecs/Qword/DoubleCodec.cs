@@ -1,7 +1,7 @@
 ﻿namespace ThabeSoft.EdgeGateway.Codecs.Qword;
 
-internal sealed class DoubleCodec<TQWordCodec>(TQWordCodec codec) : ICodec<double>, IRequiredBits
-    where TQWordCodec : ICodec<ulong>, IRequiredBits
+
+internal sealed record class DoubleCodec(ICodec<ulong> codec) : ICodec<double>
 {
     public int RequiredBits => codec.RequiredBits;
 

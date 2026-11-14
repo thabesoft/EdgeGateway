@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
 using System.Net;
 using ThabeSoft.EdgeGateway.App.Features.Gateway;
-using ThabeSoft.EdgeGateway.Recoveries;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transport;
 

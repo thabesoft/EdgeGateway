@@ -13,22 +13,22 @@ public static class CodecExtensions
     extension<TWordCodec>(TWordCodec codec)
         where TWordCodec : ICodec<ushort>, IRequiredBits
     {
-        public ICodec<short> AsShort() => new ShortCodec<TWordCodec>(codec);
-        public ICodec<char> AsChar() => new CharCodec<TWordCodec>(codec);
+        public ICodec<short> AsShort() => new ShortCodec(codec);
+        public ICodec<char> AsChar() => new CharCodec(codec);
     }
 
     extension<TDWordCodec>(TDWordCodec codec)
         where TDWordCodec : ICodec<uint>, IRequiredBits
     {
-        public ICodec<int> AsInt() => new IntCodec<TDWordCodec>(codec);
-        public ICodec<float> AsFloat() => new FloatCodec<TDWordCodec>(codec);
+        public ICodec<int> AsInt() => new IntCodec(codec);
+        public ICodec<float> AsFloat() => new FloatCodec(codec);
     }
 
     extension<TQWordCodec>(TQWordCodec codec)
         where TQWordCodec : ICodec<ulong>, IRequiredBits
     {
-        public ICodec<long> AsLong() => new LongCodec<TQWordCodec>(codec);
-        public ICodec<double> AsDouble() => new DoubleCodec<TQWordCodec>(codec);
+        public ICodec<long> AsLong() => new LongCodec(codec);
+        public ICodec<double> AsDouble() => new DoubleCodec(codec);
     }
 
 

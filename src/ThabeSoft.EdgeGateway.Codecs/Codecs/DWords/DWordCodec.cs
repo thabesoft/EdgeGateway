@@ -3,19 +3,24 @@
 namespace ThabeSoft.EdgeGateway.Codecs.DWords;
 
 
-internal sealed class DWordCodec : ICodec<uint>, IRequiredBits
+public sealed record class DWordCodec : ICodec<uint>
 {
-    public static DWordCodec BigEndian { get; } = new(DWordSwapper.BigEndian);
-    public static DWordCodec LittleEndian { get; } = new(DWordSwapper.LittleEndian);
+    public static ICodec<uint> BigEndian { get; } = new DWordCodec(DWordSwapper.BigEndian);
+    public static ICodec<uint> LittleEndian { get; } = new DWordCodec(DWordSwapper.LittleEndian);
 
-    public static DWordCodec ABCD { get; } = BigEndian;
-    public static DWordCodec DCBA { get; } = LittleEndian;
-    public static DWordCodec CDAB { get; } = new(DWordSwapper.CDAB);
-    public static DWordCodec BADC { get; } = new(DWordSwapper.BADC);
+    public static ICodec<uint> ABCD { get; } = BigEndian;
+    public static ICodec<uint> DCBA { get; } = LittleEndian;
+    public static ICodec<uint> CDAB { get; } = new DWordCodec(DWordSwapper.CDAB);
+    public static ICodec<uint> BADC { get; } = new DWordCodec(DWordSwapper.BADC);
 
 
-    private readonly DWordSwapper _wordSwapper;
-    private DWordCodec(DWordSwapper wordSwapper) => _wordSwapper = wordSwapper;
+    private readonly ISwapper _swapper;
+    private DWordCodec(ISwapper swapper)
+    {
+        if (swapper.RequiredBits != RequiredBits)
+            throw new ArgumentOutOfRangeException($"数据交换器可处理数据长度与编码器所需长度不一致, 需要: {ByteLength} bytes", swapper.RequiredBytes, nameof(swapper));
+        _swapper = swapper;
+    }
 
 
     public const int ByteLength = 4;
@@ -29,7 +34,7 @@ internal sealed class DWordCodec : ICodec<uint>, IRequiredBits
             throw new ArgumentException($"缓冲区至少需要 {ByteLength} 字节。", nameof(buffer));
 
         BinaryPrimitives.WriteUInt32BigEndian(buffer, value);
-        _wordSwapper.Swap(buffer);
+        _swapper.Swap(buffer);
 
         return ByteLength;
     }
@@ -41,7 +46,7 @@ internal sealed class DWordCodec : ICodec<uint>, IRequiredBits
 
         Span<byte> cache = stackalloc byte[ByteLength];
         raw.CopyTo(cache);
-        _wordSwapper.Swap(cache);
+        _swapper.Swap(cache);
 
         return BinaryPrimitives.ReadUInt32BigEndian(cache);
     }

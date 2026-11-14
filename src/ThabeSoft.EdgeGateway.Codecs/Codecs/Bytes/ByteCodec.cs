@@ -1,10 +1,10 @@
 ﻿namespace ThabeSoft.EdgeGateway.Codecs.Bytes;
 
 
-internal sealed class ByteCodec : ICodec<byte>, IRequiredBits
+public sealed record class ByteCodec : ICodec<byte>
 {
     private ByteCodec() { }
-    public static ByteCodec Instance { get; } = new();
+    public static ICodec<byte> Instance { get; } = new ByteCodec();
 
 
     public const int RequiredBytes = 1;

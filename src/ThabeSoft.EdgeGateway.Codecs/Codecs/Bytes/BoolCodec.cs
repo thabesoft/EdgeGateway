@@ -1,23 +1,19 @@
-﻿using System.Collections.Concurrent;
-
-namespace ThabeSoft.EdgeGateway.Codecs.Bytes;
+﻿namespace ThabeSoft.EdgeGateway.Codecs.Bytes;
 
 
-internal sealed class BoolCodec : ICodec<bool>, IRequiredBits
+public sealed record class BoolCodec : ICodec<bool>
 {
-    private static readonly ConcurrentDictionary<int, BoolCodec> _cache = [];
-
-
     private readonly int _bitOffset;
-    private BoolCodec(int bitOffset) => _bitOffset = bitOffset;
-
-    public static BoolCodec BitOffset(int bitOffset)
+    private BoolCodec(int bitOffset)
     {
         if (bitOffset is < 0 or > 7)
             throw new ArgumentOutOfRangeException(nameof(bitOffset), "位偏移必须在 0~7。");
 
-        return _cache.GetOrAdd(bitOffset, x => new BoolCodec(x));
+        _bitOffset = bitOffset;
     }
+
+    public static ICodec<bool> BitOffset(int bitOffset) =>
+        new BoolCodec(bitOffset);
 
 
 

@@ -3,14 +3,21 @@
 namespace ThabeSoft.EdgeGateway.Codecs.Words;
 
 
-internal sealed class WordCodec : ICodec<ushort>, IRequiredBits
+public sealed record class WordCodec : ICodec<ushort>
 {
-    public static WordCodec BigEndian { get; } = new(WordSwapper.BigEndian);
-    public static WordCodec LittleEndian { get; } = new(WordSwapper.LittleEndian);
+    public static ICodec<ushort> BigEndian { get; } = new WordCodec(WordSwapper.BigEndian);
+    public static ICodec<ushort> LittleEndian { get; } = new WordCodec(WordSwapper.LittleEndian);
 
 
-    private readonly ISwapper _byteSwapper;
-    private WordCodec(ISwapper byteSwapper) => _byteSwapper = byteSwapper;
+    private readonly ISwapper _swapper;
+    private WordCodec(ISwapper swapper)
+    {
+        ArgumentNullException.ThrowIfNull(swapper);
+
+        if (swapper.RequiredBits != RequiredBits)
+            throw new ArgumentOutOfRangeException($"数据交换器可处理数据长度与编码器所需长度不一致, 需要: {RequiredBytes} bytes", swapper.RequiredBytes, nameof(swapper));
+        _swapper = swapper;
+    }
 
 
     public const int RequiredBytes = 2;
@@ -23,7 +30,7 @@ internal sealed class WordCodec : ICodec<ushort>, IRequiredBits
             throw new ArgumentException($"缓冲区至少需要 {RequiredBytes} 字节。", nameof(buffer));
 
         BinaryPrimitives.WriteUInt16BigEndian(buffer, value);
-        _byteSwapper.Swap(buffer);
+        _swapper.Swap(buffer);
 
         return 2;
     }
@@ -35,7 +42,7 @@ internal sealed class WordCodec : ICodec<ushort>, IRequiredBits
 
         Span<byte> cache = stackalloc byte[RequiredBytes];
         raw.CopyTo(cache);
-        _byteSwapper.Swap(cache);
+        _swapper.Swap(cache);
 
         return (ushort)((cache[0] << 8) | cache[1]);
     }

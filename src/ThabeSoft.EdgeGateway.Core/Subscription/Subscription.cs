@@ -30,7 +30,7 @@ internal sealed class Subscription<T>(
 
 
     public SubscriptionId Id { get; } = descriptor.Id;
-    public IDataAddress Address { get; } = descriptor.Tag.Address;
+    public DataAddress Address { get; } = descriptor.Tag.Address;
     public Reading<T>? Latest => reader.Latest;
     Reading? ISubscription.Latest => reader.Latest;
     public IObservable<Reading<T>> Update => _subject;

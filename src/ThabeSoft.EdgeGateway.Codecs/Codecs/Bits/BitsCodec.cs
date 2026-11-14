@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 
-namespace ThabeSoft.EdgeGateway.Codecs;
+namespace ThabeSoft.EdgeGateway.Codecs.Bits;
 
 
-internal sealed class BitsCodec : ICodec<BitArray>, IRequiredBits
+public sealed record class BitsCodec : ICodec<BitArray>
 {
-    public BitsCodec(int bitCount, BitOrder bitOrder)
+    private BitsCodec(int bitCount, BitOrder bitOrder)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(bitCount);
+
         if (BitOrder is not (BitOrder.LsbFirst or BitOrder.MsbFirst))
             throw new ArgumentOutOfRangeException(nameof(bitOrder), bitCount, "不支持的位序");
 
@@ -15,6 +16,8 @@ internal sealed class BitsCodec : ICodec<BitArray>, IRequiredBits
         RequiredBits = bitCount;
         RequiredBytes = (bitCount + 7) / 8;
     }
+    public static ICodec<BitArray> Bits(int bitCount, BitOrder bitOrder) =>
+        new BitsCodec(bitCount, bitOrder);
 
 
     public BitOrder BitOrder { get; }
@@ -62,11 +65,4 @@ internal sealed class BitsCodec : ICodec<BitArray>, IRequiredBits
 
     int ICodec.Encode(object value, Span<byte> buffer) => Encode((BitArray)value, buffer);
     object ICodec.Decode(ReadOnlySpan<byte> raw) => Decode(raw);
-}
-
-
-internal enum BitOrder
-{
-    LsbFirst,
-    MsbFirst
 }

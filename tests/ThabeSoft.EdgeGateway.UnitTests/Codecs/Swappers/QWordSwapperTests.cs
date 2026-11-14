@@ -36,7 +36,7 @@ public class QWordSwapperTests
         byte[] input = [1, 2, 3, 4, 5, 6, 7, 8];
         byte[] expected = [2, 1, 4, 3, 6, 5, 8, 7];   // 每 2 字节内部交换
 
-        QWordSwapper.Create([QWordSwap.Byte]).Swap(input);
+        QWordSwapper.From([QWordSwap.Byte]).Swap(input);
         CollectionAssert.AreEqual(expected, input);
     }
 
@@ -46,7 +46,7 @@ public class QWordSwapperTests
         byte[] input = [1, 2, 3, 4, 5, 6, 7, 8];
         byte[] expected = [3, 4, 1, 2, 7, 8, 5, 6];   // 每 4 字节内 Word 交换
 
-        QWordSwapper.Create([QWordSwap.Word]).Swap(input);
+        QWordSwapper.From([QWordSwap.Word]).Swap(input);
         CollectionAssert.AreEqual(expected, input);
     }
 
@@ -56,7 +56,7 @@ public class QWordSwapperTests
         byte[] input = [1, 2, 3, 4, 5, 6, 7, 8];
         byte[] expected = [5, 6, 7, 8, 1, 2, 3, 4];   // 前后 4 字节交换
 
-        QWordSwapper.Create([QWordSwap.DWord]).Swap(input);
+        QWordSwapper.From([QWordSwap.DWord]).Swap(input);
         CollectionAssert.AreEqual(expected, input);
     }
 
@@ -66,8 +66,8 @@ public class QWordSwapperTests
         byte[] input = [1, 2, 3, 4, 5, 6, 7, 8];
         byte[] expected = [1, 2, 3, 4, 5, 6, 7, 8];
 
-        QWordSwapper.Create([QWordSwap.Byte, QWordSwap.Word]).Swap(input);
-        QWordSwapper.Create([QWordSwap.Word, QWordSwap.Byte]).Swap(expected);
+        QWordSwapper.From([QWordSwap.Byte, QWordSwap.Word]).Swap(input);
+        QWordSwapper.From([QWordSwap.Word, QWordSwap.Byte]).Swap(expected);
 
         CollectionAssert.AreEqual(expected, input);
     }
@@ -78,7 +78,7 @@ public class QWordSwapperTests
         byte[] input = [1, 2, 3, 4, 5, 6, 7, 8];
         byte[] expected = [7, 8, 5, 6, 3, 4, 1, 2];
 
-        QWordSwapper.Create([QWordSwap.Word, QWordSwap.DWord]).Swap(input);
+        QWordSwapper.From([QWordSwap.Word, QWordSwap.DWord]).Swap(input);
         CollectionAssert.AreEqual(expected, input);
     }
 
@@ -88,7 +88,7 @@ public class QWordSwapperTests
         byte[] input = [1, 2, 3, 4, 5, 6, 7, 8];
         byte[] expected = [1, 2, 3, 4, 5, 6, 7, 8];
 
-        QWordSwapper.Create([QWordSwap.DWord, QWordSwap.Word, QWordSwap.Byte]).Swap(input);
+        QWordSwapper.From([QWordSwap.DWord, QWordSwap.Word, QWordSwap.Byte]).Swap(input);
         QWordSwapper.LittleEndian.Swap(expected);
 
         CollectionAssert.AreEqual(expected, input);

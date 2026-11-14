@@ -1,18 +1,21 @@
-﻿using ThabeSoft.EdgeGateway.Codecs;
+﻿using ThabeSoft.EdgeGateway.Compatibility;
 
 namespace ThabeSoft.EdgeGateway.Addressing;
 
 
-public sealed class ModbusDataAddress : IDataAddress, IRequiredBits
+public sealed record class ModbusDataAddress : DataAddress
 {
     public required byte SlaveId { get; init; }
-    public required ModbusDataKind Kind { get; init; }
+    public required ModbusDataKind Kind { get; init => field = value.Defined(); }
     public required ushort StartAddress { get; init; }
     public required ushort Quantity { get; init; }
     public required int RequiredBits { get; init; }
 
-    private ModbusDataAddress() { }
-    public bool Equals(IDataAddress? other) => Equals(other as ModbusDataAddress);
+    private ModbusDataAddress()
+    {
+
+    }
+
     // Coil(0, 1)
     public override string ToString() => $"{Kind}({StartAddress}, {Quantity})";
 

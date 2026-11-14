@@ -1,7 +1,8 @@
 ﻿namespace ThabeSoft.EdgeGateway.Codecs;
 
 
-public interface ICodec
+[Obsolete]
+public interface ICodec : IRequiredBits
 {
     int Encode(object value, Span<byte> buffer);
     object Decode(ReadOnlySpan<byte> raw);

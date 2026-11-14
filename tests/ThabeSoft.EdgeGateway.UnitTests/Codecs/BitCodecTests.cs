@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using ThabeSoft.EdgeGateway.Codecs.Bits;
 
 namespace ThabeSoft.EdgeGateway.Codecs;
 

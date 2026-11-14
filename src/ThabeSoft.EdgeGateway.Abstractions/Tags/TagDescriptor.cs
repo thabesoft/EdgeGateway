@@ -6,17 +6,16 @@ namespace ThabeSoft.EdgeGateway.Tags;
 
 public abstract record class TagDescriptor
 {
-    public abstract IDataAddress Address { get; }
+    public abstract DataAddress Address { get; }
 
-
-    public static TagDescriptor<T> Create<T>(IDataAddress address, ICodec<T> codec) where T : notnull
+    public static TagDescriptor<T> Create<T>(DataAddress address, ICodec<T> codec) where T : notnull
         => new(address, codec);
 }
 
 public sealed record class TagDescriptor<T> : TagDescriptor
      where T : notnull
 {
-    public TagDescriptor(IDataAddress address, ICodec<T> codec)
+    public TagDescriptor(DataAddress address, ICodec<T> codec)
     {
         ArgumentNullException.ThrowIfNull(address);
         ArgumentNullException.ThrowIfNull(codec);
@@ -34,5 +33,5 @@ public sealed record class TagDescriptor<T> : TagDescriptor
 
 
     public ICodec<T> Codec { get; }
-    public override IDataAddress Address { get; }
+    public override DataAddress Address { get; }
 }

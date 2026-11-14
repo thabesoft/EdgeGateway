@@ -3,34 +3,53 @@
 namespace ThabeSoft.EdgeGateway.Codecs.Qword;
 
 
-internal sealed class QWordCodec(QWordSwapper qwordSwapper) : ICodec<ulong>, IRequiredBits
+public sealed record class QWordCodec : ICodec<ulong>
 {
-    public static QWordCodec BigEndian { get; } = new(QWordSwapper.BigEndian);
-    public static QWordCodec LittleEndian { get; } = new(QWordSwapper.LittleEndian);
+    public static ICodec<ulong> BigEndian { get; } = new QWordCodec(QWordSwapper.BigEndian);
+    public static ICodec<ulong> LittleEndian { get; } = new QWordCodec(QWordSwapper.LittleEndian);
 
-    public const int ByteLength = 8;
-    public int RequiredBits { get; } = ByteLength * 8;
+
+    private readonly ISwapper _swapper;
+
+    private QWordCodec(ISwapper swapper)
+    {
+        ArgumentNullException.ThrowIfNull(swapper);
+
+        if (swapper.RequiredBits != RequiredBits)
+            throw new ArgumentOutOfRangeException($"数据交换器可处理数据长度与编码器所需长度不一致, 需要: {RequiredBytes} bytes", swapper.RequiredBytes, nameof(swapper));
+        _swapper = swapper;
+    }
+    public static ICodec<ulong> From(params IEnumerable<QWordSwap> swaps)
+    {
+        var swapper = QWordSwapper.From(swaps);
+        return new QWordCodec(swapper);
+    }
+
+
+
+    public const int RequiredBytes = 8;
+    public int RequiredBits { get; } = RequiredBytes * 8;
 
 
     public int Encode(ulong value, Span<byte> buffer)
     {
-        if (buffer.Length < ByteLength)
-            throw new ArgumentException($"缓冲区至少需要 {ByteLength} 字节。", nameof(buffer));
+        if (buffer.Length < RequiredBytes)
+            throw new ArgumentException($"缓冲区至少需要 {RequiredBytes} 字节。", nameof(buffer));
 
         BinaryPrimitives.WriteUInt64BigEndian(buffer, value);
-        qwordSwapper.Swap(buffer);
+        _swapper.Swap(buffer);
 
-        return ByteLength;
+        return RequiredBytes;
     }
 
     public ulong Decode(ReadOnlySpan<byte> raw)
     {
-        if (raw.Length < ByteLength)
-            throw new ArgumentException($"数据至少需要 {ByteLength} 字节。", nameof(raw));
+        if (raw.Length < RequiredBytes)
+            throw new ArgumentException($"数据至少需要 {RequiredBytes} 字节。", nameof(raw));
 
-        Span<byte> cache = stackalloc byte[ByteLength];
+        Span<byte> cache = stackalloc byte[RequiredBytes];
         raw.CopyTo(cache);
-        qwordSwapper.Swap(cache);
+        _swapper.Swap(cache);
 
         return BinaryPrimitives.ReadUInt64BigEndian(cache);
     }

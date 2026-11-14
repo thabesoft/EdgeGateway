@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using ThabeSoft.EdgeGateway.Codecs;
+using ThabeSoft.EdgeGateway.Codecs.Bits;
 using ThabeSoft.EdgeGateway.Codecs.Bytes;
 using ThabeSoft.EdgeGateway.Codecs.DWords;
 using ThabeSoft.EdgeGateway.Codecs.Qword;
@@ -30,9 +31,9 @@ public static class Codec
 
 
     public static ICodec<BitArray> BitsLsbFirst(int bitCount) =>
-        new BitsCodec(bitCount, BitOrder.LsbFirst);
+        BitsCodec.Bits(bitCount, BitOrder.LsbFirst);
     public static ICodec<BitArray> BitsMsbFirst(int bitCount) =>
-        new BitsCodec(bitCount, BitOrder.MsbFirst);
+        BitsCodec.Bits(bitCount, BitOrder.MsbFirst);
 
     public static ICodec<bool> Bool(int bitOffset) =>
         BoolCodec.BitOffset(bitOffset);

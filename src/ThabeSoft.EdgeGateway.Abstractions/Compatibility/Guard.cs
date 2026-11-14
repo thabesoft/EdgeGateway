@@ -64,6 +64,24 @@ public static class Guard
         }
     }
 
+    extension(byte param)
+    {
+        /// <summary>
+        /// 至少达到目标
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public double AtLeast(byte target,
+            string? errroMessage = null,
+            [CallerArgumentExpression(nameof(param))] string? paramName = null)
+        {
+            if (param < target)
+                throw new ArgumentOutOfRangeException(paramName, param, errroMessage ?? $"至少大于{target}");
+
+            return param;
+        }
+    }
+
+
     extension<T>(T param) where T : struct, Enum
     {
         /// <summary>

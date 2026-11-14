@@ -7,7 +7,7 @@ namespace ThabeSoft.EdgeGateway.Subscription;
 public interface ISubscription : ILifecycleWithState
 {
     SubscriptionId Id { get; }
-    IDataAddress Address { get; }
+    DataAddress Address { get; }
     Reading? Latest { get; }
     IObservable<Reading> Update { get; }
 }

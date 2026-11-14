@@ -5,12 +5,12 @@ namespace ThabeSoft.EdgeGateway.Transport.Udp;
 
 internal sealed class UdpTransportConnectionFactory(ILoggerFactory  loggerFactory) : ITransportConnectionFactory
 {
-    public bool CanCreate(ITransportDescriptor descriptor)
+    public bool CanCreate(TransportDescriptor descriptor)
     {
         return descriptor is IpTransportDescriptor ip && ip.TransportType == IpTransportType.Udp;
     }
 
-    public ITransportConnection Create(ITransportDescriptor descriptor)
+    public ITransportConnection Create(TransportDescriptor descriptor)
     {
         if (descriptor is not IpTransportDescriptor ip || ip.TransportType != IpTransportType.Udp)
             throw new InvalidOperationException();

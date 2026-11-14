@@ -13,7 +13,7 @@ public static class Lifecycle
     /// <summary>
     /// 使用委托创建生命周期
     /// </summary>
-    public static IBackgroundLifecycle Background(Func<CancellationToken, Task> backgroundAction, ILogger? logger = null)
+    public static IDisposableLifecycle Background(Func<CancellationToken, Task> backgroundAction, ILogger? logger = null)
     {
         ArgumentNullException.ThrowIfNull(backgroundAction);
         return new BackgroundLifecycle(backgroundAction, logger);

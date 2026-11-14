@@ -5,7 +5,7 @@ using ThabeSoft.EdgeGateway.Extensions;
 namespace ThabeSoft.EdgeGateway.Lifecycles;
 
 
-internal sealed class BackgroundLifecycle : IBackgroundLifecycle
+internal sealed class BackgroundLifecycle : IDisposableLifecycle
 {
     private int _disposed;
     private readonly ILogger _logger;

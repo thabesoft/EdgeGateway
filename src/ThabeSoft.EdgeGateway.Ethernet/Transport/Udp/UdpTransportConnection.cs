@@ -69,7 +69,7 @@ internal sealed class UdpTransportConnection(
 
     private ValueTask OnStartAsync(CancellationToken cancellationToken)
     {
-        _udpClient.Connect(descriptor.IPAddress, descriptor.Port);
+        _udpClient.Connect(descriptor.IP, descriptor.Port);
 
         // 每次启动创建新的 Channel 和 CTS
         _datagrams = Channel.CreateUnbounded<byte[]>();

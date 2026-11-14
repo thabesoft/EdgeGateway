@@ -6,7 +6,7 @@ namespace ThabeSoft.EdgeGateway.Ports;
 
 public sealed class SimulatorPortDescriptor
 {
-    public SimulatorPortDescriptor(ITransportDescriptor transport, IProtocolDescriptor protocol)
+    public SimulatorPortDescriptor(TransportDescriptor transport, IProtocolDescriptor protocol)
     {
         ArgumentNullException.ThrowIfNull(transport);
         ArgumentNullException.ThrowIfNull(protocol);
@@ -15,7 +15,7 @@ public sealed class SimulatorPortDescriptor
         Protocol = protocol;
     }
 
-    public ITransportDescriptor Transport { get; }
+    public TransportDescriptor Transport { get; }
     public IProtocolDescriptor Protocol { get; }
 
 

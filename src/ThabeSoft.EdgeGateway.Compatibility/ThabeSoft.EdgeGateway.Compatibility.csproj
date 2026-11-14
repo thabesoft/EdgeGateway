@@ -11,7 +11,7 @@
 		<!--Span, Memory-->
 		<PackageReference Include="System.Memory" Version="4.6.3" />
 		<!--TimeProvider-->
-		<PackageReference Include="Microsoft.Bcl.TimeProvider" Version="10.0.14" />
+		<PackageReference Include="Microsoft.Bcl.TimeProvider" Version="11.0.0" />
 		<!--ValueTask-->
 		<!--<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.14" />-->
 		<!--异步扩展-->
@@ -22,6 +22,9 @@
 		<!--新版本语法支持, 详情见项目地址 https://github.com/Sergio0694/PolySharp/-->
 		<PackageReference Include="PolySharp" Version="1.16.0" />
 
+		<!--不可变集合-->
+		<PackageReference Include="System.Collections.Immutable" Version="11.0.0" />
+	
 	</ItemGroup>
 
 </Project>

@@ -3,9 +3,9 @@
 namespace ThabeSoft.EdgeGateway.Transport;
 
 
-public sealed record class SerialTransportDescriptor : ITransportDescriptor
+public sealed record class SerialTransportDescriptor : TransportDescriptor
 {
-    public ConnectionEndpoint Endpoint { get; }
+    public override ConnectionEndpoint Endpoint { get; }
     public string PortName { get; }
     public int BaudRate { get; }
     public int DataBits { get; }
@@ -38,13 +38,7 @@ public sealed record class SerialTransportDescriptor : ITransportDescriptor
         DataBits = dataBits;
         StopBits = stopBits;
     }
-    public bool Equals(ITransportDescriptor other)
-    {
-        if (other is not SerialTransportDescriptor serial)
-            return false;
 
-        return serial.Equals(this);
-    }
     // COM2(9600, 8N5)
     public override string ToString()
     {

@@ -11,7 +11,7 @@ internal sealed class TriggerScheduler : ILifecycle
     private readonly ConcurrentDictionary<Guid, Action> _entries = [];
     private readonly ITrigger trigger;
     private readonly ILogger<TriggerScheduler> _logger;
-    private readonly IBackgroundLifecycle _background;
+    private readonly IDisposableLifecycle _background;
 
     public TriggerScheduler(ITrigger trigger, ILogger<TriggerScheduler> logger)
     {

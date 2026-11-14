@@ -4,14 +4,14 @@ using System.Net;
 namespace ThabeSoft.EdgeGateway.Transport;
 
 
-public sealed record IpTransportDescriptor : ITransportDescriptor
+public sealed record IpTransportDescriptor : TransportDescriptor
 {
-    public ConnectionEndpoint Endpoint { get; }
+    public override ConnectionEndpoint Endpoint { get; }
     public IpTransportType TransportType { get; }
-    public IPAddress IPAddress { get; }
+    public IPAddress IP { get; }
     public int Port { get; }
     // 由于 Address 和 Port 属性可更改, 所以每次返回新的对象
-    public IPEndPoint IPEndPoint => new(IPAddress, Port);
+    public IPEndPoint IPEndPoint => new(IP, Port);
 
 
 
@@ -25,14 +25,10 @@ public sealed record IpTransportDescriptor : ITransportDescriptor
 
         Endpoint = ConnectionEndpoint.Ethernet(iPEndPoint);
         TransportType = transportType;
-        IPAddress = iPEndPoint.Address;
+        IP = iPEndPoint.Address;
         Port = iPEndPoint.Port;
     }
-    public bool Equals(ITransportDescriptor other)
-    {
-        if (other is not IpTransportDescriptor ip) return false;
-        return ip.Equals(this);
-    }
+
     // Tcp(192.168.1.1:1234)
     public override string ToString() => $"{TransportType}({IPEndPoint})";
 
@@ -75,5 +71,42 @@ public sealed record IpTransportDescriptor : ITransportDescriptor
         }
         errorMessage = null;
         return true;
+    }
+}
+
+
+
+
+public sealed class RetryBackoff
+{
+    private readonly RetryDescriptor _descriptor;
+
+    public RetryBackoff(RetryDescriptor descriptor)
+    {
+        ArgumentNullException.ThrowIfNull(descriptor);
+
+        _descriptor = descriptor;
+        CurrentInterval = descriptor.StartInterval;
+    }
+
+    public TimeSpan CurrentInterval { get; private set; }
+
+
+    // 重置重试间隔
+    public TimeSpan Reset()
+    {
+        return CurrentInterval = _descriptor.StartInterval;
+    }
+
+    // 获取下一次重试间隔
+    public TimeSpan GetNextInterval()
+    {
+        var nextMs = CurrentInterval.TotalMilliseconds * _descriptor.BackoffMultiplier;
+
+        CurrentInterval = nextMs > _descriptor.MaxInterval.TotalMilliseconds
+           ? _descriptor.MaxInterval
+           : TimeSpan.FromMilliseconds(nextMs);
+
+        return CurrentInterval;
     }
 }

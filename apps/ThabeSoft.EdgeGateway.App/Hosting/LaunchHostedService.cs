@@ -26,7 +26,7 @@ internal sealed class LaunchHostedService(GatewayViewModel gateway) :
 
     private static async Task AddPortAsync(IpTransportDescriptor transportDescriptor, GatewayViewModel gateway, CancellationToken cancellationToken)
     {
-        var port = await gateway.AddPortAsync(new(transportDescriptor, Recovery.IO(5)), cancellationToken);
+        var port = await gateway.AddPortAsync(new() { Transport = transportDescriptor }, cancellationToken);
 
         const int count = 2;
 

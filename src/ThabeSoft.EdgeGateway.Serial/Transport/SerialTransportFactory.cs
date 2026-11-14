@@ -5,12 +5,12 @@ namespace ThabeSoft.EdgeGateway.Transport;
 
 internal sealed class SerialTransportFactory(ILoggerFactory loggerFactory) : ITransportConnectionFactory
 {
-    public bool CanCreate(ITransportDescriptor descriptor)
+    public bool CanCreate(TransportDescriptor descriptor)
     {
         return descriptor is SerialTransportDescriptor;
     }
 
-    public ITransportConnection Create(ITransportDescriptor descriptor)
+    public ITransportConnection Create(TransportDescriptor descriptor)
     {
         if (descriptor is not SerialTransportDescriptor serial)
             throw new InvalidOperationException();

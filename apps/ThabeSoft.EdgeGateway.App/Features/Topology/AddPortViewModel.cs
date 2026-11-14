@@ -26,7 +26,7 @@ internal sealed partial class AddPortViewModel(ISukiDialog dialog, ISukiToastMan
     {
         try
         {
-            ITransportDescriptor? descriptor = null;
+            TransportDescriptor? descriptor = null;
 
             if (IsSelectedIpFrom) descriptor = IpForm.Build();
             else if (IsSelectedSerialFrom) descriptor = SerialForm.Build();

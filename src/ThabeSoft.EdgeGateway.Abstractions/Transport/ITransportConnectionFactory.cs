@@ -3,6 +3,6 @@
 
 public interface ITransportConnectionFactory
 {
-    bool CanCreate(ITransportDescriptor transportDescriptor);
-    ITransportConnection Create(ITransportDescriptor transportDescriptor);
+    bool CanCreate(TransportDescriptor transportDescriptor);
+    ITransportConnection Create(TransportDescriptor transportDescriptor);
 }

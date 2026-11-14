@@ -1,111 +1,60 @@
 ﻿using Microsoft.Extensions.Logging;
-using System.Collections.Concurrent;
+using Microsoft.Extensions.Logging.Abstractions;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
-using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
-using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.EdgeGateway.Recoveries;
 using ThabeSoft.EdgeGateway.Transport;
-using ThabeSoft.EdgeGateway.Utilities;
 
 namespace ThabeSoft.EdgeGateway.Ports;
 
 
-internal sealed class Port : IPort, IAsyncDisposable
-{
-    // 设备资源
-    private readonly DeviceFactory _deviceFactory;
-    private readonly ILifecycleKeyedCollection<DeviceId, Device> _devices;
-    private readonly ILifecycleBatchExecutor _deviceBatchExecutor;
-
-
-    // 传输资源
-    private readonly RecoveryPolicyHandler _recoveryPolicyHandler;
-    private readonly ITransportConnection _transportConnection;
-    private readonly ProtocolAccessorFactoryResolver _protocolAccessorFactoryResolver;
-    private readonly ConcurrentDictionary<IProtocolDescriptor, IProtocolAccessor> _protocolAccessors = [];
-
-
-    // 生命周期
-    private readonly ILifecycleStateMachine _lifecycleStateMachine;
-    private readonly PortDescriptor _portDescriptor;
-    private readonly ILifecycleStateable _gatewayLifecycleState;
-
-
-    // 日志
-    private readonly ILogger<Port> _logger;
-
-    public Port(
-        PortDescriptor portDescriptor,
+internal sealed class Port(
+        PortDescriptor descriptor,
+        ILifecycleStateMachine lifecycleStateMachine,
         ILifecycleStateable gatewayLifecycleState,
-        ITransportConnectionFactoryResolver transportConnectionFactoryResolver,
-        ProtocolAccessorFactoryResolver protocolAccessorFactoryResolver,
-        RecoveryPolicyFactoryResolver recoveryPolicyFactoryResolver,
-        DeviceFactory deviceFactory,
-        ILogger<Port> logger)
-    {
-        _portDescriptor = portDescriptor;
-        _gatewayLifecycleState = gatewayLifecycleState;
-        _deviceFactory = deviceFactory;
-        _logger = logger;
+        DeviceCollection deviceCollection,
+        ILifecycle transportConnectionLifeCycle,
+        ILogger<Port>? logger = null
+    ) : IPort, IAsyncDisposable
+{
+    private DisposeNotifier _disposeNotifier = new(logger);
+    private readonly ILogger<Port> _logger = logger ?? NullLogger<Port>.Instance;
 
 
-        // 重试策略
-        _recoveryPolicyHandler = new RecoveryPolicyHandler(_portDescriptor.Recoveries
-            .Select(recoveryPolicyFactoryResolver.Resolve));
-
-        // 协议/传输
-        _transportConnection = transportConnectionFactoryResolver.Resolve(portDescriptor.Transport);
-        _protocolAccessorFactoryResolver = protocolAccessorFactoryResolver;
-
-        // 设备
-        _devices = Lifecycle.KeyedCollection<DeviceId, Device>(this, logger);
-        Devices = new ReadOnlyDictionaryView<DeviceId, Device, IDevice>(_devices.Items);
-        _deviceBatchExecutor = Lifecycle.BatchExecutor(logger);
-
-        // 状态机
-        _lifecycleStateMachine = Lifecycle.RetryableStateMachine(logger);
-    }
-
-    public ConnectionEndpoint Endpoint => _transportConnection.Endpoint;
-    public IReadOnlyDictionary<DeviceId, IDevice> Devices { get; }
-    public LifecycleState State => _lifecycleStateMachine.State;
+    public IDisposeObservable Disposed => _disposeNotifier;
+    public ConnectionEndpoint Endpoint => descriptor.Transport.Endpoint;
+    public LifecycleState State => lifecycleStateMachine.State;
+    public IReadOnlyDictionary<DeviceId, IDevice> Devices => deviceCollection.Items;
 
 
     public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
-        _lifecycleStateMachine.StartAsync(OnStartAsync, cancellationToken);
+        lifecycleStateMachine.StartAsync(OnStartAsync, cancellationToken);
     public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
-        _lifecycleStateMachine.StopAsync(OnStopAsync, cancellationToken);
+        lifecycleStateMachine.StopAsync(OnStopAsync, cancellationToken);
     public ValueTask DisposeAsync() =>
-        _lifecycleStateMachine.DisposeAsync(OnDisposeAsync);
+        lifecycleStateMachine.DisposeAsync(OnDisposeAsync);
 
 
 
     public async ValueTask<IDevice> AddDeviceAsync(DeviceDescriptor descriptor, CancellationToken cancellationToken = default)
     {
-        return await _lifecycleStateMachine.ExecuteAsync(
-            ct => _devices.AddAsync(
-                descriptor.Id,
-                () => _deviceFactory.Create(descriptor, this, GetProtocolAccessor(descriptor.Protocol), _recoveryPolicyHandler),
-                ct),
-            cancellationToken);
+        return await lifecycleStateMachine.ExecuteAsync(ct =>
+            deviceCollection.AddAsync(descriptor, ct), cancellationToken);
     }
     public ValueTask<bool> RemoveDeviceAsync(DeviceId deviceId, CancellationToken cancellationToken = default)
     {
-        return _lifecycleStateMachine.ExecuteAsync(
-            ct => _devices.RemoveAsync(deviceId, ct),
-            cancellationToken);
+        return lifecycleStateMachine.ExecuteAsync(ct =>
+            deviceCollection.RemoveAsync(deviceId, ct), cancellationToken);
     }
 
 
     private async ValueTask OnStartAsync(CancellationToken cancellationToken)
     {
-        if (_gatewayLifecycleState.State is not (LifecycleState.Starting or LifecycleState.Running))
+        if (gatewayLifecycleState.State is not (LifecycleState.Starting or LifecycleState.Running))
             throw new InvalidOperationException("端口启动失败, 网关未启动");
 
-        await _transportConnection.StartAsync(cancellationToken);
-        await _deviceBatchExecutor.StartAsync(_devices.Values, cancellationToken);
+        await transportConnectionLifeCycle.StartAsync(cancellationToken);
+        await deviceCollection.StartAllAsync(cancellationToken);
     }
     private async ValueTask OnStopAsync(CancellationToken cancellationToken)
     {
@@ -113,20 +62,20 @@ internal sealed class Port : IPort, IAsyncDisposable
 
         try
         {
-            await _deviceBatchExecutor.StopAsync(_devices.Values, cancellationToken);
+            await deviceCollection.StopAllAsync(cancellationToken);
         }
         catch (Exception ex)
         {
             errors.Add(ex);
-            _logger.LogError(ex, "端口设备批处理停止失败", _transportConnection.Endpoint);
+            _logger.LogError(ex, "端口({Endpoint})设备批处理停止失败", Endpoint);
         }
 
 
-        try { await _transportConnection.StopAsync(cancellationToken); }
+        try { await transportConnectionLifeCycle.StopAsync(cancellationToken); }
         catch (Exception ex)
         {
             errors.Add(ex);
-            _logger.LogError(ex, "端口传输器 {Endpoint} 停止失败", _transportConnection.Endpoint);
+            _logger.LogError(ex, "端口传输器 {Endpoint} 停止失败", Endpoint);
         }
 
         if (errors.Count == 0) return;
@@ -135,27 +84,7 @@ internal sealed class Port : IPort, IAsyncDisposable
     }
     private async ValueTask OnDisposeAsync()
     {
-        // 释放设备集合
-        try { await _devices.DisposeAsync(); }
-        catch (Exception ex) { _logger.LogError(ex, "设备释放失败"); }
-
-        // 批处理
-        try { await _deviceBatchExecutor.DisposeAsync(_devices.Values); }
-        catch (Exception ex) { _logger.LogError(ex, "设备释放失败"); }
-
-        // 传输器
-        try { await _transportConnection.DisposeAsync(); }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "端口 {Endpoint} 传输器 释放失败", _transportConnection.Endpoint);
-        }
-    }
-
-
-
-    private IProtocolAccessor GetProtocolAccessor(IProtocolDescriptor protocolDescriptor)
-    {
-        return _protocolAccessors.GetOrAdd(protocolDescriptor, x =>
-            _protocolAccessorFactoryResolver.Resolve(x, _transportConnection));
+        await _disposeNotifier.RaiseAsync(this);
+        await _disposeNotifier.TryDisposeAsync(_logger);
     }
 }

@@ -1,9 +1,10 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using ReactiveUI.Primitives;
-using ReactiveUI.Primitives.Concurrency;
 using SukiUI.Toasts;
+using System.Reactive.Linq;
 using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Subscription;
+
+using static System.ObservableExtensions;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Gateway;
 
@@ -19,7 +20,7 @@ internal sealed partial class SubscriptionViewModel : LifecycleViewModel, IDispo
         _subscription = subscription;
         Latest = subscription.Latest;
         _subscriptionHandle = subscription.Update
-            .ObserveOn(AvaloniaScheduler.Instance)
+            .ObserveOnUI()
             .Subscribe(
                 onNext: value =>
                 {
@@ -28,7 +29,8 @@ internal sealed partial class SubscriptionViewModel : LifecycleViewModel, IDispo
                     if (value.Value is double d)
                         _buffer.Write(d);
                 },
-                onError: _ => Latest = Reading.Bad(Latest?.Value ?? default!));
+                onError: _ => Latest = Reading.Bad(Latest?.Value ?? default!),
+                onCompleted: delegate { });
     }
 
     public SubscriptionId Id => _subscription.Id;

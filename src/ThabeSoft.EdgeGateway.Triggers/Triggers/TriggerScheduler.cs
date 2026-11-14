@@ -4,7 +4,7 @@ using System.Collections.Concurrent;
 namespace ThabeSoft.EdgeGateway.Triggers;
 
 
-internal sealed class TriggerScheduler(ITriggerFactorySelector triggerFactorySelector, ILoggerFactory loggerFactory) : ITriggerScheduler
+internal sealed class TriggerScheduler(ITriggerResolver triggerFactorySelector, ILoggerFactory loggerFactory) : ITriggerScheduler
 {
     private readonly ConcurrentDictionary<ITriggerDescriptor, TriggerBatchPublisher> _ticks = [];
 
@@ -12,7 +12,7 @@ internal sealed class TriggerScheduler(ITriggerFactorySelector triggerFactorySel
     {
         var method = _ticks.GetOrAdd(triggerDescriptor, x =>
         {
-            var trigger = triggerFactorySelector.Create(x);
+            var trigger = triggerFactorySelector.Resolve(x);
             var logger = loggerFactory.CreateLogger<TriggerBatchPublisher>();
 
             return new TriggerBatchPublisher(trigger, logger);

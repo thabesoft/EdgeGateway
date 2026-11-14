@@ -63,7 +63,7 @@ internal abstract class SimulationDeviceBase(
 }
 
 
-internal class TriggerManager(ITriggerFactorySelector triggerFactorySelector, ILoggerFactory loggerFactory)
+internal class TriggerManager(ITriggerResolver triggerFactorySelector, ILoggerFactory loggerFactory)
 {
     private readonly ConcurrentDictionary<ITriggerDescriptor, TriggerScheduler> _entries = [];
 
@@ -71,7 +71,7 @@ internal class TriggerManager(ITriggerFactorySelector triggerFactorySelector, IL
     {
         var scheduler = _entries.GetOrAdd(triggerDescriptor, x =>
         {
-            var trigger = triggerFactorySelector.Create(x);
+            var trigger = triggerFactorySelector.Resolve(x);
             return new TriggerScheduler(trigger, loggerFactory.CreateLogger<TriggerScheduler>());
         });
 

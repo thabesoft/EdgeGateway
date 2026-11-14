@@ -6,16 +6,13 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.14" />
+		<PackageReference Include="System.Reactive" Version="7.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Abstractions\ThabeSoft.EdgeGateway.Abstractions.csproj" />
 		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Lifecycles\ThabeSoft.EdgeGateway.Lifecycles.csproj" />
 		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Triggers\ThabeSoft.EdgeGateway.Triggers.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Triggers\" />
 	</ItemGroup>
 
 </Project>

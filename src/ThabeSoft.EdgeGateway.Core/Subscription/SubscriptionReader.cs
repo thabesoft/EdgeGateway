@@ -1,20 +1,24 @@
 ﻿using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.EdgeGateway.Recoveries;
+using ThabeSoft.EdgeGateway.Tags;
 
 namespace ThabeSoft.EdgeGateway.Subscription;
 
+
 internal sealed class SubscriptionReader<T>(
-    SubscriptionDescriptor<T> descriptor,
+    TagDescriptor<T> tagDescriptor,
     IProtocolAccessor protocolAccessor,
-    RecoveryPolicyHandler recoveryPolicyHandler) where T : notnull
+    Func<Exception, bool> recovery
+    ) where T : notnull
 {
     public Reading<T>? Latest { get; private set; }
+
 
     public async ValueTask<Reading<T>> ReadAsync(CancellationToken ct)
     {
         try
         {
-            var value = await protocolAccessor.ReadAsync(descriptor.Tag, ct);
+            var value = await protocolAccessor.ReadAsync(tagDescriptor, ct);
+            
             var reading = Reading.Good(value);
             Latest = reading;
 
@@ -24,7 +28,7 @@ internal sealed class SubscriptionReader<T>(
         {
             throw;
         }
-        catch (Exception ex) when (recoveryPolicyHandler.Handle(ex))
+        catch (Exception ex) when (recovery.Invoke(ex))
         {
             return Reading.Bad(GetLatestValue());
         }

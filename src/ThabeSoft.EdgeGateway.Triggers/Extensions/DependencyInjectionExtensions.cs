@@ -16,7 +16,7 @@ public static class DependencyInjectionExtensions
         public IServiceCollection AddTriggers()
         {
             descriptors.TryAddSingleton<ITriggerScheduler, TriggerScheduler>();
-            descriptors.TryAddSingleton<ITriggerFactorySelector, TriggerFactorySelector>();
+            descriptors.TryAddSingleton<ITriggerResolver, TriggerResolver>();
 
 
             descriptors.TryAddSingleton(TimeProvider.System);

@@ -3,7 +3,7 @@
 namespace ThabeSoft.EdgeGateway.Protocols;
 
 
-internal sealed class ProtocolAccessorFactoryResolver(IEnumerable<IProtocolAccessorFactory> factories)
+internal sealed class ProtocolAccessorResolver(IEnumerable<IProtocolAccessorFactory> factories)
 {
     public IProtocolAccessor Resolve(IProtocolDescriptor protocolDescriptor, IByteDuplex byteDuplex)
     {

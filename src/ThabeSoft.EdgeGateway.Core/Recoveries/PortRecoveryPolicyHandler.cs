@@ -1,7 +1,7 @@
 ﻿namespace ThabeSoft.EdgeGateway.Recoveries;
 
 
-internal sealed class RecoveryPolicyHandler(IEnumerable<IRecoveryPolicy> policies)
+internal sealed class PortRecoveryPolicyHandler(IEnumerable<IRecoveryPolicy> policies)
 {
     private readonly IRecoveryPolicy[] _policies = policies?.Where(x => x is not null).ToArray() ?? [];
 

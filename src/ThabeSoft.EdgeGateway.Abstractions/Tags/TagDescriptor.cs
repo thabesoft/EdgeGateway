@@ -4,7 +4,12 @@ using ThabeSoft.EdgeGateway.Codecs;
 namespace ThabeSoft.EdgeGateway.Tags;
 
 
-public sealed class TagDescriptor<T> : IEquatable<TagDescriptor<T>>
+public interface ITagDescriptor : IEquatable<ITagDescriptor>
+{
+    IDataAddress Address { get; }
+}
+
+public sealed class TagDescriptor<T> : ITagDescriptor, IEquatable<TagDescriptor<T>>
      where T : notnull
 {
     public TagDescriptor(IDataAddress address, ICodec<T> codec)
@@ -31,6 +36,11 @@ public sealed class TagDescriptor<T> : IEquatable<TagDescriptor<T>>
     public bool Equals(TagDescriptor<T> other)
     {
         return Address.Equals(other.Address) && Codec.Equals(other.Codec);
+    }
+    public bool Equals(ITagDescriptor other)
+    {
+        if (other is not TagDescriptor<T> result) return false;
+        return Equals(result);
     }
 
     public override string ToString() => $"Tag({Address}, {Codec})";

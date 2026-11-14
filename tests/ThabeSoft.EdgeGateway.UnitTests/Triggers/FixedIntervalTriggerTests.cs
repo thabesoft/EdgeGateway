@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Time.Testing;
+using ThabeSoft.EdgeGateway.Triggers.Interval;
 
 namespace ThabeSoft.EdgeGateway.Triggers;
 

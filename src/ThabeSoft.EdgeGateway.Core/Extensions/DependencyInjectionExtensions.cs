@@ -1,12 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Events;
 using ThabeSoft.EdgeGateway.Hosting;
-using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Recoveries;
-using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transport;
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
@@ -23,27 +20,19 @@ public static class DependencyInjectionExtensions
             // Events
             descriptors.TryAddSingleton<IEventPublisher, EventPublisher>();
 
-            // Triggers
+            // Modules
             descriptors.AddTriggers();
-
-            // Recoveries
-            descriptors.AddSingleton<RecoveryPolicyHandler>();
-            descriptors.AddSingleton<RecoveryPolicyFactoryResolver>();
-            descriptors.AddSingleton<IRecoveryPolicyFactory, SocketExceptionRecoveryPolicyFactory>();
-
-
-            // Factory
-            descriptors.TryAddSingleton<PortFactory>();
-            descriptors.TryAddSingleton<DeviceFactory>();
-            descriptors.TryAddSingleton<DeviceSubscriptionFactory>();
-
-            // FactorySelector
+            descriptors.AddRecovers();
             descriptors.AddTransport();
-            descriptors.TryAddSingleton<ProtocolAccessorFactoryResolver>();
+
+            // Resolvers
+            descriptors.TryAddSingleton<TransportConnectionResolver>();
+            descriptors.TryAddSingleton<ProtocolAccessorResolver>();
+            descriptors.TryAddSingleton<RecoveryPolicyFactoryResolver>();
+
 
             // Gateway
             descriptors.TryAddSingleton<IGateway, Gateway>();
-
             return descriptors;
         }
 
@@ -55,7 +44,16 @@ public static class DependencyInjectionExtensions
 
         public IServiceCollection AddTransport()
         {
-            descriptors.AddSingleton<ITransportConnectionFactoryResolver, TransportConnectionFactoryResolver>();
+            descriptors.AddSingleton<ITransportConnectionFactoryResolver, TransportConnectionResolver>();
+            return descriptors;
+        }
+
+        public IServiceCollection AddRecovers()
+        {
+            descriptors.TryAddSingleton<PortRecoveryPolicyHandler>();
+            descriptors.TryAddSingleton<RecoveryPolicyFactoryResolver>();
+            descriptors.TryAddSingleton<IRecoveryPolicyFactory, SocketExceptionRecoveryPolicyFactory>();
+
             return descriptors;
         }
     }

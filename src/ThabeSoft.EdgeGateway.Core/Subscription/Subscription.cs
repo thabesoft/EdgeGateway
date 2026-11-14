@@ -15,40 +15,46 @@ namespace ThabeSoft.EdgeGateway.Subscription;
 internal interface IAsyncDisposableSubscription : ISubscription, IAsyncDisposable;
 
 internal sealed class Subscription<T>(
-        SubscriptionDescriptor<T> subscriptionDescriptor,
-        SubscriptionReader<T> subscriptionReader,
+        SubscriptionDescriptor<T> descriptor,
+        ILifecycleStateMachine lifecycleStateMachine,
+        ILifecycleStateable deviceLifecycleState,
         ITriggerScheduler triggerScheduler,
-        ILifecycleStateMachine stateMachine,
+        SubscriptionReader<T> reader,
         ILogger<Subscription<T>>? logger = null
     ) : ISubscription<T>, IAsyncDisposableSubscription
     where T : notnull
 {
+    private DisposeNotifier _disposeNotifier = new(logger);
     private IDisposable? _triggerTick;
     private readonly ReadingSubject<T> _subject = new(logger);
 
 
-    public SubscriptionId Id { get; } = subscriptionDescriptor.Id;
-    public IDataAddress Address { get; } = subscriptionDescriptor.Tag.Address;
-    public Reading<T>? Latest => subscriptionReader.Latest;
-    Reading? ISubscription.Latest => subscriptionReader.Latest;
+    public SubscriptionId Id { get; } = descriptor.Id;
+    public IDataAddress Address { get; } = descriptor.Tag.Address;
+    public Reading<T>? Latest => reader.Latest;
+    Reading? ISubscription.Latest => reader.Latest;
     public IObservable<Reading<T>> Update => _subject;
     IObservable<Reading> ISubscription.Update => _subject;
-    public LifecycleState State => stateMachine.State;
+    public LifecycleState State => lifecycleStateMachine.State;
+    public IDisposeObservable Disposed => _disposeNotifier;
 
 
 
     public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
-        stateMachine.StartAsync(OnStartAsync, cancellationToken);
+        lifecycleStateMachine.StartAsync(OnStartAsync, cancellationToken);
     public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
-        stateMachine.StopAsync(OnStopAsync, cancellationToken);
+        lifecycleStateMachine.StopAsync(OnStopAsync, cancellationToken);
     public ValueTask DisposeAsync() =>
-        stateMachine.DisposeAsync(OnDisposeAsync);
+        lifecycleStateMachine.DisposeAsync(OnDisposeAsync);
 
 
     private ValueTask OnStartAsync(CancellationToken cancellationToken)
     {
+        if (deviceLifecycleState.State != LifecycleState.Running)
+            throw new InvalidOperationException("设备未启动");
+
         _triggerTick?.Dispose();
-        _triggerTick = triggerScheduler.Register(subscriptionDescriptor.Trigger, UpdateAsync);
+        _triggerTick = triggerScheduler.Register(descriptor.Trigger, UpdateAsync);
 
         return ValueTask.CompletedTask;
     }
@@ -57,10 +63,13 @@ internal sealed class Subscription<T>(
         _triggerTick?.Dispose();
         return ValueTask.CompletedTask;
     }
-    private ValueTask OnDisposeAsync()
+    private async ValueTask OnDisposeAsync()
     {
-        _subject.Dispose();
-        return ValueTask.CompletedTask;
+        _triggerTick?.TryDispose(logger);
+        _subject.TryDispose(logger);
+
+        await _disposeNotifier.RaiseAsync(this);
+        await _disposeNotifier.TryDisposeAsync(logger);
     }
 
 
@@ -70,7 +79,7 @@ internal sealed class Subscription<T>(
 
         try
         {
-            var reading = await subscriptionReader.ReadAsync(cancellationToken);
+            var reading = await reader.ReadAsync(cancellationToken);
             _subject.OnNext(reading);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -81,7 +90,7 @@ internal sealed class Subscription<T>(
         {
             _subject.OnError(ex);
 
-            _triggerTick?.Dispose();
+            _triggerTick?.TryDispose(logger);
             _triggerTick = null;
         }
     }

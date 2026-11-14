@@ -27,7 +27,7 @@ namespace ThabeSoft.EdgeGateway.Transport;
 /// <b>不保证并发安全</b>；并发调用需由调用方串行化（或由协议会话内部加锁）。
 /// </para>
 /// </remarks>
-public interface ITransportConnection : ILifecycle, IByteDuplex, IAsyncDisposable
+public interface ITransportConnection : IDisposableLifecycle, IByteDuplex
 {
     ConnectionEndpoint Endpoint { get; }
 }

@@ -2,5 +2,5 @@
 
 public interface ITriggerScheduler
 {
-    IDisposable Register(ITriggerDescriptor triggerDescriptor, Func<CancellationToken, ValueTask> onTickAsync);
+    IDisposable Register(TriggerDescriptor triggerDescriptor, Func<CancellationToken, ValueTask> onTickAsync);
 }

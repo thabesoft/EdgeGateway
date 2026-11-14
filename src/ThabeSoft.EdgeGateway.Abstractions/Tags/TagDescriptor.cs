@@ -4,12 +4,16 @@ using ThabeSoft.EdgeGateway.Codecs;
 namespace ThabeSoft.EdgeGateway.Tags;
 
 
-public interface ITagDescriptor : IEquatable<ITagDescriptor>
+public abstract record class TagDescriptor
 {
-    IDataAddress Address { get; }
+    public abstract IDataAddress Address { get; }
+
+
+    public static TagDescriptor<T> Create<T>(IDataAddress address, ICodec<T> codec) where T : notnull
+        => new(address, codec);
 }
 
-public sealed class TagDescriptor<T> : ITagDescriptor, IEquatable<TagDescriptor<T>>
+public sealed record class TagDescriptor<T> : TagDescriptor
      where T : notnull
 {
     public TagDescriptor(IDataAddress address, ICodec<T> codec)
@@ -29,25 +33,6 @@ public sealed class TagDescriptor<T> : ITagDescriptor, IEquatable<TagDescriptor<
     }
 
 
-    public IDataAddress Address { get; }
     public ICodec<T> Codec { get; }
-
-
-    public bool Equals(TagDescriptor<T> other)
-    {
-        return Address.Equals(other.Address) && Codec.Equals(other.Codec);
-    }
-    public bool Equals(ITagDescriptor other)
-    {
-        if (other is not TagDescriptor<T> result) return false;
-        return Equals(result);
-    }
-
-    public override string ToString() => $"Tag({Address}, {Codec})";
-}
-
-public static class TagDescriptor
-{
-    public static TagDescriptor<T> Create<T>(IDataAddress address, ICodec<T> codec) where T : notnull
-        => new(address, codec);
+    public override IDataAddress Address { get; }
 }

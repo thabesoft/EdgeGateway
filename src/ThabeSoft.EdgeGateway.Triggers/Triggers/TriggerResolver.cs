@@ -3,7 +3,7 @@
 
 internal sealed class TriggerResolver(IEnumerable<ITriggerFactory> factories) : ITriggerResolver
 {
-    public ITrigger Resolve(ITriggerDescriptor triggerDescriptor)
+    public ITrigger Resolve(TriggerDescriptor triggerDescriptor)
     {
         var factory = factories.FirstOrDefault(x => x.CanCreate(triggerDescriptor))
             ?? throw new InvalidOperationException();

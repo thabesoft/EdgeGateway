@@ -3,10 +3,10 @@
 
 internal sealed class FixedIntervalTriggerFactory(TimeProvider timeProvider) : ITriggerFactory
 {
-    public bool CanCreate(ITriggerDescriptor triggerDescriptor) =>
+    public bool CanCreate(TriggerDescriptor triggerDescriptor) =>
         triggerDescriptor is FixedIntervalTriggerDescriptor;
 
-    public ITrigger Create(ITriggerDescriptor triggerDescriptor)
+    public ITrigger Create(TriggerDescriptor triggerDescriptor)
     {
         if (triggerDescriptor is not FixedIntervalTriggerDescriptor descriptor)
             throw new InvalidOperationException($"不支持的触发器描述: {triggerDescriptor.GetType()}");

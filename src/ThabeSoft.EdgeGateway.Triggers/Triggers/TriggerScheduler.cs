@@ -6,9 +6,9 @@ namespace ThabeSoft.EdgeGateway.Triggers;
 
 internal sealed class TriggerScheduler(ITriggerResolver triggerFactorySelector, ILoggerFactory loggerFactory) : ITriggerScheduler
 {
-    private readonly ConcurrentDictionary<ITriggerDescriptor, TriggerBatchPublisher> _ticks = [];
+    private readonly ConcurrentDictionary<TriggerDescriptor, TriggerBatchPublisher> _ticks = [];
 
-    public IDisposable Register(ITriggerDescriptor triggerDescriptor, Func<CancellationToken, ValueTask> onTickAsync)
+    public IDisposable Register(TriggerDescriptor triggerDescriptor, Func<CancellationToken, ValueTask> onTickAsync)
     {
         var method = _ticks.GetOrAdd(triggerDescriptor, x =>
         {

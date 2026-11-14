@@ -30,7 +30,7 @@ public static class DeviceExtensions
     {
         public ValueTask<ISubscription<T>> AddSubscriptionAsync<T>(
                 TagDescriptor<T> tagDescriptor,
-                ITriggerDescriptor triggerDescriptor,
+                TriggerDescriptor triggerDescriptor,
                 CancellationToken cancellationToken = default
             ) where T : notnull
         {

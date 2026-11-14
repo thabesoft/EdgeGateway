@@ -12,7 +12,7 @@ internal sealed class LaunchHostedService(ISimulator simulator, ILogger<LaunchHo
 {
     private const int DeviceCount = 2;
     private const int DeviceValueCount = 10;
-    private static ITriggerDescriptor TriggerDescriptor { get; } = Trigger.Interval(10);
+    private static TriggerDescriptor TriggerDescriptor { get; } = Trigger.Interval(10);
 
     private Task? _flakyPortRunningTask;
     private CancellationTokenSource? _flakyPortRunningTaskCts;

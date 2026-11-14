@@ -40,7 +40,7 @@ internal abstract class SimulationDeviceBase(
     });
 
 
-    public async ValueTask<IDisposable> ValueAsync<T>(TagDescriptor<T> tagDescriptor, ITriggerDescriptor triggerDescriptor, IValueGenerator<T> generator, CancellationToken cancellationToken = default)
+    public async ValueTask<IDisposable> ValueAsync<T>(TagDescriptor<T> tagDescriptor, TriggerDescriptor triggerDescriptor, IValueGenerator<T> generator, CancellationToken cancellationToken = default)
         where T : notnull
     {
         if (tagDescriptor.Address is not ModbusDataAddress dataAddrss)
@@ -65,9 +65,9 @@ internal abstract class SimulationDeviceBase(
 
 internal class TriggerManager(ITriggerResolver triggerFactorySelector, ILoggerFactory loggerFactory)
 {
-    private readonly ConcurrentDictionary<ITriggerDescriptor, TriggerScheduler> _entries = [];
+    private readonly ConcurrentDictionary<TriggerDescriptor, TriggerScheduler> _entries = [];
 
-    public async ValueTask<TriggerScheduler> GetSchedulerAsync(ITriggerDescriptor triggerDescriptor, CancellationToken cancellationToken)
+    public async ValueTask<TriggerScheduler> GetSchedulerAsync(TriggerDescriptor triggerDescriptor, CancellationToken cancellationToken)
     {
         var scheduler = _entries.GetOrAdd(triggerDescriptor, x =>
         {

@@ -11,13 +11,13 @@ namespace ThabeSoft.EdgeGateway.Subscription;
 public abstract record class SubscriptionDescriptor
 {
     public SubscriptionId Id { get; init => field = value.Required(); } = SubscriptionId.Create();
-    public required ITriggerDescriptor Trigger { get; init => field = value.Required(); }
+    public required TriggerDescriptor Trigger { get; init => field = value.Required(); }
 
 
 
-    public static SubscriptionDescriptor<T> Create<T>(SubscriptionId id, TagDescriptor<T> tag, ITriggerDescriptor trigger) where T : notnull =>
+    public static SubscriptionDescriptor<T> Create<T>(SubscriptionId id, TagDescriptor<T> tag, TriggerDescriptor trigger) where T : notnull =>
        new() { Id = id, Tag = tag, Trigger = trigger };
-    public static SubscriptionDescriptor<T> Create<T>(TagDescriptor<T> tag, ITriggerDescriptor trigger) where T : notnull =>
+    public static SubscriptionDescriptor<T> Create<T>(TagDescriptor<T> tag, TriggerDescriptor trigger) where T : notnull =>
         new() { Tag = tag, Trigger = trigger };
 }
 

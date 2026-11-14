@@ -3,5 +3,5 @@
 
 public interface ITriggerResolver
 {
-    ITrigger Resolve(ITriggerDescriptor triggerDescriptor);
+    ITrigger Resolve(TriggerDescriptor triggerDescriptor);
 }

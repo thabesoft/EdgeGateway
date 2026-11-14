@@ -2,6 +2,6 @@
 
 public interface ITriggerFactory
 {
-    bool CanCreate(ITriggerDescriptor triggerDescriptor);
-    ITrigger Create(ITriggerDescriptor triggerDescriptor);
+    bool CanCreate(TriggerDescriptor triggerDescriptor);
+    ITrigger Create(TriggerDescriptor triggerDescriptor);
 }

@@ -11,7 +11,7 @@ public static class SerialDependencyInjectionExtensions
         /// <summary>
         /// 添加串口模块
         /// </summary>
-        public IServiceCollection AddSerial()
+        public IServiceCollection AddEdgeGatewaySerial()
         {
             descriptors.AddSingleton<ITransportConnectionFactory, SerialTransportFactory>();
             return descriptors;

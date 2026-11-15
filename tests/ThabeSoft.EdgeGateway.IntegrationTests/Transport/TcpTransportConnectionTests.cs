@@ -16,8 +16,8 @@ public class TcpTransportConnectionTests
         var app = Host.CreateDefaultBuilder()
             .ConfigureServices(x => x
                 .AddLogging()
-                .AddEthernet()
-                .AddTransport()
+                .AddEdgeGatewayEthernet()
+                .AddEdgeGatewayTransport()
             )
             .Build();
         var resolver = app.Services.GetRequiredService<ITransportConnectionFactoryResolver>();

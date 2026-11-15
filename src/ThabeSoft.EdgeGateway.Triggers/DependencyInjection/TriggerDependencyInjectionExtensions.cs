@@ -11,7 +11,7 @@ public static class TriggerDependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {
-        public IServiceCollection AddTriggers()
+        public IServiceCollection AddEdgeGatewayTriggers()
         {
             descriptors.TryAddSingleton<ITriggerScheduler, TriggerScheduler>();
             descriptors.TryAddSingleton<ITriggerResolver, TriggerResolver>();

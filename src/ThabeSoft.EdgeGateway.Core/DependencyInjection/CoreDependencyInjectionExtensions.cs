@@ -16,12 +16,12 @@ public static class CoreDependencyInjectionExtensions
     {
         public IServiceCollection AddEdgeGateway()
         {
-            descriptors.AddEvent();
-            descriptors.AddTriggers();
-            descriptors.AddRecovers();
-            descriptors.AddTransport();
-            descriptors.AddProtocol();
-            descriptors.AddReading();
+            descriptors.AddEdgeGatewayEvents();
+            descriptors.AddEdgeGatewayTriggers();
+            descriptors.AddEdgeGatewayRecovers();
+            descriptors.AddEdgeGatewayTransport();
+            descriptors.AddEdgeGatewayProtocol();
+            descriptors.AddEdgeGatewayReadings();
 
             // Gateway
             descriptors.TryAddSingleton<GatewayFactory>();
@@ -34,25 +34,25 @@ public static class CoreDependencyInjectionExtensions
             return descriptors.AddHostedService<LaunchHostedService>();
         }
 
-        public IServiceCollection AddEvent()
+        public IServiceCollection AddEdgeGatewayEvents()
         {
             descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IEventPublisher, EventPublisher>());
             return descriptors;
         }
 
-        public IServiceCollection AddTransport()
+        public IServiceCollection AddEdgeGatewayTransport()
         {
             descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportConnectionFactoryResolver, TransportConnectionResolver>());
             return descriptors;
         }
 
-        public IServiceCollection AddProtocol()
+        public IServiceCollection AddEdgeGatewayProtocol()
         {
             descriptors.TryAddSingleton<ProtocolAccessorResolver>();
             return descriptors;
         }
 
-        public IServiceCollection AddRecovers()
+        public IServiceCollection AddEdgeGatewayRecovers()
         {
             descriptors.TryAddSingleton<PortRecoveryPolicyHandler>();
             descriptors.TryAddSingleton<RecoveryPolicyFactoryResolver>();
@@ -61,7 +61,7 @@ public static class CoreDependencyInjectionExtensions
             return descriptors;
         }
 
-        public IServiceCollection AddReading()
+        public IServiceCollection AddEdgeGatewayReadings()
         {
             descriptors.TryAddSingleton<ReadingSinkBus>();
             descriptors.TryAddSingleton<IReadingSink, TestReadingSink>();

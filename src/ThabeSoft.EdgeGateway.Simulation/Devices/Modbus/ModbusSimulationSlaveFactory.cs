@@ -1,13 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using NModbus;
-using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Devices.Modbus;
-using ThabeSoft.EdgeGateway.Triggers;
 
-namespace ThabeSoft.EdgeGateway.Slaves.Modbus;
+namespace ThabeSoft.EdgeGateway.Devices.Modbus;
 
 
-internal sealed class ModbusSimulatedSlaveFactory(
+internal sealed class ModbusSimulationSlaveFactory(
         IModbusFactory modbusFactory,
         TriggerManager triggerManager,
         ILoggerFactory loggerFactory

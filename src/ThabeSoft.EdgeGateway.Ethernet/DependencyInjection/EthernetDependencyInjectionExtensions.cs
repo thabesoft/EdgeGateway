@@ -13,7 +13,7 @@ public static class EthernetDependencyInjectionExtensions
         /// <summary>
         /// 添加以太网模块
         /// </summary>
-        public IServiceCollection AddEthernet()
+        public IServiceCollection AddEdgeGatewayEthernet()
         {
             descriptors.AddSingleton<ITransportConnectionFactory, TcpTransportConnectionFactory>();
             descriptors.AddSingleton<ITransportConnectionFactory, UdpTransportConnectionFactory>();

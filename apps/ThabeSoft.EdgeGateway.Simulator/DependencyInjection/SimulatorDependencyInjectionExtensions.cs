@@ -12,7 +12,7 @@ public static class SimulatorDependencyInjectionExtensions
         /// <summary>
         /// 添加视图模块
         /// </summary>
-        public IServiceCollection AddApp()
+        public IServiceCollection AddEdgeGatewaySimulatorApp()
         {
             // Services
             descriptors.AddOptions<SimulatorOptions>()

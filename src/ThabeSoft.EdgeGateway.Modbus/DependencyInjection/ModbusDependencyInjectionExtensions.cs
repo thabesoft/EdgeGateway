@@ -12,7 +12,7 @@ public static class ModbusDependencyInjectionExtensions
         /// <summary>
         /// 添加 Modbus 模块
         /// </summary>
-        public IServiceCollection AddModbus()
+        public IServiceCollection AddEdgeGatewayModbus()
         {
             descriptors.AddSingleton<IModbusFactory, ModbusFactory>();
             descriptors.AddSingleton<IProtocolAccessorFactory, ModbusProtocolAccessorFactory>();

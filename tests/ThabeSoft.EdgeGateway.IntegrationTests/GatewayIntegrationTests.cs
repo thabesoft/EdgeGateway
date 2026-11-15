@@ -40,13 +40,13 @@ public class GatewayIntegrationTests
             .ConfigureServices(x => x
 
                 // 模拟器
-                .AddSimulation()
-                .AddModbusSimulation()
+                .AddEdgeGatewaySimulation()
+                .AddEdgeGatewayModbusSimulation()
 
                 // 网关
                 .AddEdgeGateway()
-                .AddModbus()
-                .AddEthernet())
+                .AddEdgeGatewayModbus()
+                .AddEdgeGatewayEthernet())
             .Build();
 
         Gateway = _app.Services.GetRequiredService<IGateway>();

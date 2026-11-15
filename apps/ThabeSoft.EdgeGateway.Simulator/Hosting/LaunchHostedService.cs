@@ -5,7 +5,7 @@ using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Triggers;
 using ThabeSoft.EdgeGateway.ValueGenerators;
 
-namespace ThabeSoft.EdgeGateway.Simulator;
+namespace ThabeSoft.EdgeGateway.Simulator.Hosting;
 
 
 internal sealed class LaunchHostedService(ISimulator simulator, ILogger<LaunchHostedService> logger) : IHostedService

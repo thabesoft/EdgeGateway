@@ -21,7 +21,7 @@ public static class AppDependencyInjectionExtensions
         /// <summary>
         /// 添加视图模块
         /// </summary>
-        public IServiceCollection AddApp()
+        public IServiceCollection AddEdgeGatewayApp()
         {
             // Services
             descriptors.AddSingleton<ClipboardService>();
@@ -53,7 +53,7 @@ public static class AppDependencyInjectionExtensions
             return descriptors;
         }
 
-        public IServiceCollection AddAppHost()
+        public IServiceCollection AddEdgeGatewayAppHost()
         {
             descriptors.AddHostedService<LaunchHostedService>();
             return descriptors;

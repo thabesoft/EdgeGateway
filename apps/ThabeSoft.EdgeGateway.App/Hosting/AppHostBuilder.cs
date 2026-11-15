@@ -17,14 +17,14 @@ internal static class AppHostBuilder
             builder.ConfigureServices(services =>
             {
                 services.AddEdgeGateway();
-                //services.AddEdgeGatewayHost();
-                services.AddSerial();
-                services.AddEthernet();
-                services.AddModbus();
+                services.AddEdgeGatewayHost();
+                services.AddEdgeGatewaySerial();
+                services.AddEdgeGatewayEthernet();
+                services.AddEdgeGatewayModbus();
 
                 // App
-                services.AddApp();
-                services.AddAppHost();
+                services.AddEdgeGatewayApp();
+                services.AddEdgeGatewayAppHost();
             });
 
             return builder;

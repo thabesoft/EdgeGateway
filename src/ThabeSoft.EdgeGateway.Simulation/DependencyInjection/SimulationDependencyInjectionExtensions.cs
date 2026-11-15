@@ -2,19 +2,22 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NModbus;
 using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Devices.Modbus;
 using ThabeSoft.EdgeGateway.Hosting;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Ports.Modbus;
-using ThabeSoft.EdgeGateway.Slaves.Modbus;
 
-namespace ThabeSoft.EdgeGateway;
+namespace ThabeSoft.EdgeGateway.DependencyInjection;
 
 
 public static class SimulationDependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {
-        public IServiceCollection AddSimulation()
+        /// <summary>
+        /// 添加模拟模块
+        /// </summary>
+        public IServiceCollection AddEdgeGatewaySimulation()
         {
             descriptors.TryAddSingleton<SimulationDeviceFactorySelector>();
             descriptors.TryAddSingleton<SimulationPortFactorySelector>();
@@ -22,17 +25,19 @@ public static class SimulationDependencyInjectionExtensions
             descriptors.TryAddSingleton<ISimulator, Simulator>();
             return descriptors;
         }
-        public IServiceCollection AddSimulationHost()
+        public IServiceCollection AddEdgeGatewaySimulationHost()
         {
             descriptors.AddHostedService<LaunchHostedService>();
             return descriptors;
         }
 
-
-        public IServiceCollection AddModbusSimulation()
+        /// <summary>
+        /// 添加 Modbus 模拟模块
+        /// </summary>
+        public IServiceCollection AddEdgeGatewayModbusSimulation()
         {
             descriptors.TryAddSingleton<IModbusFactory, ModbusFactory>();
-            descriptors.TryAddSingleton<ISimulationDeviceFactory, ModbusSimulatedSlaveFactory>();
+            descriptors.TryAddSingleton<ISimulationDeviceFactory, ModbusSimulationSlaveFactory>();
             descriptors.TryAddSingleton<ISimulationPortFactory, ModbusSimulationPortFactory>();
             return descriptors;
         }

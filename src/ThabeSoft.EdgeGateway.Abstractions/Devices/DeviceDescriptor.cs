@@ -1,5 +1,4 @@
 ﻿using ThabeSoft.EdgeGateway.Compatibility;
-using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
 
 namespace ThabeSoft.EdgeGateway.Devices;

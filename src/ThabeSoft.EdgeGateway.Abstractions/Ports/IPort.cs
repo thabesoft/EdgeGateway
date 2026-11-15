@@ -1,6 +1,5 @@
 ﻿using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
-using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Transport;
 
 namespace ThabeSoft.EdgeGateway.Ports;
@@ -8,6 +7,7 @@ namespace ThabeSoft.EdgeGateway.Ports;
 
 public interface IPort : ILifecycleWithState
 {
+    PortId Id { get; }
     ConnectionEndpoint Endpoint { get; }
     IReadOnlyDictionary<DeviceId, IDevice> Devices { get; }
 

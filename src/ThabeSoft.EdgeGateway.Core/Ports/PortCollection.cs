@@ -1,6 +1,5 @@
 ﻿using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
-using ThabeSoft.EdgeGateway.Transport;
 using ThabeSoft.EdgeGateway.Utilities;
 
 namespace ThabeSoft.EdgeGateway.Ports;
@@ -8,7 +7,7 @@ namespace ThabeSoft.EdgeGateway.Ports;
 
 internal sealed class PortCollection : IAsyncDisposable
 {
-    private readonly ILifecycleKeyedCollection<ConnectionEndpoint, Port> _collection;
+    private readonly ILifecycleKeyedCollection<PortId, Port> _collection;
     private readonly ILifecycleBatchExecutor _batchExecutor;
     private readonly Func<PortDescriptor, Port> _creator;
 
@@ -16,13 +15,13 @@ internal sealed class PortCollection : IAsyncDisposable
     public PortCollection(ILifecycleStateable gatwayLifecycleState, Func<PortDescriptor, Port> creator)
     {
         _creator = creator;
-        _collection = Lifecycle.KeyedCollection<ConnectionEndpoint, Port>(gatwayLifecycleState);
+        _collection = Lifecycle.KeyedCollection<PortId, Port>(gatwayLifecycleState);
         _batchExecutor = Lifecycle.BatchExecutor();
 
-        Items = new ReadOnlyDictionaryView<ConnectionEndpoint, Port, IPort>(_collection.Items);
+        Items = new ReadOnlyDictionaryView<PortId, Port, IPort>(_collection.Items);
     }
 
-    public IReadOnlyDictionary<ConnectionEndpoint, IPort> Items { get; }
+    public IReadOnlyDictionary<PortId, IPort> Items { get; }
 
 
     public ValueTask StartAllAsync(CancellationToken cancellationToken = default) =>
@@ -37,7 +36,7 @@ internal sealed class PortCollection : IAsyncDisposable
     }
 
     public async ValueTask<IPort> AddAsync(PortDescriptor descriptor, CancellationToken cancellationToken = default) =>
-        await _collection.AddAsync(descriptor.Transport.Endpoint, () => _creator.Invoke(descriptor), cancellationToken);
-    public ValueTask<bool> RemoveAsync(ConnectionEndpoint endpoint, CancellationToken cancellationToken = default) =>
-        _collection.RemoveAsync(endpoint, cancellationToken);
+        await _collection.AddAsync(descriptor.Id, () => _creator.Invoke(descriptor), cancellationToken);
+    public ValueTask<bool> RemoveAsync(PortId id, CancellationToken cancellationToken = default) =>
+        _collection.RemoveAsync(id, cancellationToken);
 }

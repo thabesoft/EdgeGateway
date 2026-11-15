@@ -10,7 +10,7 @@ public class BitCodecTests
     [TestMethod]
     public void LsbFirst_Decode()
     {
-        var codec = new BitsCodec(10, BitOrder.LsbFirst);
+        var codec = BitsCodec.Bits(10, BitOrder.LsbFirst);
 
         byte[] raw = [0b0000_0101, 0b0000_0001];
         var actual = codec.Decode(raw);
@@ -27,7 +27,7 @@ public class BitCodecTests
     [TestMethod]
     public void LsbFirst_Encode()
     {
-        var codec = new BitsCodec(10, BitOrder.LsbFirst);
+        var codec = BitsCodec.Bits(10, BitOrder.LsbFirst);
 
         var bits = new BitArray(
         [
@@ -48,7 +48,7 @@ public class BitCodecTests
     [TestMethod]
     public void LsbFirst_RoundTrip()
     {
-        var codec = new BitsCodec(10, BitOrder.LsbFirst);
+        var codec = BitsCodec.Bits(10, BitOrder.LsbFirst);
         var original = new BitArray(10);
         original[0] = true; original[2] = true; original[8] = true;
 
@@ -61,7 +61,7 @@ public class BitCodecTests
     [TestMethod]
     public void LsbFirst_RoundTrip_Random()
     {
-        var codec = new BitsCodec(10, BitOrder.MsbFirst);
+        var codec = BitsCodec.Bits(10, BitOrder.MsbFirst);
         var random = new Random(42);   // 固定种子，可复现
 
         for (int n = 0; n < 100; n++)
@@ -83,7 +83,7 @@ public class BitCodecTests
     [TestMethod]
     public void MsbFirst_Decode()
     {
-        var codec = new BitsCodec(10, BitOrder.MsbFirst);
+        var codec = BitsCodec.Bits(10, BitOrder.MsbFirst);
 
         byte[] raw = [0b0000_0101, 0b0000_0001];
         var actual = codec.Decode(raw);
@@ -100,7 +100,7 @@ public class BitCodecTests
     [TestMethod]
     public void MsbFirst_Encode()
     {
-        var codec = new BitsCodec(10, BitOrder.MsbFirst);
+        var codec = BitsCodec.Bits(10, BitOrder.MsbFirst);
 
         var bits = new BitArray(
         [
@@ -121,7 +121,7 @@ public class BitCodecTests
     [TestMethod]
     public void MsbFirst_RoundTrip()
     {
-        var codec = new BitsCodec(10, BitOrder.MsbFirst);
+        var codec = BitsCodec.Bits(10, BitOrder.MsbFirst);
         var original = new BitArray(10);
         original[0] = true; original[2] = true; original[8] = true;
 
@@ -134,7 +134,7 @@ public class BitCodecTests
     [TestMethod]
     public void MsbFirst_RoundTrip_Random()
     {
-        var codec = new BitsCodec(10, BitOrder.MsbFirst);
+        var codec = BitsCodec.Bits(10, BitOrder.MsbFirst);
         var random = new Random(42);   // 固定种子，可复现
 
         for (int n = 0; n < 100; n++)

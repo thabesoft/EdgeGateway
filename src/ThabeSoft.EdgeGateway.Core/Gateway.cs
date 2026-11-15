@@ -15,7 +15,7 @@ internal sealed class Gateway(
 
 
     public LifecycleState State => lifecycleStateMachine.State;
-    public IReadOnlyDictionary<ConnectionEndpoint, IPort> Ports => portCollection.Items;
+    public IReadOnlyDictionary<PortId, IPort> Ports => portCollection.Items;
     public IDisposeObservable Disposed => _disposeNotifier;
 
 
@@ -33,10 +33,10 @@ internal sealed class Gateway(
         return await lifecycleStateMachine.ExecuteAsync(ct =>
             portCollection.AddAsync(descriptor, ct), cancellationToken);
     }
-    public async ValueTask<bool> RemovePortAsync(ConnectionEndpoint endpoint, CancellationToken cancellationToken = default)
+    public async ValueTask<bool> RemovePortAsync(PortId id, CancellationToken cancellationToken = default)
     {
         return await lifecycleStateMachine.ExecuteAsync(ct =>
-            portCollection.RemoveAsync(endpoint, ct), cancellationToken);
+            portCollection.RemoveAsync(id, ct), cancellationToken);
     }
 
     private async ValueTask OnDisposeAsync()

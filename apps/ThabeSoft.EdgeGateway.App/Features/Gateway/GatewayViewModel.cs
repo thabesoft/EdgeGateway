@@ -10,7 +10,7 @@ namespace ThabeSoft.EdgeGateway.App.Features.Gateway;
 
 internal sealed partial class GatewayViewModel : LifecycleViewModel
 {
-    private readonly AvaloniaDictionary<ConnectionEndpoint, PortViewModel> _viewModels;
+    private readonly AvaloniaDictionary<PortId, PortViewModel> _viewModels;
     private readonly IGateway _gateway;
     private readonly ISukiToastManager _sukiToastManager;
 
@@ -22,7 +22,7 @@ internal sealed partial class GatewayViewModel : LifecycleViewModel
         _viewModels = new(gateway.Ports.ToDictionary(k => k.Key, v => CreateViewModel(v.Value)));
     }
 
-    public IAvaloniaReadOnlyDictionary<ConnectionEndpoint, PortViewModel> Ports => _viewModels;
+    public IAvaloniaReadOnlyDictionary<PortId, PortViewModel> Ports => _viewModels;
 
 
 
@@ -34,10 +34,10 @@ internal sealed partial class GatewayViewModel : LifecycleViewModel
     }
 
     [RelayCommand]
-    private async Task RemovePort(ConnectionEndpoint connectionEndpoint)
+    private async Task RemovePort(PortId id)
     {
         await _sukiToastManager.ExecuteWithToastAsync(async ct =>
-           await RemovePortAsync(connectionEndpoint, ct), "删除端口", TimeSpan.FromSeconds(10));
+           await RemovePortAsync(id, ct), "删除端口", TimeSpan.FromSeconds(10));
     }
 
     public override async ValueTask StartAsync(CancellationToken cancellationToken = default)
@@ -61,13 +61,13 @@ internal sealed partial class GatewayViewModel : LifecycleViewModel
         var model = await _gateway.AddPortAsync(portDescriptor);
         var viewModel = CreateViewModel(model);
 
-        _viewModels[portDescriptor.Transport.Endpoint] = viewModel;
+        _viewModels[portDescriptor.Id] = viewModel;
         return viewModel;
     }
-    public async ValueTask<bool> RemovePortAsync(ConnectionEndpoint connectionEndpoint, CancellationToken cancellationToken = default)
+    public async ValueTask<bool> RemovePortAsync(PortId id, CancellationToken cancellationToken = default)
     {
-        var result = await _gateway.RemovePortAsync(connectionEndpoint);
-        _viewModels.Remove(connectionEndpoint);
+        var result = await _gateway.RemovePortAsync(id, cancellationToken);
+        _viewModels.Remove(id);
 
         return result;
     }

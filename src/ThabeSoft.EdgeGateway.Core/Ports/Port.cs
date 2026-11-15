@@ -21,10 +21,11 @@ internal sealed class Port(
     private readonly ILogger<Port> _logger = logger ?? NullLogger<Port>.Instance;
 
 
-    public IDisposeObservable Disposed => _disposeNotifier;
+    public PortId Id => descriptor.Id;
     public ConnectionEndpoint Endpoint => descriptor.Transport.Endpoint;
     public LifecycleState State => lifecycleStateMachine.State;
     public IReadOnlyDictionary<DeviceId, IDevice> Devices => deviceCollection.Items;
+    public IDisposeObservable Disposed => _disposeNotifier;
 
 
     public ValueTask StartAsync(CancellationToken cancellationToken = default) =>

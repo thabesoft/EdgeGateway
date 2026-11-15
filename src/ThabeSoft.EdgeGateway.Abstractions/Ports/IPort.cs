@@ -1,5 +1,6 @@
 ﻿using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Transport;
 
 namespace ThabeSoft.EdgeGateway.Ports;

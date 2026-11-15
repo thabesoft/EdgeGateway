@@ -1,5 +1,6 @@
 ﻿using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Readings;
 
 namespace ThabeSoft.EdgeGateway.Subscription;
 

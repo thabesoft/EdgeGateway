@@ -1,7 +1,7 @@
-﻿namespace ThabeSoft.EdgeGateway.Subscription;
+﻿namespace ThabeSoft.EdgeGateway.Readings;
 
 
-public readonly struct Reading
+public readonly record struct Reading
 {
     public object Value { get; }
     public ReadingQuality Quality { get; }
@@ -37,7 +37,7 @@ public readonly struct Reading
 
 
 
-public readonly struct Reading<T> where T : notnull
+public readonly record struct Reading<T> where T : notnull
 {
     public DateTimeOffset Timestamp { get; }
     public ReadingQuality Quality { get; }

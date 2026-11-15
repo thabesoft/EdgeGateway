@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Subscription;
+﻿namespace ThabeSoft.EdgeGateway.Readings;
 
 
 public enum ReadingQuality : byte

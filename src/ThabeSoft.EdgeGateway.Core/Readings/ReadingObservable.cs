@@ -1,12 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Collections.Concurrent;
+using ThabeSoft.EdgeGateway.Readings;
 using ThabeSoft.EdgeGateway.Utilities;
 
 namespace ThabeSoft.EdgeGateway.Subscription;
 
 
-internal sealed class ReadingSubject<T>(ILogger? logger = null) : IObservable<Reading<T>>, IObservable<Reading>, IDisposable
+internal sealed class ReadingObservable<T>(ILogger? logger = null) : 
+    IObservable<Reading<T>>, IObservable<Reading>, IDisposable
     where T : notnull
 {
     private volatile int _disposed;

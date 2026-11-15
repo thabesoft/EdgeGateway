@@ -2,6 +2,7 @@
 using SukiUI.Toasts;
 using System.Reactive.Linq;
 using ThabeSoft.EdgeGateway.Addressing;
+using ThabeSoft.EdgeGateway.Readings;
 using ThabeSoft.EdgeGateway.Subscription;
 
 using static System.ObservableExtensions;

@@ -2,6 +2,7 @@
 using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.EdgeGateway.Readings;
 using ThabeSoft.EdgeGateway.Triggers;
 
 namespace ThabeSoft.EdgeGateway.Subscription;
@@ -9,27 +10,28 @@ namespace ThabeSoft.EdgeGateway.Subscription;
 
 internal interface IAsyncDisposableSubscription : ISubscription, IAsyncDisposable;
 
+
 internal sealed class Subscription<T>(
         SubscriptionDescriptor<T> descriptor,
         ILifecycleStateMachine lifecycleStateMachine,
         ILifecycleStateable deviceLifecycleState,
         ITriggerScheduler triggerScheduler,
-        SubscriptionReader<T> reader,
+        ReadingSource<T> readingSource,
         ILogger<Subscription<T>>? logger = null
     ) : ISubscription<T>, IAsyncDisposableSubscription
     where T : notnull
 {
-    private DisposeNotifier _disposeNotifier = new(logger);
     private IDisposable? _triggerTick;
-    private readonly ReadingSubject<T> _subject = new(logger);
+    private DisposeNotifier _disposeNotifier = new(logger);
+    private readonly ReadingObservable<T> _readingObservable = new(logger);
 
 
     public SubscriptionId Id { get; } = descriptor.Id;
     public DataAddress Address { get; } = descriptor.Tag.Address;
-    public Reading<T>? Latest => reader.Latest;
-    Reading? ISubscription.Latest => reader.Latest;
-    public IObservable<Reading<T>> Update => _subject;
-    IObservable<Reading> ISubscription.Update => _subject;
+    public Reading<T>? Latest => readingSource.Latest;
+    Reading? ISubscription.Latest => readingSource.Latest;
+    public IObservable<Reading<T>> Update => _readingObservable;
+    IObservable<Reading> ISubscription.Update => _readingObservable;
     public LifecycleState State => lifecycleStateMachine.State;
     public IDisposeObservable Disposed => _disposeNotifier;
 
@@ -61,7 +63,7 @@ internal sealed class Subscription<T>(
     private async ValueTask OnDisposeAsync()
     {
         _triggerTick?.TryDispose(logger);
-        _subject.TryDispose(logger);
+        _readingObservable.TryDispose(logger);
 
         await _disposeNotifier.RaiseAsync(this);
         await _disposeNotifier.TryDisposeAsync(logger);
@@ -74,8 +76,8 @@ internal sealed class Subscription<T>(
 
         try
         {
-            var reading = await reader.ReadAsync(cancellationToken);
-            _subject.OnNext(reading);
+            var reading = await readingSource.ReadAsync(cancellationToken);
+            _readingObservable.OnNext(reading);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -84,7 +86,7 @@ internal sealed class Subscription<T>(
         }
         catch (Exception ex)
         {
-            _subject.OnError(ex);
+            _readingObservable.OnError(ex);
 
             _triggerTick?.TryDispose(logger);
             _triggerTick = null;

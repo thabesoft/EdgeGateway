@@ -1,8 +1,6 @@
 ﻿using Avalonia;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using SukiUI.Dialogs;
 using SukiUI.Toasts;
 using ThabeSoft.EdgeGateway.App.Common;
@@ -12,36 +10,12 @@ using ThabeSoft.EdgeGateway.App.Features.Gateway;
 using ThabeSoft.EdgeGateway.App.Features.Topology;
 using ThabeSoft.EdgeGateway.App.Hosting;
 using ThabeSoft.EdgeGateway.App.Services;
-using ThabeSoft.EdgeGateway.DependencyInjection;
 
 namespace ThabeSoft.EdgeGateway.App.DependencyInjection;
 
 
 public static class AppDependencyInjectionExtensions
 {
-    extension(IHostBuilder builder)
-    {
-        public IHostBuilder UseEdgeGatewayApp()
-        {
-            builder.ConfigureLogging((_, builder) => builder
-                .SetMinimumLevel(LogLevel.Information));
-
-            builder.ConfigureServices(services =>
-            {
-                services.AddEdgeGateway();
-                //services.AddEdgeGatewayHost();
-                services.AddSerial();
-                services.AddEthernet();
-                services.AddModbus();
-                services.AddApp();
-                services.AddAppHost();
-            });
-
-            return builder;
-        }
-    }
-
-
     extension(IServiceCollection descriptors)
     {
         /// <summary>
@@ -86,7 +60,7 @@ public static class AppDependencyInjectionExtensions
         }
 
 
-        public IServiceCollection AddViewMapping<TView, TViewModel>(ServiceLifetime lifetime)
+        private IServiceCollection AddViewMapping<TView, TViewModel>(ServiceLifetime lifetime)
             where TView : IDataContextProvider, new()
             where TViewModel : ObservableObject
         {

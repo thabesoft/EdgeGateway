@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using ThabeSoft.EdgeGateway.App.DependencyInjection;
 
 namespace ThabeSoft.EdgeGateway.App.Hosting;
 

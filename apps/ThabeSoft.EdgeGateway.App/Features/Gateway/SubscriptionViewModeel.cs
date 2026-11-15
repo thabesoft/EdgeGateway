@@ -2,10 +2,9 @@
 using SukiUI.Toasts;
 using System.Reactive.Linq;
 using ThabeSoft.EdgeGateway.Addressing;
+using ThabeSoft.EdgeGateway.App.Utilities;
 using ThabeSoft.EdgeGateway.Readings;
 using ThabeSoft.EdgeGateway.Subscription;
-
-using static System.ObservableExtensions;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Gateway;
 

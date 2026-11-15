@@ -2,12 +2,10 @@
 using ThabeSoft.EdgeGateway.Simulator.Configs;
 using ThabeSoft.EdgeGateway.Simulator.Options;
 
-#pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
-namespace ThabeSoft.EdgeGateway;
-#pragma warning restore IDE0130 // 命名空间与文件夹结构不匹配
+namespace ThabeSoft.EdgeGateway.Simulator.DependencyInjection;
 
 
-public static class DependencyInjectionExtensions
+public static class SimulatorDependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {

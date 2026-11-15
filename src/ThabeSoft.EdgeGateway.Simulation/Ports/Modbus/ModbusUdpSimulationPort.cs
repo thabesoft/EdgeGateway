@@ -4,7 +4,7 @@ using System.Net.Sockets;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Devices.Modbus;
 using ThabeSoft.EdgeGateway.Ports;
-using ThabeSoft.EdgeGateway.Transport;
+using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.EdgeGateway.Networks.Modbus;
 

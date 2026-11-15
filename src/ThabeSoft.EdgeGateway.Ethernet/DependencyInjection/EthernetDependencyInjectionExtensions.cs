@@ -1,9 +1,10 @@
-﻿using ThabeSoft.EdgeGateway.Transport;
+﻿using ThabeSoft.EdgeGateway.Transports;
 using Microsoft.Extensions.DependencyInjection;
-using ThabeSoft.EdgeGateway.Transport.Tcp;
-using ThabeSoft.EdgeGateway.Transport.Udp;
+using ThabeSoft.EdgeGateway.Transports.Tcp;
+using ThabeSoft.EdgeGateway.Transports.Udp;
 
-namespace ThabeSoft.EdgeGateway;
+namespace ThabeSoft.EdgeGateway.DependencyInjection;
+
 
 public static class EthernetDependencyInjectionExtensions
 {

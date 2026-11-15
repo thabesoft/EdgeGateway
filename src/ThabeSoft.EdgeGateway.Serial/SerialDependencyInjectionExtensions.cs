@@ -1,4 +1,4 @@
-﻿using ThabeSoft.EdgeGateway.Transport;
+﻿using ThabeSoft.EdgeGateway.Transports;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ThabeSoft.EdgeGateway;

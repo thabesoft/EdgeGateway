@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Transport.Byte;
+﻿namespace ThabeSoft.EdgeGateway.Transports.Byte;
 
 public interface IByteReader
 {

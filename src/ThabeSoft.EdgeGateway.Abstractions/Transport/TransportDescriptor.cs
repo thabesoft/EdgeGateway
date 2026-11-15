@@ -1,17 +1,18 @@
 ﻿using ThabeSoft.EdgeGateway.Compatibility;
 
-namespace ThabeSoft.EdgeGateway.Transport;
+namespace ThabeSoft.EdgeGateway.Transports;
 
 
 public abstract record class TransportDescriptor
 {
     public abstract ConnectionEndpoint Endpoint { get; }
-    public RetryDescriptor Retry { get; init => field = value.Required(); } = RetryDescriptor.Default;
+    public RetryDescriptor Retry { get; init => field = value.Required(); } = Transports.Retry.Default;
 }
 
 
 public sealed record class RetryDescriptor
 {
+    [Obsolete]
     public static RetryDescriptor Default { get; } = new(TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(30))
     {
         BackoffMultiplier = 1.3
@@ -41,4 +42,15 @@ public sealed record class RetryDescriptor
     {
         return $"Retry({StartInterval.TotalSeconds:g}s~{MaxInterval.TotalSeconds:g}s:{BackoffMultiplier:g})";
     }
+}
+
+
+public static class Retry
+{
+    public static RetryDescriptor Default { get; } = From(TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(30), 1.5);
+
+    public static RetryDescriptor From(TimeSpan startInterval, TimeSpan maxInterval, double backoffMultiplier) =>
+        new(startInterval, maxInterval) { BackoffMultiplier = backoffMultiplier };
+    public static RetryDescriptor From(double startIntervalMilliseconds, double maxIntervalMilliseconds, double backoffMultiplier) =>
+        From(TimeSpan.FromMilliseconds(startIntervalMilliseconds), TimeSpan.FromMilliseconds(maxIntervalMilliseconds), backoffMultiplier);
 }

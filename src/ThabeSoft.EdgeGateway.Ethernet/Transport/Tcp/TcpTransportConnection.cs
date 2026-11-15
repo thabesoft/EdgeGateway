@@ -4,7 +4,7 @@ using System.Net.Sockets;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 
-namespace ThabeSoft.EdgeGateway.Transport.Tcp;
+namespace ThabeSoft.EdgeGateway.Transports.Tcp;
 
 
 internal sealed class TcpTransportConnection : ITransportConnection

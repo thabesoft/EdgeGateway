@@ -1,5 +1,5 @@
 using Moq;
-using ThabeSoft.EdgeGateway.Transport.Byte;
+using ThabeSoft.EdgeGateway.Transports.Byte;
 using ThabeSoft.EdgeGateway.IO;
 
 namespace ThabeSoft.EdgeGateway.Protocol;

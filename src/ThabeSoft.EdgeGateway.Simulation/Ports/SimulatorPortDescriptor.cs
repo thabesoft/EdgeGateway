@@ -1,5 +1,5 @@
 ﻿using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.EdgeGateway.Transport;
+using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.EdgeGateway.Ports;
 

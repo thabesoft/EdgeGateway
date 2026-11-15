@@ -15,7 +15,7 @@ public interface IDevice : ILifecycleWithState
 
 
     ValueTask<ISubscription<T>> AddSubscriptionAsync<T>(
-        SubscriptionDescriptor<T> subscriptionDescriptor,
+        SubscriptionDescriptor<T> subscription,
         CancellationToken cancellationToken = default
     ) where T : notnull;
 
@@ -29,13 +29,23 @@ public static class DeviceExtensions
     extension(IDevice device)
     {
         public ValueTask<ISubscription<T>> AddSubscriptionAsync<T>(
-                TagDescriptor<T> tagDescriptor,
-                TriggerDescriptor triggerDescriptor,
+                SubscriptionId id,
+                TagDescriptor<T> tag,
+                TriggerDescriptor trigger,
                 CancellationToken cancellationToken = default
             ) where T : notnull
         {
-            var descriptor = SubscriptionDescriptor.Create(tagDescriptor, triggerDescriptor);
+            var descriptor = SubscriptionDescriptor.Create(id, tag, trigger);
             return device.AddSubscriptionAsync(descriptor, cancellationToken);
+        }
+
+        public ValueTask<ISubscription<T>> AddSubscriptionAsync<T>(
+                TagDescriptor<T> tag,
+                TriggerDescriptor trigger,
+                CancellationToken cancellationToken = default
+            ) where T : notnull
+        {
+            return device.AddSubscriptionAsync(SubscriptionId.Create(), tag, trigger, cancellationToken);
         }
     }
 }

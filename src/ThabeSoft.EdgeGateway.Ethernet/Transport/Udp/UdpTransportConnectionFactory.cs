@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace ThabeSoft.EdgeGateway.Transport.Udp;
+namespace ThabeSoft.EdgeGateway.Transports.Udp;
 
 
 internal sealed class UdpTransportConnectionFactory(ILoggerFactory  loggerFactory) : ITransportConnectionFactory

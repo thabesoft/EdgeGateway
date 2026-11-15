@@ -6,7 +6,7 @@ using ThabeSoft.EdgeGateway.Hosting;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Readings;
 using ThabeSoft.EdgeGateway.Recoveries;
-using ThabeSoft.EdgeGateway.Transport;
+using ThabeSoft.EdgeGateway.Transports;
 
 #pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
 namespace ThabeSoft.EdgeGateway;

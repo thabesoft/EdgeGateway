@@ -1,6 +1,6 @@
 ﻿using NModbus.IO;
 using System.Diagnostics;
-using ThabeSoft.EdgeGateway.Transport.Byte;
+using ThabeSoft.EdgeGateway.Transports.Byte;
 
 namespace ThabeSoft.EdgeGateway.IO;
 

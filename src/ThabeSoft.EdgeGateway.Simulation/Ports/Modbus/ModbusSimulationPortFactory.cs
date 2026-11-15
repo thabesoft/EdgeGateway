@@ -3,7 +3,7 @@ using NModbus;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Networks.Modbus;
 using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.EdgeGateway.Transport;
+using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.EdgeGateway.Ports.Modbus;
 

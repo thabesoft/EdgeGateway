@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Transport;
+﻿namespace ThabeSoft.EdgeGateway.Transports;
 
 public enum IpTransportType
 {

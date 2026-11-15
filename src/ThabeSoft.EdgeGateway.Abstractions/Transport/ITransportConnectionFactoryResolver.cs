@@ -1,5 +1,5 @@
 ﻿
-namespace ThabeSoft.EdgeGateway.Transport;
+namespace ThabeSoft.EdgeGateway.Transports;
 
 public interface ITransportConnectionFactoryResolver
 {

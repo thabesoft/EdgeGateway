@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace ThabeSoft.EdgeGateway.Transport;
+namespace ThabeSoft.EdgeGateway.Transports;
 
 
 internal sealed class SerialTransportFactory(ILoggerFactory loggerFactory) : ITransportConnectionFactory

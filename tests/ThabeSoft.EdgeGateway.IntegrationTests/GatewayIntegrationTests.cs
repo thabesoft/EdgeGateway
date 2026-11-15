@@ -4,12 +4,13 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Time.Testing;
 using System.Collections.Concurrent;
 using System.Net;
+using ThabeSoft.EdgeGateway.DependencyInjection;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Tags;
-using ThabeSoft.EdgeGateway.Transport;
+using ThabeSoft.EdgeGateway.Transports;
 using ThabeSoft.EdgeGateway.Triggers;
 
 namespace ThabeSoft.EdgeGateway;
@@ -83,7 +84,7 @@ public class GatewayIntegrationTests
 
         ConcurrentQueue<double> _values = [];
 
-        var port = await Gateway.AddPortAsync(new() { Transport = _transportDescriptor }, TestContext.CancellationToken);
+        var port = await Gateway.AddPortAsync(_transportDescriptor, TestContext.CancellationToken);
         var device = await port.AddDeviceAsync(_protocolDescriptor, TestContext.CancellationToken);
         var subscription = await device.AddSubscriptionAsync(_tag, _trigger, TestContext.CancellationToken);
         subscription.Subscribe(x =>

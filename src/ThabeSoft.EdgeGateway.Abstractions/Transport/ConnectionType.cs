@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Transport;
+﻿namespace ThabeSoft.EdgeGateway.Transports;
 
 /// <summary>
 /// 连接类型

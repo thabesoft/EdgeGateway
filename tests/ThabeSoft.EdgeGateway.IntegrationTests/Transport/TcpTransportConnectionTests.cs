@@ -2,8 +2,9 @@
 using Microsoft.Extensions.Hosting;
 using System.Net;
 using System.Net.Sockets;
+using ThabeSoft.EdgeGateway.DependencyInjection;
 
-namespace ThabeSoft.EdgeGateway.Transport;
+namespace ThabeSoft.EdgeGateway.Transports;
 
 
 [TestClass]

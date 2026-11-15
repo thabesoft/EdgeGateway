@@ -1,7 +1,7 @@
 ﻿using NModbus;
 using NModbus.IO;
 using ThabeSoft.EdgeGateway.IO;
-using ThabeSoft.EdgeGateway.Transport.Byte;
+using ThabeSoft.EdgeGateway.Transports.Byte;
 
 namespace ThabeSoft.EdgeGateway.Protocols;
 

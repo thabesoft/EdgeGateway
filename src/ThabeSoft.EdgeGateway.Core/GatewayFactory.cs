@@ -42,7 +42,6 @@ internal sealed class GatewayFactory(
             var portState = Lifecycle.RetryableStateMachine(portLogger);
             var transport = transportResolver.Resolve(portDescriptor.Transport);
             var protocolAccessors = new ConcurrentDictionary<ProtocolDescriptor, IProtocolAccessor>();
-            var recoverHandler = new PortRecoveryPolicyHandler(portDescriptor.Recoveries.Select(recoveryPolicyFactoryResolver.Resolve));
             var deviceCollection = new DeviceCollection(portState, DeviceCreator);
 
             var port = new Port(

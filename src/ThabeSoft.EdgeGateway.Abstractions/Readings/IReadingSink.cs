@@ -1,4 +1,9 @@
-﻿namespace ThabeSoft.EdgeGateway.Readings;
+﻿using ThabeSoft.EdgeGateway.Addressing;
+using ThabeSoft.EdgeGateway.Compatibility;
+using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Ports;
+
+namespace ThabeSoft.EdgeGateway.Readings;
 
 
 /// <summary>
@@ -6,5 +11,13 @@
 /// </summary>
 public interface IReadingSink
 {
-    ValueTask WriteAsync<T>(Reading<T> reading, CancellationToken cancellationToken = default) where T : notnull;
+    ValueTask WriteAsync<T>(ReadingContext context, Reading<T> reading, CancellationToken cancellationToken = default) where T : notnull;
+}
+
+
+public readonly record struct ReadingContext
+{
+    public required PortId PortId { get; init => field = value.Required(); }
+    public required DeviceId DeviceId { get; init => field = value.Required(); }
+    public required DataAddress DataAddress { get; init => field = value.Required(); }
 }

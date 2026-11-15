@@ -13,7 +13,7 @@ public static class Guard
 
 
 
-    extension<T>(T param) where T : class
+    extension<T>(T param)
     {
         /// <summary>
         /// 不可为空
@@ -29,6 +29,25 @@ public static class Guard
             return param;
         }
     }
+
+
+    extension<T>(T param) where T : struct, IEquatable<T>
+    {
+        /// <summary>
+        /// 不可为默认值
+        /// </summary>
+        /// <exception cref="ArgumentNullException"></exception>
+        public T NotDefault(
+            string? errroMessage = null,
+            [CallerArgumentExpression(nameof(param))] string? paramName = null)
+        {
+            if (param.Equals(default))
+                throw new ArgumentNullException(paramName, errroMessage ?? "不可为默认值");
+
+            return param;
+        }
+    }
+
 
     extension(TimeSpan param)
     {

@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.ComponentModel.Design;
 using ThabeSoft.EdgeGateway.Events;
 using ThabeSoft.EdgeGateway.Hosting;
 using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Readings;
 using ThabeSoft.EdgeGateway.Recoveries;
 using ThabeSoft.EdgeGateway.Transport;
 
@@ -17,20 +19,13 @@ public static class DependencyInjectionExtensions
     {
         public IServiceCollection AddEdgeGateway()
         {
-            // Events
-            descriptors.TryAddSingleton<IEventPublisher, EventPublisher>();
-
-            // Modules
+            descriptors.AddEvent();
             descriptors.AddTriggers();
             descriptors.AddRecovers();
             descriptors.AddTransport();
-
-            // Resolvers
-            descriptors.TryAddSingleton<TransportConnectionResolver>();
-            descriptors.TryAddSingleton<ProtocolAccessorResolver>();
-            descriptors.TryAddSingleton<RecoveryPolicyFactoryResolver>();
-
-
+            descriptors.AddProtocol();
+            descriptors.AddReading();
+            
             // Gateway
             descriptors.TryAddSingleton<GatewayFactory>();
             descriptors.TryAddSingleton<IGateway>(sp => sp.GetRequiredService<GatewayFactory>().Create());
@@ -42,10 +37,21 @@ public static class DependencyInjectionExtensions
             return descriptors.AddHostedService<LaunchHostedService>();
         }
 
+        public IServiceCollection AddEvent()
+        {
+            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IEventPublisher, EventPublisher>());
+            return descriptors;
+        }
 
         public IServiceCollection AddTransport()
         {
-            descriptors.AddSingleton<ITransportConnectionFactoryResolver, TransportConnectionResolver>();
+            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportConnectionFactoryResolver, TransportConnectionResolver>());
+            return descriptors;
+        }
+
+        public IServiceCollection AddProtocol()
+        {
+            descriptors.TryAddSingleton<ProtocolAccessorResolver>();
             return descriptors;
         }
 
@@ -53,7 +59,15 @@ public static class DependencyInjectionExtensions
         {
             descriptors.TryAddSingleton<PortRecoveryPolicyHandler>();
             descriptors.TryAddSingleton<RecoveryPolicyFactoryResolver>();
-            descriptors.TryAddSingleton<IRecoveryPolicyFactory, IOExceptionRecoveryPolicyFactory>();
+            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IRecoveryPolicyFactory, IOExceptionRecoveryPolicyFactory>());
+
+            return descriptors;
+        }
+
+        public IServiceCollection AddReading()
+        {
+            descriptors.TryAddSingleton<ReadingSinkBus>();
+            descriptors.TryAddSingleton<IReadingSink, TestReadingSink>();
 
             return descriptors;
         }

@@ -15,8 +15,9 @@ namespace ThabeSoft.EdgeGateway;
 internal sealed class GatewayFactory(
     ITriggerScheduler triggerScheduler,
     ProtocolAccessorResolver protocolAccessorResolver,
-    TransportConnectionResolver transportResolver,
+    ITransportConnectionFactoryResolver transportResolver,
     RecoveryPolicyFactoryResolver recoveryPolicyFactoryResolver,
+    ReadingSinkBus readingSinkBus,
     ILoggerFactory loggerFactory
     )
 {
@@ -34,18 +35,18 @@ internal sealed class GatewayFactory(
         return gateway;
 
 
-        Port PortCreator(PortDescriptor descriptor)
+        Port PortCreator(PortDescriptor portDescriptor)
         {
             // 创建端口
             var portLogger = loggerFactory.CreateLogger<Port>();
             var portState = Lifecycle.RetryableStateMachine(portLogger);
-            var transport = transportResolver.Resolve(descriptor.Transport);
+            var transport = transportResolver.Resolve(portDescriptor.Transport);
             var protocolAccessors = new ConcurrentDictionary<ProtocolDescriptor, IProtocolAccessor>();
-            var recoverHandler = new PortRecoveryPolicyHandler(descriptor.Recoveries.Select(recoveryPolicyFactoryResolver.Resolve));
+            var recoverHandler = new PortRecoveryPolicyHandler(portDescriptor.Recoveries.Select(recoveryPolicyFactoryResolver.Resolve));
             var deviceCollection = new DeviceCollection(portState, DeviceCreator);
 
             var port = new Port(
-                descriptor: descriptor,
+                descriptor: portDescriptor,
                 lifecycleStateMachine: portState,
                 gatewayLifecycleState: gatewayState,
                 deviceCollection: deviceCollection,
@@ -60,24 +61,27 @@ internal sealed class GatewayFactory(
 
             return port;
 
-            Device DeviceCreator(DeviceDescriptor descriptor)
+            Device DeviceCreator(DeviceDescriptor deviceDescriptor)
             {
                 var deviceLogger = loggerFactory.CreateLogger<Device>();
                 var deviceState = Lifecycle.RetryableStateMachine(deviceLogger);
-                var protocolAccessor = protocolAccessors.GetOrAdd(descriptor.Protocol, x =>
+                var protocolAccessor = protocolAccessors.GetOrAdd(deviceDescriptor.Protocol, x =>
                         protocolAccessorResolver.Resolve(x, transport));
 
                 var subscriptionCreator = new SubscriptionCreator(
                     deviceState: deviceState,
                     triggerScheduler: triggerScheduler,
                     protocolAccessor: protocolAccessor,
+                    portId: portDescriptor.Id,
+                    deviceId: deviceDescriptor.Id,
+                    readingSinkBus: readingSinkBus,
                     loggerFactory: loggerFactory
                 );
 
                 var subscriptionCollection = new SubscriptionCollection(gatewayState, subscriptionCreator);
 
                 var device = new Device(
-                    descriptor: descriptor,
+                    descriptor: deviceDescriptor,
                     lifecycleStateMachine: deviceState,
                     portLifecycleState: portState,
                     collection: subscriptionCollection,
@@ -95,6 +99,9 @@ internal sealed class GatewayFactory(
             ILifecycleStateable deviceState,
             ITriggerScheduler triggerScheduler,
             IProtocolAccessor protocolAccessor,
+            PortId portId,
+            DeviceId deviceId,
+            ReadingSinkBus readingSinkBus,
             ILoggerFactory loggerFactory
             ) : ISubscriptionCreator
     {
@@ -110,7 +117,13 @@ internal sealed class GatewayFactory(
                 triggerScheduler: triggerScheduler,
                 reader
             );
-            subscription.Disposed.Subscribe(async () => await subscriptionState.TryDisposeAsync());
+            var readingContext = new ReadingContext() { PortId = portId, DeviceId = deviceId, DataAddress = descriptor.Tag.Address };
+            var updateDisposable = subscription.Update.Subscribe(x => readingSinkBus.Publish(readingContext, x));
+            subscription.Disposed.Subscribe(async () =>
+            {
+                updateDisposable.Dispose();
+                await subscriptionState.TryDisposeAsync();
+            });
 
             return subscription;
         }

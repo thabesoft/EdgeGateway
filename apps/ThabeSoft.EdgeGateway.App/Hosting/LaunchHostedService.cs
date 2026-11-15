@@ -37,7 +37,7 @@ internal sealed class LaunchHostedService(GatewayViewModel gateway) :
     {
         var device = await port.AddDeviceAsync(new() { Protocol = Modbus.Ip }, cancellationToken);
 
-        var trigger = Trigger.Interval(10);
+        var trigger = Trigger.Interval(100);
 
         for (int i = 0; i < 10; i++)
         {

@@ -1,58 +1,37 @@
-﻿namespace ThabeSoft.EdgeGateway.Readings;
+﻿using ThabeSoft.EdgeGateway.Compatibility;
+
+namespace ThabeSoft.EdgeGateway.Readings;
 
 
 public readonly record struct Reading
 {
-    public object Value { get; }
-    public ReadingQuality Quality { get; }
-    public DateTimeOffset Timestamp { get; }
+    public required ReadingQuality Quality { get; init => field.Defined("不支持的质量类型"); }
+    public required DateTimeOffset Timestamp { get; init => field = value.NotDefault("时间戳异常"); }
+    public required object Value { get; init => field = value.Required("值不可为空"); }
 
 
-    internal Reading(object value, ReadingQuality quality, DateTimeOffset timestamp)
-    {
-        Value = value;
-        Quality = quality;
-        Timestamp = timestamp;
-    }
     public override string ToString() => $"Reading({Value}, {Quality}, {Timestamp:HH:mm:ss.fff})";
 
 
-    public static Reading<T> Create<T>(T value, ReadingQuality quality, DateTimeOffset timestamp) where T: notnull
-    {
-        ArgumentNullException.ThrowIfNull(value);
-        if (!Enum.IsDefined(quality))
-            throw new ArgumentOutOfRangeException(nameof(quality), quality, "不支持的质量类型");
-
-        return new(value, quality, timestamp);
-    }
-    public static Reading<T> Create<T>(T value, ReadingQuality quality) where T : notnull =>
-        Create(value, quality, DateTimeOffset.UtcNow);
-
 
     public static Reading<T> Good<T>(T value) where T : notnull =>
-        Create(value, ReadingQuality.Good);
+        new() { Value = value, Quality = ReadingQuality.Good, Timestamp = DateTimeOffset.UtcNow };
     public static Reading<T> Bad<T>(T value) where T : notnull =>
-        Create(value, ReadingQuality.Bad);
+        new() { Value = value, Quality = ReadingQuality.Bad, Timestamp = DateTimeOffset.UtcNow };
 }
 
 
 
 public readonly record struct Reading<T> where T : notnull
 {
-    public DateTimeOffset Timestamp { get; }
-    public ReadingQuality Quality { get; }
-    public T Value { get; }
+    public required DateTimeOffset Timestamp { get; init => field = value.NotDefault("时间戳异常"); }
+    public required ReadingQuality Quality { get; init => field.Defined("不支持的质量类型"); }
+    public required T Value { get; init => field = value.Required("值不可为空"); }
 
 
-    internal Reading(T value, ReadingQuality quality, DateTimeOffset timestamp)
-    {
-        Value = value;
-        Quality = quality;
-        Timestamp = timestamp;
-    }
-    public override string ToString() => $"Reading({Value}, {Quality}, {Timestamp:HH:mm:ss.fff})";
+    public override string ToString() => $"Reading({Value}, {Quality}, {Timestamp.LocalDateTime:HH:mm:ss.fff})";
 
 
     public static implicit operator Reading(Reading<T> reading) =>
-        new(reading.Value, reading.Quality, reading.Timestamp);
+        new() { Value = reading.Value, Quality = reading.Quality, Timestamp = reading.Timestamp };
 }

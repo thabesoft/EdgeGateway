@@ -2,7 +2,7 @@
 using NModbus;
 using ThabeSoft.EdgeGateway.Protocols;
 
-namespace ThabeSoft.EdgeGateway;
+namespace ThabeSoft.EdgeGateway.DependencyInjection;
 
 
 public static class ModbusDependencyInjectionExtensions

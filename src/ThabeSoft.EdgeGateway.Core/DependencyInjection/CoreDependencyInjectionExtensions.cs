@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using System.ComponentModel.Design;
 using ThabeSoft.EdgeGateway.Events;
 using ThabeSoft.EdgeGateway.Hosting;
 using ThabeSoft.EdgeGateway.Protocols;
@@ -8,12 +7,10 @@ using ThabeSoft.EdgeGateway.Readings;
 using ThabeSoft.EdgeGateway.Recoveries;
 using ThabeSoft.EdgeGateway.Transports;
 
-#pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
-namespace ThabeSoft.EdgeGateway;
-#pragma warning restore IDE0130 // 命名空间与文件夹结构不匹配
+namespace ThabeSoft.EdgeGateway.DependencyInjection;
 
 
-public static class DependencyInjectionExtensions
+public static class CoreDependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {
@@ -25,7 +22,7 @@ public static class DependencyInjectionExtensions
             descriptors.AddTransport();
             descriptors.AddProtocol();
             descriptors.AddReading();
-            
+
             // Gateway
             descriptors.TryAddSingleton<GatewayFactory>();
             descriptors.TryAddSingleton<IGateway>(sp => sp.GetRequiredService<GatewayFactory>().Create());

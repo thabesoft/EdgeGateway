@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using ThabeSoft.EdgeGateway.Extensions;
+using ThabeSoft.EdgeGateway.Utilities;
 
 namespace ThabeSoft.EdgeGateway.Lifecycles.Collections;
 

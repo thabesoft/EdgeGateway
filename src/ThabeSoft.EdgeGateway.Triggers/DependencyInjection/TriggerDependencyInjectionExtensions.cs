@@ -4,12 +4,10 @@ using ThabeSoft.EdgeGateway.Triggers;
 using ThabeSoft.EdgeGateway.Triggers.Interval;
 using ThabeSoft.EdgeGateway.Triggers.Signal;
 
-#pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
-namespace ThabeSoft.EdgeGateway;
-#pragma warning restore IDE0130 // 命名空间与文件夹结构不匹配
+namespace ThabeSoft.EdgeGateway.DependencyInjection;
 
 
-public static class DependencyInjectionExtensions
+public static class TriggerDependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {

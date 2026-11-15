@@ -5,7 +5,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SukiUI.Dialogs;
 using SukiUI.Toasts;
-using ThabeSoft.EdgeGateway.App;
 using ThabeSoft.EdgeGateway.App.Common;
 using ThabeSoft.EdgeGateway.App.Features;
 using ThabeSoft.EdgeGateway.App.Features.Dashboard;
@@ -15,13 +14,10 @@ using ThabeSoft.EdgeGateway.App.Hosting;
 using ThabeSoft.EdgeGateway.App.Services;
 using ThabeSoft.EdgeGateway.DependencyInjection;
 
-
-#pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
-namespace ThabeSoft.EdgeGateway;
-#pragma warning restore IDE0130 // 命名空间与文件夹结构不匹配
+namespace ThabeSoft.EdgeGateway.App.DependencyInjection;
 
 
-public static class DependencyInjectionExtensions
+public static class AppDependencyInjectionExtensions
 {
     extension(IHostBuilder builder)
     {
@@ -62,7 +58,7 @@ public static class DependencyInjectionExtensions
 
 
             // Views
-            descriptors.AddSingleton<App.Common.ViewLocator>();
+            descriptors.AddSingleton<Common.ViewLocator>();
             descriptors.AddSingleton<ViewFactory>();
 
 

@@ -1,7 +1,7 @@
 ﻿using ThabeSoft.EdgeGateway.Transports;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ThabeSoft.EdgeGateway;
+namespace ThabeSoft.EdgeGateway.DependencyInjection;
 
 
 public static class SerialDependencyInjectionExtensions

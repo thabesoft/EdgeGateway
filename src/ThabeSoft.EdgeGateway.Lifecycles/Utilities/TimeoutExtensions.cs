@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace ThabeSoft.EdgeGateway.Extensions;
+namespace ThabeSoft.EdgeGateway.Utilities;
 
 
 internal static class TimeoutExtensions

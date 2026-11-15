@@ -13,7 +13,7 @@ internal sealed class LaunchHostedService(GatewayViewModel gateway) :
 {
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        await AddPortAsync(Ethernet.Tcp(IPAddress.Loopback, 2333), gateway, cancellationToken);
+        //await AddPortAsync(Ethernet.Tcp(IPAddress.Loopback, 2333), gateway, cancellationToken);
         await AddPortAsync(Ethernet.Tcp(IPAddress.Loopback, 2334), gateway, cancellationToken);
 
         await gateway.StartCommand.ExecuteAsync(null);
@@ -28,7 +28,7 @@ internal sealed class LaunchHostedService(GatewayViewModel gateway) :
     {
         var port = await gateway.AddPortAsync(new() { Transport = transportDescriptor, Recoveries = [Recovery.IO(100)] }, cancellationToken);
 
-        const int count = 2;
+        const int count = 1;
 
         for (byte i = 1; i <= count; i++)
             await AddDeviceAsync(i, port, cancellationToken);
@@ -39,7 +39,7 @@ internal sealed class LaunchHostedService(GatewayViewModel gateway) :
 
         var trigger = Trigger.Interval(100);
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 1; i++)
         {
             // Double 占 4 个寄存器，地址按 4 递增
             var tag = Modbus.HoldingRegister(id, (ushort)(i * 4), Codec.Double);

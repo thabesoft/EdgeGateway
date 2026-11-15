@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 using System.Threading.Channels;
 using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Compatibility;
@@ -134,7 +135,13 @@ internal sealed class TestReadingSink(ILogger<TestReadingSink> logger) : IReadin
         public required DeviceId DeviceId { get; init => field = value.Required(); }
         public required DataAddress DataAddress { get; init => field = value.Required(); }
         public required DateTimeOffset Timestamp { get; init => field = value.NotDefault("时间戳异常"); }
-        public required ReadingQuality Quality { get; init => field.Defined("不支持的质量类型"); }
+        public required ReadingQuality Quality { get; init => field = value.Defined("不支持的质量类型"); }
         public required object Value { get; init => field = value.Required("值不可为空"); }
+
+
+        public override string ToString()
+        {
+            return $"Data(Port({PortId}), Device({DeviceId}), Address({DataAddress}), Value({Value:F0}), Quality({Quality}), Time({Timestamp.LocalDateTime:HH:mm:ss:fff}))";
+        }
     }
 }

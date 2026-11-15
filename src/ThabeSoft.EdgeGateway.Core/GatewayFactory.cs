@@ -1,8 +1,10 @@
-﻿using System.Collections.Concurrent;
+﻿using Microsoft.Extensions.Logging;
+using System.Collections.Concurrent;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Readings;
 using ThabeSoft.EdgeGateway.Recoveries;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transport;
@@ -14,18 +16,20 @@ internal sealed class GatewayFactory(
     ITriggerScheduler triggerScheduler,
     ProtocolAccessorResolver protocolAccessorResolver,
     TransportConnectionResolver transportResolver,
-    RecoveryPolicyFactoryResolver recoveryPolicyFactoryResolver
+    RecoveryPolicyFactoryResolver recoveryPolicyFactoryResolver,
+    ILoggerFactory loggerFactory
     )
 {
     public Gateway Create()
     {
-        var gatewayState = Lifecycle.RetryableStateMachine();
+        var gatewayLogger = loggerFactory.CreateLogger<Gateway>();
+        var gatewayState = Lifecycle.RetryableStateMachine(gatewayLogger);
         var portCollection = new PortCollection(gatwayLifecycleState: gatewayState, creator: PortCreator);
         var gateway = new Gateway(
             lifecycleStateMachine: gatewayState,
             portCollection: portCollection);
         gateway.Disposed.Subscribe(async () =>
-           await portCollection.TryDisposeAsync());
+           await portCollection.TryDisposeAsync(gatewayLogger));
 
         return gateway;
 
@@ -33,7 +37,8 @@ internal sealed class GatewayFactory(
         Port PortCreator(PortDescriptor descriptor)
         {
             // 创建端口
-            var portState = Lifecycle.RetryableStateMachine();
+            var portLogger = loggerFactory.CreateLogger<Port>();
+            var portState = Lifecycle.RetryableStateMachine(portLogger);
             var transport = transportResolver.Resolve(descriptor.Transport);
             var protocolAccessors = new ConcurrentDictionary<ProtocolDescriptor, IProtocolAccessor>();
             var recoverHandler = new PortRecoveryPolicyHandler(descriptor.Recoveries.Select(recoveryPolicyFactoryResolver.Resolve));
@@ -44,19 +49,21 @@ internal sealed class GatewayFactory(
                 lifecycleStateMachine: portState,
                 gatewayLifecycleState: gatewayState,
                 deviceCollection: deviceCollection,
-                transportConnectionLifeCycle: transport);
+                transportConnectionLifeCycle: transport,
+                logger: portLogger);
             port.Disposed.Subscribe(async () =>
             {
-                await deviceCollection.TryDisposeAsync();
+                await deviceCollection.TryDisposeAsync(portLogger);
                 protocolAccessors.Clear();
-                await transport.TryDisposeAsync();
+                await transport.TryDisposeAsync(portLogger);
             });
 
             return port;
 
             Device DeviceCreator(DeviceDescriptor descriptor)
             {
-                var deviceState = Lifecycle.RetryableStateMachine();
+                var deviceLogger = loggerFactory.CreateLogger<Device>();
+                var deviceState = Lifecycle.RetryableStateMachine(deviceLogger);
                 var protocolAccessor = protocolAccessors.GetOrAdd(descriptor.Protocol, x =>
                         protocolAccessorResolver.Resolve(x, transport));
 
@@ -64,7 +71,7 @@ internal sealed class GatewayFactory(
                     deviceState: deviceState,
                     triggerScheduler: triggerScheduler,
                     protocolAccessor: protocolAccessor,
-                    recover: recoverHandler.Handle
+                    loggerFactory: loggerFactory
                 );
 
                 var subscriptionCollection = new SubscriptionCollection(gatewayState, subscriptionCreator);
@@ -73,9 +80,10 @@ internal sealed class GatewayFactory(
                     descriptor: descriptor,
                     lifecycleStateMachine: deviceState,
                     portLifecycleState: portState,
-                    collection: subscriptionCollection);
+                    collection: subscriptionCollection,
+                    logger: deviceLogger);
                 device.Disposed.Subscribe(async () =>
-                    await subscriptionCollection.TryDisposeAsync());
+                    await subscriptionCollection.TryDisposeAsync(deviceLogger));
 
                 return device;
             }
@@ -87,13 +95,13 @@ internal sealed class GatewayFactory(
             ILifecycleStateable deviceState,
             ITriggerScheduler triggerScheduler,
             IProtocolAccessor protocolAccessor,
-            Func<Exception, bool> recover
+            ILoggerFactory loggerFactory
             ) : ISubscriptionCreator
     {
         public Subscription<T> Create<T>(SubscriptionDescriptor<T> descriptor) where T : notnull
         {
             var subscriptionState = Lifecycle.StrictStateMachine();
-            var reader = new SubscriptionReader<T>(descriptor.Tag, protocolAccessor, recover);
+            var reader = new ReadingSource<T>(descriptor.Tag, protocolAccessor, loggerFactory.CreateLogger<ReadingSource<T>>());
 
             var subscription = new Subscription<T>(
                 descriptor: descriptor,

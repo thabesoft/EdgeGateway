@@ -25,6 +25,9 @@
 		<!--不可变集合-->
 		<PackageReference Include="System.Collections.Immutable" Version="11.0.0" />
 	
+		<!--Json-->
+		<PackageReference Include="System.Text.Json" Version="11.0.0" />
+	
 	</ItemGroup>
 
 </Project>

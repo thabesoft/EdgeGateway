@@ -1,0 +1,53 @@
+﻿{
+  "Ports": [
+    {
+      "Descriptor": {
+        "Id": "PortId",
+        "Transport": {
+          "Type": "Ethernet",
+          "ConnectType": "Tcp",
+          "Ip": "127.0.0.1",
+          "Port": 2333,
+          "Retry": {
+            "StartInterval": 3000,
+            "MaxInterval": 30000,
+            "BackoffMultiplier": 1.5
+          }
+        }
+      },
+      "Devices": [
+        {
+          "Descriptor": {
+            "Id": "DeviceId",
+            "Protocol": {
+              "Type": "Modbus",
+              "ConnectionType": "Ethernet",
+              "FrameFormat": "Ip"
+            },
+            "Subscriptions": [
+              {
+                "Descriptor": {
+                  "Id": "SubscriptionId",
+                  "Trigger": {
+                    "Type": "Interval",
+                    "Interval": 100
+                  }
+                },
+                "Slinks": [
+                  {
+                    "Type": "Sqlite",
+                    "TableName": "HoldingRegisters"
+                  },
+                  {
+                    "Type": "Mqtt",
+                    "Topic": "factory/plc1/temperature"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

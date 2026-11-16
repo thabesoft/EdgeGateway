@@ -1,4 +1,4 @@
-﻿using ThabeSoft.EdgeGateway.Compatibility;
+﻿using ThabeSoft.Guard;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Triggers;
 

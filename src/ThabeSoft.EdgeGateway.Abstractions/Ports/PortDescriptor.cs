@@ -1,4 +1,4 @@
-﻿using ThabeSoft.EdgeGateway.Compatibility;
+﻿using ThabeSoft.Guard;
 using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.EdgeGateway.Ports;

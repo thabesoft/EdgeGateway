@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Net;
-using ThabeSoft.EdgeGateway.Compatibility;
+using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Transports;
 

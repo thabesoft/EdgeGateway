@@ -16,7 +16,6 @@ public static class BitConverterPolyFills
             unsafe { return *(float*)&value; }
         }
 
-
         public static ulong DoubleToUInt64Bits(double value)
         {
             unsafe { return *(ulong*)&value; }
@@ -25,10 +24,6 @@ public static class BitConverterPolyFills
         {
             unsafe { return *(double*)&value; }
         }
-
-
-        
-
     }
 }
 

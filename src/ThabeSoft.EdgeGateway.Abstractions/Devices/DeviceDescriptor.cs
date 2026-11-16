@@ -1,5 +1,5 @@
-﻿using ThabeSoft.EdgeGateway.Compatibility;
-using ThabeSoft.EdgeGateway.Protocols;
+﻿using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Devices;
 

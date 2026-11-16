@@ -6,6 +6,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\..\ThabeSoft.Guard\ThabeSoft.Guard\ThabeSoft.Guard.csproj" />
 	  <ProjectReference Include="..\ThabeSoft.EdgeGateway.Compatibility\ThabeSoft.EdgeGateway.Compatibility.csproj" />
 	</ItemGroup>
 

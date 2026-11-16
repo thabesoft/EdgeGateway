@@ -12,14 +12,49 @@ internal sealed partial class GatewayViewModel : LifecycleViewModel
 {
     private readonly AvaloniaDictionary<PortId, PortViewModel> _viewModels;
     private readonly IGateway _gateway;
+    private readonly IEventSubscriber _eventSubscriber;
     private readonly ISukiToastManager _sukiToastManager;
 
 
-    public GatewayViewModel(IGateway gateway, ISukiToastManager sukiToastManager) : base(gateway, sukiToastManager)
+    public GatewayViewModel(
+            IGateway gateway,
+            IEventSubscriber eventSubscriber,
+            ISukiToastManager sukiToastManager
+        ) : base(gateway, sukiToastManager)
     {
         _gateway = gateway;
         _sukiToastManager = sukiToastManager;
+        _eventSubscriber = eventSubscriber;
         _viewModels = new(gateway.Ports.ToDictionary(k => k.Key, v => CreateViewModel(v.Value)));
+
+        IDisposable[] eventDisposers =
+        [
+            _eventSubscriber.Subscribe<PortAddedEvent>((e, _) =>
+            {
+                if (gateway.Ports.TryGetValue(e.PortId, out var port))
+                    _viewModels[e.PortId] = CreateViewModel(port);
+
+                return ValueTask.CompletedTask;
+            }),
+            _eventSubscriber.Subscribe<PortRemovedEvent>((e, _) =>
+            {
+                _viewModels.Remove(e.PortId);
+                return ValueTask.CompletedTask;
+            }),
+
+             _eventSubscriber.Subscribe<DeviceAddedEvent>((e, _) =>
+            {
+                if (gateway.Ports.TryGetValue(e.PortId, out var port))
+                    if(port.Devices.TryGetValue(e.DeviceId, out var device))
+                        ;
+                return ValueTask.CompletedTask;
+            }),
+            _eventSubscriber.Subscribe<DeviceRemovedEvent>((e, _) =>
+            {
+                _viewModels.Remove(e.PortId);
+                return ValueTask.CompletedTask;
+            }),
+        ];
     }
 
     public IAvaloniaReadOnlyDictionary<PortId, PortViewModel> Ports => _viewModels;
@@ -82,18 +117,3 @@ internal sealed partial class GatewayViewModel : LifecycleViewModel
 
     private PortViewModel CreateViewModel(IPort port) => new(port, _sukiToastManager);
 }
-
-
-//internal sealed class Fuc(GatewayViewModel gatewayViewModel) : IEventHandler<PortAdded>, IEventHandler<PortRemoved>
-//{
-//    public ValueTask HandleAsync(PortAdded @event, CancellationToken cancellationToken = default)
-//    {
-//        gatewayViewModel.AddPort(@event.Port);
-//        return ValueTask.CompletedTask;
-//    }
-
-//    public ValueTask HandleAsync(PortRemoved @event, CancellationToken cancellationToken = default)
-//    {
-//        gatewayViewModel.RemovePortAsync(@event.PortId);
-//    }
-//}

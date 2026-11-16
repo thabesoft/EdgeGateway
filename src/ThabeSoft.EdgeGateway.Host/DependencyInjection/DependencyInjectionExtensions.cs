@@ -19,12 +19,5 @@ public static class DependencyInjectionExtensions
 
             return descriptors;
         }
-
-
-        public IServiceCollection AddEdgeGatewayEvents()
-        {
-            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IEventPublisher, EventPublisher>());
-            return descriptors;
-        }
     }
 }

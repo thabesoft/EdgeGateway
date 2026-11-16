@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using ThabeSoft.EdgeGateway.Events;
 using ThabeSoft.EdgeGateway.Hosting;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Readings;
@@ -15,6 +16,7 @@ public static class CoreDependencyInjectionExtensions
     {
         public IServiceCollection AddEdgeGateway()
         {
+            descriptors.AddEdgeGatewayEvents();
             descriptors.AddEdgeGatewayTriggers();
             descriptors.AddEdgeGatewayRecovers();
             descriptors.AddEdgeGatewayTransport();
@@ -30,6 +32,16 @@ public static class CoreDependencyInjectionExtensions
         public IServiceCollection AddEdgeGatewayHost()
         {
             return descriptors.AddHostedService<LaunchHostedService>();
+        }
+
+
+        public IServiceCollection AddEdgeGatewayEvents()
+        {
+            descriptors.TryAddSingleton<EventBus>();
+            descriptors.TryAddSingleton<IEventPublisher>(sp => sp.GetRequiredService<EventBus>());
+            descriptors.TryAddSingleton<IEventSubscriber>(sp => sp.GetRequiredService<EventBus>());
+
+            return descriptors;
         }
 
         public IServiceCollection AddEdgeGatewayTransport()

@@ -58,7 +58,7 @@ public class NModbusStreamAdapterTests
         var mockChannel = new Mock<IByteDuplex>();
         mockChannel
             .Setup(x => x.WriteAsync(It.IsAny<ReadOnlyMemory<byte>>(), It.IsAny<CancellationToken>()))
-            .Returns(ValueTask.CompletedTask);
+            .Returns(default(ValueTask));
 
         var adapter = new NModbusStreamAdapter(mockChannel.Object);
         byte[] buffer = [0, 1, 2, 3, 4, 5];

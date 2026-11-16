@@ -22,9 +22,13 @@ internal static class AppHostBuilder
                 services.AddEdgeGatewayEthernet();
                 services.AddEdgeGatewayModbus();
 
+                // Config
+                services.AddEdgeGatewayJsonConfiguration();
+
                 // App
                 services.AddEdgeGatewayApp();
-                services.AddEdgeGatewayAppHost();
+                //services.AddEdgeGatewayAppHost();
+
             });
 
             return builder;

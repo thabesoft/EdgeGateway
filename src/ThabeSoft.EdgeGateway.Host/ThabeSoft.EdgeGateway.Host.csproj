@@ -6,6 +6,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Abstractions\ThabeSoft.EdgeGateway.Abstractions.csproj" />
+		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Codecs\ThabeSoft.EdgeGateway.Codecs.csproj" />
 		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Core\ThabeSoft.EdgeGateway.Core.csproj" />
 		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Ethernet\ThabeSoft.EdgeGateway.Ethernet.csproj" />
 		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Modbus\ThabeSoft.EdgeGateway.Modbus.csproj" />
@@ -19,6 +20,11 @@
 		<!--Json-->
 		<PackageReference Include="System.Text.Json" Version="11.0.0" />
 
+	</ItemGroup>
+	<ItemGroup>
+	  <None Update="Gateway.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>

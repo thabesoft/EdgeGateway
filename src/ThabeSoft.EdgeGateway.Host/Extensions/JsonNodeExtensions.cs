@@ -2,6 +2,7 @@
 
 namespace ThabeSoft.EdgeGateway.Extensions;
 
+
 internal static class JsonNodeExtensions
 {
     extension(JsonNode node)

@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using ThabeSoft.Guard;
 
-namespace ThabeSoft.EdgeGateway.Compatibility;
+namespace ThabeSoft.EdgeGateway.Guard;
 
 
 public static class SerialGuard

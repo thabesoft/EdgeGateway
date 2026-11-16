@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using ThabeSoft.EdgeGateway.Compatibility;
+using ThabeSoft.EdgeGateway.Guard;
 using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Transports;

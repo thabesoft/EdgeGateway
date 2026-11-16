@@ -73,9 +73,9 @@ public class RetryableLifecycleStateMachineTests
         Assert.AreEqual(LifecycleState.Faulted, lifecycle.State);
     }
 
-    private static ValueTask EmptyMethod(CancellationToken _) => ValueTask.CompletedTask;
+    private static ValueTask EmptyMethod(CancellationToken _) => default;
     private static ValueTask ExceptionMethod(CancellationToken _) => throw new Exception();
-    private static ValueTask EmptyMethod() => ValueTask.CompletedTask;
+    private static ValueTask EmptyMethod() => default;
 
 
     public TestContext TestContext { get; set; }

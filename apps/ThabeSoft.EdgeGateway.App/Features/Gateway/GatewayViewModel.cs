@@ -2,8 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using SukiUI.Toasts;
 using ThabeSoft.EdgeGateway.App.Services;
+using ThabeSoft.EdgeGateway.Events;
 using ThabeSoft.EdgeGateway.Ports;
-using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Gateway;
 
@@ -55,6 +55,14 @@ internal sealed partial class GatewayViewModel : LifecycleViewModel
             i.OnUpdateState();
     }
 
+    public PortViewModel AddPort(IPort port)
+    {
+        var vm = CreateViewModel(port);
+        _viewModels[port.Id] = vm;
+
+        return vm;
+    }
+
 
     public async ValueTask<PortViewModel> AddPortAsync(PortDescriptor portDescriptor, CancellationToken cancellationToken = default)
     {
@@ -74,3 +82,18 @@ internal sealed partial class GatewayViewModel : LifecycleViewModel
 
     private PortViewModel CreateViewModel(IPort port) => new(port, _sukiToastManager);
 }
+
+
+//internal sealed class Fuc(GatewayViewModel gatewayViewModel) : IEventHandler<PortAdded>, IEventHandler<PortRemoved>
+//{
+//    public ValueTask HandleAsync(PortAdded @event, CancellationToken cancellationToken = default)
+//    {
+//        gatewayViewModel.AddPort(@event.Port);
+//        return ValueTask.CompletedTask;
+//    }
+
+//    public ValueTask HandleAsync(PortRemoved @event, CancellationToken cancellationToken = default)
+//    {
+//        gatewayViewModel.RemovePortAsync(@event.PortId);
+//    }
+//}

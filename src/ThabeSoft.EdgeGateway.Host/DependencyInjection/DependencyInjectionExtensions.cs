@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using ThabeSoft.EdgeGateway.Configuration;
+using ThabeSoft.EdgeGateway.Events;
 
 namespace ThabeSoft.EdgeGateway.DependencyInjection;
 
@@ -16,6 +17,13 @@ public static class DependencyInjectionExtensions
             descriptors.AddHostedService<JsonFileConfigHostedService>();
             descriptors.TryAddSingleton<IConfigSerializer, JsonConfigSerializer>();
 
+            return descriptors;
+        }
+
+
+        public IServiceCollection AddEdgeGatewayEvents()
+        {
+            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IEventPublisher, EventPublisher>());
             return descriptors;
         }
     }

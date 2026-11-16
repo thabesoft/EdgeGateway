@@ -35,10 +35,10 @@ internal sealed class ModbusSimulationPortFactory(
 
         if (descriptor.Transport is IpTransportDescriptor ip)
         {
-            if (ip.TransportType == IpTransportType.Tcp)
+            if (ip.ProtocolType == IpProtocolType.Tcp)
                 return new ModbusTcpSimulationPort(ip, modbusFactory, deviceFactorySelector, loggerFactory.CreateLogger<ModbusTcpSimulationPort>());
 
-            if (ip.TransportType == IpTransportType.Udp)
+            if (ip.ProtocolType == IpProtocolType.Udp)
                 return new ModbusUdpSimulationPort(ip, modbusFactory, deviceFactorySelector, loggerFactory.CreateLogger<ModbusUdpSimulationPort>());
         }
 

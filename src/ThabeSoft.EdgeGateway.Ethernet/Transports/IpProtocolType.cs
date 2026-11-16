@@ -1,6 +1,6 @@
 ﻿namespace ThabeSoft.EdgeGateway.Transports;
 
-public enum IpTransportType
+public enum IpProtocolType
 {
     Tcp,
     Udp

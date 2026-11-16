@@ -12,12 +12,6 @@ public abstract record class TransportDescriptor
 
 public sealed record class RetryDescriptor
 {
-    [Obsolete]
-    public static RetryDescriptor Default { get; } = new(TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(30))
-    {
-        BackoffMultiplier = 1.3
-    };
-
     public RetryDescriptor(TimeSpan startInterval, TimeSpan maxInterval)
     {
         if (startInterval <= TimeSpan.Zero)

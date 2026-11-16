@@ -13,13 +13,13 @@ public static class Modbus
     #region --协议--
 
     public static ModbusProtocolDescriptor Rtu { get; } =
-        new(ModbusFrameFormat.Rtu, ConnectionType.Serial);
+        new(ModbusFrameFormat.Rtu, TransportType.Serial);
 
     public static ModbusProtocolDescriptor Ascii { get; } =
-       new(ModbusFrameFormat.Ascii, ConnectionType.Serial);
+       new(ModbusFrameFormat.Ascii, TransportType.Serial);
 
     public static ModbusProtocolDescriptor Ip { get; } =
-       new(ModbusFrameFormat.Ip, ConnectionType.Ethernet);
+       new(ModbusFrameFormat.Ip, TransportType.Ethernet);
 
     #endregion
 

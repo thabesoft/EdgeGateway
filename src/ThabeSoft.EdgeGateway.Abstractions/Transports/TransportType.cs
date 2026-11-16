@@ -1,9 +1,9 @@
 ﻿namespace ThabeSoft.EdgeGateway.Transports;
 
 /// <summary>
-/// 连接类型
+/// 传输类型
 /// </summary>
-public enum ConnectionType
+public enum TransportType
 {
     Serial,
     Ethernet

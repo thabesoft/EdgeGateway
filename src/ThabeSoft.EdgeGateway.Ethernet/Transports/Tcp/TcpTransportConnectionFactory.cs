@@ -7,12 +7,12 @@ internal sealed class TcpTransportConnectionFactory(ILoggerFactory loggerFactory
 {
     public bool CanCreate(TransportDescriptor descriptor)
     {
-        return descriptor is IpTransportDescriptor ip && ip.TransportType == IpTransportType.Tcp;
+        return descriptor is IpTransportDescriptor ip && ip.ProtocolType == IpProtocolType.Tcp;
     }
 
     public ITransportConnection Create(TransportDescriptor descriptor)
     {
-        if (descriptor is not IpTransportDescriptor ip || ip.TransportType != IpTransportType.Tcp)
+        if (descriptor is not IpTransportDescriptor ip || ip.ProtocolType != IpProtocolType.Tcp)
             throw new InvalidOperationException();
 
         return new TcpTransportConnection(ip, loggerFactory.CreateLogger<TcpTransportConnection>());

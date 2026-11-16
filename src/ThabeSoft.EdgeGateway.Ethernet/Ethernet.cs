@@ -7,7 +7,7 @@ namespace ThabeSoft.EdgeGateway;
 public static class Ethernet
 {
     public static IpTransportDescriptor Tcp(IPEndPoint iPEndPoint, RetryDescriptor? retry = null)
-        => new(IpTransportType.Tcp, iPEndPoint) { Retry = retry ?? Retry.Default };
+        => new(IpProtocolType.Tcp, iPEndPoint) { Retry = retry ?? Retry.Default };
     public static IpTransportDescriptor Tcp(IPAddress ip, int port, RetryDescriptor? retry = null)
         => Tcp(new IPEndPoint(ip, port), retry);
     public static IpTransportDescriptor Tcp(string ip, int port, RetryDescriptor? retry = null)
@@ -15,7 +15,7 @@ public static class Ethernet
 
 
     public static IpTransportDescriptor Udp(IPEndPoint iPEndPoint, RetryDescriptor? retry = null)
-        => new(IpTransportType.Udp, iPEndPoint) { Retry = retry ?? Retry.Default };
+        => new(IpProtocolType.Udp, iPEndPoint) { Retry = retry ?? Retry.Default };
     public static IpTransportDescriptor Udp(IPAddress ip, int port, RetryDescriptor? retry = null)
         => Udp(new IPEndPoint(ip, port), retry);
     public static IpTransportDescriptor Udp(string ip, int port, RetryDescriptor? retry = null)

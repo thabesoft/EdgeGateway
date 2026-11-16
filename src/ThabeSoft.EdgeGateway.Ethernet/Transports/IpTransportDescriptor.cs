@@ -7,7 +7,7 @@ namespace ThabeSoft.EdgeGateway.Transports;
 public sealed record IpTransportDescriptor : TransportDescriptor
 {
     public override ConnectionEndpoint Endpoint { get; }
-    public IpTransportType TransportType { get; }
+    public IpProtocolType ProtocolType { get; }
     public IPAddress IP { get; }
     public int Port { get; }
     // 由于 Address 和 Port 属性可更改, 所以每次返回新的对象
@@ -15,7 +15,7 @@ public sealed record IpTransportDescriptor : TransportDescriptor
 
 
 
-    public IpTransportDescriptor(IpTransportType transportType, IPEndPoint iPEndPoint)
+    public IpTransportDescriptor(IpProtocolType transportType, IPEndPoint iPEndPoint)
     {
         if (!ValidateTransportType(transportType, out var errorMessage))
             throw new ArgumentOutOfRangeException(nameof(transportType), errorMessage);
@@ -24,13 +24,13 @@ public sealed record IpTransportDescriptor : TransportDescriptor
         ArgumentNullException.ThrowIfNull(iPEndPoint.Address);
 
         Endpoint = ConnectionEndpoint.Ethernet(iPEndPoint);
-        TransportType = transportType;
+        ProtocolType = transportType;
         IP = iPEndPoint.Address;
         Port = iPEndPoint.Port;
     }
 
     // Tcp(192.168.1.1:1234)
-    public override string ToString() => $"{TransportType}({IPEndPoint})";
+    public override string ToString() => $"{ProtocolType}({IPEndPoint})";
 
 
 
@@ -62,11 +62,11 @@ public sealed record IpTransportDescriptor : TransportDescriptor
         errorMessage = null;
         return true;
     }
-    public static bool ValidateTransportType(IpTransportType type, [NotNullWhen(false)] out string? errorMessage)
+    public static bool ValidateTransportType(IpProtocolType type, [NotNullWhen(false)] out string? errorMessage)
     {
         if (!Enum.IsDefined(type))
         {
-            errorMessage = $"不支持的传输方式, 仅支持 [{IpTransportType.Tcp}, {IpTransportType.Udp}]";
+            errorMessage = $"不支持的传输方式, 仅支持 [{IpProtocolType.Tcp}, {IpProtocolType.Udp}]";
             return false;
         }
         errorMessage = null;

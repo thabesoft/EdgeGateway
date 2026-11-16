@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
 using System.Collections.Immutable;
+using System.Net;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using ThabeSoft.EdgeGateway.Codecs;
@@ -9,6 +10,7 @@ using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Subscription;
+using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.EdgeGateway.Hosting;
 
@@ -71,27 +73,119 @@ class IGatewayJsonConfigDeserializer : IGatewayConfigDeserializer
     public async ValueTask<GatewayConfig> DeserializeAsync(Stream stream, CancellationToken cancellationToken = default)
     {
         var root = await JsonNode.ParseAsync(stream, cancellationToken: cancellationToken);
-        ArgumentNullException.ThrowIfNull(root);
+        return AAA.AsGatewayConfig(root.Required("网关配置不可为空"));
+    }
+}
 
-        foreach (var port in root.GetByPath("Ports")?.AsArray() ?? [])
+
+
+internal static class AAA
+{
+    public static GatewayConfig AsGatewayConfig(JsonNode root)
+    {
+        var ports = root.GetByPath("Ports")
+            ?.AsArray()
+            .Where(x => x is not null)
+            .Select(x => x!.AsPortConfig())
+            ?? [];
+
+        return new GatewayConfig() { Ports = [.. ports] };
+    }
+
+
+    private static PortConfig AsPortConfig(this JsonNode root)
+    {
+        var descriptor = root.GetByPath("Descriptor").Required("端口描述符不存在")!.AsPortDescriptor();
+        return new() { Descriptor = descriptor, Devices = [] };
+    }
+    private static PortDescriptor AsPortDescriptor(this JsonNode root)
+    {
+        var portId = PortId.From(root.GetByPath("Id").Required("缺少端口Id")!.ToString());
+        var transport = AsTransportDescriptor(root.GetByPath("Transport").Required("缺少端口传输配置")!);
+
+        return new() { Id = portId, Transport = transport };
+    }
+    private static TransportDescriptor AsTransportDescriptor(this JsonNode root)
+    {
+        var transportType = root.GetValueStringByPath("Type").Required("缺少传输类型")
+            .ToEnum<TransportType>();
+
+        if (transportType == TransportType.Ethernet)
         {
-            ParsePort(port.Required("端口配置为空")!);
+            var ipProtocolType = root.GetValueStringByPath("ProtocolType").Required("缺少Ip协议类型")
+                .ToEnum<IpProtocolType>();
+
+            var ip = root.GetValueStringByPath("Ip").Required("缺少Ip地址")
+                .ToIPAddress();
+
+            var port = root.GetValueStringByPath("Port").Required("缺少端口")
+                .ToInt32()
+                .NonNegative("端口不可为负数");
+
+            var retry = root.GetByPath("Retry")?.AsRetryDescriptor()
+                ?? Retry.Default;
+
+
+            return new IpTransportDescriptor()
+            {
+                ProtocolType = ipProtocolType,
+                IP = ip,
+                Port = port,
+                Retry = retry
+            };
         }
 
-        return null!;
+        if (transportType == TransportType.Serial)
+        {
+            var portName = root.GetValueStringByPath("PortName").Required("缺少串口名称")
+                .PortName()!;
+
+            var baudRate = root.GetValueStringByPath("BaudRate").Required("缺少波特率")
+                .ToInt32()
+                .StandardBaudRate();
+
+            var dataBits = root.GetValueStringByPath("DataBits").Required("缺少数据位")
+                .ToInt32()
+                .DataBits();
+
+            var parity = root.GetValueStringByPath("Parity").Required("缺少校验值")
+                .ToEnum<SerialParity>();
+
+            var stopBits = root.GetValueStringByPath("StopBits").Required("缺少停止位")
+                .ToEnum<SerialStopBits>();
+
+            var retry = root.GetByPath("Retry")?.AsRetryDescriptor()
+                ?? Retry.Default;
+
+            return new SerialTransportDescriptor()
+            {
+                PortName = portName,
+                BaudRate = baudRate,
+                DataBits = dataBits,
+                Parity = parity,
+                StopBits = stopBits,
+                Retry = retry
+            };
+        }
+
+
+        throw new InvalidOperationException("不支持的传输描述符");
     }
-
-
-    private void ParsePort(JsonNode root)
+    private static RetryDescriptor AsRetryDescriptor(this JsonNode root)
     {
-        var descriptorNode = root.GetByPath("Descriptor").Required("端口描述符不存在")!;
-        var portId = PortId.From(descriptorNode.GetByPath("Id").Required("缺少端口Id")!.ToString());
-        
-        var transportNode = descriptorNode.GetByPath("Transport").Required("缺少端口传输配置");
-        transportNode.GetByPath("Type");
-        
+        var startInterval = root.GetValueStringByPath("StartInterval").Required("缺少起始间隔")
+            .ToTimeSpan();
+
+        var maxInterval = root.GetValueStringByPath("MaxInterval").Required("缺少最大间隔")
+            .ToTimeSpan();
+
+        var backoffMultiplier = root.GetValueStringByPath("BackoffMultiplier").Required("缺少退避倍数")
+            .ToDouble()
+            .AtLeast(1);
+
+        return new(startInterval, maxInterval)
+        {
+            BackoffMultiplier = backoffMultiplier
+        };
     }
-
-
-    
 }

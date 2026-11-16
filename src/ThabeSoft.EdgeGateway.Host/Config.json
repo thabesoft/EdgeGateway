@@ -5,12 +5,12 @@
         "Id": "PortId",
         "Transport": {
           "Type": "Ethernet",
-          "ConnectType": "Tcp",
+          "ProtocolType": "Tcp",
           "Ip": "127.0.0.1",
           "Port": 2333,
           "Retry": {
-            "StartInterval": 3000,
-            "MaxInterval": 30000,
+            "StartInterval": "00:00:03",
+            "MaxInterval": "00:00:30",
             "BackoffMultiplier": 1.5
           }
         }
@@ -21,7 +21,7 @@
             "Id": "DeviceId",
             "Protocol": {
               "Type": "Modbus",
-              "ConnectionType": "Ethernet",
+              "TransportType": "Ethernet",
               "FrameFormat": "Ip"
             },
             "Subscriptions": [
@@ -30,7 +30,7 @@
                   "Id": "SubscriptionId",
                   "Trigger": {
                     "Type": "Interval",
-                    "Interval": 100
+                    "Interval": "00:00:00.100"
                   }
                 },
                 "Slinks": [
@@ -48,6 +48,25 @@
           }
         }
       ]
+    },
+
+    {
+      "Descriptor": {
+        "Id": "SerialPortid",
+        "Transport": {
+          "Type": "Serial",
+          "PortName": "Com3",
+          "BaudRate": 9600,
+          "DataBits": 8,
+          "Parity": "None",
+          "StopBits": "One",
+          "Retry": {
+            "StartInterval": "00:00:03",
+            "MaxInterval": "00:00:30",
+            "BackoffMultiplier": 1.5
+          }
+        }
+      }
     }
   ]
 }

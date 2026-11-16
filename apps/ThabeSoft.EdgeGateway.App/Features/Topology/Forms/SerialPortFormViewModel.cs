@@ -72,8 +72,14 @@ internal sealed partial class SerialPortFormViewModel : ViewModelBase
     }
 
 
-    public SerialTransportDescriptor Build() =>
-        new(PortName, BaudRate, Parity, DataBits, StopBits);
+    public SerialTransportDescriptor Build() => new()
+    {
+        PortName = PortName,
+        BaudRate = BaudRate,
+        Parity = Parity,
+        DataBits = DataBits,
+        StopBits = StopBits
+    };
 
     public void ValidateAllProperty()
     {

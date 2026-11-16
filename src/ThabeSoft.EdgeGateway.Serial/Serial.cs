@@ -11,5 +11,16 @@ public static class Serial
             int dataBits = 8,
             SerialStopBits stopBits = SerialStopBits.One,
             RetryDescriptor? retry = null
-        ) => new(portName, baudRate, parity, dataBits, stopBits) { Retry = retry ?? Retry.Default };
+        )
+    {
+        return new()
+        {
+            PortName = portName,
+            BaudRate = baudRate,
+            DataBits = dataBits,
+            Parity = parity,
+            StopBits = stopBits,
+            Retry = retry ?? Retry.Default
+        };
+    }
 }

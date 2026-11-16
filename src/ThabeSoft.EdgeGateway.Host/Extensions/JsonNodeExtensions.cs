@@ -18,5 +18,10 @@ internal static class JsonNodeExtensions
 
             return current;
         }
+
+        public string? GetValueStringByPath(params ReadOnlySpan<string> paths)
+        {
+            return node.GetByPath(paths)?.ToString();
+        }
     }
 }

@@ -7,7 +7,7 @@ public sealed record class ModbusProtocolDescriptor : ProtocolDescriptor
 {
     public override ProtocolType Type { get; } = ProtocolType.Modbus;
     public ModbusFrameFormat FrameFormat { get; }
-    public TransportType ConnectionType { get; }
+    public TransportType TransportType { get; }
 
 
     public ModbusProtocolDescriptor(ModbusFrameFormat frameFormat, TransportType connectionType)
@@ -24,6 +24,6 @@ public sealed record class ModbusProtocolDescriptor : ProtocolDescriptor
         }
 
         FrameFormat = frameFormat;
-        ConnectionType = connectionType;
+        TransportType = connectionType;
     }
 }

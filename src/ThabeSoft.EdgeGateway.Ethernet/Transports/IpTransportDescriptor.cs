@@ -1,33 +1,21 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Net;
+using ThabeSoft.EdgeGateway.Compatibility;
 
 namespace ThabeSoft.EdgeGateway.Transports;
 
 
 public sealed record IpTransportDescriptor : TransportDescriptor
 {
-    public override ConnectionEndpoint Endpoint { get; }
-    public IpProtocolType ProtocolType { get; }
-    public IPAddress IP { get; }
-    public int Port { get; }
+    public required IpProtocolType ProtocolType { get; init => field = value.Defined("不支持的Ip协议"); }
+    public required IPAddress IP { get; init => field = value.Required("Ip地址不可为空"); }
+    public required int Port { get; init => field = value.NonNegative("端口不可为负数"); }
+
+
     // 由于 Address 和 Port 属性可更改, 所以每次返回新的对象
     public IPEndPoint IPEndPoint => new(IP, Port);
+    public override ConnectionEndpoint Endpoint => ConnectionEndpoint.Ethernet(IPEndPoint);
 
-
-
-    public IpTransportDescriptor(IpProtocolType transportType, IPEndPoint iPEndPoint)
-    {
-        if (!ValidateTransportType(transportType, out var errorMessage))
-            throw new ArgumentOutOfRangeException(nameof(transportType), errorMessage);
-
-        ArgumentNullException.ThrowIfNull(iPEndPoint);
-        ArgumentNullException.ThrowIfNull(iPEndPoint.Address);
-
-        Endpoint = ConnectionEndpoint.Ethernet(iPEndPoint);
-        ProtocolType = transportType;
-        IP = iPEndPoint.Address;
-        Port = iPEndPoint.Port;
-    }
 
     // Tcp(192.168.1.1:1234)
     public override string ToString() => $"{ProtocolType}({IPEndPoint})";

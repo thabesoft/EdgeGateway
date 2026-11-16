@@ -1,67 +1,20 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using ThabeSoft.EdgeGateway.Compatibility;
 
 namespace ThabeSoft.EdgeGateway.Transports;
 
 
 public sealed record class SerialTransportDescriptor : TransportDescriptor
 {
-    public override ConnectionEndpoint Endpoint { get; }
-    public string PortName { get; }
-    public int BaudRate { get; }
-    public int DataBits { get; }
-    public SerialParity Parity { get; }
-    public SerialStopBits StopBits { get; }
+    public required string PortName { get; init => field = value.PortName(); }
+    public int BaudRate { get; init => field = value.StandardBaudRate(); } = 9600;
+    public int DataBits { get; init => field = value.DataBits(); } = 8;
+    public SerialParity Parity { get; init => field = value.Defined($"未知的校验值({value})"); } = SerialParity.None;
+    public SerialStopBits StopBits { get; init => field = value.Defined($"未知的停止位({value})"); } = SerialStopBits.One;
+
+    public override ConnectionEndpoint Endpoint => ConnectionEndpoint.Serial(PortName);
 
 
-    public SerialTransportDescriptor(string portName, int baudRate, SerialParity parity, int dataBits, SerialStopBits stopBits)
-    {
-        if (!ValidatePortName(portName, out var portNameErrorMessage))
-            throw new ArgumentException(portNameErrorMessage, nameof(portName));
-
-        if (!ValidateBaudRate(baudRate, out var baudRateErrorMessage))
-            throw new ArgumentOutOfRangeException(nameof(baudRate), baudRate, baudRateErrorMessage);
-
-        if (!ValidateParity(parity, out var parityErrorMessage))
-            throw new ArgumentOutOfRangeException(nameof(parity), parity, parityErrorMessage);
-
-        if (!ValidateDataBits(dataBits, out var dataBitsErrorMessage))
-            throw new ArgumentOutOfRangeException(nameof(dataBits), dataBits, dataBitsErrorMessage);
-
-        if (!ValidateStopBits(stopBits, out var stopBitsErrorMessage))
-            throw new ArgumentOutOfRangeException(nameof(stopBits), stopBits, stopBitsErrorMessage);
-
-
-        Endpoint = ConnectionEndpoint.Serial(portName);
-        PortName = portName;
-        BaudRate = baudRate;
-        Parity = parity;
-        DataBits = dataBits;
-        StopBits = stopBits;
-    }
-
-    // COM2(9600, 8N5)
-    public override string ToString()
-    {
-        var parityChar = Parity switch
-        {
-            SerialParity.None => 'N',
-            SerialParity.Even => 'E',
-            SerialParity.Odd => 'O',
-            SerialParity.Mark => 'M',
-            SerialParity.Space => 'S',
-            _ => '?'
-        };
-
-        var stopBitsChar = StopBits switch
-        {
-            SerialStopBits.One => '1',
-            SerialStopBits.Two => '2',
-            SerialStopBits.OnePointFive => '5',
-            _ => '?'
-        };
-
-        return $"{PortName}({BaudRate}, {DataBits}{parityChar}{stopBitsChar})";
-    }
 
 
     public static bool ValidatePortName(ReadOnlySpan<char> portName, [NotNullWhen(false)] out string? errorMessage)

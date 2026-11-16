@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.Net;
+using ThabeSoft.EdgeGateway.Compatibility;
 using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
@@ -37,7 +38,7 @@ internal sealed partial class IpPortFormViewModel : ViewModelBase
     }
 
     public IpTransportDescriptor Build() =>
-        new(TransportType, new IPEndPoint(IPAddress.Parse(Ip), Port!.Value));
+        new() { Port = Port.Value, IP = IPAddress.Parse(Ip), ProtocolType = TransportType };
 
     public void ValidateAllProperty()
     {

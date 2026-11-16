@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Events;
 using ThabeSoft.EdgeGateway.Lifecycles;
-using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Readings;

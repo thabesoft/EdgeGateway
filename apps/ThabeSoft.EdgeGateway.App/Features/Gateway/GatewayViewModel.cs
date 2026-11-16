@@ -3,11 +3,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SukiUI.Toasts;
 using ThabeSoft.EdgeGateway.App.Services;
-using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Events;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Ports;
-using ThabeSoft.EdgeGateway.Subscription;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Gateway;
 

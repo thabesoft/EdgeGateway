@@ -6,100 +6,81 @@ using ThabeSoft.EdgeGateway.Utilities;
 namespace ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 
 
-internal sealed class RetryableLifecycleStateMachine(ILogger? logger = null) :
-    ILifecycleStateMachine
+internal sealed class RetryableLifecycleStateMachine : LifecycleStateMachineBase
 {
-    private readonly SemaphoreSlim _lock = new(1, 1);
-    private readonly ILogger _logger = logger ?? NullLogger.Instance;
-    private volatile LifecycleState _state = LifecycleState.Created;
+    private readonly ObservableLifecycleState _observableLifecycleState;
+    private readonly Locker _locker;
+    private readonly ILogger _logger;
 
 
-    public LifecycleState State => _state;
-
-#if DEBUG
-    public TimeSpan StartTimeout { get; init; } = TimeSpan.FromMinutes(5);
-    public TimeSpan StopTimeout { get; init; } = TimeSpan.FromMinutes(5);
-    public TimeSpan DisposeTimeout { get; init; } = TimeSpan.FromMinutes(5);
-    public TimeSpan ExecuteTimeout { get; init; } = TimeSpan.FromMinutes(5);
-    public TimeSpan LockTimeout { get; init; } = TimeSpan.FromMinutes(5);
-#else
-    public TimeSpan StartTimeout { get; init; } = TimeSpan.FromSeconds(30);
-    public TimeSpan StopTimeout { get; init; } = TimeSpan.FromSeconds(15);
-    public TimeSpan DisposeTimeout { get; init; } = TimeSpan.FromSeconds(10);
-    public TimeSpan ExecuteTimeout { get; init; } = TimeSpan.FromSeconds(30);
-    public TimeSpan LockTimeout { get; init; } = TimeSpan.FromSeconds(30);
-#endif
+    private RetryableLifecycleStateMachine(ObservableLifecycleState observableLifecycleState, Locker locker, ILogger logger) : base(observableLifecycleState, new Executor(observableLifecycleState, locker))
+    {
+        _observableLifecycleState = observableLifecycleState;
+        _locker = locker;
+        _logger = logger;
+    }
+    public RetryableLifecycleStateMachine(ILogger? logger = null) : this(new ObservableLifecycleState(), new Locker(1, 1), logger ?? NullLogger.Instance)
+    {
+    }
 
 
     [DebuggerStepThrough]
-    public async ValueTask StartAsync(Func<CancellationToken, ValueTask> onStart, CancellationToken cancellationToken = default)
+    public override async ValueTask StartAsync(Func<CancellationToken, ValueTask> onStart, CancellationToken cancellationToken = default)
     {
-        ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);
+        ObjectDisposedException.ThrowIf(State is LifecycleState.Disposed, this);
 
-        await _lock.WaitWithTimeoutAsync(LockTimeout, cancellationToken);
+        using var _ = await _locker.WaiAsync(cancellationToken);
+
+        ObjectDisposedException.ThrowIf(State is LifecycleState.Disposed, this);
+        if (State is LifecycleState.Starting) return;
+
         try
         {
-            ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);
-            if (_state is LifecycleState.Starting) return;
+            _observableLifecycleState.OnStarting();
 
-            try
-            {
-                _state = LifecycleState.Starting;
-                await onStart.InvokeWithTimeoutAsync(StopTimeout, "启动", cancellationToken);
+            await onStart.InvokeWithTimeoutAsync(StopTimeout, "启动", cancellationToken);
 
-                _state = LifecycleState.Running;
-                _logger.LogTrace("已启动");
-            }
-            catch (Exception ex)
-            {
-                _state = LifecycleState.Faulted;
-                _logger.LogError(ex, "启动失败");
-
-                throw;
-            }
+            _observableLifecycleState.OnRunning();
+            _logger.LogTrace("已启动");
         }
-        finally { _lock.Release(); }
-    }
+        catch (Exception ex)
+        {
+            _observableLifecycleState.OnFaulted();
+            _logger.LogError(ex, "启动失败");
 
+            throw;
+        }
+    }
     [DebuggerStepThrough]
-    public async ValueTask StopAsync(Func<CancellationToken, ValueTask> onStop, CancellationToken cancellationToken = default)
+    public override async ValueTask StopAsync(Func<CancellationToken, ValueTask> onStop, CancellationToken cancellationToken = default)
     {
-        ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);
+        ObjectDisposedException.ThrowIf(State is LifecycleState.Disposed, this);
 
 
-        await _lock.WaitWithTimeoutAsync(LockTimeout, cancellationToken);
+        using var _ = await _locker.WaiAsync(cancellationToken);
+        ObjectDisposedException.ThrowIf(State is LifecycleState.Disposed, this);
+        if (State is LifecycleState.Stopping or LifecycleState.Stopped) return;
+
         try
         {
-            ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);
-            if (_state is LifecycleState.Stopping or LifecycleState.Stopped) return;
+            _observableLifecycleState.OnStopping();
+            await onStop.InvokeWithTimeoutAsync(StopTimeout, "停止", cancellationToken);
 
-            try
-            {
-                _state = LifecycleState.Stopping;
-                await onStop.InvokeWithTimeoutAsync(StopTimeout, "停止", cancellationToken);
-
-                _state = LifecycleState.Stopped;
-                _logger.LogTrace("已停止");
-            }
-            catch (Exception ex)
-            {
-                _state = LifecycleState.Faulted;
-                _logger.LogError(ex, "停止失败");
-                throw;
-            }
+            _observableLifecycleState.OnStopped();
+            _logger.LogTrace("已停止");
         }
-        finally { _lock.Release(); }
+        catch (Exception ex)
+        {
+            _observableLifecycleState.OnFaulted();
+            _logger.LogError(ex, "停止失败");
+            throw;
+        }
     }
-    public async ValueTask DisposeAsync(Func<ValueTask> onDispose)
+    public override async ValueTask DisposeAsync(Func<ValueTask> onDispose)
     {
-        await _lock.WaitWithTimeoutAsync(LockTimeout);
-        try
-        {
-            if (_state is LifecycleState.Disposed) return;
-
-            _state = LifecycleState.Disposed;
-        }
-        finally { _lock.Release(); }
+        using var _ = await _locker.WaiAsync();
+        if (State is LifecycleState.Disposed) return;
+        _observableLifecycleState.OnDisposed();
 
         try
         {
@@ -111,74 +92,11 @@ internal sealed class RetryableLifecycleStateMachine(ILogger? logger = null) :
             _logger.LogError(ex, "释放失败");
         }
     }
-    public ValueTask DisposeAsync() => DisposeAsync(() => ValueTask.CompletedTask);
 
-
-    [DebuggerStepThrough]
-    public async ValueTask ExecuteAsync(
-        Func<CancellationToken, ValueTask> action,
-        CancellationToken cancellationToken = default)
+    public override ValueTask DisposeAsync()
     {
-        ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);
-
-        await _lock.WaitWithTimeoutAsync(LockTimeout, cancellationToken);
-        try
-        {
-            ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);
-            await action.InvokeWithTimeoutAsync(ExecuteTimeout, "执行", cancellationToken);
-        }
-        finally { _lock.Release(); }
-
-    }
-
-    [DebuggerStepThrough]
-    public async ValueTask<TResult> ExecuteAsync<TResult>(
-        Func<CancellationToken, ValueTask<TResult>> action,
-        CancellationToken cancellationToken = default)
-    {
-        ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);
-
-        await _lock.WaitWithTimeoutAsync(LockTimeout, cancellationToken);
-        try
-        {
-            ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);
-            return await action.InvokeWithTimeoutAsync(ExecuteTimeout, "执行", cancellationToken);
-        }
-        finally { _lock.Release(); }
-
-    }
-
-    [DebuggerStepThrough]
-    public void Execute(Action action)
-    {
-        ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);
-        ArgumentNullException.ThrowIfNull(action);
-
-        try
-        {
-            _lock.Wait(LockTimeout);
-            action();
-        }
-        finally
-        {
-            _lock.Release();
-        }
-    }
-
-    [DebuggerStepThrough]
-    public TResult Execute<TResult>(Func<TResult> action)
-    {
-        ObjectDisposedException.ThrowIf(_state is LifecycleState.Disposed, this);
-        ArgumentNullException.ThrowIfNull(action);
-
-        try
-        {
-            _lock.Wait(LockTimeout);
-            return action();
-        }
-        finally
-        {
-            _lock.Release();
-        }
+        _locker.Dispose();
+        _observableLifecycleState.Dispose();
+        return base.DisposeAsync();
     }
 }

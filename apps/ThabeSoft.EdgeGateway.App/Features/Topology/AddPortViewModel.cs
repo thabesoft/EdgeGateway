@@ -8,7 +8,7 @@ using ThabeSoft.EdgeGateway.Transports;
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 
 
-internal sealed partial class AddPortViewModel(ISukiDialog dialog, ISukiToastManager sukiToastManager, GatewayViewModel gatewayViewModel) : ObservableObject
+internal sealed partial class AddPortViewModel(ISukiDialog dialog, ISukiToastManager sukiToastManager, IGateway gateway) : ObservableObject
 {
     public IpPortFormViewModel IpForm { get; } = new();
     public SerialPortFormViewModel SerialForm { get; } = new();
@@ -22,7 +22,7 @@ internal sealed partial class AddPortViewModel(ISukiDialog dialog, ISukiToastMan
 
 
     [RelayCommand]
-    private void Create()
+    private async Task Create()
     {
         try
         {
@@ -32,7 +32,7 @@ internal sealed partial class AddPortViewModel(ISukiDialog dialog, ISukiToastMan
             else if (IsSelectedSerialFrom) descriptor = SerialForm.Build();
 
             if (descriptor == null) return;
-            gatewayViewModel.AddPortCommand.Execute(descriptor);
+            await gateway.AddPortAsync(descriptor);
 
             dialog.Dismiss();
         }

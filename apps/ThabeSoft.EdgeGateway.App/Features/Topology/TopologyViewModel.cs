@@ -6,6 +6,7 @@ using SukiUI.Dialogs;
 using SukiUI.Toasts;
 using ThabeSoft.EdgeGateway.App.Features.Gateway;
 using ThabeSoft.EdgeGateway.App.Services;
+using ThabeSoft.EdgeGateway.Lifecycles;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 
@@ -13,6 +14,7 @@ namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 internal sealed partial class TopologyViewModel(
         ISukiDialogManager sukiDialogManager,
         ISukiToastManager sukiToastManager,
+        IGateway gateway,
         GatewayViewModel gatewayViewModel
     ) : PageViewModel("拓扑", MaterialIconKind.Dog)
 {
@@ -43,7 +45,7 @@ internal sealed partial class TopologyViewModel(
     {
         await sukiToastManager.ExecuteWithToastAsync(async _ =>
         {
-            if (gatewayViewModel.IsRunning)
+            if (gateway.IsRunning)
             {
                 await gatewayViewModel.StopCommand.ExecuteAsync(null);
             }
@@ -60,7 +62,7 @@ internal sealed partial class TopologyViewModel(
     {
         sukiDialogManager.CreateDialog()
             .WithTitle("创建端口")
-            .WithViewModel(dialog => new AddPortViewModel(dialog, sukiToastManager, gatewayViewModel), false)
+            .WithViewModel(dialog => new AddPortViewModel(dialog, sukiToastManager, gateway), false)
             .WithActionButton("取消", dialog => dialog.Dismiss(), false, "Flat")
             .WithActionButton("创建", dialog =>
             {
@@ -77,7 +79,7 @@ internal sealed partial class TopologyViewModel(
         if (SelectedPort is null) return;
 
         var nextItem = GetNextItem([.. Gateway.Ports.Values], SelectedPort);
-        await gatewayViewModel.RemovePortCommand.ExecuteAsync(SelectedPort.Endpoint);
+        await gateway.RemovePortAsync(SelectedPort.Id);
 
         SelectedPort = nextItem;
 

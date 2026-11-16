@@ -15,6 +15,7 @@ internal sealed partial class SubscriptionViewModel : LifecycleViewModel, IDispo
     private readonly IDisposable _subscriptionHandle;
     private readonly RingBuffer<double> _buffer = new(120);
 
+
     public SubscriptionViewModel(ISubscription subscription, ISukiToastManager sukiToastManager) : base(subscription, sukiToastManager)
     {
         _subscription = subscription;

@@ -1,78 +1,84 @@
 ﻿using Avalonia.Collections;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SukiUI.Toasts;
 using ThabeSoft.EdgeGateway.App.Services;
 using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Events;
+using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Gateway;
 
 
-internal sealed partial class PortViewModel : LifecycleViewModel
+internal sealed partial class PortViewModel : ObservableObject, IDisposable
 {
     private readonly AvaloniaDictionary<DeviceId, DeviceViewModel> _viewModels;
     private readonly IPort _port;
     private readonly ISukiToastManager _sukiToastManager;
+    private readonly IDisposable[] _eventDisposers;
 
 
-    public PortViewModel(IPort port, ISukiToastManager sukiToastManager) : base(port, sukiToastManager)
+    public PortViewModel(IPort port, IEventSubscriber eventSubscriber, ISukiToastManager sukiToastManager)
     {
         _port = port;
         _sukiToastManager = sukiToastManager;
         _viewModels = new(port.Devices.ToDictionary(k => k.Key, v => CreateViewModel(v.Value)));
+
+
+        _eventDisposers =
+        [
+             eventSubscriber.Subscribe<DeviceAddedEvent>((e, _) =>
+            {
+                if(e.PortId != port.Id)return ValueTask.CompletedTask;
+
+                if(port.Devices.TryGetValue(e.DeviceId, out var device))
+                        _viewModels[e.DeviceId] = CreateViewModel(device);
+
+                return ValueTask.CompletedTask;
+            }),
+            eventSubscriber.Subscribe<DeviceRemovedEvent>((e, _) =>
+            {
+                if(e.PortId != port.Id) return ValueTask.CompletedTask;
+
+                _viewModels.Remove(e.DeviceId);
+                return ValueTask.CompletedTask;
+            }),
+        ];
+
+        DeviceViewModel CreateViewModel(IDevice device) => new(device, eventSubscriber, _sukiToastManager);
     }
 
+
+    public PortId Id => _port.Id;
     public ConnectionEndpoint Endpoint => _port.Endpoint;
     public IAvaloniaReadOnlyDictionary<DeviceId, DeviceViewModel> Devices => _viewModels;
-
+    public bool IsRunning => _port.IsRunning;
 
 
     [RelayCommand]
-    private async Task AddDeviceAsync(DeviceDescriptor deviceDescriptor)
+    private async Task StartAsync()
     {
-        await _sukiToastManager.ExecuteWithToastAsync(async ct =>
-           await AddDeviceAsync(deviceDescriptor, ct), "添加设备", TimeSpan.FromSeconds(30));
+        await _sukiToastManager.ExecuteWithToastAsync(_port.StartAsync, "启动端口");
     }
-
+    [RelayCommand]
+    private async Task StopAsync()
+    {
+        await _sukiToastManager.ExecuteWithToastAsync(_port.StopAsync, "停止端口");
+    }
     [RelayCommand]
     private async Task RemoveDeviceAsync(DeviceId deviceId)
     {
         await _sukiToastManager.ExecuteWithToastAsync(async ct =>
-           await RemoveDeviceAsync(deviceId, ct), "删除设备", TimeSpan.FromSeconds(10));
+            await _port.RemoveDeviceAsync(deviceId, ct), "删除设备");
     }
 
 
-    public override async ValueTask StartAsync(CancellationToken cancellationToken = default)
+
+    public void Dispose()
     {
-        await base.StartAsync(cancellationToken);
-
-        foreach (var i in _viewModels.Values)
-            i.OnUpdateState();
+        foreach (var i in _eventDisposers)
+            i.Dispose();
     }
-    public override async ValueTask StopAsync(CancellationToken cancellationToken = default)
-    {
-        await base.StopAsync(cancellationToken);
-
-        foreach (var i in _viewModels.Values)
-            i.OnUpdateState();
-    }
-
-    public async ValueTask<DeviceViewModel> AddDeviceAsync(DeviceDescriptor deviceDescriptor, CancellationToken cancellationToken = default)
-    {
-        var model = await _port.AddDeviceAsync(deviceDescriptor);
-        var viewModel = CreateViewModel(model);
-
-        _viewModels[deviceDescriptor.Id] = viewModel;
-        return viewModel;
-    }
-    public async ValueTask<bool> RemoveDeviceAsync(DeviceId deviceId, CancellationToken cancellationToken = default)
-    {
-        var result = await _port.RemoveDeviceAsync(deviceId);
-        _viewModels.Remove(deviceId);
-
-        return result;
-    }
-
-    private DeviceViewModel CreateViewModel(IDevice device) => new(device, _sukiToastManager);
 }

@@ -1,13 +1,13 @@
 ﻿using Microsoft.Extensions.Hosting;
 using System.Net;
-using ThabeSoft.EdgeGateway.App.Features.Gateway;
+using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.EdgeGateway.App.Hosting;
 
 
-internal sealed class LaunchHostedService(GatewayViewModel gateway) :
+internal sealed class LaunchHostedService(IGateway gateway) :
     IHostedService
 {
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -15,7 +15,7 @@ internal sealed class LaunchHostedService(GatewayViewModel gateway) :
         //await AddPortAsync(Ethernet.Tcp(IPAddress.Loopback, 2333), gateway, cancellationToken);
         await AddPortAsync(Ethernet.Tcp(IPAddress.Loopback, 2334), gateway, cancellationToken);
 
-        await gateway.StartCommand.ExecuteAsync(null);
+        await gateway.StartAsync();
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
@@ -23,7 +23,7 @@ internal sealed class LaunchHostedService(GatewayViewModel gateway) :
         return Task.CompletedTask;
     }
 
-    private static async Task AddPortAsync(IpTransportDescriptor transportDescriptor, GatewayViewModel gateway, CancellationToken cancellationToken)
+    private static async Task AddPortAsync(IpTransportDescriptor transportDescriptor, IGateway gateway, CancellationToken cancellationToken)
     {
         var port = await gateway.AddPortAsync(new() { Transport = transportDescriptor }, cancellationToken);
 
@@ -32,7 +32,7 @@ internal sealed class LaunchHostedService(GatewayViewModel gateway) :
         for (byte i = 1; i <= count; i++)
             await AddDeviceAsync(i, port, cancellationToken);
     }
-    private static async Task AddDeviceAsync(byte id, PortViewModel port, CancellationToken cancellationToken)
+    private static async Task AddDeviceAsync(byte id, IPort port, CancellationToken cancellationToken)
     {
         var device = await port.AddDeviceAsync(new() { Protocol = Modbus.Ip }, cancellationToken);
 

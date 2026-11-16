@@ -4,6 +4,7 @@ using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.EdgeGateway.Utilities;
 using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Ports;

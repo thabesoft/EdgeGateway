@@ -9,7 +9,7 @@ internal sealed class ObservableLifecycleState : ILifecycleStateable, ILifecycle
 
 
     public LifecycleState State { get; private set; }
-    public IObservable<LifecycleStateTransition> StateChanged => throw new NotImplementedException();
+    public IObservable<LifecycleStateTransition> StateChanged => _stateSubject;
 
 
     public bool ChangeState(LifecycleState @new)

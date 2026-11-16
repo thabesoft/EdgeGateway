@@ -40,7 +40,7 @@ internal abstract class LifecycleStateMachineBase(ObservableLifecycleState obser
     public abstract ValueTask StartAsync(Func<CancellationToken, ValueTask> onStart, CancellationToken cancellationToken = default);
     public abstract ValueTask StopAsync(Func<CancellationToken, ValueTask> onStop, CancellationToken cancellationToken = default);
     public abstract ValueTask DisposeAsync(Func<ValueTask> onDispose);
-    public virtual ValueTask DisposeAsync() => DisposeAsync(() => ValueTask.CompletedTask);
+    public virtual ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
 
 

@@ -45,6 +45,13 @@ internal sealed partial class PortViewModel : ObservableObject, IDisposable
                 _viewModels.Remove(e.DeviceId);
                 return ValueTask.CompletedTask;
             }),
+            eventSubscriber.Subscribe<PortStateChangedEvent>((e, _) =>
+            {
+                if(e.PortId != port.Id) return ValueTask.CompletedTask;
+
+                State = e.New;
+                return ValueTask.CompletedTask;
+            })
         ];
 
         DeviceViewModel CreateViewModel(IDevice device) => new(device, eventSubscriber, _sukiToastManager);
@@ -54,7 +61,12 @@ internal sealed partial class PortViewModel : ObservableObject, IDisposable
     public PortId Id => _port.Id;
     public ConnectionEndpoint Endpoint => _port.Endpoint;
     public IAvaloniaReadOnlyDictionary<DeviceId, DeviceViewModel> Devices => _viewModels;
-    public bool IsRunning => _port.IsRunning;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsRunning))]
+    public partial LifecycleState State { get; private set; }
+    public bool IsRunning => State == LifecycleState.Running;
+
 
 
     [RelayCommand]

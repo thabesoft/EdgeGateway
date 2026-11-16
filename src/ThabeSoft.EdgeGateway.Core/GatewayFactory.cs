@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Events;
@@ -9,9 +10,12 @@ using ThabeSoft.EdgeGateway.Readings;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transports;
 using ThabeSoft.EdgeGateway.Triggers;
+using ThabeSoft.EdgeGateway.Utilities;
 using ThabeSoft.Guard;
+using static ThabeSoft.EdgeGateway.GatewayFactory;
 
 namespace ThabeSoft.EdgeGateway;
+
 
 internal sealed class GatewayFactory(
     ITriggerScheduler triggerScheduler,
@@ -27,6 +31,9 @@ internal sealed class GatewayFactory(
         var gatewayLogger = loggerFactory.CreateLogger<Gateway>();
         var gatewayState = Lifecycle.RetryableStateMachine(gatewayLogger);
 
+        var gatewayStateEventDisposable = gatewayState.StateChanged.Subscribe(x =>
+            _ = eventPublisher.PublishAsync(new GatewayStateChangedEvent(x.Old, x.New)));
+
         var portCollection = new PortCollection(
             gatwayLifecycleState: gatewayState,
             eventPublisher: eventPublisher,
@@ -35,8 +42,9 @@ internal sealed class GatewayFactory(
         var gateway = new Gateway(
             lifecycleStateMachine: gatewayState,
             portCollection: portCollection);
-        gateway.Disposed.Subscribe(async () =>
-           await portCollection.TryDisposeAsync(gatewayLogger));
+
+        var gatewayDisposer = DisposableCollection.From(portCollection, gatewayStateEventDisposable, gatewayState);
+        gateway.Disposed.Subscribe(gatewayDisposer.DisposeAsync);
 
         return gateway;
 
@@ -46,6 +54,10 @@ internal sealed class GatewayFactory(
             // 创建端口
             var portLogger = loggerFactory.CreateLogger<Port>();
             var portState = Lifecycle.RetryableStateMachine(portLogger);
+
+            var portStateEventDisposable = gatewayState.StateChanged.Subscribe(x =>
+                _ = eventPublisher.PublishAsync(new PortStateChangedEvent(portDescriptor.Id, x.Old, x.New)));
+
             var transport = transportResolver.Resolve(portDescriptor.Transport);
             var protocolAccessors = new ConcurrentDictionary<ProtocolDescriptor, IProtocolAccessor>();
 
@@ -67,12 +79,8 @@ internal sealed class GatewayFactory(
                 Logger = portLogger
             });
 
-            port.Disposed.Subscribe(async () =>
-            {
-                await deviceCollection.TryDisposeAsync(portLogger);
-                protocolAccessors.Clear();
-                await transport.TryDisposeAsync(portLogger);
-            });
+            var portDisposer = DisposableCollection.From(deviceCollection, transport, portStateEventDisposable, portState);
+            port.Disposed.Subscribe(portDisposer.DisposeAsync);
 
             return port;
 
@@ -80,6 +88,10 @@ internal sealed class GatewayFactory(
             {
                 var deviceLogger = loggerFactory.CreateLogger<Device>();
                 var deviceState = Lifecycle.RetryableStateMachine(deviceLogger);
+
+                var deviceStateEventDisposable = gatewayState.StateChanged.Subscribe(x =>
+                    _ = eventPublisher.PublishAsync(new DeviceStateChangedEvent(portDescriptor.Id, deviceDescriptor.Id, x.Old, x.New)));
+
                 var protocolAccessor = protocolAccessors.GetOrAdd(deviceDescriptor.Protocol, x =>
                         protocolAccessorResolver.Resolve(x, transport));
 
@@ -91,7 +103,8 @@ internal sealed class GatewayFactory(
                     PortId = portDescriptor.Id,
                     DeviceId = deviceDescriptor.Id,
                     ReadingSinkBus = readingSinkBus,
-                    LoggerFactory = loggerFactory
+                    LoggerFactory = loggerFactory,
+                    EventPublisher = eventPublisher
                 });
 
                 var subscriptionCollection = new SubscriptionCollection(new()
@@ -110,6 +123,7 @@ internal sealed class GatewayFactory(
                     collection: subscriptionCollection,
                     logger: deviceLogger);
 
+                var portDisposer = DisposableCollection.From(subscriptionCollection, subscriptionCreator, protocolAccessor, deviceStateEventDisposable, deviceState);
                 device.Disposed.Subscribe(async () =>
                     await subscriptionCollection.TryDisposeAsync(deviceLogger));
 
@@ -125,6 +139,10 @@ internal sealed class GatewayFactory(
         public Subscription<T> Create<T>(SubscriptionDescriptor<T> descriptor) where T : notnull
         {
             var subscriptionState = Lifecycle.StrictStateMachine();
+
+            var subscriptionStateEventDisposable = subscriptionState.StateChanged.Subscribe(x =>
+                   _ = dependencies.EventPublisher.PublishAsync(new SubscriptionStateChanged(dependencies.PortId, dependencies.DeviceId, descriptor.Id, x.Old, x.New)));
+
             var reader = new ReadingSource<T>(descriptor.Tag, dependencies.ProtocolAccessor, dependencies.LoggerFactory.CreateLogger<ReadingSource<T>>());
 
             var subscription = new Subscription<T>(
@@ -136,11 +154,9 @@ internal sealed class GatewayFactory(
             );
             var readingContext = new ReadingContext() { PortId = dependencies.PortId, DeviceId = dependencies.DeviceId, DataAddress = descriptor.Tag.Address };
             var updateDisposable = subscription.Update.Subscribe(x => dependencies.ReadingSinkBus.Publish(readingContext, x));
-            subscription.Disposed.Subscribe(async () =>
-            {
-                updateDisposable.Dispose();
-                await subscriptionState.TryDisposeAsync();
-            });
+
+            var portDisposer = DisposableCollection.From(updateDisposable, reader, subscriptionStateEventDisposable, subscriptionState);
+            subscription.Disposed.Subscribe(portDisposer.DisposeAsync);
 
             return subscription;
         }
@@ -155,5 +171,6 @@ internal sealed class GatewayFactory(
         public required DeviceId DeviceId { get; init => field = value.Required(); }
         public required ReadingSinkBus ReadingSinkBus { get; init => field = value.Required(); }
         public required ILoggerFactory LoggerFactory { get; init => field = value.Required(); }
+        public required IEventPublisher EventPublisher { get; init => field = value.Required(); }
     }
 }

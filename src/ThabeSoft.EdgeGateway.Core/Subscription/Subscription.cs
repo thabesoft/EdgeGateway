@@ -4,6 +4,7 @@ using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Readings;
 using ThabeSoft.EdgeGateway.Triggers;
+using ThabeSoft.EdgeGateway.Utilities;
 
 namespace ThabeSoft.EdgeGateway.Subscription;
 

@@ -1,8 +1,10 @@
 ﻿using Avalonia.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using ReactiveUI.Primitives.Extensions;
 using SukiUI.Toasts;
 using ThabeSoft.EdgeGateway.App.Services;
+using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Events;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Ports;
@@ -41,6 +43,11 @@ internal sealed partial class GatewayViewModel : ObservableObject, IDisposable
             {
                 _viewModels.Remove(e.PortId);
                 return ValueTask.CompletedTask;
+            }),
+            eventSubscriber.Subscribe<GatewayStateChangedEvent>((e, _) =>
+            {
+                State = e.New;
+                return ValueTask.CompletedTask;
             })
         ];
 
@@ -49,7 +56,11 @@ internal sealed partial class GatewayViewModel : ObservableObject, IDisposable
     }
 
     public IAvaloniaReadOnlyDictionary<PortId, PortViewModel> Ports => _viewModels;
-    public bool IsRunning => _gateway.IsRunning;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsRunning))]
+    public partial LifecycleState State { get; private set; }
+    public bool IsRunning => State == LifecycleState.Running;
 
 
     [RelayCommand]

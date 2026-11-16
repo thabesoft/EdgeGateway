@@ -45,6 +45,13 @@ internal sealed partial class DeviceViewModel : ObservableObject, IDisposable
                 _viewModels.Remove(e.SubscriptionId);
                 return ValueTask.CompletedTask;
             }),
+            eventSubscriber.Subscribe<DeviceStateChangedEvent>((e, _) =>
+            {
+                if(e.DeviceId != device.Id) return ValueTask.CompletedTask;
+                
+                State = e.New;
+                return ValueTask.CompletedTask;
+            })
         ];
 
         SubscriptionViewModel CreateViewModel(ISubscription subscription) => new(subscription, _sukiToastManager);
@@ -53,7 +60,11 @@ internal sealed partial class DeviceViewModel : ObservableObject, IDisposable
     public DeviceId Id => _device.Id;
     public ProtocolType ProtocolType => _device.ProtocolType;
     public IAvaloniaReadOnlyDictionary<SubscriptionId, SubscriptionViewModel> Subscriptions => _viewModels;
-    public bool IsRunning => _device.IsRunning;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsRunning))]
+    public partial LifecycleState State { get; private set; }
+    public bool IsRunning => State == LifecycleState.Running;
 
 
     [RelayCommand]

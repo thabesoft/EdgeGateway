@@ -1,8 +1,11 @@
 ﻿#if NETSTANDARD2_0
 
+#pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
 namespace System.Threading;
+#pragma warning restore IDE0130 // 命名空间与文件夹结构不匹配
 
-public sealed class PeriodicTimer : IDisposable
+
+internal sealed class PeriodicTimer : IDisposable
 {
     private readonly TimeProvider _timeProvider;
     private readonly CancellationTokenSource _disposeCts = new();

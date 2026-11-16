@@ -2,7 +2,9 @@
 
 using System.Runtime.InteropServices;
 
+#pragma warning disable IDE0130 // 命名空间与文件夹结构不匹配
 namespace System.Net.Sockets;
+#pragma warning restore IDE0130 // 命名空间与文件夹结构不匹配
 
 public static class UdpClientExtensions
 {

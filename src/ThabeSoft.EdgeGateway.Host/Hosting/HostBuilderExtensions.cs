@@ -11,6 +11,7 @@ using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Hosting;
 
@@ -39,19 +40,19 @@ public static class HostBuilderExtensions
 
 class GatewayConfig()
 {
-    public ImmutableArray<PortConfig> Ports { get; init => field = value.ToImmutableArrayOrEmpty(); } = [];
+    public ImmutableArray<PortConfig> Ports { get; init => field = [.. value.WhereNotNull()]; } = [];
 }
 
 class PortConfig
 {
     public required PortDescriptor Descriptor { get; init => field = value.Required(); }
-    public ImmutableArray<DeviceConfig> Devices { get; init => field = value.ToImmutableArrayOrEmpty(); } = [];
+    public ImmutableArray<DeviceConfig> Devices { get; init => field = [.. value.WhereNotNull()]; } = [];
 }
 
 class DeviceConfig
 {
     public required DeviceDescriptor Descriptor { get; init => field = value.Required(); }
-    public ImmutableArray<SubscriptionConfig> Subscriptions { get; init => field = value.ToImmutableArrayOrEmpty(); } = [];
+    public ImmutableArray<SubscriptionConfig> Subscriptions { get; init => field = [.. value.WhereNotNull()]; } = [];
 }
 
 class SubscriptionConfig
@@ -116,7 +117,7 @@ internal static class AAA
                 .ToEnum<IpProtocolType>();
 
             var ip = root.GetValueStringByPath("Ip").Required("缺少Ip地址")
-                .ToIPAddress();
+                .ToIpAddress();
 
             var port = root.GetValueStringByPath("Port").Required("缺少端口")
                 .ToInt32()

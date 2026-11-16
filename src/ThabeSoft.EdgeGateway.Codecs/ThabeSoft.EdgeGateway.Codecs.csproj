@@ -1,5 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+	<PropertyGroup>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+
+	<!--兼容包-->
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+
+		<!--不可变集合-->
+		<PackageReference Include="System.Collections.Immutable" Version="11.0.0" />
+
+	</ItemGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Abstractions\ThabeSoft.EdgeGateway.Abstractions.csproj" />
 	</ItemGroup>

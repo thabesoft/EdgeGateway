@@ -33,7 +33,7 @@ public sealed record class SerialTransportDescriptor : TransportDescriptor
             return false;
         }
         var portNumberString = trimedPortName[3..];
-        if (!int.TryParse(portNumberString, out _))
+        if (!int.TryParse(portNumberString, null, out _))
         {
             errorMessage = $"串口名称格式错误, 应类似于 COM1 或 COM3";
             return false;

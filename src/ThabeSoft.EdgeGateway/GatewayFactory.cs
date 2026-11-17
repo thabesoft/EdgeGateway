@@ -32,16 +32,16 @@ internal sealed class GatewayFactory(
         var gatewayStateEventDisposable = gatewayState.StateChanged.Subscribe(x =>
             _ = eventPublisher.PublishAsync(new GatewayStateChangedEvent(x.Old, x.New)));
 
-        var portCollection = new PortCollection(
+        var portManager = new PortManager(
             gatwayLifecycleState: gatewayState,
             eventPublisher: eventPublisher,
             creator: PortCreator);
 
         var gateway = new Gateway(
             lifecycleStateMachine: gatewayState,
-            portCollection: portCollection);
+            portManager: portManager);
 
-        var gatewayDisposer = DisposableCollection.From(portCollection, gatewayStateEventDisposable, gatewayState);
+        var gatewayDisposer = DisposableCollection.From(portManager, gatewayStateEventDisposable, gatewayState);
         gateway.Disposed.Subscribe(gatewayDisposer.DisposeAsync);
 
         return gateway;

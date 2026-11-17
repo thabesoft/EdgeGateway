@@ -13,7 +13,6 @@ public interface IGateway : ILifecycleWithState
     ValueTask<bool> RemovePortAsync(PortId id, CancellationToken cancellationToken = default);
 }
 
-
 public static class GatewayExtensions
 {
     extension(IGateway gateway)

@@ -6,7 +6,7 @@ using ThabeSoft.EdgeGateway.Utilities;
 namespace ThabeSoft.EdgeGateway.Ports;
 
 
-internal sealed class PortCollection : IAsyncDisposable
+internal sealed class PortManager : IAsyncDisposable
 {
     private readonly ILifecycleKeyedCollection<PortId, Port> _collection;
     private readonly ILifecycleBatchExecutor _batchExecutor;
@@ -14,7 +14,7 @@ internal sealed class PortCollection : IAsyncDisposable
     private readonly Func<PortDescriptor, Port> _creator;
 
 
-    public PortCollection(ILifecycleStateable gatwayLifecycleState, IEventPublisher eventPublisher, Func<PortDescriptor, Port> creator)
+    public PortManager(ILifecycleStateable gatwayLifecycleState, IEventPublisher eventPublisher, Func<PortDescriptor, Port> creator)
     {
         _creator = creator;
         _collection = Lifecycle.KeyedCollection<PortId, Port>(gatwayLifecycleState);

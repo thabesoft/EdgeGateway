@@ -16,13 +16,17 @@ internal sealed class PortManager : IAsyncDisposable
     private readonly Func<PortDescriptor, Port> _portCreator;
 
 
-    public PortManager(PortManagerDependencies dependencies)
+    public PortManager(
+            PortManagerDependencies dependencies,
+            IEventPublisher eventPublisher,
+            ILifecycleKeyedCollectionFactory lifecycleKeyedCollectionFactory,
+            ILifecycleBatchExecutorFactory lifecycleBatchExecutorFactory)
     {
         _portCreator = dependencies.PortCreator;
-        _eventPublisher = dependencies.EventPublisher;
+        _eventPublisher = eventPublisher;
 
-        _collection = dependencies.LifecycleKeyedCollectionFactory.Create<PortId, Port>(dependencies.GatwayLifecycleState);
-        _batchExecutor = dependencies.LifecycleBatchExecutorFactory.Create(dependencies.DeviceBatchExecutorDescriptor);
+        _collection = lifecycleKeyedCollectionFactory.Create<PortId, Port>(dependencies.GatwayLifecycleState);
+        _batchExecutor = lifecycleBatchExecutorFactory.Create(dependencies.PortBatchExecutorDescriptor);
 
         Items = new ReadOnlyDictionaryView<PortId, Port, IPort>(_collection.Items);
     }
@@ -61,11 +65,22 @@ internal readonly struct PortManagerDependencies
 {
     public required ILifecycleStateable GatwayLifecycleState { get; init => field = value.Required(); }
     public required Func<PortDescriptor, Port> PortCreator { get; init => field = value.Required(); }
-    public required LifecycleBatchExecutorDescriptor DeviceBatchExecutorDescriptor { get; init => field = value.Required(); }
+    public required LifecycleBatchExecutorDescriptor PortBatchExecutorDescriptor { get; init => field = value.Required(); }
+}
 
 
-
-    public required IEventPublisher EventPublisher { get; init => field = value.Required(); }
-    public required ILifecycleKeyedCollectionFactory LifecycleKeyedCollectionFactory { get; init => field = value.Required(); }
-    public required ILifecycleBatchExecutorFactory LifecycleBatchExecutorFactory { get; init => field = value.Required(); }
+internal sealed class PortManagerFactory(
+        IEventPublisher eventPublisher,
+        ILifecycleKeyedCollectionFactory lifecycleKeyedCollectionFactory,
+        ILifecycleBatchExecutorFactory lifecycleBatchExecutorFactory
+    )
+{
+    public PortManager Create(PortManagerDependencies dependencies)
+    {
+        return new(
+            dependencies: dependencies,
+            eventPublisher: eventPublisher,
+            lifecycleKeyedCollectionFactory: lifecycleKeyedCollectionFactory,
+            lifecycleBatchExecutorFactory: lifecycleBatchExecutorFactory);
+    }
 }

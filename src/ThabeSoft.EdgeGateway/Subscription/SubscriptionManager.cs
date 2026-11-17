@@ -9,7 +9,7 @@ using ThabeSoft.Guard;
 namespace ThabeSoft.EdgeGateway.Subscription;
 
 
-internal sealed class SubscriptionCollection : IAsyncDisposable
+internal sealed class SubscriptionManager : IAsyncDisposable
 {
     private readonly ILifecycleKeyedCollection<SubscriptionId, IAsyncDisposableSubscription> _collection;
     private readonly ILifecycleBatchExecutor _batchExecutor;
@@ -20,14 +20,19 @@ internal sealed class SubscriptionCollection : IAsyncDisposable
     private readonly DeviceId _deviceId;
 
 
-    public SubscriptionCollection(SubscriptionCollectionDependencies dependencies)
+    public SubscriptionManager(
+        SubscriptionManagerDependencies dependencies,
+        IEventPublisher eventPublisher,
+        ILifecycleKeyedCollectionFactory lifecycleKeyedCollectionFactory,
+        ILifecycleBatchExecutorFactory lifecycleBatchExecutorFactory)
     {
-        _collection = Lifecycle.KeyedCollection<SubscriptionId, IAsyncDisposableSubscription>(dependencies.GatwayLifecycleState);
-        _batchExecutor = Lifecycle.BatchExecutor();
-        _creator = dependencies.SubscriptionCreator;
         _portId = dependencies.PortId;
         _deviceId = dependencies.DeviceId;
-        _eventPublisher = dependencies.EventPublisher;
+        _eventPublisher = eventPublisher;
+        _creator = dependencies.SubscriptionCreator;
+
+        _collection = lifecycleKeyedCollectionFactory.Create<SubscriptionId, IAsyncDisposableSubscription>(dependencies.DeviceState);
+        _batchExecutor = lifecycleBatchExecutorFactory.Create(dependencies.SubscriptionBatchExecutorDescriptor);
 
         Items = new ReadOnlyDictionaryView<SubscriptionId, IAsyncDisposableSubscription, ISubscription>(_collection.Items);
     }
@@ -69,11 +74,29 @@ internal interface ISubscriptionCreator
     Subscription<T> Create<T>(SubscriptionDescriptor<T> descriptor) where T : notnull;
 }
 
-internal readonly struct SubscriptionCollectionDependencies
+internal readonly struct SubscriptionManagerDependencies
 {
-    public required ILifecycleStateable GatwayLifecycleState { get; init => field = value.Required(); }
-    public required IEventPublisher EventPublisher { get; init => field = value.Required(); }
     public required PortId PortId { get; init => field = value.Required(); }
     public required DeviceId DeviceId { get; init => field = value.Required(); }
+    public required ILifecycleStateable DeviceState { get; init => field = value.Required(); }
+
     public required ISubscriptionCreator SubscriptionCreator { get; init => field = value.Required(); }
+    public required LifecycleBatchExecutorDescriptor SubscriptionBatchExecutorDescriptor { get; init => field = value.Required(); }
+}
+
+
+internal sealed class SubscriptionManagerFactory(
+        IEventPublisher eventPublisher,
+        ILifecycleBatchExecutorFactory lifecycleBatchExecutorFactory,
+        ILifecycleKeyedCollectionFactory lifecycleKeyedCollectionFactory
+    )
+{
+    public SubscriptionManager Create(SubscriptionManagerDependencies dependencies)
+    {
+        return new(
+            dependencies: dependencies,
+            eventPublisher: eventPublisher,
+            lifecycleKeyedCollectionFactory: lifecycleKeyedCollectionFactory,
+            lifecycleBatchExecutorFactory: lifecycleBatchExecutorFactory);
+    }
 }

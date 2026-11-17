@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-
-namespace ThabeSoft.EdgeGateway.Utilities;
+﻿namespace ThabeSoft.EdgeGateway.Utilities;
 
 
 public sealed class Disposer : IDisposable
@@ -17,10 +14,4 @@ public sealed class Disposer : IDisposable
 
 
     public void Dispose() => _action.Invoke();
-
-
-
-
-
-    
 }

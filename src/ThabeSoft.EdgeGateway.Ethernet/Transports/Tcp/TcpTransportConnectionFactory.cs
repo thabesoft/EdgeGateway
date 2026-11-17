@@ -3,14 +3,14 @@
 namespace ThabeSoft.EdgeGateway.Transports.Tcp;
 
 
-internal sealed class TcpTransportConnectionFactory(ILoggerFactory loggerFactory) : ITransportConnectionFactory
+internal sealed class TcpTransportConnectionFactory(ILoggerFactory loggerFactory) : ITransportConnectionResolver
 {
-    public bool CanCreate(TransportDescriptor descriptor)
+    public bool CanResolve(TransportDescriptor descriptor)
     {
         return descriptor is IpTransportDescriptor ip && ip.ProtocolType == IpProtocolType.Tcp;
     }
 
-    public ITransportConnection Create(TransportDescriptor descriptor)
+    public ITransportConnection Resolve(TransportDescriptor descriptor)
     {
         if (descriptor is not IpTransportDescriptor ip || ip.ProtocolType != IpProtocolType.Tcp)
             throw new InvalidOperationException();

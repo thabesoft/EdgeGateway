@@ -1,40 +1,48 @@
 ﻿using Microsoft.Extensions.Logging;
+using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Events;
+using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Ports;
+using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway;
 
 
-internal sealed class Gateway(
-        ILifecycleStateMachine lifecycleStateMachine,
-        PortManager portManager,
-        ILogger<Gateway> logger
-    ) : IGateway, IAsyncDisposable
+internal sealed class Gateway(GatewayDependencies dependencies) :
+    IGateway, IAsyncDisposable
 {
-    public LifecycleState State => lifecycleStateMachine.State;
-    public IReadOnlyDictionary<PortId, IPort> Ports => portManager.Items;
+    private readonly ILifecycleStateMachine _stateMachine = dependencies.GatwayStateMachine;
+    private readonly PortManager _portManager = dependencies.PortManager;
+    private readonly ILogger _logger = dependencies.Logger;
+
+
+    public LifecycleState State => _stateMachine.State;
+    public IReadOnlyDictionary<PortId, IPort> Ports => _portManager.Items;
     public Func<ValueTask>? DisposedCallback { get; init; }
 
 
     public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
-        lifecycleStateMachine.StartAsync(portManager.StartAllAsync, cancellationToken);
+        _stateMachine.StartAsync(_portManager.StartAllAsync, cancellationToken);
     public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
-        lifecycleStateMachine.StopAsync(portManager.StopAllAsync, cancellationToken);
+        _stateMachine.StopAsync(_portManager.StopAllAsync, cancellationToken);
     public ValueTask DisposeAsync() =>
-        lifecycleStateMachine.DisposeAsync(OnDisposeAsync);
+        _stateMachine.DisposeAsync(OnDisposeAsync);
 
 
 
     public async ValueTask<IPort> AddPortAsync(PortDescriptor descriptor, CancellationToken cancellationToken = default)
     {
-        return await lifecycleStateMachine.ExecuteAsync(ct =>
-            portManager.AddAsync(descriptor, ct), cancellationToken);
+        return await _stateMachine.ExecuteAsync(ct =>
+            _portManager.AddAsync(descriptor, ct), cancellationToken);
     }
     public async ValueTask<bool> RemovePortAsync(PortId id, CancellationToken cancellationToken = default)
     {
-        return await lifecycleStateMachine.ExecuteAsync(ct =>
-            portManager.RemoveAsync(id, ct), cancellationToken);
+        return await _stateMachine.ExecuteAsync(ct =>
+            _portManager.RemoveAsync(id, ct), cancellationToken);
     }
 
     private async ValueTask OnDisposeAsync()
@@ -42,6 +50,98 @@ internal sealed class Gateway(
         if (DisposedCallback is null) return;
 
         try { await DisposedCallback.Invoke(); }
-        catch (Exception ex) { logger.LogError(ex, "网关释放回调执行异常"); }
+        catch (Exception ex) { _logger.LogError(ex, "网关释放回调执行异常"); }
     }
+}
+
+internal readonly struct GatewayDependencies
+{
+    // Gateway
+    public required ILogger Logger { get; init => field = value.Required(); }
+    public required ILifecycleStateMachine GatwayStateMachine { get; init => field = value.Required(); }
+
+    // Port
+    public required PortManager PortManager { get; init => field = value.Required(); }
+}
+
+
+internal sealed class GatewayFactory(
+        ILifecycleStateMachineFactory lifecycleStateMachineFactory,
+        IEventPublisher eventPublisher,
+        DeviceManagerFactory deviceManagerFactory,
+        ProtocolAccessorResolver protocolAccessorResolver,
+        PortManagerFactory portManagerFactory,
+        PortFactory portFactory,
+        ILoggerFactory loggerFactory
+    )
+{
+    public Gateway Create(GatewayCreationContext context)
+    {
+        var logger = loggerFactory.CreateLogger<Gateway>();
+
+        // 状态机
+        var gatewayStateMachine = lifecycleStateMachineFactory.Create(context.GatewayStateMachineDescriptor);
+        var gatewayStateEventDisposable = gatewayStateMachine.StateChanged.Subscribe(x =>
+            _ = eventPublisher.PublishAsync(new GatewayStateChangedEvent(x.Old, x.New)));
+
+
+        var portManager = portManagerFactory.Create(new()
+        {
+            GatwayLifecycleState = gatewayStateMachine,
+            PortBatchExecutorDescriptor = context.PortBatchExecutorDescriptor,
+            PortCreator = port => portFactory.Create(new()
+            {
+                GatewayLifecycleState = gatewayStateMachine,
+
+                Port = port,
+                PortStateMachineDescriptor = context.PortStateMachine,
+
+                DeviceStateMachineDescriptor = context.DeviceStateMachine,
+                DeviceBatchExecutorDescriptor = context.DeviceBatchExecutorDescriptor,
+
+                SubscriptionStateMachineDescriptor = context.SubscriptionStateMachine,
+                SubscriptionBatchExecutorDescriptor = context.SubscriptionBatchExecutorDescriptor,
+            })
+        });
+
+        // 网关依赖
+        var gatewaytDependencies = new GatewayDependencies()
+        {
+            GatwayStateMachine = gatewayStateMachine,
+            PortManager = portManager,
+            Logger = logger
+        };
+
+
+        return new Gateway(gatewaytDependencies)
+        {
+            DisposedCallback = async () =>
+            {
+                await portManager.TryDisposeAsync();
+                gatewayStateEventDisposable.TryDispose();
+                await gatewayStateMachine.TryDisposeAsync();
+            }
+        };
+    }
+}
+
+
+public sealed record GatewayCreationContext
+{
+    // Gateway
+    public required LifecycleStateMachineDescriptor GatewayStateMachineDescriptor { get; init; }
+    public required LifecycleStateMachineDescriptor GatewayStateMachine { get; init => field = value.Required(); }
+
+    // Port
+    public required LifecycleStateMachineDescriptor PortStateMachine { get; init => field = value.Required(); }
+    public required LifecycleBatchExecutorDescriptor PortBatchExecutorDescriptor { get; init; }
+
+    // Device
+    public required LifecycleStateMachineDescriptor DeviceStateMachine { get; init => field = value.Required(); }
+    public required LifecycleBatchExecutorDescriptor DeviceBatchExecutorDescriptor { get; init; }
+
+
+    // Subscription
+    public required LifecycleStateMachineDescriptor SubscriptionStateMachine { get; init => field = value.Required(); }
+    public required LifecycleBatchExecutorDescriptor SubscriptionBatchExecutorDescriptor { get; init => field = value.Required(); }
 }

@@ -13,7 +13,7 @@ public static class SerialDependencyInjectionExtensions
         /// </summary>
         public IServiceCollection AddEdgeGatewaySerial()
         {
-            descriptors.AddSingleton<ITransportConnectionFactory, SerialTransportFactory>();
+            descriptors.AddSingleton<ITransportConnectionResolver, SerialTransportFactory>();
             return descriptors;
         }
     }

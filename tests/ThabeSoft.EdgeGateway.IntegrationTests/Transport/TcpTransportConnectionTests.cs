@@ -20,7 +20,7 @@ public class TcpTransportConnectionTests
                 .AddEdgeGatewayTransport()
             )
             .Build();
-        var resolver = app.Services.GetRequiredService<ITransportConnectionFactoryResolver>();
+        var resolver = app.Services.GetRequiredService<ITransportConnectionFactoryFactory>();
 
 
 

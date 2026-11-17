@@ -1,10 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+using System.Collections.Concurrent;
 using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Events;
+using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transports;
-using ThabeSoft.EdgeGateway.Utilities;
 using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Ports;
@@ -13,19 +17,18 @@ namespace ThabeSoft.EdgeGateway.Ports;
 internal sealed class Port(PortDependencies dependencies) :
     IPort, IAsyncDisposable
 {
-    private readonly DisposeNotifier _disposeNotifier = new(dependencies.Logger);
-    private readonly ILogger<Port> _logger = dependencies.Logger;
-    private readonly ILifecycleStateMachine _stateMachine = dependencies.LifecycleStateMachine;
-    private readonly DeviceManager _deviceCollection = dependencies.DeviceCollection;
+    private readonly ILogger _logger = dependencies.Logger;
+    private readonly ILifecycleStateMachine _stateMachine = dependencies.PortStateMachine;
+    private readonly DeviceManager _deviceCollection = dependencies.DeviceManager;
     private readonly ILifecycleStateable _gatewayLifecycleStateable = dependencies.GatewayLifecycleState;
     private readonly ILifecycle _transportConnectionLifeCycle = dependencies.TransportConnectionLifeCycle;
 
 
-    public PortId Id { get; } = dependencies.Descriptor.Id;
-    public ConnectionEndpoint Endpoint { get; } = dependencies.Descriptor.Transport.Endpoint;
+    public PortId Id { get; } = dependencies.Port.Id;
+    public ConnectionEndpoint Endpoint { get; } = dependencies.Port.Transport.Endpoint;
     public IReadOnlyDictionary<DeviceId, IDevice> Devices => _deviceCollection.Items;
     public LifecycleState State => _stateMachine.State;
-    public IDisposeObservable Disposed => _disposeNotifier;
+    public Func<ValueTask>? DisposedCallback { get; init; }
 
 
     public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
@@ -85,18 +88,119 @@ internal sealed class Port(PortDependencies dependencies) :
     }
     private async ValueTask OnDisposeAsync()
     {
-        await _disposeNotifier.RaiseAsync(this);
-        await _disposeNotifier.TryDisposeAsync(_logger);
+        if (DisposedCallback is null) return;
+
+        try { await DisposedCallback.Invoke(); }
+        catch (Exception ex) { dependencies.Logger.LogError(ex, "设备释放回调异常"); }
     }
 }
 
 internal readonly struct PortDependencies
 {
-    public required PortDescriptor Descriptor { get; init => field = value.Required(); }
+    // Gateway
     public required ILifecycleStateable GatewayLifecycleState { get; init => field = value.Required(); }
-    public required DeviceManager DeviceCollection { get; init => field = value.Required(); }
-    public required ILifecycle TransportConnectionLifeCycle { get; init => field = value.Required(); }
 
-    public required ILifecycleStateMachine LifecycleStateMachine { get; init => field = value.Required(); } 
-    public required ILogger<Port> Logger { get; init => field = value.Required(); }
+    // Port
+    public required ILogger Logger { get; init => field = value.Required(); }
+    public required PortDescriptor Port { get; init => field = value.Required(); }
+    public required ILifecycle TransportConnectionLifeCycle { get; init => field = value.Required(); }
+    public required ILifecycleStateMachine PortStateMachine { get; init => field = value.Required(); }
+
+
+    // Device
+    public required DeviceManager DeviceManager { get; init => field = value.Required(); }
+}
+
+
+internal sealed class PortFactory(
+        ILifecycleStateMachineFactory lifecycleStateMachineFactory,
+        IEventPublisher eventPublisher,
+        DeviceManagerFactory deviceManagerFactory,
+        ITransportConnectionFactoryFactory transportConnectionFactory,
+        ProtocolAccessorResolver protocolAccessorResolver,
+        DeviceFactory deviceFactory,
+        ILoggerFactory loggerFactory
+    )
+{
+    public Port Create(PortCreationContext context)
+    {
+        var logger = loggerFactory.CreateLogger<Port>();
+
+        // 状态机
+        var portStateMachine = lifecycleStateMachineFactory.Create(context.PortStateMachineDescriptor);
+        var deviceStateEventDisposable = portStateMachine.StateChanged.Subscribe(x =>
+            _ = eventPublisher.PublishAsync(new PortStateChangedEvent(context.Port.Id, x.Old, x.New)));
+
+        // 传输器
+        var transport = transportConnectionFactory.Resolve(context.Port.Transport);
+        var protocolAccessors = new ConcurrentDictionary<ProtocolDescriptor, IProtocolAccessor>();
+
+        // 设备管理器
+        var deviceManager = deviceManagerFactory.Create(new()
+        {
+            Port = context.Port,
+            PortLifecycleState = portStateMachine,
+
+            DeviceBatchExecutorDescriptor = context.DeviceBatchExecutorDescriptor,
+            DevicCreator = device => deviceFactory.Create(new()
+            {
+                Port = context.Port,
+                ProtocolAccessor = protocolAccessors.GetOrAdd(device.Protocol, protocol => protocolAccessorResolver.Resolve(protocol, transport)),
+                PortState = portStateMachine,
+
+                Device = device,
+                DeviceStateMachineDescriptor = context.DeviceStateMachineDescriptor,
+
+                SubscriptionBatchExecutorDescriptor = context.SubscriptionBatchExecutorDescriptor,
+                SubscriptionStateMachineDescriptor = context.SubscriptionStateMachineDescriptor
+            })
+        });
+
+        // 端口依赖
+        var portDependencies = new PortDependencies()
+        {
+            GatewayLifecycleState = context.GatewayLifecycleState,
+
+            Port = context.Port,
+            PortStateMachine = portStateMachine,
+
+            DeviceManager = deviceManager,
+            TransportConnectionLifeCycle = transport,
+
+            Logger = logger
+        };
+
+        return new Port(portDependencies)
+        {
+            DisposedCallback = async () =>
+            {
+                await deviceManager.TryDisposeAsync();
+                protocolAccessors.Clear();
+                await transport.TryDisposeAsync();
+                deviceStateEventDisposable.TryDispose();
+                await portStateMachine.TryDisposeAsync();
+            }
+        };
+    }
+}
+
+
+internal readonly struct PortCreationContext
+{
+    // Gateway
+    public required ILifecycleStateable GatewayLifecycleState { get; init => field = value.Required(); }
+
+
+    // Port
+    public required PortDescriptor Port { get; init => field = value.Required(); }
+    public required LifecycleStateMachineDescriptor PortStateMachineDescriptor { get; init; }
+
+    // Device
+    public required LifecycleStateMachineDescriptor DeviceStateMachineDescriptor { get; init => field = value.Required(); }
+    public required LifecycleBatchExecutorDescriptor DeviceBatchExecutorDescriptor { get; init => field = value.Required(); }
+
+
+    // Subscription
+    public required LifecycleStateMachineDescriptor SubscriptionStateMachineDescriptor { get; init => field = value.Required(); }
+    public required LifecycleBatchExecutorDescriptor SubscriptionBatchExecutorDescriptor { get; init; }
 }

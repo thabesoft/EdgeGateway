@@ -1,18 +1,16 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using System.Collections.Concurrent;
-using ThabeSoft.EdgeGateway.Readings;
 using ThabeSoft.EdgeGateway.Utilities;
 
-namespace ThabeSoft.EdgeGateway.Subscription;
+namespace ThabeSoft.EdgeGateway.Readings;
 
 
-internal sealed class ReadingObservable<T>(ILogger? logger = null) : 
-    IObservable<Reading<T>>, IObservable<Reading>, IDisposable
+internal sealed class ReadingObservable<T>(
+        ILogger<ReadingObservable<T>> logger
+    ) : IObservable<Reading<T>>, IObservable<Reading>, IDisposable
     where T : notnull
 {
     private volatile int _disposed;
-    private readonly ILogger _logger = logger ?? NullLogger.Instance;
     private readonly ConcurrentDictionary<Guid, IObserver<Reading<T>>> _observers = [];
 
 
@@ -43,7 +41,7 @@ internal sealed class ReadingObservable<T>(ILogger? logger = null) :
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex,
+                logger.LogError(ex,
                    "观察者处理数据时发生异常。数据类型: {DataType}, 当前值: {@Value}, 观察者类型: {ObserverType}",
                    typeof(T).Name,
                    value,

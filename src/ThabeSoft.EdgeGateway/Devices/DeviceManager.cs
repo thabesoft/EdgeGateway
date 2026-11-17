@@ -24,7 +24,7 @@ internal sealed class DeviceManager : IAsyncDisposable
             ILifecycleBatchExecutorFactory lifecycleBatchExecutorFactory)
     {
         _devicCreator = dependencies.DevicCreator;
-        _portId = dependencies.PortId;
+        _portId = dependencies.Port.Id;
         _eventPublisher = eventPublisher;
 
         _collection = lifecycleKeyedCollectionFactory.Create<DeviceId, Device>(dependencies.PortLifecycleState);
@@ -66,8 +66,11 @@ internal sealed class DeviceManager : IAsyncDisposable
 
 internal readonly struct DeviceManagerDependencies
 {
+    // Port
+    public required PortDescriptor Port { get; init => field = value.Required(); }
     public required ILifecycleStateable PortLifecycleState { get; init => field = value.Required(); }
-    public required PortId PortId { get; init => field = value.Required(); }
+
+    // Device
     public required Func<DeviceDescriptor, Device> DevicCreator { get; init => field = value.Required(); }
     public required LifecycleBatchExecutorDescriptor DeviceBatchExecutorDescriptor { get; init => field = value.Required(); }
 }
@@ -79,10 +82,10 @@ internal sealed class DeviceManagerFactory(
         ILifecycleBatchExecutorFactory lifecycleBatchExecutorFactory
     )
 {
-    public DeviceManager Create(DeviceManagerDependencies deviceManagerDependencies)
+    public DeviceManager Create(DeviceManagerDependencies dependencies)
     {
         return new(
-            dependencies: deviceManagerDependencies,
+            dependencies: dependencies,
             eventPublisher: eventPublisher,
             lifecycleKeyedCollectionFactory: lifecycleKeyedCollectionFactory,
             lifecycleBatchExecutorFactory: lifecycleBatchExecutorFactory);

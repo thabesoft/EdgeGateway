@@ -22,19 +22,19 @@ internal sealed class TcpTransportConnection : ITransportConnection
 
     public TcpTransportConnection(
             IpTransportDescriptor descriptor,
-            ILogger<TcpTransportConnection>? logger = null)
+            ILifecycleStateMachine stateMachine,
+            ILogger<TcpTransportConnection> logger)
     {
+        _logger = logger;
         _descriptor = descriptor;
-        _logger = logger ?? NullLogger<TcpTransportConnection>.Instance;
-
-        _stateMachine = Lifecycle.StrictStateMachine(logger);
+        _stateMachine = stateMachine;
         _retryBackoff = new(descriptor.Retry);
         _reconnectBackgroundLifecycle = Lifecycle.Background(ReconnectLoopAsync, logger);
     }
 
     public ConnectionEndpoint Endpoint => _descriptor.Endpoint;
     public LifecycleState State => _stateMachine.State;
-
+    public Func<ValueTask>? DisposedCallback { get; init; }
 
 
     public async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
@@ -103,9 +103,19 @@ internal sealed class TcpTransportConnection : ITransportConnection
     {
         await _reconnectBackgroundLifecycle.StopAsync(cancellationToken);
     }
-    private ValueTask OnDisposeAsync()
+    private async ValueTask OnDisposeAsync()
     {
-        return OnStopAsync(CancellationToken.None);
+        try { await OnStopAsync(CancellationToken.None); }
+        catch (Exception ex) { _logger.LogError(ex, "Tcp 传输停止失败"); }
+
+        // 2. 释放底层 UdpClient
+        try { _tcpClient?.Dispose(); }
+        catch (Exception ex) { _logger.LogError(ex, "TcpClient 释放失败"); }
+
+
+        if (DisposedCallback is null) return;
+        try { await DisposedCallback.Invoke(); }
+        catch (Exception ex) { _logger.LogError(ex, "Tcp传输释放回调执行异常"); }
     }
 
 

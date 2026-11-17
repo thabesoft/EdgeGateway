@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace ThabeSoft.EdgeGateway.Utilities;
+namespace ThabeSoft.EdgeGateway.Extensions;
 
 
-internal static class DisposableExtensions
+public static class SafeDisposeExtensions
 {
     extension<T>(T obj) where T : IAsyncDisposable
     {
@@ -17,7 +17,7 @@ internal static class DisposableExtensions
             }
             catch (Exception ex)
             {
-                (logger ?? NullLogger.Instance).LogError(ex, "设备释放失败");
+                (logger ?? NullLogger.Instance).LogError(ex, "资源释放失败");
                 return false;
             }
         }
@@ -34,7 +34,7 @@ internal static class DisposableExtensions
             }
             catch (Exception ex)
             {
-                (logger ?? NullLogger.Instance).LogError(ex, "设备释放失败");
+                (logger ?? NullLogger.Instance).LogError(ex, "资源释放失败");
                 return false;
             }
         }

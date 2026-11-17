@@ -15,8 +15,8 @@ public static class EthernetDependencyInjectionExtensions
         /// </summary>
         public IServiceCollection AddEdgeGatewayEthernet()
         {
-            descriptors.AddSingleton<ITransportConnectionFactory, TcpTransportConnectionFactory>();
-            descriptors.AddSingleton<ITransportConnectionFactory, UdpTransportConnectionFactory>();
+            descriptors.AddSingleton<ITransportConnectionResolver, TcpTransportConnectionFactory>();
+            descriptors.AddSingleton<ITransportConnectionResolver, UdpTransportConnectionFactory>();
 
             return descriptors;
         }

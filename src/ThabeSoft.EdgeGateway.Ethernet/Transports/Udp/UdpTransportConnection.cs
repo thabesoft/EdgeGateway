@@ -9,10 +9,10 @@ namespace ThabeSoft.EdgeGateway.Transports.Udp;
 
 internal sealed class UdpTransportConnection(
         IpTransportDescriptor descriptor,
+        ILifecycleStateMachine stateMachine,
         ILogger<UdpTransportConnection> logger
     ) : ITransportConnection
 {
-    private readonly ILifecycleStateMachine _stateMachine = Lifecycle.StrictStateMachine(logger);
     private readonly UdpClient _udpClient = new();
 
     private Task? _receiveLoop;
@@ -22,13 +22,13 @@ internal sealed class UdpTransportConnection(
 
 
     public ConnectionEndpoint Endpoint { get; } = descriptor.Endpoint;
-    public LifecycleState State => _stateMachine.State;
-
+    public LifecycleState State => stateMachine.State;
+    public Func<ValueTask>? DisposedCallback { get; init; }
 
 
     public ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
     {
-        return _stateMachine.ExecuteAsync
+        return stateMachine.ExecuteAsync
         (
             handler: async ct =>
             {
@@ -50,7 +50,7 @@ internal sealed class UdpTransportConnection(
     }
     public async ValueTask WriteAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
     {
-        await _stateMachine.ExecuteAsync
+        await stateMachine.ExecuteAsync
         (
             handler: ct => _udpClient.SendAsync(data, ct),
             cancellationToken: cancellationToken
@@ -59,11 +59,11 @@ internal sealed class UdpTransportConnection(
 
 
     public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StartAsync(OnStartAsync, cancellationToken);
+        stateMachine.StartAsync(OnStartAsync, cancellationToken);
     public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StopAsync(OnStopAsync, cancellationToken);
+        stateMachine.StopAsync(OnStopAsync, cancellationToken);
     public ValueTask DisposeAsync() =>
-        _stateMachine.DisposeAsync(OnDisposeAsync);
+        stateMachine.DisposeAsync(OnDisposeAsync);
 
 
 
@@ -111,18 +111,17 @@ internal sealed class UdpTransportConnection(
     }
     private async ValueTask OnDisposeAsync()
     {
-        try
-        {
-            await OnStopAsync(CancellationToken.None);
-        }
-        catch
-        {
-
-        }
+        try { await OnStopAsync(CancellationToken.None); }
+        catch (Exception ex) { logger.LogError(ex, "释放 UdpClient 停止失败"); }
 
         // 2. 释放底层 UdpClient
         try { _udpClient.Dispose(); }
         catch (Exception ex) { logger.LogError(ex, "释放 UdpClient 失败"); }
+
+
+        if (DisposedCallback is null) return;
+        try { await DisposedCallback.Invoke(); }
+        catch (Exception ex) { logger.LogError(ex, "网关释放回调执行异常"); }
     }
 
 

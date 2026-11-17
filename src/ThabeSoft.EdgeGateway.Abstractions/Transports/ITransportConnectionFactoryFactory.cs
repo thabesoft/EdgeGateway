@@ -1,7 +1,7 @@
 ﻿
 namespace ThabeSoft.EdgeGateway.Transports;
 
-public interface ITransportConnectionFactoryResolver
+public interface ITransportConnectionFactoryFactory
 {
     ITransportConnection Resolve(TransportDescriptor transportDescriptor);
 }

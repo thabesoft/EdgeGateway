@@ -1,10 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Events;
 using ThabeSoft.EdgeGateway.Hosting;
+using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Readings;
 using ThabeSoft.EdgeGateway.Recoveries;
+using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.EdgeGateway.DependencyInjection;
@@ -14,8 +17,20 @@ public static class CoreDependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {
-        public IServiceCollection AddEdgeGateway(GatewayDescriptor descriptor)
+        public IServiceCollection AddEdgeGateway(GatewayCreationContext creationContext)
         {
+            descriptors.AddSingleton<SubscriptionFactory>();
+            descriptors.AddSingleton<SubscriptionManagerFactory>();
+
+            descriptors.AddSingleton<DeviceFactory>();
+            descriptors.AddSingleton<DeviceManagerFactory>();
+
+            descriptors.AddSingleton<PortFactory>();
+            descriptors.AddSingleton<PortManagerFactory>();
+
+            descriptors.AddSingleton<GatewayFactory>();
+
+
             descriptors.AddEdgeGatewayEvents();
             descriptors.AddEdgeGatewayRecovers();
             descriptors.AddEdgeGatewayTransport();
@@ -27,7 +42,7 @@ public static class CoreDependencyInjectionExtensions
             descriptors.TryAddSingleton<IGateway>(sp =>
             {
                 var gatewayFactory = sp.GetRequiredService<GatewayFactory>();
-                return gatewayFactory.Create(descriptor);
+                return gatewayFactory.Create(creationContext);
             });
 
             return descriptors;
@@ -50,7 +65,7 @@ public static class CoreDependencyInjectionExtensions
 
         public IServiceCollection AddEdgeGatewayTransport()
         {
-            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportConnectionFactoryResolver, TransportConnectionResolver>());
+            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportConnectionFactoryFactory, TransportConnectionFactory>());
             return descriptors;
         }
 

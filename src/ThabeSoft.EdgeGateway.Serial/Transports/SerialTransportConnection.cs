@@ -1,44 +1,36 @@
-﻿using RJCP.IO.Ports;
+﻿using Microsoft.Extensions.Logging;
+using RJCP.IO.Ports;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Transports.Byte;
+
 using RJCPParity = RJCP.IO.Ports.Parity;
 using RJCPStopBit = RJCP.IO.Ports.StopBits;
-
 
 namespace ThabeSoft.EdgeGateway.Transports;
 
 
-internal sealed class SerialTransportConnection : ITransportConnection, IReadBufferDiscardable
-{
-    private readonly ILifecycleStateMachine _stateMachine;
-    private readonly SerialPortStream _serialPort;
-
-    public SerialTransportConnection(
+internal sealed class SerialTransportConnection(
         SerialTransportDescriptor descriptor,
-        ILifecycleStateMachine stateMachine)
-    {
-        ArgumentNullException.ThrowIfNull(descriptor);
-        ArgumentNullException.ThrowIfNull(stateMachine);
-
-        _serialPort = new(
+        ILifecycleStateMachine stateMachine,
+        ILogger<SerialTransportConnection> logger
+    ) : ITransportConnection, IReadBufferDiscardable
+{
+    private readonly SerialPortStream _serialPort = new(
             port: descriptor.PortName,
             baud: descriptor.BaudRate,
             data: descriptor.DataBits,
             parity: Parse(descriptor.Parity),
             stopbits: Parse(descriptor.StopBits));
 
-        _stateMachine = stateMachine;
-        Endpoint = descriptor.Endpoint;
-    }
-
-    public ConnectionEndpoint Endpoint { get; }
-    public LifecycleState State => throw new NotImplementedException();
+    public ConnectionEndpoint Endpoint { get; } = descriptor.Endpoint;
+    public LifecycleState State => stateMachine.State;
+    public Func<ValueTask>? DisposedCallback { get; init; }
 
 
     public ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
     {
-        return _stateMachine.ExecuteAsync
+        return stateMachine.ExecuteAsync
         (
             handler: ct => _serialPort.ReadAsync(buffer, ct),
             cancellationToken: cancellationToken
@@ -46,7 +38,7 @@ internal sealed class SerialTransportConnection : ITransportConnection, IReadBuf
     }
     public ValueTask WriteAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
     {
-        return _stateMachine.ExecuteAsync
+        return stateMachine.ExecuteAsync
         (
             handler: ct => _serialPort.WriteAsync(data, ct),
             cancellationToken: cancellationToken
@@ -54,16 +46,16 @@ internal sealed class SerialTransportConnection : ITransportConnection, IReadBuf
     }
     public void DiscardInputBuffer()
     {
-        _stateMachine.Execute(_serialPort.DiscardInBuffer);
+        stateMachine.Execute(_serialPort.DiscardInBuffer);
     }
 
 
     public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StartAsync(OnStartAsync, cancellationToken);
+        stateMachine.StartAsync(OnStartAsync, cancellationToken);
     public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StopAsync(OnStopAsync, cancellationToken);
+        stateMachine.StopAsync(OnStopAsync, cancellationToken);
     public ValueTask DisposeAsync() =>
-        _stateMachine.DisposeAsync(OnDisposeAsync);
+        stateMachine.DisposeAsync(OnDisposeAsync);
 
 
 
@@ -79,11 +71,22 @@ internal sealed class SerialTransportConnection : ITransportConnection, IReadBuf
     }
     private async ValueTask OnDisposeAsync()
     {
+        try
+        {
 #if NETSTANDARD2_0
         _serialPort.Dispose();
 #else
         await _serialPort.DisposeAsync();
 #endif
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "串口释放失败");
+        }
+
+        if (DisposedCallback is null) return;
+        try { await DisposedCallback.Invoke(); }
+        catch (Exception ex) { logger.LogError(ex, "串行传输释放回调执行异常"); }
     }
 
 

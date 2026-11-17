@@ -9,7 +9,7 @@ public sealed record IpTransportDescriptor : TransportDescriptor
 {
     public required IpProtocolType ProtocolType { get; init => field = value.Defined("不支持的Ip协议"); }
     public required IPAddress IP { get; init => field = value.Required("Ip地址不可为空"); }
-    public required int Port { get; init => field = value.NonNegative("端口不可为负数"); }
+    public required int Port { get; init => field = value.Positive("端口不可为负数"); }
 
 
     // 由于 Address 和 Port 属性可更改, 所以每次返回新的对象

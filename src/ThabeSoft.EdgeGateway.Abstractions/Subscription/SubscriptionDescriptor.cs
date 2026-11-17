@@ -1,6 +1,6 @@
-﻿using ThabeSoft.Guard;
-using ThabeSoft.EdgeGateway.Tags;
+﻿using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Triggers;
+using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Subscription;
 

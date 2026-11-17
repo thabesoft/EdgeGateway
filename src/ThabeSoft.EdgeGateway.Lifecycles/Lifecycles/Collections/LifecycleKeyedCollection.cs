@@ -1,27 +1,18 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using System.Collections.Concurrent;
 
 namespace ThabeSoft.EdgeGateway.Lifecycles.Collections;
 
 
-internal sealed class LifecycleKeyedCollection<TKey, TLifecycle> : ILifecycleKeyedCollection<TKey, TLifecycle>
+internal sealed class LifecycleKeyedCollection<TKey, TLifecycle>(
+        ILifecycleStateable stateSource,
+        ILogger<LifecycleKeyedCollection<TKey, TLifecycle>> logger
+    ) : ILifecycleKeyedCollection<TKey, TLifecycle>
     where TKey : notnull
     where TLifecycle : ILifecycle, IAsyncDisposable
 {
     private readonly ConcurrentDictionary<TKey, TLifecycle> _items = [];
-    private readonly ILifecycleStateable _stateSource;
-    private readonly ILogger _logger;
 
-    public LifecycleKeyedCollection(
-            ILifecycleStateable stateSource,
-            ILogger? logger = null)
-    {
-        ArgumentNullException.ThrowIfNull(stateSource);
-
-        _stateSource = stateSource;
-        _logger = logger ?? NullLogger.Instance;
-    }
 
     public IReadOnlyDictionary<TKey, TLifecycle> Items => _items;
 
@@ -34,7 +25,7 @@ internal sealed class LifecycleKeyedCollection<TKey, TLifecycle> : ILifecycleKey
             throw new InvalidOperationException($"{key} 已存在, 无法添加");
         }
 
-        if (_stateSource.State == LifecycleState.Running)
+        if (stateSource.State == LifecycleState.Running)
         {
             try
             {
@@ -57,10 +48,10 @@ internal sealed class LifecycleKeyedCollection<TKey, TLifecycle> : ILifecycleKey
             return false;
 
         try { await item.StopAsync(cancellationToken); }
-        catch (Exception ex) { _logger.LogError(ex, "移除 [{Type}]  时发生错误, 停止失败", item.GetType()); }
+        catch (Exception ex) { logger.LogError(ex, "移除 [{Type}]  时发生错误, 停止失败", item.GetType()); }
 
         try { await item.DisposeAsync(); }
-        catch (Exception ex) { _logger.LogError(ex, "移除 [{Type}] 时发生错误, 释放失败", key); }
+        catch (Exception ex) { logger.LogError(ex, "移除 [{Type}] 时发生错误, 释放失败", key); }
 
         return true;
     }
@@ -74,7 +65,7 @@ internal sealed class LifecycleKeyedCollection<TKey, TLifecycle> : ILifecycleKey
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "生命周期集合释放时发生错误");
+                logger.LogError(ex, "生命周期集合释放时发生错误");
             }
         }
     }

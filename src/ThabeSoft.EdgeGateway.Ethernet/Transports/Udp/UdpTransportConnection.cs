@@ -30,7 +30,7 @@ internal sealed class UdpTransportConnection(
     {
         return _stateMachine.ExecuteAsync
         (
-            method: async ct =>
+            handler: async ct =>
             {
                 if (_datagrams is null)
                     return 0;   // 未启动
@@ -52,7 +52,7 @@ internal sealed class UdpTransportConnection(
     {
         await _stateMachine.ExecuteAsync
         (
-            method: ct => _udpClient.SendAsync(data, ct),
+            handler: ct => _udpClient.SendAsync(data, ct),
             cancellationToken: cancellationToken
         );
     }

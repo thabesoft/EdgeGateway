@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
-using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 
 namespace ThabeSoft.EdgeGateway;
 
@@ -31,23 +30,6 @@ public static class Lifecycle
     }
 
     #endregion
-
-    #region --状态机--
-
-    /// <summary>
-    /// 标准 启动->停止->释放 状态机
-    /// </summary>
-    public static ILifecycleStateMachine StrictStateMachine(ILogger? logger = null) =>
-        new StrictLifecycleStateMachine(logger);
-
-    /// <summary>
-    /// 可以连续重复启动的状态机
-    /// </summary>
-    public static ILifecycleStateMachine RetryableStateMachine(ILogger? logger = null) =>
-        new RetryableLifecycleStateMachine(logger);
-
-    #endregion
-
 
     // 批量执行器
     public static ILifecycleBatchExecutor BatchExecutor(ILogger? logger = null) =>

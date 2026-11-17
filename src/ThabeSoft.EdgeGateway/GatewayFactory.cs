@@ -3,6 +3,8 @@ using System.Collections.Concurrent;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Events;
 using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Lifecycles.Collections;
+using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Readings;
@@ -19,15 +21,18 @@ internal sealed class GatewayFactory(
     ITriggerScheduler triggerScheduler,
     ProtocolAccessorResolver protocolAccessorResolver,
     ITransportConnectionFactoryResolver transportResolver,
+    ILifecycleStateMachineFactory stateMachineResolver,
+    ILifecycleBatchExecutorFactory lifecycleBatchExecutorFactory,
+    ILifecycleKeyedCollectionFactory lifecycleKeyedCollectionFactory,
+    DeviceManagerFactory deviceManagerFactory,
     ReadingSinkBus readingSinkBus,
     IEventPublisher eventPublisher,
     ILoggerFactory loggerFactory
     )
 {
-    public Gateway Create()
+    public Gateway Create(GatewayDescriptor gatewayDescriptor)
     {
-        var gatewayLogger = loggerFactory.CreateLogger<Gateway>();
-        var gatewayState = Lifecycle.RetryableStateMachine(gatewayLogger);
+        var gatewayState = stateMachineResolver.Create(gatewayDescriptor.GatewayStateMachine);
 
         var gatewayStateEventDisposable = gatewayState.StateChanged.Subscribe(x =>
             _ = eventPublisher.PublishAsync(new GatewayStateChangedEvent(x.Old, x.New)));
@@ -37,21 +42,28 @@ internal sealed class GatewayFactory(
             eventPublisher: eventPublisher,
             creator: PortCreator);
 
-        var gateway = new Gateway(
+        var gatewayLogger = loggerFactory.CreateLogger<Gateway>();
+
+        return new Gateway(
             lifecycleStateMachine: gatewayState,
-            portManager: portManager);
-
-        var gatewayDisposer = DisposableCollection.From(portManager, gatewayStateEventDisposable, gatewayState);
-        gateway.Disposed.Subscribe(gatewayDisposer.DisposeAsync);
-
-        return gateway;
+            portManager: portManager,
+            logger: gatewayLogger
+            )
+        {
+            DisposedCallback = async () =>
+            {
+                await portManager.TryDisposeAsync();
+                gatewayStateEventDisposable.TryDispose();
+                await gatewayState.TryDisposeAsync();
+            }
+        };
 
 
         Port PortCreator(PortDescriptor portDescriptor)
         {
             // 创建端口
             var portLogger = loggerFactory.CreateLogger<Port>();
-            var portState = Lifecycle.RetryableStateMachine(portLogger);
+            var portState = stateMachineResolver.Create(gatewayDescriptor.PortStateMachine);
 
             var portStateEventDisposable = gatewayState.StateChanged.Subscribe(x =>
                 _ = eventPublisher.PublishAsync(new PortStateChangedEvent(portDescriptor.Id, x.Old, x.New)));
@@ -59,12 +71,12 @@ internal sealed class GatewayFactory(
             var transport = transportResolver.Resolve(portDescriptor.Transport);
             var protocolAccessors = new ConcurrentDictionary<ProtocolDescriptor, IProtocolAccessor>();
 
-            var deviceCollection = new DeviceCollection(new()
+            var deviceCollection = deviceManagerFactory.Create(new()
             {
                 PortLifecycleState = portState,
                 PortId = portDescriptor.Id,
-                EventPublisher = eventPublisher,
-                DevicCreator = DeviceCreator
+                DevicCreator = DeviceCreator,
+                DeviceBatchExecutorDescriptor = new() { Concurrency = 1 }
             });
 
             var port = new Port(new()
@@ -85,7 +97,7 @@ internal sealed class GatewayFactory(
             Device DeviceCreator(DeviceDescriptor deviceDescriptor)
             {
                 var deviceLogger = loggerFactory.CreateLogger<Device>();
-                var deviceState = Lifecycle.RetryableStateMachine(deviceLogger);
+                var deviceState = stateMachineResolver.Create(gatewayDescriptor.DeviceStateMachine);
 
                 var deviceStateEventDisposable = gatewayState.StateChanged.Subscribe(x =>
                     _ = eventPublisher.PublishAsync(new DeviceStateChangedEvent(portDescriptor.Id, deviceDescriptor.Id, x.Old, x.New)));
@@ -102,7 +114,9 @@ internal sealed class GatewayFactory(
                     DeviceId = deviceDescriptor.Id,
                     ReadingSinkBus = readingSinkBus,
                     LoggerFactory = loggerFactory,
-                    EventPublisher = eventPublisher
+                    EventPublisher = eventPublisher,
+                    LifecycleStateMachineResolver = stateMachineResolver,
+                    SubscriptionDescriptor = gatewayDescriptor.SubscriptionStateMachine
                 });
 
                 var subscriptionCollection = new SubscriptionCollection(new()
@@ -136,7 +150,7 @@ internal sealed class GatewayFactory(
     {
         public Subscription<T> Create<T>(SubscriptionDescriptor<T> descriptor) where T : notnull
         {
-            var subscriptionState = Lifecycle.StrictStateMachine();
+            var subscriptionState = dependencies.LifecycleStateMachineResolver.Create(dependencies.SubscriptionDescriptor);
 
             var subscriptionStateEventDisposable = subscriptionState.StateChanged.Subscribe(x =>
                    _ = dependencies.EventPublisher.PublishAsync(new SubscriptionStateChanged(dependencies.PortId, dependencies.DeviceId, descriptor.Id, x.Old, x.New)));
@@ -170,5 +184,7 @@ internal sealed class GatewayFactory(
         public required ReadingSinkBus ReadingSinkBus { get; init => field = value.Required(); }
         public required ILoggerFactory LoggerFactory { get; init => field = value.Required(); }
         public required IEventPublisher EventPublisher { get; init => field = value.Required(); }
+        public required ILifecycleStateMachineFactory LifecycleStateMachineResolver { get; init => field = value.Required(); }
+        public required LifecycleStateMachineDescriptor SubscriptionDescriptor { get; init => field = value.Required(); }
     }
 }

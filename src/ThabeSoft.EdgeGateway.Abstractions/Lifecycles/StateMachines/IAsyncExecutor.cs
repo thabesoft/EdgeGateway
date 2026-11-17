@@ -7,10 +7,10 @@
 public interface IAsyncExecutor
 {
     ValueTask ExecuteAsync(
-        Func<CancellationToken, ValueTask> method,
+        Func<CancellationToken, ValueTask> handler,
         CancellationToken cancellationToken = default);
 
     ValueTask<TResult> ExecuteAsync<TResult>(
-        Func<CancellationToken, ValueTask<TResult>> method,
+        Func<CancellationToken, ValueTask<TResult>> handler,
         CancellationToken cancellationToken = default);
 }

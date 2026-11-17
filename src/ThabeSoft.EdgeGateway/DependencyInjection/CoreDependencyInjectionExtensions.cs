@@ -14,7 +14,7 @@ public static class CoreDependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {
-        public IServiceCollection AddEdgeGateway()
+        public IServiceCollection AddEdgeGateway(GatewayDescriptor descriptor)
         {
             descriptors.AddEdgeGatewayEvents();
             descriptors.AddEdgeGatewayRecovers();
@@ -24,7 +24,12 @@ public static class CoreDependencyInjectionExtensions
 
             // Gateway
             descriptors.TryAddSingleton<GatewayFactory>();
-            descriptors.TryAddSingleton<IGateway>(sp => sp.GetRequiredService<GatewayFactory>().Create());
+            descriptors.TryAddSingleton<IGateway>(sp =>
+            {
+                var gatewayFactory = sp.GetRequiredService<GatewayFactory>();
+                return gatewayFactory.Create(descriptor);
+            });
+
             return descriptors;
         }
 

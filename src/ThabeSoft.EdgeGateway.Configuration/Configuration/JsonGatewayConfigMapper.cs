@@ -68,7 +68,7 @@ internal static class JsonGatewayConfigMapper
 
             var port = root.GetValueStringByPath("Port").Required("缺少端口")
                 .ToInt32()
-                .NonNegative("端口不可为负数");
+                .Positive("端口不可为负数");
 
             var retry = root.GetByPath("Retry")?.AsRetryDescriptor()
                 ?? Retry.Default;

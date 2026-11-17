@@ -6,6 +6,6 @@
 /// </summary>
 public interface IExecutor
 {
-    void Execute(Action action);
-    TResult Execute<TResult>(Func<TResult> action);
+    void Execute(Action handler);
+    TResult Execute<TResult>(Func<TResult> handler);
 }

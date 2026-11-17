@@ -16,7 +16,7 @@ internal sealed class Port(PortDependencies dependencies) :
     private readonly DisposeNotifier _disposeNotifier = new(dependencies.Logger);
     private readonly ILogger<Port> _logger = dependencies.Logger;
     private readonly ILifecycleStateMachine _stateMachine = dependencies.LifecycleStateMachine;
-    private readonly DeviceCollection _deviceCollection = dependencies.DeviceCollection;
+    private readonly DeviceManager _deviceCollection = dependencies.DeviceCollection;
     private readonly ILifecycleStateable _gatewayLifecycleStateable = dependencies.GatewayLifecycleState;
     private readonly ILifecycle _transportConnectionLifeCycle = dependencies.TransportConnectionLifeCycle;
 
@@ -94,7 +94,7 @@ internal readonly struct PortDependencies
 {
     public required PortDescriptor Descriptor { get; init => field = value.Required(); }
     public required ILifecycleStateable GatewayLifecycleState { get; init => field = value.Required(); }
-    public required DeviceCollection DeviceCollection { get; init => field = value.Required(); }
+    public required DeviceManager DeviceCollection { get; init => field = value.Required(); }
     public required ILifecycle TransportConnectionLifeCycle { get; init => field = value.Required(); }
 
     public required ILifecycleStateMachine LifecycleStateMachine { get; init => field = value.Required(); } 

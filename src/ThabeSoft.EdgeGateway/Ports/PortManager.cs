@@ -1,7 +1,9 @@
-﻿using ThabeSoft.EdgeGateway.Events;
+﻿using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Events;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Utilities;
+using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Ports;
 
@@ -11,15 +13,16 @@ internal sealed class PortManager : IAsyncDisposable
     private readonly ILifecycleKeyedCollection<PortId, Port> _collection;
     private readonly ILifecycleBatchExecutor _batchExecutor;
     private readonly IEventPublisher _eventPublisher;
-    private readonly Func<PortDescriptor, Port> _creator;
+    private readonly Func<PortDescriptor, Port> _portCreator;
 
 
-    public PortManager(ILifecycleStateable gatwayLifecycleState, IEventPublisher eventPublisher, Func<PortDescriptor, Port> creator)
+    public PortManager(PortManagerDependencies dependencies)
     {
-        _creator = creator;
-        _collection = Lifecycle.KeyedCollection<PortId, Port>(gatwayLifecycleState);
-        _batchExecutor = Lifecycle.BatchExecutor();
-        _eventPublisher = eventPublisher;
+        _portCreator = dependencies.PortCreator;
+        _eventPublisher = dependencies.EventPublisher;
+
+        _collection = dependencies.LifecycleKeyedCollectionFactory.Create<PortId, Port>(dependencies.GatwayLifecycleState);
+        _batchExecutor = dependencies.LifecycleBatchExecutorFactory.Create(dependencies.DeviceBatchExecutorDescriptor);
 
         Items = new ReadOnlyDictionaryView<PortId, Port, IPort>(_collection.Items);
     }
@@ -40,7 +43,7 @@ internal sealed class PortManager : IAsyncDisposable
 
     public async ValueTask<IPort> AddAsync(PortDescriptor descriptor, CancellationToken cancellationToken = default)
     {
-        var port = await _collection.AddAsync(descriptor.Id, () => _creator.Invoke(descriptor), cancellationToken);
+        var port = await _collection.AddAsync(descriptor.Id, () => _portCreator.Invoke(descriptor), cancellationToken);
         await _eventPublisher.PublishAsync(new PortAddedEvent(descriptor.Id));
 
         return port;
@@ -52,4 +55,17 @@ internal sealed class PortManager : IAsyncDisposable
 
         return result;
     }
+}
+
+internal readonly struct PortManagerDependencies
+{
+    public required ILifecycleStateable GatwayLifecycleState { get; init => field = value.Required(); }
+    public required Func<PortDescriptor, Port> PortCreator { get; init => field = value.Required(); }
+    public required LifecycleBatchExecutorDescriptor DeviceBatchExecutorDescriptor { get; init => field = value.Required(); }
+
+
+
+    public required IEventPublisher EventPublisher { get; init => field = value.Required(); }
+    public required ILifecycleKeyedCollectionFactory LifecycleKeyedCollectionFactory { get; init => field = value.Required(); }
+    public required ILifecycleBatchExecutorFactory LifecycleBatchExecutorFactory { get; init => field = value.Required(); }
 }

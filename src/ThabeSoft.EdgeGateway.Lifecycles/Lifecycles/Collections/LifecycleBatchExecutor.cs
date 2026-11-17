@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using ThabeSoft.EdgeGateway.Utilities;
@@ -7,21 +6,12 @@ using ThabeSoft.EdgeGateway.Utilities;
 namespace ThabeSoft.EdgeGateway.Lifecycles.Collections;
 
 
-internal sealed class LifecycleBatchExecutor(ILogger? logger = null) : ILifecycleBatchExecutor
+internal sealed class LifecycleBatchExecutor(LifecycleBatchExecutorDescriptor descriptor, ILogger<LifecycleBatchExecutor> logger) : ILifecycleBatchExecutor
 {
-    private readonly ILogger _logger = logger ?? NullLogger.Instance;
-
-#if DEBUG
-    public int MaxCount { get; init; } = 10;
-    public TimeSpan ItemStartTimeout { get; init; } = TimeSpan.FromMinutes(5);
-    public TimeSpan ItemStopTimeout { get; init; } = TimeSpan.FromMinutes(5);
-    public TimeSpan ItemDisposeTimeout { get; init; } = TimeSpan.FromMinutes(5);
-#else
-    public int MaxCount { get; init; } = 10;
-    public TimeSpan ItemStartTimeout { get; init; } = TimeSpan.FromSeconds(30);
-    public TimeSpan ItemStopTimeout { get; init; } = TimeSpan.FromSeconds(15);
-    public TimeSpan ItemDisposeTimeout { get; init; } = TimeSpan.FromSeconds(10);
-#endif
+    private readonly int _concurrency = descriptor.Concurrency;
+    private readonly TimeSpan _itemStartTimeout = descriptor.ItemStartTimeout;
+    private readonly TimeSpan _itemStopTimeout = descriptor.ItemStopTimeout;
+    private readonly TimeSpan _itemDisposeTimeout = descriptor.ItemDisposeTimeout;
 
 
     [DebuggerStepThrough]
@@ -29,7 +19,7 @@ internal sealed class LifecycleBatchExecutor(ILogger? logger = null) : ILifecycl
     {
         var parallelOptions = new ParallelOptions
         {
-            MaxDegreeOfParallelism = MaxCount,
+            MaxDegreeOfParallelism = _concurrency,
             CancellationToken = cancellationToken
         };
 
@@ -41,12 +31,12 @@ internal sealed class LifecycleBatchExecutor(ILogger? logger = null) : ILifecycl
 
             try
             {
-                await TimeoutExtensions.ExecuteAsync(lifecycle.StartAsync, ItemStartTimeout, "启动", ct);
+                await TimeoutExtensions.ExecuteAsync(lifecycle.StartAsync, _itemStartTimeout, "启动", ct);
             }
             catch (Exception ex)
             {
                 errors.Add(ex);
-                _logger.LogError(ex, "{Type} 启动失败", lifecycle.GetType());
+                logger.LogError(ex, "{Type} 启动失败", lifecycle.GetType());
 
                 try { await lifecycle.StopAsync(ct); } catch { }
             }
@@ -61,7 +51,7 @@ internal sealed class LifecycleBatchExecutor(ILogger? logger = null) : ILifecycl
     {
         var parallelOptions = new ParallelOptions
         {
-            MaxDegreeOfParallelism = MaxCount,
+            MaxDegreeOfParallelism = _concurrency,
             CancellationToken = cancellationToken
         };
 
@@ -73,12 +63,12 @@ internal sealed class LifecycleBatchExecutor(ILogger? logger = null) : ILifecycl
 
             try
             {
-                await TimeoutExtensions.ExecuteAsync(lifecycle.StopAsync, ItemStartTimeout, "停止", cancellationToken);
+                await TimeoutExtensions.ExecuteAsync(lifecycle.StopAsync, _itemStopTimeout, "停止", cancellationToken);
             }
             catch (Exception ex)
             {
                 errors.Add(ex);
-                _logger.LogError(ex, "{Type} 停止失败", lifecycle.GetType());
+                logger.LogError(ex, "{Type} 停止失败", lifecycle.GetType());
             }
         });
 
@@ -93,11 +83,11 @@ internal sealed class LifecycleBatchExecutor(ILogger? logger = null) : ILifecycl
         {
             try
             {
-                await TimeoutExtensions.ExecuteAsync(lifecycle.DisposeAsync, ItemStartTimeout, "释放");
+                await TimeoutExtensions.ExecuteAsync(lifecycle.DisposeAsync, _itemDisposeTimeout, "释放");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "{Type} 释放失败", lifecycle.GetType());
+                logger.LogError(ex, "{Type} 释放失败", lifecycle.GetType());
             }
         }
     }

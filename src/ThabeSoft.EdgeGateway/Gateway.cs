@@ -1,4 +1,5 @@
-﻿using ThabeSoft.EdgeGateway.Lifecycles;
+﻿using Microsoft.Extensions.Logging;
+using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Ports;
 
@@ -7,15 +8,13 @@ namespace ThabeSoft.EdgeGateway;
 
 internal sealed class Gateway(
         ILifecycleStateMachine lifecycleStateMachine,
-        PortManager portManager
+        PortManager portManager,
+        ILogger<Gateway> logger
     ) : IGateway, IAsyncDisposable
 {
-    private readonly DisposeNotifier _disposeNotifier = new();
-
-
     public LifecycleState State => lifecycleStateMachine.State;
     public IReadOnlyDictionary<PortId, IPort> Ports => portManager.Items;
-    public IDisposeObservable Disposed => _disposeNotifier;
+    public Func<ValueTask>? DisposedCallback { get; init; }
 
 
     public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
@@ -40,7 +39,9 @@ internal sealed class Gateway(
 
     private async ValueTask OnDisposeAsync()
     {
-        await _disposeNotifier.RaiseAsync(this);
-        await _disposeNotifier.DisposeAsync();
+        if (DisposedCallback is null) return;
+
+        try { await DisposedCallback.Invoke(); }
+        catch (Exception ex) { logger.LogError(ex, "网关释放回调执行异常"); }
     }
 }

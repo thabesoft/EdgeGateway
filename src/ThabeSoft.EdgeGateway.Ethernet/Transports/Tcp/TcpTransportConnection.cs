@@ -49,7 +49,7 @@ internal sealed class TcpTransportConnection : ITransportConnection
         {
             return await _stateMachine.ExecuteAsync
             (
-                method: ct => _tcpClient.GetStream().ReadAsync(buffer, ct),
+                handler: ct => _tcpClient.GetStream().ReadAsync(buffer, ct),
                 cancellationToken: cancellationToken
             );
         }
@@ -71,7 +71,7 @@ internal sealed class TcpTransportConnection : ITransportConnection
         {
             await _stateMachine.ExecuteAsync
             (
-                method: ct => _tcpClient.GetStream().WriteAsync(data, ct),
+                handler: ct => _tcpClient.GetStream().WriteAsync(data, ct),
                 cancellationToken: cancellationToken
             );
         }

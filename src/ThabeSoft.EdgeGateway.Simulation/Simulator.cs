@@ -26,7 +26,7 @@ internal sealed class Simulator(
     {
         return _stateMachine.Execute
         (
-            action: () =>
+            handler: () =>
             {
                 var key = simulatorDescriptor.Transport.Endpoint;
 
@@ -44,7 +44,7 @@ internal sealed class Simulator(
     {
         _stateMachine.Execute
        (
-           action: () =>
+           handler: () =>
            {
                if (_ports.TryRemove(endpoint, out var port))
                    port.Dispose();

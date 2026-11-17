@@ -224,7 +224,7 @@ internal static class JsonGatewayConfigMapper
             var interval = root.GetValueStringByPath("Interval").Required("缺少触发间隔")
                 .ToTimeSpan();
 
-            return new FixedIntervalTriggerDescriptor() { Interval = interval };
+            return new IntervalTriggerDescriptor() { Interval = interval };
         }
 
         throw new InvalidOperationException("未知的触发器类型");

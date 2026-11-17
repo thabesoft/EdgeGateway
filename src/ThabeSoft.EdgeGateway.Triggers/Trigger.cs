@@ -15,7 +15,7 @@ public static class Trigger
     }
 
     public static TriggerDescriptor Interval(TimeSpan timeSpan) =>
-        new FixedIntervalTriggerDescriptor() { Interval = timeSpan };
+        new IntervalTriggerDescriptor() { Interval = timeSpan };
     public static TriggerDescriptor Interval(double milliseconds) =>
         Interval(TimeSpan.FromMilliseconds(milliseconds));
 }

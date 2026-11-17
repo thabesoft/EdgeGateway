@@ -1,15 +1,15 @@
-﻿namespace ThabeSoft.EdgeGateway.Triggers.Signal;
+﻿using ThabeSoft.Guard;
+
+namespace ThabeSoft.EdgeGateway.Triggers.Signal;
 
 internal sealed class SignalTriggerFactory : ITriggerResolver
 {
-    public bool CanCreate(TriggerDescriptor triggerDescriptor) =>
-        triggerDescriptor is SignalTriggerDescriptor;
+    public bool CanResolve(TriggerDescriptor descriptor) =>
+        descriptor is SignalTriggerDescriptor;
 
-    public ITrigger Create(TriggerDescriptor triggerDescriptor)
+    public ITrigger Resolve(TriggerDescriptor descriptor)
     {
-        if (triggerDescriptor is not SignalTriggerDescriptor descriptor)
-            throw new InvalidOperationException($"不支持的触发器描述: {triggerDescriptor.GetType()}");
-
-        return new SignalTrigger(descriptor);
+        var signal = descriptor.AssertType<SignalTriggerDescriptor>();
+        return new SignalTrigger(signal);
     }
 }

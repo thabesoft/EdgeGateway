@@ -11,7 +11,7 @@ public class FixedIntervalTriggerTests
     public async Task WaitForNextTickAsync_TriggersAfterInterval()
     {
         var fakeTime = new FakeTimeProvider();
-        var factory = new FixedIntervalTriggerFactory(fakeTime);
+        var factory = new IntervalTriggerResolver(fakeTime);
         var trigger = factory.Create(Trigger.Interval(100));
 
         // 1. 先发起等待（注册监听），拿到未完成的 Task

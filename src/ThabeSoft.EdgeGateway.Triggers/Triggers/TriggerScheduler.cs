@@ -4,7 +4,10 @@ using System.Collections.Concurrent;
 namespace ThabeSoft.EdgeGateway.Triggers;
 
 
-internal sealed class TriggerScheduler(ITriggerResolver triggerFactorySelector, ILoggerFactory loggerFactory) : ITriggerScheduler
+internal sealed class TriggerScheduler(
+        ITriggerFactory triggerFactory,
+        ILoggerFactory loggerFactory
+    ) : ITriggerScheduler
 {
     private readonly ConcurrentDictionary<TriggerDescriptor, TriggerBatchPublisher> _ticks = [];
 
@@ -12,7 +15,7 @@ internal sealed class TriggerScheduler(ITriggerResolver triggerFactorySelector, 
     {
         var method = _ticks.GetOrAdd(triggerDescriptor, x =>
         {
-            var trigger = triggerFactorySelector.Resolve(x);
+            var trigger = triggerFactory.Create(x);
             var logger = loggerFactory.CreateLogger<TriggerBatchPublisher>();
 
             return new TriggerBatchPublisher(trigger, logger);
@@ -72,7 +75,7 @@ internal sealed class TriggerBatchPublisher : IAsyncDisposable
                 {
                     await tick.Invoke(cancellationToken);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     _logger.LogError(ex, "触发器回调执行失败");
                 }

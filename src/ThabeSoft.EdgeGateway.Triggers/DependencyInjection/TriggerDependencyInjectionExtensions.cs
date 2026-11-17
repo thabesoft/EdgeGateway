@@ -14,11 +14,11 @@ public static class TriggerDependencyInjectionExtensions
         public IServiceCollection AddEdgeGatewayTriggers()
         {
             descriptors.TryAddSingleton<ITriggerScheduler, TriggerScheduler>();
-            descriptors.TryAddSingleton<ITriggerResolver, TriggerFactory>();
+            descriptors.TryAddSingleton<ITriggerFactory, TriggerFactory>();
 
 
             descriptors.TryAddSingleton(TimeProvider.System);
-            descriptors.TryAddSingleton<ITriggerResolver, FixedIntervalTriggerFactory>();
+            descriptors.TryAddSingleton<ITriggerResolver, IntervalTriggerResolver>();
             descriptors.TryAddSingleton<ITriggerResolver, SignalTriggerFactory>();
 
             return descriptors;

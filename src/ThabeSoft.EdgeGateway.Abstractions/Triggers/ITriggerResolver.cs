@@ -3,6 +3,6 @@
 
 public interface ITriggerResolver
 {
-    bool CanResolve(TriggerDescriptor triggerDescriptor);
-    ITrigger Resolve(TriggerDescriptor triggerDescriptor);
+    bool CanResolve(TriggerDescriptor descriptor);
+    ITrigger Resolve(TriggerDescriptor descriptor);
 }

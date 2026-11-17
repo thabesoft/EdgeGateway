@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using ThabeSoft.EdgeGateway.Configuration;
+using ThabeSoft.EdgeGateway.Configuration.Json;
 
 namespace ThabeSoft.EdgeGateway.DependencyInjection;
 

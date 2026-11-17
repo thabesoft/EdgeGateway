@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
 
-namespace ThabeSoft.EdgeGateway.Configuration;
+namespace ThabeSoft.EdgeGateway.Configuration.Json;
 
 internal sealed class JsonFileConfigHostedService(
     IConfigSerializer configSerializer,

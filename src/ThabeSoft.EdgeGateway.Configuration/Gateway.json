@@ -18,8 +18,7 @@
           "Id": "DeviceId",
           "Protocol": {
             "Type": "Modbus",
-            "FrameFormat": "Ip",
-            "TransportType": "Ethernet"
+            "FrameFormat": "Ip"
           },
           "Subscriptions": [
             {
@@ -34,7 +33,10 @@
                 "SlaveId": 1,
                 "Address": 0,
                 "BitOffset": 0
-              }
+              },
+              "Slinks": [
+                "Test"
+              ]
             },
             {
               "Id": "SubscriptionId",

@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Nodes;
 using ThabeSoft.Guard;
 
-namespace ThabeSoft.EdgeGateway.Configuration;
+namespace ThabeSoft.EdgeGateway.Configuration.Json;
 
 
 internal sealed class JsonConfigSerializer : IConfigSerializer

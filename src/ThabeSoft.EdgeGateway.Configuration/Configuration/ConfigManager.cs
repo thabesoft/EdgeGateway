@@ -2,12 +2,12 @@
 using System.Collections;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Subscription;
-using ThabeSoft.EdgeGateway.Subscriptions;
+using ThabeSoft.EdgeGateway.Tags;
 
 namespace ThabeSoft.EdgeGateway.Configuration;
 
 
-internal class ConfigManager(IGateway gateway, ILogger<ConfigManager> logger)
+internal sealed class ConfigManager(IGateway gateway, ILogger<ConfigManager> logger)
 {
     private GatewayConfig _current = new();
 

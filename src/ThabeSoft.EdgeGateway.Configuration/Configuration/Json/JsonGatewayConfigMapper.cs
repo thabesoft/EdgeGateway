@@ -15,7 +15,7 @@ using ThabeSoft.EdgeGateway.Triggers;
 using ThabeSoft.EdgeGateway.Triggers.Interval;
 using ThabeSoft.Guard;
 
-namespace ThabeSoft.EdgeGateway.Configuration;
+namespace ThabeSoft.EdgeGateway.Configuration.Json;
 
 
 internal static class JsonGatewayConfigMapper

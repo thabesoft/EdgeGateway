@@ -56,7 +56,7 @@
                     <StackPanel Spacing="5">
                         <TextBlock Text="波特率" FontWeight="SemiBold" />
                         <ComboBox IsEditable="True"
-                                  Text="{Binding SerialForm.BaudRate, Converter={x:Static local:SerialPortFormViewModel.BaudRateStringConverter}}"
+                                  Text="{Binding SerialForm.BaudRate, Converter={x:Static local:SerialPortViewModel.BaudRateStringConverter}}"
                                   ItemsSource="{Binding SerialForm.BaudRatesOptions}"
                                   PlaceholderText="选择或输入"
                                   HorizontalAlignment="Stretch" />

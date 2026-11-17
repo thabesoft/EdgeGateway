@@ -6,22 +6,38 @@ using SukiUI.Dialogs;
 using SukiUI.Toasts;
 using ThabeSoft.EdgeGateway.App.Features.Gateway;
 using ThabeSoft.EdgeGateway.App.Services;
+using ThabeSoft.EdgeGateway.Events;
 using ThabeSoft.EdgeGateway.Lifecycles;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 
 
-internal sealed partial class TopologyViewModel(
-        ISukiDialogManager sukiDialogManager,
-        ISukiToastManager sukiToastManager,
-        IGateway gateway,
-        GatewayViewModel gatewayViewModel
-    ) : PageViewModel("拓扑", MaterialIconKind.Dog)
+internal sealed partial class TopologyViewModel : PageViewModel
 {
-    private readonly AvaloniaList<MenuItemViewModel> _items = [];
+    private readonly MenuViewModel _menu;
+    private readonly ISukiDialogManager _sukiDialogManager;
+    private readonly ISukiToastManager _sukiToastManager;
+    private readonly IGateway _gateway;
+    private readonly GatewayViewModel _gatewayViewModel;
 
-    public GatewayViewModel Gateway => gatewayViewModel;
-    public IAvaloniaReadOnlyList<MenuItemViewModel> MenuItemsSource => _items;
+
+    public TopologyViewModel(
+            ISukiDialogManager sukiDialogManager,
+            ISukiToastManager sukiToastManager,
+            IGateway gateway,
+            IEventSubscriber eventSubscriber,
+            GatewayViewModel gatewayViewModel
+    ) : base("拓扑", MaterialIconKind.Dog)
+    {
+        _sukiDialogManager = sukiDialogManager;
+        _sukiToastManager = sukiToastManager;
+        _gateway = gateway;
+        _gatewayViewModel = gatewayViewModel;
+        _menu = new MenuViewModel(gatewayViewModel, eventSubscriber);
+    }
+
+    public GatewayViewModel Gateway => _gatewayViewModel;
+    public IAvaloniaReadOnlyList<MenuItemViewModel> MenuItemsSource => _menu.Items;
 
 
     [ObservableProperty]
@@ -43,15 +59,15 @@ internal sealed partial class TopologyViewModel(
     [RelayCommand]
     private async Task ChangeGatewayAsync()
     {
-        await sukiToastManager.ExecuteWithToastAsync(async _ =>
+        await _sukiToastManager.ExecuteWithToastAsync(async _ =>
         {
-            if (gateway.IsRunning)
+            if (_gateway.IsRunning)
             {
-                await gatewayViewModel.StopCommand.ExecuteAsync(null);
+                await _gatewayViewModel.StopCommand.ExecuteAsync(null);
             }
             else
             {
-                await gatewayViewModel.StartCommand.ExecuteAsync(null);
+                await _gatewayViewModel.StartCommand.ExecuteAsync(null);
             }
         }, "切换网关状态");
     }
@@ -60,9 +76,9 @@ internal sealed partial class TopologyViewModel(
     [RelayCommand]
     private void ShowAddPortDialog()
     {
-        sukiDialogManager.CreateDialog()
+        _sukiDialogManager.CreateDialog()
             .WithTitle("创建端口")
-            .WithViewModel(dialog => new AddPortViewModel(dialog, sukiToastManager, gateway), false)
+            .WithViewModel(dialog => new AddPortViewModel(dialog, _sukiToastManager, _gateway), false)
             .WithActionButton("取消", dialog => dialog.Dismiss(), false, "Flat")
             .WithActionButton("创建", dialog =>
             {
@@ -79,7 +95,7 @@ internal sealed partial class TopologyViewModel(
         if (SelectedPort is null) return;
 
         var nextItem = GetNextItem([.. Gateway.Ports.Values], SelectedPort);
-        await gateway.RemovePortAsync(SelectedPort.Id);
+        await _gateway.RemovePortAsync(SelectedPort.Id);
 
         SelectedPort = nextItem;
 
@@ -106,28 +122,6 @@ internal sealed partial class TopologyViewModel(
             return items.LastOrDefault();
         }
     }
-
-
-    public override void OnNavigationEnter()
-    {
-        var ports = gatewayViewModel.Ports.Values
-            .Select(port => new MenuItemViewModel()
-            {
-                Header = port.Endpoint.Address,
-                Content = port,
-                ChildItemsSource = new AvaloniaList<MenuItemViewModel>(port.Devices.Values
-                     .Select(device => new MenuItemViewModel()
-                     {
-                         Header = device.ProtocolType.ToString(),
-                         Content = device
-                     }))
-            });
-
-        _items.Clear();
-        _items.AddRange(ports);
-        SelectedMenu = _items.FirstOrDefault();
-    }
-
 
     partial void OnSelectedMenuChanged(MenuItemViewModel? value)
     {

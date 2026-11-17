@@ -5,7 +5,8 @@ using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 
-internal sealed partial class SerialPortFormViewModel : ViewModelBase
+
+internal sealed partial class SerialPortViewModel : ViewModelBase
 {
     public SerialParity[] ParitysOptions { get; } = [SerialParity.None, SerialParity.Odd, SerialParity.Even, SerialParity.Mark, SerialParity.Space];
     public SerialStopBits[] StopBitsOptions { get; } = [SerialStopBits.One, SerialStopBits.OnePointFive, SerialStopBits.Two];
@@ -13,7 +14,7 @@ internal sealed partial class SerialPortFormViewModel : ViewModelBase
     public string[] PortNameOptions => SerialPort.GetPortNames();
 
 
-    public SerialPortFormViewModel()
+    public SerialPortViewModel()
     {
         if (PortNameOptions.Length == 1)
             PortName = PortNameOptions[0];

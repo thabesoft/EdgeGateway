@@ -1,8 +1,10 @@
 ﻿using Avalonia.Collections;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ReactiveUI.Primitives.Extensions;
 using SukiUI.Toasts;
+using System.Net;
 using ThabeSoft.EdgeGateway.App.Services;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Events;
@@ -35,18 +37,21 @@ internal sealed partial class GatewayViewModel : ObservableObject, IDisposable
             eventSubscriber.Subscribe<PortAddedEvent>((e, _) =>
             {
                 if (gateway.Ports.TryGetValue(e.PortId, out var port))
+                {
                     _viewModels[e.PortId] = CreateViewModel(port);
+                }
 
                 return ValueTask.CompletedTask;
             }),
             eventSubscriber.Subscribe<PortRemovedEvent>((e, _) =>
             {
-                _viewModels.Remove(e.PortId);
+                 Dispatcher.UIThread.InvokeAsync(() =>
+                    _viewModels.Remove(e.PortId));
                 return ValueTask.CompletedTask;
             }),
             eventSubscriber.Subscribe<GatewayStateChangedEvent>((e, _) =>
             {
-                State = e.New;
+                Dispatcher.UIThread.InvokeAsync(() => State = e.New);
                 return ValueTask.CompletedTask;
             })
         ];

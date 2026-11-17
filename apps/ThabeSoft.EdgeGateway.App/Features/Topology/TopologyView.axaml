@@ -21,12 +21,12 @@
                            UseCustomContent="True">
 
             <suki:SukiSideMenu.HeaderContent>
-                <Button Command="{Binding ChangeGatewayCommand}"></Button>
+                <Button Command="{Binding ChangeGatewayCommand}" Content="{Binding Gateway.State}"></Button>
             </suki:SukiSideMenu.HeaderContent>
             <!--菜单-->
             <suki:SukiSideMenu.ItemTemplate>
                 <DataTemplate>
-                    <suki:SukiSideMenuItem Width="250" Header="{Binding Header}" ItemsSource="{Binding ChildItemsSource}">
+                    <suki:SukiSideMenuItem Width="250" Header="{Binding Header}" ItemsSource="{Binding ChildIs}">
 
                         <suki:SukiSideMenuItem.ItemTemplate>
                             <DataTemplate>
@@ -48,7 +48,10 @@
                         <!--顶部栏-->
                         <DockPanel DockPanel.Dock="Top">
 
-                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                            <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Text="{Binding SelectedPort.Endpoint}"></TextBlock>
+                            <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Text="{Binding SelectedPort.State}"></TextBlock>
+
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
                                 <Button IsVisible="{Binding !SelectedPort.IsRunning}"
                                         Content="打开"
@@ -66,10 +69,6 @@
                                         Command="{Binding RemoveSelectedPortCommand}" />
 
                             </StackPanel>
-
-                            <DockPanel>
-                                <TextBlock VerticalAlignment="Center" Text="{Binding SelectedPort.Endpoint}"></TextBlock>
-                            </DockPanel>
 
                         </DockPanel>
 
@@ -132,7 +131,10 @@
                         <!--顶部栏-->
                         <DockPanel DockPanel.Dock="Top">
 
-                            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                            <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Text="{Binding SelectedDevice.Id}"></TextBlock>
+                            <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center" Text="{Binding SelectedDevice.State}"></TextBlock>
+
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
 
                                 <Button IsVisible="{Binding !SelectedDevice.IsRunning}"
                                         Content="启用"
@@ -150,10 +152,6 @@
                                         Command="{Binding RemoveSelectedPortCommand}" />
 
                             </StackPanel>
-
-                            <DockPanel>
-                                <TextBlock VerticalAlignment="Center" Text="{Binding SelectedDevice.Id}"></TextBlock>
-                            </DockPanel>
 
                         </DockPanel>
 

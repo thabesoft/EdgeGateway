@@ -1,5 +1,4 @@
 using Avalonia.Controls;
-using ThabeSoft.EdgeGateway.App.Hosting;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 
@@ -8,9 +7,7 @@ public partial class TopologyView : UserControl
     public TopologyView()
     {
         InitializeComponent();
-        this.Initialized += OnInitialized;
-
-        DesignHost.SetDataContext<TopologyViewModel>(this);
+        Initialized += OnInitialized;
     }
 
     private void OnInitialized(object? sender, EventArgs e)

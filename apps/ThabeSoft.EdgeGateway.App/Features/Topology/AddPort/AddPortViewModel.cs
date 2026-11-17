@@ -2,16 +2,19 @@
 using CommunityToolkit.Mvvm.Input;
 using SukiUI.Dialogs;
 using SukiUI.Toasts;
-using ThabeSoft.EdgeGateway.App.Features.Gateway;
 using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 
 
-internal sealed partial class AddPortViewModel(ISukiDialog dialog, ISukiToastManager sukiToastManager, IGateway gateway) : ObservableObject
+internal sealed partial class AddPortViewModel(
+        ISukiDialog dialog,
+        ISukiToastManager sukiToastManager,
+        IGateway gateway
+    ) : ObservableObject
 {
-    public IpPortFormViewModel IpForm { get; } = new();
-    public SerialPortFormViewModel SerialForm { get; } = new();
+    public IpPortViewModel IpForm { get; } = new();
+    public SerialPortViewModel SerialForm { get; } = new();
 
 
     [ObservableProperty]
@@ -36,7 +39,7 @@ internal sealed partial class AddPortViewModel(ISukiDialog dialog, ISukiToastMan
 
             dialog.Dismiss();
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             if (IsSelectedIpFrom) IpForm.ValidateAllProperty();
             else if (IsSelectedSerialFrom) SerialForm.ValidateAllProperty();

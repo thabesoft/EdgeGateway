@@ -12,10 +12,12 @@ using ThabeSoft.EdgeGateway.App.Hosting;
 namespace ThabeSoft.EdgeGateway.App;
 
 
-public class App : Application
+public class App : Application, IAsyncDisposable
 {
     private readonly IHost _host;
     private readonly ILogger<App> _logger;
+    private Task? _luanchHostTask;
+    private readonly CancellationTokenSource _luanchHostTaskCts = new();
 
 
     public App()
@@ -49,34 +51,35 @@ public class App : Application
             e.SetObserved();
         };
 
-
-
-        var viewFactory = Services.GetRequiredService<ViewFactory>();
+        // 初始化数据模板
         var viewLocator = Services.GetRequiredService<Common.ViewLocator>();
+        DataTemplates.Add(viewLocator);
 
-
+        // 主窗口
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            DataTemplates.Add(viewLocator);
+            var viewFactory = Services.GetRequiredService<ViewFactory>();
             desktop.MainWindow = viewFactory.CreateView<MainWindowViewModel>() as Window;
         }
 
-        Task.Run(async () =>
-        {
-            try
-            {
-                await _host.StartAsync();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Host启动失败");
+        // 启动 Host
+        _luanchHostTask = _host.StartAsync(_luanchHostTaskCts.Token);
+    }
 
-                await Dispatcher.UIThread.InvokeAsync(() =>
-                {
-                    if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-                        desktop.Shutdown(-1);
-                });
-            }
-        });
+
+    public async ValueTask DisposeAsync()
+    {
+        await _luanchHostTaskCts.CancelAsync();
+
+        try
+        {
+            if (_luanchHostTask is not null) await _luanchHostTask;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Host启动任务释放失败");
+        }
+
+        GC.SuppressFinalize(this);
     }
 }

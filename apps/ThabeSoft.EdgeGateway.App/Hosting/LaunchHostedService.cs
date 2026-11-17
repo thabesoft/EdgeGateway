@@ -13,9 +13,9 @@ internal sealed class LaunchHostedService(IGateway gateway) :
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         //await AddPortAsync(Ethernet.Tcp(IPAddress.Loopback, 2333), gateway, cancellationToken);
-        await AddPortAsync(Ethernet.Tcp(IPAddress.Loopback, 2334), gateway, cancellationToken);
+        ///await AddPortAsync(Ethernet.Tcp(IPAddress.Loopback, 2334), gateway, cancellationToken);
 
-        await gateway.StartAsync();
+        //await gateway.StartAsync();
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

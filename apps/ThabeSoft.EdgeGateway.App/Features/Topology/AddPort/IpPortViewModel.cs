@@ -5,7 +5,7 @@ using ThabeSoft.EdgeGateway.Transports;
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 
 
-internal sealed partial class IpPortFormViewModel : ViewModelBase
+internal sealed partial class IpPortViewModel : ViewModelBase
 {
     public IpProtocolType[] TransportTypeOptions { get; } = [IpProtocolType.Tcp, IpProtocolType.Udp];
 

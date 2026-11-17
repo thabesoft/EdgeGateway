@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
 using SukiUI.Toasts;
 using System.Reactive.Linq;
 using ThabeSoft.EdgeGateway.Addressing;
@@ -21,14 +22,16 @@ internal sealed partial class SubscriptionViewModel : LifecycleViewModel, IDispo
         _subscription = subscription;
         Latest = subscription.Latest;
         _subscriptionHandle = subscription.Update
-            .ObserveOnUI()
+            //.ObserveOnUI()
             .Subscribe(
                 onNext: value =>
                 {
-                    Latest = value;
-
-                    if (value.Value is double d)
-                        _buffer.Write(d);
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        Latest = value;
+                        if (value.Value is double d)
+                            _buffer.Write(d);
+                    });
                 },
                 onError: _ => Latest = Reading.Bad(Latest?.Value ?? default!),
                 onCompleted: delegate { });

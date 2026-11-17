@@ -5,7 +5,7 @@ using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 namespace ThabeSoft.EdgeGateway.Transports.Tcp;
 
 
-internal sealed class TcpTransportConnectionFactory(
+internal sealed class TcpTransportConnectionResolver(
         ILoggerFactory loggerFactory,
         ILifecycleStateMachineFactory lifecycleStateMachineFactory
     ) : ITransportConnectionResolver

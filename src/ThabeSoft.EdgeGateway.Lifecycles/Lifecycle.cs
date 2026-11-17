@@ -77,11 +77,11 @@ public sealed class LifecycleStateMachineDescriptorConfigurator
     public LifecycleStateMachineDescriptorConfigurator WithStartTimeout(double timeoutMs) => WithStartTimeout(TimeSpan.FromMilliseconds(timeoutMs));
 
 
-    public LifecycleStateMachineDescriptorConfigurator WithStopTimeout(TimeSpan timeout) { StartTimeout = timeout; return this; }
+    public LifecycleStateMachineDescriptorConfigurator WithStopTimeout(TimeSpan timeout) { StopTimeout = timeout; return this; }
     public LifecycleStateMachineDescriptorConfigurator WithStopTimeout(double timeoutMs) => WithStopTimeout(TimeSpan.FromMilliseconds(timeoutMs));
 
 
-    public LifecycleStateMachineDescriptorConfigurator WithDisposeTimeout(TimeSpan timeout) { StartTimeout = timeout; return this; }
+    public LifecycleStateMachineDescriptorConfigurator WithDisposeTimeout(TimeSpan timeout) { DisposeTimeout = timeout; return this; }
     public LifecycleStateMachineDescriptorConfigurator WithDisposeTimeout(double timeoutMs) => WithDisposeTimeout(TimeSpan.FromMilliseconds(timeoutMs));
 
 

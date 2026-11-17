@@ -18,8 +18,8 @@ public static class TriggerDependencyInjectionExtensions
 
 
             descriptors.TryAddSingleton(TimeProvider.System);
-            descriptors.TryAddSingleton<ITriggerResolver, IntervalTriggerResolver>();
-            descriptors.TryAddSingleton<ITriggerResolver, SignalTriggerFactory>();
+            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ITriggerResolver, IntervalTriggerResolver>());
+            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ITriggerResolver, SignalTriggerResolver>());
 
             return descriptors;
         }

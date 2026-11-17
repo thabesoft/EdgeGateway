@@ -64,7 +64,7 @@ public static class CoreDependencyInjectionExtensions
         }
         public IServiceCollection AddEdgeGatewayTransport()
         {
-            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportConnectionFactory, TransportConnectionFactory>());
+            descriptors.TryAddSingleton<ITransportConnectionFactory, TransportConnectionFactory>();
             return descriptors;
         }
 

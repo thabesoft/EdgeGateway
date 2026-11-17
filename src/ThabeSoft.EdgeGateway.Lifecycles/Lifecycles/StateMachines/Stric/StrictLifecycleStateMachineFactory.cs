@@ -10,7 +10,7 @@ internal sealed class StrictLifecycleStateMachineFactory(ILoggerFactory loggerFa
         return descriptor is StrictLifecycleStateMachineDescriptor;
     }
 
-    public ILifecycleStateMachine Create(LifecycleStateMachineDescriptor descriptor)
+    public ILifecycleStateMachine Resolve(LifecycleStateMachineDescriptor descriptor)
     {
         if (descriptor is not StrictLifecycleStateMachineDescriptor strict)
             throw new InvalidOperationException($"不支持的描述符: {descriptor}");

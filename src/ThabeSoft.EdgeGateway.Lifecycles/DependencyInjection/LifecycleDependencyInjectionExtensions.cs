@@ -23,9 +23,8 @@ public static class LifecycleDependencyInjectionExtensions
 
 
             // 默认实现状态机
-            descriptors.TryAddSingleton<ILifecycleStateMachineResolver, StrictLifecycleStateMachineFactory>();
-            descriptors.TryAddSingleton<ILifecycleStateMachineResolver, RetryableLifecycleStateMachineFactory>();
-
+            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ILifecycleStateMachineResolver, StrictLifecycleStateMachineFactory>());
+            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ILifecycleStateMachineResolver, RetryableLifecycleStateMachineFactory>());
 
             return descriptors;
         }

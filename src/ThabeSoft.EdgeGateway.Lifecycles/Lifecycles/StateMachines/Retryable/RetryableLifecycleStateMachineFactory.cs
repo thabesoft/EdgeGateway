@@ -11,7 +11,7 @@ internal sealed class RetryableLifecycleStateMachineFactory(ILoggerFactory logge
         return descriptor is RetryableLifecycleStateMachineDescriptor;
     }
 
-    public ILifecycleStateMachine Create(LifecycleStateMachineDescriptor descriptor)
+    public ILifecycleStateMachine Resolve(LifecycleStateMachineDescriptor descriptor)
     {
         if (descriptor is not RetryableLifecycleStateMachineDescriptor strict)
             throw new InvalidOperationException($"不支持的描述符: {descriptor}");

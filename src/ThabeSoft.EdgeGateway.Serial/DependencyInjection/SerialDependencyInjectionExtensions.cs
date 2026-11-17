@@ -1,5 +1,6 @@
-﻿using ThabeSoft.EdgeGateway.Transports;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.EdgeGateway.DependencyInjection;
 
@@ -13,7 +14,7 @@ public static class SerialDependencyInjectionExtensions
         /// </summary>
         public IServiceCollection AddEdgeGatewaySerial()
         {
-            descriptors.AddSingleton<ITransportConnectionResolver, SerialTransportFactory>();
+            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportConnectionResolver, SerialTransportResolver>());
             return descriptors;
         }
     }

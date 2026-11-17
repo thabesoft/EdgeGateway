@@ -2,14 +2,14 @@
 
 
 internal sealed class LifecycleStateMachineResolver(
-        IEnumerable<ILifecycleStateMachineResolver> factories
+        IEnumerable<ILifecycleStateMachineResolver> resolvers
     ) : ILifecycleStateMachineFactory
 {
     public ILifecycleStateMachine Create(LifecycleStateMachineDescriptor descriptor)
     {
-        var factory = factories.FirstOrDefault(x => x.CanCreate(descriptor))
-            ?? throw new InvalidOperationException($"不支持的生命状态机描述符: {descriptor}");
+        var resolver = resolvers.FirstOrDefault(x => x.CanCreate(descriptor))
+             ?? throw new InvalidOperationException($"不支持创建的生命周期状态机({descriptor.GetType()}):{descriptor}");
 
-        return factory.Create(descriptor);
+        return resolver.Resolve(descriptor);
     }
 }

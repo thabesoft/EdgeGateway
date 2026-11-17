@@ -1,5 +1,6 @@
-﻿using ThabeSoft.EdgeGateway.Transports;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using ThabeSoft.EdgeGateway.Transports;
 using ThabeSoft.EdgeGateway.Transports.Tcp;
 using ThabeSoft.EdgeGateway.Transports.Udp;
 
@@ -15,8 +16,8 @@ public static class EthernetDependencyInjectionExtensions
         /// </summary>
         public IServiceCollection AddEdgeGatewayEthernet()
         {
-            descriptors.AddSingleton<ITransportConnectionResolver, TcpTransportConnectionFactory>();
-            descriptors.AddSingleton<ITransportConnectionResolver, UdpTransportConnectionFactory>();
+            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportConnectionResolver, TcpTransportConnectionResolver>());
+            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportConnectionResolver, UdpTransportConnectionResolver>());
 
             return descriptors;
         }

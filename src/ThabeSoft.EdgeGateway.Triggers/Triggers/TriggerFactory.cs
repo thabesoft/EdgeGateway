@@ -5,13 +5,13 @@ internal sealed class TriggerFactory(
         IEnumerable<ITriggerResolver> resolvers
     ) : ITriggerFactory
 {
-    public ITrigger Create(TriggerDescriptor triggerDescriptor)
+    public ITrigger Create(TriggerDescriptor descriptor)
     {
-        ArgumentNullException.ThrowIfNull(triggerDescriptor);
+        ArgumentNullException.ThrowIfNull(descriptor);
 
-        var factory = resolvers.FirstOrDefault(x => x.CanResolve(triggerDescriptor))
-            ?? throw new NotSupportedTriggerException(triggerDescriptor);
+        var factory = resolvers.FirstOrDefault(x => x.CanResolve(descriptor))
+            ?? throw new InvalidOperationException($"不支持创建的触发器({descriptor.GetType()}):{descriptor}");
 
-        return factory.Resolve(triggerDescriptor);
+        return factory.Resolve(descriptor);
     }
 }

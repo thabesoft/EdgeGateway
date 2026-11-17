@@ -17,7 +17,6 @@ public static class CoreDependencyInjectionExtensions
         public IServiceCollection AddEdgeGateway()
         {
             descriptors.AddEdgeGatewayEvents();
-            descriptors.AddEdgeGatewayTriggers();
             descriptors.AddEdgeGatewayRecovers();
             descriptors.AddEdgeGatewayTransport();
             descriptors.AddEdgeGatewayProtocol();

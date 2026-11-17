@@ -14,22 +14,23 @@ internal static class AppHostBuilder
             builder.ConfigureLogging((_, builder) => builder
                 .SetMinimumLevel(LogLevel.Information));
 
-            builder.ConfigureServices(services =>
+            builder.ConfigureServices(descriptors =>
             {
-                services.AddEdgeGateway();
-                services.AddEdgeGatewaySerial();
-                services.AddEdgeGatewayEthernet();
-                services.AddEdgeGatewayModbus();
+                descriptors.AddEdgeGateway();
+                descriptors.AddEdgeGatewayTriggers();
+                descriptors.AddEdgeGatewaySerial();
+                descriptors.AddEdgeGatewayEthernet();
+                descriptors.AddEdgeGatewayModbus();
 
                 // Host
-                services.AddEdgeGatewayHost();
+                descriptors.AddEdgeGatewayHost();
 
                 // APP
-                services.AddEdgeGatewayApp();
-                services.AddEdgeGatewayAppHost();
+                descriptors.AddEdgeGatewayApp();
+                descriptors.AddEdgeGatewayAppHost();
 
                 // 用配置初始化
-                services.AddEdgeGatewayJsonConfiguration();
+                descriptors.AddEdgeGatewayJsonConfiguration();
             });
 
             return builder;

@@ -19,7 +19,7 @@ public static class SimulationDependencyInjectionExtensions
         /// </summary>
         public IServiceCollection AddEdgeGatewaySimulation()
         {
-            descriptors.TryAddSingleton<SimulationDeviceFactorySelector>();
+            descriptors.TryAddSingleton<SimulationDeviceFactory>();
             descriptors.TryAddSingleton<SimulationPortFactorySelector>();
             descriptors.TryAddSingleton<TriggerManager>();
             descriptors.TryAddSingleton<ISimulator, Simulator>();
@@ -37,7 +37,7 @@ public static class SimulationDependencyInjectionExtensions
         public IServiceCollection AddEdgeGatewayModbusSimulation()
         {
             descriptors.TryAddSingleton<IModbusFactory, ModbusFactory>();
-            descriptors.TryAddSingleton<ISimulationDeviceFactory, ModbusSimulationSlaveFactory>();
+            descriptors.TryAddSingleton<ISimulationDeviceResolver, ModbusSimulationSlaveFactory>();
             descriptors.TryAddSingleton<ISimulationPortFactory, ModbusSimulationPortFactory>();
             return descriptors;
         }

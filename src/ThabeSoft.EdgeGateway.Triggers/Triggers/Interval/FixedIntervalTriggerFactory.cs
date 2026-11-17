@@ -1,7 +1,7 @@
 ﻿namespace ThabeSoft.EdgeGateway.Triggers.Interval;
 
 
-internal sealed class FixedIntervalTriggerFactory(TimeProvider timeProvider) : ITriggerFactory
+internal sealed class FixedIntervalTriggerFactory(TimeProvider timeProvider) : ITriggerResolver
 {
     public bool CanCreate(TriggerDescriptor triggerDescriptor) =>
         triggerDescriptor is FixedIntervalTriggerDescriptor;

@@ -71,7 +71,7 @@ public static class CoreDependencyInjectionExtensions
 
         public IServiceCollection AddEdgeGatewayProtocol()
         {
-            descriptors.TryAddSingleton<ProtocolAccessorResolver>();
+            descriptors.TryAddSingleton<ProtocolAccessorFactory>();
             return descriptors;
         }
 

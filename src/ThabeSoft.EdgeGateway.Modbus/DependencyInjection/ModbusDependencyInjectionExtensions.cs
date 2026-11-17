@@ -15,7 +15,7 @@ public static class ModbusDependencyInjectionExtensions
         public IServiceCollection AddEdgeGatewayModbus()
         {
             descriptors.AddSingleton<IModbusFactory, ModbusFactory>();
-            descriptors.AddSingleton<IProtocolAccessorFactory, ModbusProtocolAccessorFactory>();
+            descriptors.AddSingleton<IProtocolAccessorResolver, ModbusProtocolAccessorResolver>();
             return descriptors;
         }
     }

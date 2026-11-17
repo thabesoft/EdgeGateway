@@ -6,14 +6,14 @@ using ThabeSoft.EdgeGateway.Transports.Byte;
 namespace ThabeSoft.EdgeGateway.Protocols;
 
 
-internal sealed class ModbusProtocolAccessorFactory(IModbusFactory modbusFactory) : IProtocolAccessorFactory
+internal sealed class ModbusProtocolAccessorResolver(IModbusFactory modbusFactory) : IProtocolAccessorResolver
 {
-    public bool CanCreate(ProtocolDescriptor descriptor)
+    public bool CanResolve(ProtocolDescriptor descriptor)
     {
         return descriptor is ModbusProtocolDescriptor;
     }
 
-    public IProtocolAccessor Create(ProtocolDescriptor descriptor, IByteDuplex byteStream)
+    public IProtocolAccessor Resolve(ProtocolDescriptor descriptor, IByteDuplex byteStream)
     {
         if (descriptor is not ModbusProtocolDescriptor modbus)
             throw new ArgumentException("描述不是 Modbus RTU。", nameof(descriptor));

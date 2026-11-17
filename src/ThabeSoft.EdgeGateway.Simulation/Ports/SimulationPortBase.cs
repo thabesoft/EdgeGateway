@@ -14,13 +14,13 @@ internal abstract class SimulationPortBase : ISimulationPort
     private readonly ILifecycleKeyedCollection<ISimulationDeviceId, ISimulationDevice> _devices;
     private readonly ILifecycleStateMachine _stateMachine;
     private readonly ILifecycleBatchExecutor _batchExecutor;
-    private readonly SimulationDeviceFactorySelector _deviceFactorySelector;
+    private readonly SimulationDeviceFactory _deviceFactorySelector;
     private readonly ILogger _logger;
 
 
-    protected SimulationPortBase(ConnectionEndpoint endpoint, SimulationDeviceFactorySelector deviceFactorySelector, ILogger? logger = null)
+    protected SimulationPortBase(ConnectionEndpoint endpoint, SimulationDeviceFactory deviceFactory, ILogger? logger = null)
     {
-        _deviceFactorySelector = deviceFactorySelector;
+        _deviceFactorySelector = deviceFactory;
         _logger = logger ?? NullLogger.Instance;
 
 

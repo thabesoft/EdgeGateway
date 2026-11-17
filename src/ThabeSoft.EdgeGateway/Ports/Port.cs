@@ -117,7 +117,7 @@ internal sealed class PortFactory(
         IEventPublisher eventPublisher,
         DeviceManagerFactory deviceManagerFactory,
         ITransportConnectionFactory transportConnectionFactory,
-        ProtocolAccessorResolver protocolAccessorResolver,
+        ProtocolAccessorFactory protocolAccessorResolver,
         DeviceFactory deviceFactory,
         ILoggerFactory loggerFactory
     )
@@ -150,7 +150,7 @@ internal sealed class PortFactory(
             DevicCreator = device => deviceFactory.Create(new()
             {
                 Port = context.Port,
-                ProtocolAccessor = protocolAccessors.GetOrAdd(device.Protocol, protocol => protocolAccessorResolver.Resolve(protocol, transport)),
+                ProtocolAccessor = protocolAccessors.GetOrAdd(device.Protocol, protocol => protocolAccessorResolver.Create(protocol, transport)),
                 PortState = portStateMachine,
 
                 Device = device,

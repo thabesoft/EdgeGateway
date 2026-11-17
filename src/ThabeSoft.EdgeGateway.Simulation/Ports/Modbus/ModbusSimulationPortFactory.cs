@@ -10,7 +10,7 @@ namespace ThabeSoft.EdgeGateway.Ports.Modbus;
 
 internal sealed class ModbusSimulationPortFactory(
         IModbusFactory modbusFactory,
-        SimulationDeviceFactorySelector deviceFactorySelector,
+        SimulationDeviceFactory deviceFactorySelector,
         ILoggerFactory loggerFactory
     ) : ISimulationPortFactory
 {

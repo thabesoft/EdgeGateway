@@ -1,6 +1,6 @@
 ﻿namespace ThabeSoft.EdgeGateway.Triggers.Signal;
 
-internal sealed class SignalTriggerFactory : ITriggerFactory
+internal sealed class SignalTriggerFactory : ITriggerResolver
 {
     public bool CanCreate(TriggerDescriptor triggerDescriptor) =>
         triggerDescriptor is SignalTriggerDescriptor;

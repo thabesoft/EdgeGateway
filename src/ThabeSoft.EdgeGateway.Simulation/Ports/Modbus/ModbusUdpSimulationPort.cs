@@ -17,7 +17,7 @@ internal sealed class ModbusUdpSimulationPort : SimulationPortBase
     public ModbusUdpSimulationPort(
             IpTransportDescriptor ipTransportDescriptor,
             IModbusFactory modbusFactory,
-            SimulationDeviceFactorySelector deviceFactorySelector,
+            SimulationDeviceFactory deviceFactorySelector,
             ILogger<ModbusUdpSimulationPort>? logger = null
         ) : base(ipTransportDescriptor.Endpoint, deviceFactorySelector, logger)
     {

@@ -25,7 +25,7 @@ internal sealed class ModbusSerialSimulationPort : SimulationPortBase
             ModbusFrameFormat modbusFrameFormat,
             SerialTransportDescriptor serialTransportDescriptor,
             IModbusFactory modbusFactory,
-            SimulationDeviceFactorySelector deviceFactorySelector,
+            SimulationDeviceFactory deviceFactorySelector,
             ILogger<ModbusSerialSimulationPort>? logger = null
         ) : base(serialTransportDescriptor.Endpoint, deviceFactorySelector, logger)
     {
@@ -48,7 +48,7 @@ internal sealed class ModbusSerialSimulationPort : SimulationPortBase
     public static ModbusSerialSimulationPort Rtu(
             SerialTransportDescriptor serialTransportDescriptor,
             IModbusFactory modbusFactory,
-            SimulationDeviceFactorySelector deviceFactorySelector,
+            SimulationDeviceFactory deviceFactorySelector,
             ILogger<ModbusSerialSimulationPort>? logger = null)
     {
         ArgumentNullException.ThrowIfNull(serialTransportDescriptor);
@@ -60,7 +60,7 @@ internal sealed class ModbusSerialSimulationPort : SimulationPortBase
     public static ModbusSerialSimulationPort Ascii(
             SerialTransportDescriptor serialTransportDescriptor,
             IModbusFactory modbusFactory,
-            SimulationDeviceFactorySelector deviceFactorySelector,
+            SimulationDeviceFactory deviceFactorySelector,
             ILogger<ModbusSerialSimulationPort>? logger = null)
     {
         ArgumentNullException.ThrowIfNull(serialTransportDescriptor);

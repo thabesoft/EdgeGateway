@@ -20,7 +20,7 @@ internal sealed class ModbusTcpSimulationPort : SimulationPortBase
     public ModbusTcpSimulationPort(
             IpTransportDescriptor ipTransportDescriptor,
             IModbusFactory modbusFactory,
-            SimulationDeviceFactorySelector deviceFactorySelector,
+            SimulationDeviceFactory deviceFactorySelector,
             ILogger<ModbusTcpSimulationPort>? logger = null
         ) : base(ipTransportDescriptor.Endpoint, deviceFactorySelector, logger)
     {

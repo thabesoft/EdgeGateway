@@ -38,10 +38,10 @@ internal sealed class GatewayFactory(
                 TransportStateMachine = context.TransportStateMachine,
 
                 DeviceStateMachine = context.DeviceStateMachine,
-                DeviceBatchExecutor = context.DeviceBatchExecutorDescriptor,
+                DeviceBatchExecutor = context.DeviceBatchExecutor,
 
                 SubscriptionStateMachine = context.SubscriptionStateMachine,
-                SubscriptionBatchExecutor = context.SubscriptionBatchExecutorDescriptor,
+                SubscriptionBatchExecutor = context.SubscriptionBatchExecutor,
             })
         });
 

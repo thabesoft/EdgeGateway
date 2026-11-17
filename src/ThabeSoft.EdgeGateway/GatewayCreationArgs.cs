@@ -18,10 +18,10 @@ public sealed class GatewayCreationArgs
 
     // Device
     public required LifecycleStateMachineDescriptor DeviceStateMachine { get; init => field = value.Required(); }
-    public LifecycleBatchExecutorDescriptor DeviceBatchExecutorDescriptor { get; init => field = value.Required(); } = new LifecycleBatchExecutorDescriptor();
+    public LifecycleBatchExecutorDescriptor DeviceBatchExecutor { get; init => field = value.Required(); } = new LifecycleBatchExecutorDescriptor();
 
 
     // Subscription
     public required LifecycleStateMachineDescriptor SubscriptionStateMachine { get; init => field = value.Required(); }
-    public LifecycleBatchExecutorDescriptor SubscriptionBatchExecutorDescriptor { get; init => field = value.Required(); } = new LifecycleBatchExecutorDescriptor();
+    public LifecycleBatchExecutorDescriptor SubscriptionBatchExecutor { get; init => field = value.Required(); } = new LifecycleBatchExecutorDescriptor();
 }

@@ -22,22 +22,22 @@ public static class Lifecycle
     public static LifecycleBatchExecutorDescriptor BatchExecutor(Action<LifecycleBatchExecutorDescriptorConfigurator>? builderAction = null)
     {
         var builder = new LifecycleBatchExecutorDescriptorConfigurator();
-        builder.ItemStartTimeout(5000).ItemStartTimeout(3000).ItemDisposeTimeout(3000).MaxConcurrency(3);
+        builder.WithItemStartTimeout(5000).WithItemStartTimeout(3000).WithItemDisposeTimeout(3000).WithMaxConcurrency(3);
         builderAction?.Invoke(builder);
 
         return new LifecycleBatchExecutorDescriptor()
         {
-            ItemStartTimeout = builder.StartTimeout,
-            ItemStopTimeout = builder.StopTimeout,
-            ItemDisposeTimeout = builder.DisposeTimeout,
-            Concurrency = builder.Concurrency
+            ItemStartTimeout = builder.ItemStartTimeout,
+            ItemStopTimeout = builder.ItemStopTimeout,
+            ItemDisposeTimeout = builder.ItemDisposeTimeout,
+            Concurrency = builder.MaxConcurrency
         };
     }
 
     public static LifecycleStateMachineDescriptor RetryableStateMachine(Action<LifecycleStateMachineDescriptorConfigurator>? builderAction = null)
     {
         var builder = new LifecycleStateMachineDescriptorConfigurator();
-        builder.Start(30000).Stop(15000).Dispose(5000).Execute(3000);
+        builder.WithStartTimeout(30000).WithStopTimeout(15000).WithDisposeTimeout(5000).WithExecuteTimeout(3000);
         builderAction?.Invoke(builder);
 
         return new RetryableLifecycleStateMachineDescriptor()
@@ -51,7 +51,7 @@ public static class Lifecycle
     public static LifecycleStateMachineDescriptor StrictStateMachine(Action<LifecycleStateMachineDescriptorConfigurator>? builderAction = null)
     {
         var builder = new LifecycleStateMachineDescriptorConfigurator();
-        builder.Start(30000).Stop(15000).Dispose(5000).Execute(3000);
+        builder.WithStartTimeout(30000).WithStopTimeout(15000).WithDisposeTimeout(5000).WithExecuteTimeout(3000);
         builderAction?.Invoke(builder);
 
         return new StrictLifecycleStateMachineDescriptor()
@@ -73,43 +73,43 @@ public sealed class LifecycleStateMachineDescriptorConfigurator
     internal TimeSpan ExecuteTimeout { get; private set => field = value.Positive(); }
 
 
-    public LifecycleStateMachineDescriptorConfigurator Start(TimeSpan timeout) { StartTimeout = timeout; return this; }
-    public LifecycleStateMachineDescriptorConfigurator Start(double timeoutMs) => Start(TimeSpan.FromMilliseconds(timeoutMs));
+    public LifecycleStateMachineDescriptorConfigurator WithStartTimeout(TimeSpan timeout) { StartTimeout = timeout; return this; }
+    public LifecycleStateMachineDescriptorConfigurator WithStartTimeout(double timeoutMs) => WithStartTimeout(TimeSpan.FromMilliseconds(timeoutMs));
 
 
-    public LifecycleStateMachineDescriptorConfigurator Stop(TimeSpan timeout) { StartTimeout = timeout; return this; }
-    public LifecycleStateMachineDescriptorConfigurator Stop(double timeoutMs) => Stop(TimeSpan.FromMilliseconds(timeoutMs));
+    public LifecycleStateMachineDescriptorConfigurator WithStopTimeout(TimeSpan timeout) { StartTimeout = timeout; return this; }
+    public LifecycleStateMachineDescriptorConfigurator WithStopTimeout(double timeoutMs) => WithStopTimeout(TimeSpan.FromMilliseconds(timeoutMs));
 
 
-    public LifecycleStateMachineDescriptorConfigurator Dispose(TimeSpan timeout) { StartTimeout = timeout; return this; }
-    public LifecycleStateMachineDescriptorConfigurator Dispose(double timeoutMs) => Dispose(TimeSpan.FromMilliseconds(timeoutMs));
+    public LifecycleStateMachineDescriptorConfigurator WithDisposeTimeout(TimeSpan timeout) { StartTimeout = timeout; return this; }
+    public LifecycleStateMachineDescriptorConfigurator WithDisposeTimeout(double timeoutMs) => WithDisposeTimeout(TimeSpan.FromMilliseconds(timeoutMs));
 
 
-    public LifecycleStateMachineDescriptorConfigurator Execute(TimeSpan timeout) { ExecuteTimeout = timeout; return this; }
-    public LifecycleStateMachineDescriptorConfigurator Execute(double timeoutMs) => Execute(TimeSpan.FromMilliseconds(timeoutMs));
+    public LifecycleStateMachineDescriptorConfigurator WithExecuteTimeout(TimeSpan timeout) { ExecuteTimeout = timeout; return this; }
+    public LifecycleStateMachineDescriptorConfigurator WithExecuteTimeout(double timeoutMs) => WithExecuteTimeout(TimeSpan.FromMilliseconds(timeoutMs));
 }
 
 
 
 public sealed class LifecycleBatchExecutorDescriptorConfigurator
 {
-    internal TimeSpan StartTimeout { get; private set => field = value.Positive(); }
-    internal TimeSpan StopTimeout { get; private set => field = value.Positive(); }
-    internal TimeSpan DisposeTimeout { get; private set => field = value.Positive(); }
-    internal int Concurrency { get; private set => field = value.Positive(); }
+    internal TimeSpan ItemStartTimeout { get; private set => field = value.Positive(); }
+    internal TimeSpan ItemStopTimeout { get; private set => field = value.Positive(); }
+    internal TimeSpan ItemDisposeTimeout { get; private set => field = value.Positive(); }
+    internal int MaxConcurrency { get; private set => field = value.Positive(); }
 
 
-    public LifecycleBatchExecutorDescriptorConfigurator ItemStartTimeout(TimeSpan timeout) { StartTimeout = timeout; return this; }
-    public LifecycleBatchExecutorDescriptorConfigurator ItemStartTimeout(double timeoutMs) => ItemStartTimeout(TimeSpan.FromMilliseconds(timeoutMs));
+    public LifecycleBatchExecutorDescriptorConfigurator WithItemStartTimeout(TimeSpan timeout) { ItemStartTimeout = timeout; return this; }
+    public LifecycleBatchExecutorDescriptorConfigurator WithItemStartTimeout(double timeoutMs) => WithItemStartTimeout(TimeSpan.FromMilliseconds(timeoutMs));
 
 
-    public LifecycleBatchExecutorDescriptorConfigurator ItemStopTimeout(TimeSpan timeout) { StartTimeout = timeout; return this; }
-    public LifecycleBatchExecutorDescriptorConfigurator ItemStopTimeout(double timeoutMs) => ItemStopTimeout(TimeSpan.FromMilliseconds(timeoutMs));
+    public LifecycleBatchExecutorDescriptorConfigurator WithItemStopTimeout(TimeSpan timeout) { ItemStartTimeout = timeout; return this; }
+    public LifecycleBatchExecutorDescriptorConfigurator WithItemStopTimeout(double timeoutMs) => WithItemStopTimeout(TimeSpan.FromMilliseconds(timeoutMs));
 
 
-    public LifecycleBatchExecutorDescriptorConfigurator ItemDisposeTimeout(TimeSpan timeout) { StartTimeout = timeout; return this; }
-    public LifecycleBatchExecutorDescriptorConfigurator ItemDisposeTimeout(double timeoutMs) => ItemDisposeTimeout(TimeSpan.FromMilliseconds(timeoutMs));
+    public LifecycleBatchExecutorDescriptorConfigurator WithItemDisposeTimeout(TimeSpan timeout) { ItemStartTimeout = timeout; return this; }
+    public LifecycleBatchExecutorDescriptorConfigurator WithItemDisposeTimeout(double timeoutMs) => WithItemDisposeTimeout(TimeSpan.FromMilliseconds(timeoutMs));
 
 
-    public LifecycleBatchExecutorDescriptorConfigurator MaxConcurrency(int count) { Concurrency = count; return this; }
+    public LifecycleBatchExecutorDescriptorConfigurator WithMaxConcurrency(int count) { MaxConcurrency = count; return this; }
 }

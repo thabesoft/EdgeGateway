@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.App.DependencyInjection;
 using ThabeSoft.EdgeGateway.DependencyInjection;
+using ThabeSoft.EdgeGateway.Hosting;
 
 namespace ThabeSoft.EdgeGateway.App.Hosting;
 

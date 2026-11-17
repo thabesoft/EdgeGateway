@@ -6,7 +6,6 @@ using ThabeSoft.EdgeGateway.Hosting;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Readings;
-using ThabeSoft.EdgeGateway.Recoveries;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transports;
 
@@ -17,40 +16,41 @@ public static class CoreDependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {
+        public IServiceCollection AddEdgeGatewayHost()
+        {
+            return descriptors.AddHostedService<LaunchHostedService>();
+        }
+
         public IServiceCollection AddEdgeGateway(GatewayCreationArgs creationContext)
         {
-            descriptors.AddSingleton<SubscriptionFactory>();
-            descriptors.AddSingleton<SubscriptionManagerFactory>();
-
-            descriptors.AddSingleton<DeviceFactory>();
-            descriptors.AddSingleton<DeviceManagerFactory>();
-
-            descriptors.AddSingleton<PortFactory>();
-            descriptors.AddSingleton<PortManagerFactory>();
-
-            descriptors.AddSingleton<GatewayFactory>();
-
-
-            descriptors.AddEdgeGatewayEvents();
-            descriptors.AddEdgeGatewayRecovers();
-            descriptors.AddEdgeGatewayTransport();
-            descriptors.AddEdgeGatewayProtocol();
-            descriptors.AddEdgeGatewayReadings();
-
-            // Gateway
             descriptors.TryAddSingleton<GatewayFactory>();
             descriptors.TryAddSingleton<IGateway>(sp =>
             {
                 var gatewayFactory = sp.GetRequiredService<GatewayFactory>();
                 return gatewayFactory.Create(creationContext);
             });
+            return descriptors;
+        }
+        public IServiceCollection AddEdgeGatewayPorts()
+        {
+            descriptors.TryAddSingleton<PortFactory>();
+            descriptors.TryAddSingleton<PortManagerFactory>();
 
             return descriptors;
         }
-
-        public IServiceCollection AddEdgeGatewayHost()
+        public IServiceCollection AddEdgeGatewayDevices()
         {
-            return descriptors.AddHostedService<LaunchHostedService>();
+            descriptors.TryAddSingleton<DeviceFactory>();
+            descriptors.TryAddSingleton<DeviceManagerFactory>();
+
+            return descriptors;
+        }
+        public IServiceCollection AddEdgeGatewaySubscriptions()
+        {
+            descriptors.TryAddSingleton<SubscriptionFactory>();
+            descriptors.TryAddSingleton<SubscriptionManagerFactory>();
+
+            return descriptors;
         }
 
 
@@ -62,7 +62,6 @@ public static class CoreDependencyInjectionExtensions
 
             return descriptors;
         }
-
         public IServiceCollection AddEdgeGatewayTransport()
         {
             descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportConnectionFactory, TransportConnectionFactory>());
@@ -72,15 +71,6 @@ public static class CoreDependencyInjectionExtensions
         public IServiceCollection AddEdgeGatewayProtocol()
         {
             descriptors.TryAddSingleton<ProtocolAccessorFactory>();
-            return descriptors;
-        }
-
-        public IServiceCollection AddEdgeGatewayRecovers()
-        {
-            descriptors.TryAddSingleton<PortRecoveryPolicyHandler>();
-            descriptors.TryAddSingleton<RecoveryPolicyFactoryResolver>();
-            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IRecoveryPolicyFactory, IOExceptionRecoveryPolicyFactory>());
-
             return descriptors;
         }
 

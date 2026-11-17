@@ -1,20 +1,31 @@
 ﻿using Microsoft.Extensions.Logging;
+using ThabeSoft.EdgeGateway.Extensions;
+using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 
 namespace ThabeSoft.EdgeGateway.Transports.Udp;
 
 
-internal sealed class UdpTransportConnectionFactory(ILoggerFactory  loggerFactory) : ITransportConnectionResolver
+internal sealed class UdpTransportConnectionFactory(
+        ILoggerFactory loggerFactory,
+        ILifecycleStateMachineFactory lifecycleStateMachineFactory
+    ) : ITransportConnectionResolver
 {
-    public bool CanResolve(TransportDescriptor descriptor)
+    public bool CanResolve(TransportCreationContext context)
     {
-        return descriptor is IpTransportDescriptor ip && ip.ProtocolType == IpProtocolType.Udp;
+        return context.Transport is IpTransportDescriptor ip && ip.ProtocolType == IpProtocolType.Udp;
     }
 
-    public ITransportConnection Resolve(TransportDescriptor descriptor)
+    public ITransportConnection Resolve(TransportCreationContext context)
     {
-        if (descriptor is not IpTransportDescriptor ip || ip.ProtocolType != IpProtocolType.Udp)
+        if (context.Transport is not IpTransportDescriptor ip || ip.ProtocolType != IpProtocolType.Udp)
             throw new InvalidOperationException();
 
-        return new UdpTransportConnection(ip, loggerFactory.CreateLogger<UdpTransportConnection>());
+        var logger = loggerFactory.CreateLogger<UdpTransportConnection>();
+        var stateMachine = lifecycleStateMachineFactory.Create(context.StateMachine);
+
+        return new UdpTransportConnection(ip, stateMachine, logger)
+        {
+            DisposedCallback = async () => await stateMachine.TryDisposeAsync(logger)
+        };
     }
 }

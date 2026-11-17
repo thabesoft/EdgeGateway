@@ -20,7 +20,7 @@ public class TcpTransportConnectionTests
                 .AddEdgeGatewayTransport()
             )
             .Build();
-        var resolver = app.Services.GetRequiredService<ITransportConnectionFactoryFactory>();
+        var resolver = app.Services.GetRequiredService<ITransportConnectionFactory>();
 
 
 
@@ -28,7 +28,7 @@ public class TcpTransportConnectionTests
         listener.Start();
 
         var transportDescriptor = Ethernet.Tcp((IPEndPoint)listener.LocalEndpoint);
-        var transpor = resolver.Resolve(transportDescriptor);
+        var transpor = resolver.Create(transportDescriptor);
 
         await transpor.StartAsync(TestContext.CancellationToken);
         await transpor.StartAsync(TestContext.CancellationToken);

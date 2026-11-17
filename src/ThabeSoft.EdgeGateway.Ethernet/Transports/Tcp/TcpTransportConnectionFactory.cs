@@ -1,20 +1,31 @@
 ﻿using Microsoft.Extensions.Logging;
+using ThabeSoft.EdgeGateway.Extensions;
+using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 
 namespace ThabeSoft.EdgeGateway.Transports.Tcp;
 
 
-internal sealed class TcpTransportConnectionFactory(ILoggerFactory loggerFactory) : ITransportConnectionResolver
+internal sealed class TcpTransportConnectionFactory(
+        ILoggerFactory loggerFactory,
+        ILifecycleStateMachineFactory lifecycleStateMachineFactory
+    ) : ITransportConnectionResolver
 {
-    public bool CanResolve(TransportDescriptor descriptor)
+    public bool CanResolve(TransportCreationContext context)
     {
-        return descriptor is IpTransportDescriptor ip && ip.ProtocolType == IpProtocolType.Tcp;
+        return context.Transport is IpTransportDescriptor ip && ip.ProtocolType == IpProtocolType.Tcp;
     }
 
-    public ITransportConnection Resolve(TransportDescriptor descriptor)
+    public ITransportConnection Resolve(TransportCreationContext context)
     {
-        if (descriptor is not IpTransportDescriptor ip || ip.ProtocolType != IpProtocolType.Tcp)
+        if (context.Transport is not IpTransportDescriptor ip || ip.ProtocolType != IpProtocolType.Tcp)
             throw new InvalidOperationException();
 
-        return new TcpTransportConnection(ip, loggerFactory.CreateLogger<TcpTransportConnection>());
+        var logger = loggerFactory.CreateLogger<TcpTransportConnection>();
+        var stateMachine = lifecycleStateMachineFactory.Create(context.StateMachine);
+
+        return new TcpTransportConnection(ip, stateMachine, logger)
+        {
+            DisposedCallback = async () => await stateMachine.TryDisposeAsync(logger)
+        };
     }
 }

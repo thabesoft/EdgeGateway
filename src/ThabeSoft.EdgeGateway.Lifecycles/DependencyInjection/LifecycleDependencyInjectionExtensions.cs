@@ -12,7 +12,7 @@ public static class LifecycleDependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {
-        public IServiceCollection AddEdgeGatewayTriggers()
+        public IServiceCollection AddEdgeGatewayLifecycles()
         {
             descriptors.TryAddSingleton<ILifecycleStateMachineFactory, LifecycleStateMachineResolver>();
 

@@ -68,8 +68,6 @@ internal readonly struct GatewayDependencies
 internal sealed class GatewayFactory(
         ILifecycleStateMachineFactory lifecycleStateMachineFactory,
         IEventPublisher eventPublisher,
-        DeviceManagerFactory deviceManagerFactory,
-        ProtocolAccessorResolver protocolAccessorResolver,
         PortManagerFactory portManagerFactory,
         PortFactory portFactory,
         ILoggerFactory loggerFactory
@@ -80,7 +78,7 @@ internal sealed class GatewayFactory(
         var logger = loggerFactory.CreateLogger<Gateway>();
 
         // 状态机
-        var gatewayStateMachine = lifecycleStateMachineFactory.Create(context.GatewayStateMachineDescriptor);
+        var gatewayStateMachine = lifecycleStateMachineFactory.Create(context.GatewayStateMachine);
         var gatewayStateEventDisposable = gatewayStateMachine.StateChanged.Subscribe(x =>
             _ = eventPublisher.PublishAsync(new GatewayStateChangedEvent(x.Old, x.New)));
 
@@ -88,19 +86,20 @@ internal sealed class GatewayFactory(
         var portManager = portManagerFactory.Create(new()
         {
             GatwayLifecycleState = gatewayStateMachine,
-            PortBatchExecutorDescriptor = context.PortBatchExecutorDescriptor,
+            PortBatchExecutorDescriptor = context.PortBatchExecutor,
             PortCreator = port => portFactory.Create(new()
             {
                 GatewayLifecycleState = gatewayStateMachine,
 
                 Port = port,
-                PortStateMachineDescriptor = context.PortStateMachine,
+                PortStateMachine = context.PortStateMachine,
+                TransportStateMachine = context.TransportStateMachine,
 
-                DeviceStateMachineDescriptor = context.DeviceStateMachine,
-                DeviceBatchExecutorDescriptor = context.DeviceBatchExecutorDescriptor,
+                DeviceStateMachine = context.DeviceStateMachine,
+                DeviceBatchExecutor = context.DeviceBatchExecutorDescriptor,
 
-                SubscriptionStateMachineDescriptor = context.SubscriptionStateMachine,
-                SubscriptionBatchExecutorDescriptor = context.SubscriptionBatchExecutorDescriptor,
+                SubscriptionStateMachine = context.SubscriptionStateMachine,
+                SubscriptionBatchExecutor = context.SubscriptionBatchExecutorDescriptor,
             })
         });
 
@@ -129,19 +128,20 @@ internal sealed class GatewayFactory(
 public sealed record GatewayCreationContext
 {
     // Gateway
-    public required LifecycleStateMachineDescriptor GatewayStateMachineDescriptor { get; init; }
     public required LifecycleStateMachineDescriptor GatewayStateMachine { get; init => field = value.Required(); }
 
     // Port
     public required LifecycleStateMachineDescriptor PortStateMachine { get; init => field = value.Required(); }
-    public required LifecycleBatchExecutorDescriptor PortBatchExecutorDescriptor { get; init; }
+    public required LifecycleStateMachineDescriptor TransportStateMachine { get; init => field = value.Required(); }
+    public LifecycleBatchExecutorDescriptor PortBatchExecutor { get; init => field = value.Required(); } = new LifecycleBatchExecutorDescriptor();
+
 
     // Device
     public required LifecycleStateMachineDescriptor DeviceStateMachine { get; init => field = value.Required(); }
-    public required LifecycleBatchExecutorDescriptor DeviceBatchExecutorDescriptor { get; init; }
+    public LifecycleBatchExecutorDescriptor DeviceBatchExecutorDescriptor { get; init => field = value.Required(); } = new LifecycleBatchExecutorDescriptor();
 
 
     // Subscription
     public required LifecycleStateMachineDescriptor SubscriptionStateMachine { get; init => field = value.Required(); }
-    public required LifecycleBatchExecutorDescriptor SubscriptionBatchExecutorDescriptor { get; init => field = value.Required(); }
+    public LifecycleBatchExecutorDescriptor SubscriptionBatchExecutorDescriptor { get; init => field = value.Required(); } = new LifecycleBatchExecutorDescriptor();
 }

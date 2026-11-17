@@ -16,8 +16,18 @@ internal static class AppHostBuilder
 
             builder.ConfigureServices(descriptors =>
             {
-                descriptors.AddEdgeGateway();
                 descriptors.AddEdgeGatewayTriggers();
+                descriptors.AddEdgeGatewayLifecycles();
+
+                descriptors.AddEdgeGateway(new()
+                {
+                    GatewayStateMachine = Lifecycle.RetryableStateMachine(),
+                    PortStateMachine = Lifecycle.RetryableStateMachine(),
+                    TransportStateMachine = Lifecycle.StrictStateMachine(),
+                    DeviceStateMachine = Lifecycle.RetryableStateMachine(),
+                    SubscriptionStateMachine = Lifecycle.StrictStateMachine()
+                });
+
                 descriptors.AddEdgeGatewaySerial();
                 descriptors.AddEdgeGatewayEthernet();
                 descriptors.AddEdgeGatewayModbus();

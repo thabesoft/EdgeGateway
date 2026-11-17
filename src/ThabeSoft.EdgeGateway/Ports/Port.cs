@@ -116,7 +116,7 @@ internal sealed class PortFactory(
         ILifecycleStateMachineFactory lifecycleStateMachineFactory,
         IEventPublisher eventPublisher,
         DeviceManagerFactory deviceManagerFactory,
-        ITransportConnectionFactoryFactory transportConnectionFactory,
+        ITransportConnectionFactory transportConnectionFactory,
         ProtocolAccessorResolver protocolAccessorResolver,
         DeviceFactory deviceFactory,
         ILoggerFactory loggerFactory
@@ -127,12 +127,17 @@ internal sealed class PortFactory(
         var logger = loggerFactory.CreateLogger<Port>();
 
         // 状态机
-        var portStateMachine = lifecycleStateMachineFactory.Create(context.PortStateMachineDescriptor);
+        var portStateMachine = lifecycleStateMachineFactory.Create(context.PortStateMachine);
         var deviceStateEventDisposable = portStateMachine.StateChanged.Subscribe(x =>
             _ = eventPublisher.PublishAsync(new PortStateChangedEvent(context.Port.Id, x.Old, x.New)));
 
         // 传输器
-        var transport = transportConnectionFactory.Resolve(context.Port.Transport);
+        var transport = transportConnectionFactory.Create(new()
+        {
+            Transport = context.Port.Transport,
+            StateMachine = context.TransportStateMachine
+        });
+        // 协议访问器
         var protocolAccessors = new ConcurrentDictionary<ProtocolDescriptor, IProtocolAccessor>();
 
         // 设备管理器
@@ -141,7 +146,7 @@ internal sealed class PortFactory(
             Port = context.Port,
             PortLifecycleState = portStateMachine,
 
-            DeviceBatchExecutorDescriptor = context.DeviceBatchExecutorDescriptor,
+            DeviceBatchExecutorDescriptor = context.DeviceBatchExecutor,
             DevicCreator = device => deviceFactory.Create(new()
             {
                 Port = context.Port,
@@ -149,10 +154,10 @@ internal sealed class PortFactory(
                 PortState = portStateMachine,
 
                 Device = device,
-                DeviceStateMachineDescriptor = context.DeviceStateMachineDescriptor,
+                DeviceStateMachineDescriptor = context.DeviceStateMachine,
 
-                SubscriptionBatchExecutorDescriptor = context.SubscriptionBatchExecutorDescriptor,
-                SubscriptionStateMachineDescriptor = context.SubscriptionStateMachineDescriptor
+                SubscriptionBatchExecutorDescriptor = context.SubscriptionBatchExecutor,
+                SubscriptionStateMachineDescriptor = context.SubscriptionStateMachine
             })
         });
 
@@ -193,14 +198,15 @@ internal readonly struct PortCreationContext
 
     // Port
     public required PortDescriptor Port { get; init => field = value.Required(); }
-    public required LifecycleStateMachineDescriptor PortStateMachineDescriptor { get; init; }
+    public required LifecycleStateMachineDescriptor PortStateMachine { get; init; }
+    public required LifecycleStateMachineDescriptor TransportStateMachine { get; init => field = value.Required(); }
 
     // Device
-    public required LifecycleStateMachineDescriptor DeviceStateMachineDescriptor { get; init => field = value.Required(); }
-    public required LifecycleBatchExecutorDescriptor DeviceBatchExecutorDescriptor { get; init => field = value.Required(); }
+    public required LifecycleStateMachineDescriptor DeviceStateMachine { get; init => field = value.Required(); }
+    public required LifecycleBatchExecutorDescriptor DeviceBatchExecutor { get; init => field = value.Required(); }
 
 
     // Subscription
-    public required LifecycleStateMachineDescriptor SubscriptionStateMachineDescriptor { get; init => field = value.Required(); }
-    public required LifecycleBatchExecutorDescriptor SubscriptionBatchExecutorDescriptor { get; init; }
+    public required LifecycleStateMachineDescriptor SubscriptionStateMachine { get; init => field = value.Required(); }
+    public required LifecycleBatchExecutorDescriptor SubscriptionBatchExecutor { get; init => field = value.Required(); }
 }

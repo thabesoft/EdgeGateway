@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using ThabeSoft.EdgeGateway.App.DependencyInjection;
 using ThabeSoft.EdgeGateway.DependencyInjection;
+using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Hosting;
 
 namespace ThabeSoft.EdgeGateway.App.Hosting;

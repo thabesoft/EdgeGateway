@@ -9,8 +9,7 @@ namespace ThabeSoft.EdgeGateway.Subscriptions;
 
 public sealed record class SubscriptionConfig
 {
-    public SubscriptionId Id { get; init => field = value.Required(); } = SubscriptionId.Create();
+    public required SubscriptionDescriptor Descriptor { get; init => field = value.Required(); }
     public required TriggerDescriptor Trigger { get; init => field = value.Required(); }
-    public required DataAddress Address { get; init => field = value.Required(); }
-    public required TagValueType ValueType { get; init => field = value.Required(); }
+    public required TagValueType ValueType { get; init => field = value.Defined(); }
 }

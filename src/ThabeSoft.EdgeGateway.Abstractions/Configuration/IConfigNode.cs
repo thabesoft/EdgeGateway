@@ -1,8 +1,9 @@
-﻿namespace ThabeSoft.EdgeGateway.Configuration.Nodes;
+﻿namespace ThabeSoft.EdgeGateway.Configuration;
+
 
 public interface IConfigNode
 {
-    string? GetString(string path);
+    string? GetValue(string path);
     IConfigNode? GetChild(string path);
     IEnumerable<IConfigNode> GetChildren(string path);
 }

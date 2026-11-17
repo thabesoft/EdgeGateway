@@ -1,10 +1,4 @@
 ﻿using System.Text;
-using ThabeSoft.EdgeGateway.Configuration.Mappers;
-using ThabeSoft.EdgeGateway.Configuration.Nodes;
-using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Ports;
-using ThabeSoft.EdgeGateway.Transports;
-using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Configuration;
 

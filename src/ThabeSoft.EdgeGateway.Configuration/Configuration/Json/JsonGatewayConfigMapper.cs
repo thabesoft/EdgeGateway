@@ -185,7 +185,7 @@ internal static class JsonGatewayConfigMapper
         var (descriptor, type) = root.Required("订阅描述符不存在")
             .AsSubscriptionDescriptor(protocolType);
 
-        return new() { Descriptor = descriptor, ValueType = type };
+        return new() { Descriptor = descriptor, ValueType = type, Trigger = null! };
     }
     private static (SubscriptionDescriptor, TagValueType) AsSubscriptionDescriptor(this JsonNode root, ProtocolType protocolType)
     {

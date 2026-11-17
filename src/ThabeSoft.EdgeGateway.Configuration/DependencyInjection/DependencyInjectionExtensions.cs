@@ -2,6 +2,11 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Configuration.Json;
+using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Ports;
+using ThabeSoft.EdgeGateway.Subscription;
+using ThabeSoft.EdgeGateway.Subscriptions;
+using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.EdgeGateway.DependencyInjection;
 
@@ -16,6 +21,33 @@ public static class DependencyInjectionExtensions
             descriptors.TryAddSingleton<ConfigManager>();
             descriptors.AddHostedService<JsonFileConfigHostedService>();
             descriptors.TryAddSingleton<IConfigSerializer, JsonConfigSerializer>();
+
+            return descriptors;
+        }
+
+
+        public IServiceCollection AddAddEdgeGatewayConifigMappers()
+        {
+            descriptors.AddSingleton<IConfigMapper<GatewayConfig>, GatewayConfigMapper>();
+
+            // Port
+            descriptors.AddSingleton<IConfigMapper<PortConfig>, PortConfigMapper>();
+            descriptors.AddSingleton<IConfigMapper<PortDescriptor>, PortDescriptorConfigMapper>();
+
+            // T
+            descriptors.AddSingleton<IConfigMapper<RetryDescriptor>, RetyrDescriptorConfigMapper>();
+
+
+            // Device
+            descriptors.AddSingleton<IConfigMapper<DeviceConfig>, DeviceConfigMapper>();
+            descriptors.AddSingleton<IConfigMapper<DeviceDescriptor>, DeviceDescriptorConfigMapper>();
+
+            // Subscription
+            descriptors.AddSingleton<IConfigMapper<SubscriptionConfig>, SubscriptionConfigMapper>();
+            descriptors.AddSingleton<IConfigMapper<SubscriptionDescriptor<bool>>, SubscriptionDescriptorConfigMapper<bool>>();
+            descriptors.AddSingleton<IConfigMapper<SubscriptionDescriptor<int>>, SubscriptionDescriptorConfigMapper<int>>();
+
+
 
             return descriptors;
         }

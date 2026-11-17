@@ -17,7 +17,7 @@ public static class CoreDependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {
-        public IServiceCollection AddEdgeGateway(GatewayCreationContext creationContext)
+        public IServiceCollection AddEdgeGateway(GatewayCreationArgs creationContext)
         {
             descriptors.AddSingleton<SubscriptionFactory>();
             descriptors.AddSingleton<SubscriptionManagerFactory>();

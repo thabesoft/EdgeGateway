@@ -1,15 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Addressing;
-using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Events;
 using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles;
-using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
-using ThabeSoft.EdgeGateway.Ports;
-using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Readings;
-using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Triggers;
 using ThabeSoft.Guard;
 
@@ -19,7 +13,7 @@ namespace ThabeSoft.EdgeGateway.Subscription;
 internal interface IAsyncDisposableSubscription : ISubscription, IAsyncDisposable;
 
 
-internal sealed class Subscription<T>(SubscriptionDependencies<T> dependencies) :
+internal sealed class Subscription<T>(in SubscriptionArgs<T> dependencies) :
     ISubscription<T>, IAsyncDisposableSubscription
     where T : notnull
 {
@@ -40,7 +34,7 @@ internal sealed class Subscription<T>(SubscriptionDependencies<T> dependencies) 
     Reading? ISubscription.Latest => _readingSource.Latest;
     public IObservable<Reading<T>> Update => _readingObservable;
     IObservable<Reading> ISubscription.Update => _readingObservable;
-    public LifecycleState State => dependencies.StateMachine.State;
+    public LifecycleState State => _stateMachine.State;
     public Func<ValueTask>? DisposedCallback { get; init; }
 
 
@@ -102,7 +96,7 @@ internal sealed class Subscription<T>(SubscriptionDependencies<T> dependencies) 
     }
 }
 
-internal readonly struct SubscriptionDependencies<T> where T : notnull
+internal readonly struct SubscriptionArgs<T> where T : notnull
 {
     // Device
     public required ILifecycleStateable DeviceState { get; init => field = value.Required(); }
@@ -117,70 +111,4 @@ internal readonly struct SubscriptionDependencies<T> where T : notnull
 
     public required ITriggerScheduler TriggerScheduler { get; init => field = value.Required(); }
     public required ILogger Logger { get; init => field = value.Required(); }
-}
-
-
-
-internal sealed class SubscriptionFactory(
-        ILifecycleStateMachineFactory lifecycleStateMachineFactory,
-        ITriggerScheduler triggerScheduler,
-        IEventPublisher eventPublisher,
-        ILoggerFactory loggerFactory
-    )
-{
-    public Subscription<T> Create<T>(SubscriptionCreationContext<T> context) where T : notnull
-    {
-        // 日志
-        var subscriptionLogger = loggerFactory.CreateLogger<Subscription<T>>();
-        var readingSourceLogger = loggerFactory.CreateLogger<ReadingSource<T>>();
-        var readingObservableLogger = loggerFactory.CreateLogger<ReadingObservable<T>>();
-
-
-        // 状态机
-        var stateMachine = lifecycleStateMachineFactory.Create(context.SubscriptioStateMachineDescriptor);
-        var subscriptionStateEventDisposable = stateMachine.StateChanged.Subscribe(x =>
-                _ = eventPublisher.PublishAsync(new SubscriptionStateChanged(context.Port.Id, context.Device.Id, context.Subscription.Id, x.Old, x.New)));
-
-        // 数据更新
-        var readingSource = new ReadingSource<T>(context.Subscription.Tag, context.ProtocolAccessor, readingSourceLogger);
-        var readingObservable = new ReadingObservable<T>(readingObservableLogger);
-
-        // 构造依赖
-        var devicDependencies = new SubscriptionDependencies<T>()
-        {
-            DeviceState = context.DeviceState,
-            Subscription = context.Subscription,
-            StateMachine = stateMachine,
-            ReadingObservable = readingObservable,
-            ReadingSource = readingSource,
-            TriggerScheduler = triggerScheduler,
-            Logger = subscriptionLogger
-        };
-
-        // 创建
-        return new(devicDependencies)
-        {
-            DisposedCallback = async () =>
-            {
-                readingObservable.TryDispose(subscriptionLogger);
-                subscriptionStateEventDisposable.TryDispose(subscriptionLogger);
-                await stateMachine.TryDisposeAsync(subscriptionLogger);
-            }
-        };
-    }
-}
-
-internal readonly struct SubscriptionCreationContext<T> where T : notnull
-{
-    // Port
-    public required PortDescriptor Port { get; init => field = value.Required(); }
-    public required IProtocolAccessor ProtocolAccessor { get; init => field = value.Required(); }
-
-    // Device
-    public required DeviceDescriptor Device { get; init => field = value.Required(); }
-    public required ILifecycleStateable DeviceState { get; init => field = value.Required(); }
-
-    // Subscription
-    public required SubscriptionDescriptor<T> Subscription { get; init => field = value.Required(); }
-    public required LifecycleStateMachineDescriptor SubscriptioStateMachineDescriptor { get; init => field = value.Required(); }
 }

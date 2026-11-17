@@ -7,9 +7,9 @@ internal sealed class ProtocolAccessorFactory(IEnumerable<IProtocolAccessorResol
 {
     public IProtocolAccessor Create(ProtocolDescriptor descriptor, IByteDuplex byteDuplex)
     {
-        var factory = resolvers.FirstOrDefault(x => x.CanResolve(descriptor))
-            ?? throw new NotSupportedProtocolException(descriptor);
+        var resolver = resolvers.FirstOrDefault(x => x.CanResolve(descriptor))
+            ?? throw new InvalidOperationException($"不支持创建的协议({descriptor.GetType()}):{descriptor}");
 
-        return factory.Resolve(descriptor, byteDuplex);
+        return resolver.Resolve(descriptor, byteDuplex);
     }
 }

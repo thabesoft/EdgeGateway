@@ -8,7 +8,7 @@ internal sealed class TransportConnectionFactory(
     public ITransportConnection Create(TransportCreationContext context)
     {
         var resolver = resolvers.FirstOrDefault(x => x.CanResolve(context))
-            ?? throw new InvalidOperationException($"无法创建通讯连接, 不支持的上下文: {context}");
+            ?? throw new InvalidOperationException($"不支持创建的传输类型({context.Transport.GetType()}):{context.Transport}");
 
         return resolver.Resolve(context);
     }

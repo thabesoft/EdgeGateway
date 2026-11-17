@@ -1,9 +1,6 @@
-﻿using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Events;
-using ThabeSoft.EdgeGateway.Lifecycles;
+﻿using ThabeSoft.EdgeGateway.Events;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Utilities;
-using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Ports;
 
@@ -17,7 +14,7 @@ internal sealed class PortManager : IAsyncDisposable
 
 
     public PortManager(
-            PortManagerDependencies dependencies,
+            PortManagerCreationArgs dependencies,
             IEventPublisher eventPublisher,
             ILifecycleKeyedCollectionFactory lifecycleKeyedCollectionFactory,
             ILifecycleBatchExecutorFactory lifecycleBatchExecutorFactory)
@@ -58,29 +55,5 @@ internal sealed class PortManager : IAsyncDisposable
         await _eventPublisher.PublishAsync(new PortRemovedEvent(id));
 
         return result;
-    }
-}
-
-internal readonly struct PortManagerDependencies
-{
-    public required ILifecycleStateable GatwayLifecycleState { get; init => field = value.Required(); }
-    public required Func<PortDescriptor, Port> PortCreator { get; init => field = value.Required(); }
-    public required LifecycleBatchExecutorDescriptor PortBatchExecutorDescriptor { get; init => field = value.Required(); }
-}
-
-
-internal sealed class PortManagerFactory(
-        IEventPublisher eventPublisher,
-        ILifecycleKeyedCollectionFactory lifecycleKeyedCollectionFactory,
-        ILifecycleBatchExecutorFactory lifecycleBatchExecutorFactory
-    )
-{
-    public PortManager Create(PortManagerDependencies dependencies)
-    {
-        return new(
-            dependencies: dependencies,
-            eventPublisher: eventPublisher,
-            lifecycleKeyedCollectionFactory: lifecycleKeyedCollectionFactory,
-            lifecycleBatchExecutorFactory: lifecycleBatchExecutorFactory);
     }
 }

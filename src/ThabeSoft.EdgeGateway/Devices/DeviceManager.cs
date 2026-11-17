@@ -1,9 +1,7 @@
 ﻿using ThabeSoft.EdgeGateway.Events;
-using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Utilities;
-using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Devices;
 
@@ -18,17 +16,17 @@ internal sealed class DeviceManager : IAsyncDisposable
 
 
     public DeviceManager(
-            DeviceManagerDependencies dependencies,
+            in DeviceManagerCreationArgs args,
             IEventPublisher eventPublisher,
             ILifecycleKeyedCollectionFactory lifecycleKeyedCollectionFactory,
             ILifecycleBatchExecutorFactory lifecycleBatchExecutorFactory)
     {
-        _devicCreator = dependencies.DevicCreator;
-        _portId = dependencies.Port.Id;
+        _devicCreator = args.DevicCreator;
+        _portId = args.Port.Id;
         _eventPublisher = eventPublisher;
 
-        _collection = lifecycleKeyedCollectionFactory.Create<DeviceId, Device>(dependencies.PortLifecycleState);
-        _batchExecutor = lifecycleBatchExecutorFactory.Create(dependencies.DeviceBatchExecutorDescriptor);
+        _collection = lifecycleKeyedCollectionFactory.Create<DeviceId, Device>(args.PortLifecycleState);
+        _batchExecutor = lifecycleBatchExecutorFactory.Create(args.DeviceBatchExecutorDescriptor);
 
         Items = new ReadOnlyDictionaryView<DeviceId, Device, IDevice>(_collection.Items);
     }
@@ -60,34 +58,5 @@ internal sealed class DeviceManager : IAsyncDisposable
 
         _ = _eventPublisher.PublishAsync(new DeviceRemovedEvent(_portId, deviceId));
         return true;
-    }
-}
-
-
-internal readonly struct DeviceManagerDependencies
-{
-    // Port
-    public required PortDescriptor Port { get; init => field = value.Required(); }
-    public required ILifecycleStateable PortLifecycleState { get; init => field = value.Required(); }
-
-    // Device
-    public required Func<DeviceDescriptor, Device> DevicCreator { get; init => field = value.Required(); }
-    public required LifecycleBatchExecutorDescriptor DeviceBatchExecutorDescriptor { get; init => field = value.Required(); }
-}
-
-
-internal sealed class DeviceManagerFactory(
-        IEventPublisher eventPublisher,
-        ILifecycleKeyedCollectionFactory lifecycleKeyedCollectionFactory,
-        ILifecycleBatchExecutorFactory lifecycleBatchExecutorFactory
-    )
-{
-    public DeviceManager Create(DeviceManagerDependencies dependencies)
-    {
-        return new(
-            dependencies: dependencies,
-            eventPublisher: eventPublisher,
-            lifecycleKeyedCollectionFactory: lifecycleKeyedCollectionFactory,
-            lifecycleBatchExecutorFactory: lifecycleBatchExecutorFactory);
     }
 }

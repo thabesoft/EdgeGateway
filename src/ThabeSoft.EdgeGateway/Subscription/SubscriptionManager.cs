@@ -1,10 +1,8 @@
 ﻿using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Events;
-using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Utilities;
-using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Subscription;
 
@@ -21,18 +19,18 @@ internal sealed class SubscriptionManager : IAsyncDisposable
 
 
     public SubscriptionManager(
-        SubscriptionManagerDependencies dependencies,
-        IEventPublisher eventPublisher,
-        ILifecycleKeyedCollectionFactory lifecycleKeyedCollectionFactory,
-        ILifecycleBatchExecutorFactory lifecycleBatchExecutorFactory)
+            SubscriptionManagerCreationArgs args,
+            IEventPublisher eventPublisher,
+            ILifecycleKeyedCollectionFactory lifecycleKeyedCollectionFactory,
+            ILifecycleBatchExecutorFactory lifecycleBatchExecutorFactory)
     {
-        _portId = dependencies.PortId;
-        _deviceId = dependencies.DeviceId;
+        _portId = args.Port.Id;
+        _deviceId = args.Device.Id;
         _eventPublisher = eventPublisher;
-        _creator = dependencies.SubscriptionCreator;
+        _creator = args.SubscriptionCreator;
 
-        _collection = lifecycleKeyedCollectionFactory.Create<SubscriptionId, IAsyncDisposableSubscription>(dependencies.DeviceState);
-        _batchExecutor = lifecycleBatchExecutorFactory.Create(dependencies.SubscriptionBatchExecutorDescriptor);
+        _collection = lifecycleKeyedCollectionFactory.Create<SubscriptionId, IAsyncDisposableSubscription>(args.DeviceState);
+        _batchExecutor = lifecycleBatchExecutorFactory.Create(args.SubscriptionBatchExecutorDescriptor);
 
         Items = new ReadOnlyDictionaryView<SubscriptionId, IAsyncDisposableSubscription, ISubscription>(_collection.Items);
     }
@@ -66,37 +64,5 @@ internal sealed class SubscriptionManager : IAsyncDisposable
 
         _ = _eventPublisher.PublishAsync(new SubscriptionRemovedEvent(_portId, _deviceId, id));
         return true;
-    }
-}
-
-internal interface ISubscriptionCreator
-{
-    Subscription<T> Create<T>(SubscriptionDescriptor<T> descriptor) where T : notnull;
-}
-
-internal readonly struct SubscriptionManagerDependencies
-{
-    public required PortId PortId { get; init => field = value.Required(); }
-    public required DeviceId DeviceId { get; init => field = value.Required(); }
-    public required ILifecycleStateable DeviceState { get; init => field = value.Required(); }
-
-    public required ISubscriptionCreator SubscriptionCreator { get; init => field = value.Required(); }
-    public required LifecycleBatchExecutorDescriptor SubscriptionBatchExecutorDescriptor { get; init => field = value.Required(); }
-}
-
-
-internal sealed class SubscriptionManagerFactory(
-        IEventPublisher eventPublisher,
-        ILifecycleBatchExecutorFactory lifecycleBatchExecutorFactory,
-        ILifecycleKeyedCollectionFactory lifecycleKeyedCollectionFactory
-    )
-{
-    public SubscriptionManager Create(SubscriptionManagerDependencies dependencies)
-    {
-        return new(
-            dependencies: dependencies,
-            eventPublisher: eventPublisher,
-            lifecycleKeyedCollectionFactory: lifecycleKeyedCollectionFactory,
-            lifecycleBatchExecutorFactory: lifecycleBatchExecutorFactory);
     }
 }

@@ -18,13 +18,13 @@ public static class DependencyInjectionExtensions
         /// <summary>
         /// 添加模拟模块
         /// </summary>
-        public IServiceCollection AddEdgeGatewaySimulation(SimulatorCreationArgs args)
+        public IServiceCollection AddEdgeGatewaySimulation(SimulatorCreationArgs? args = default)
         {
             descriptors.TryAddSingleton<SimulatorFactory>();
             descriptors.TryAddSingleton<ISimulator>(sp =>
             {
                 var factory = sp.GetRequiredService<SimulatorFactory>();
-                return factory.Create(args);
+                return factory.Create(args ?? new SimulatorCreationArgs());
             });
 
             return descriptors;

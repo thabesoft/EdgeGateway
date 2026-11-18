@@ -11,6 +11,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Abstractions\ThabeSoft.EdgeGateway.Abstractions.csproj" />
 	  <ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Simulation\ThabeSoft.EdgeGateway.Simulation.csproj" />
 	  <ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Triggers\ThabeSoft.EdgeGateway.Triggers.csproj" />
 	</ItemGroup>

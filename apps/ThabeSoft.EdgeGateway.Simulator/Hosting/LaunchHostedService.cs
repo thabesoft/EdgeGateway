@@ -1,7 +1,11 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Net;
+using ThabeSoft.EdgeGateway.Codecs;
+using ThabeSoft.EdgeGateway.Ethernet;
+using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway.Ports;
+using ThabeSoft.EdgeGateway.Simulation;
 using ThabeSoft.EdgeGateway.Triggers;
 using ThabeSoft.EdgeGateway.ValueGenerators;
 
@@ -12,7 +16,7 @@ internal sealed class LaunchHostedService(ISimulator simulator, ILogger<LaunchHo
 {
     private const int DeviceCount = 2;
     private const int DeviceValueCount = 10;
-    private static TriggerDescriptor TriggerDescriptor { get; } = Trigger.Interval(100);
+    private static TriggerDescriptor TriggerDescriptor { get; } = TriggerBuilder.Interval(100);
 
     private Task? _flakyPortRunningTask;
     private CancellationTokenSource? _flakyPortRunningTaskCts;
@@ -20,7 +24,7 @@ internal sealed class LaunchHostedService(ISimulator simulator, ILogger<LaunchHo
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var network = simulator.AddPort(Simulation.ModbusIpPort(Ethernet.Tcp(IPAddress.Loopback, 2333)));
+        var network = simulator.AddPort(SimulationBuilder.ModbusIpPort(EthernetBuilder.Tcp(IPAddress.Loopback, 2333)));
         for (byte i = 1; i <= DeviceCount; i++)
             await AddDeviceAsync(i, network, cancellationToken);
 
@@ -66,7 +70,7 @@ internal sealed class LaunchHostedService(ISimulator simulator, ILogger<LaunchHo
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                var network = simulator.AddPort(Simulation.ModbusIpPort(Ethernet.Tcp(IPAddress.Loopback, 2334)));
+                var network = simulator.AddPort(SimulationBuilder.ModbusIpPort(EthernetBuilder.Tcp(IPAddress.Loopback, 2334)));
 
                 for (byte i = 1; i <= DeviceCount; i++)
                     await AddDeviceAsync(i, network, cancellationToken);
@@ -97,13 +101,13 @@ internal sealed class LaunchHostedService(ISimulator simulator, ILogger<LaunchHo
 
     private static async Task AddDeviceAsync(byte id, ISimulationPort network, CancellationToken cancellationToken)
     {
-        var slave = await network.AddDeviceAsync(Simulation.ModbusDevice(id), cancellationToken);
+        var slave = await network.AddDeviceAsync(SimulationBuilder.ModbusDevice(id), cancellationToken);
         var generators = CreateGenerators(DeviceValueCount);
 
         for (int i = 0; i < DeviceValueCount; i++)
         {
             // Double 占 4 个寄存器，地址按 4 递增
-            var tag = Modbus.HoldingRegister(id, (ushort)(i * 4), Codec.Double);
+            var tag = ModbusBuilder.HoldingRegister(id, (ushort)(i * 4), CodecBuilder.DoubleBigEndian);
             // 模拟从站写入
             await slave.ValueAsync(tag, TriggerDescriptor, generators[i], cancellationToken);
         }
@@ -117,14 +121,14 @@ internal sealed class LaunchHostedService(ISimulator simulator, ILogger<LaunchHo
             // 8 种生成器循环复用
             generators[i] = /*(index % 8)*/ index switch
             {
-                0 => Simulation.SineWaveValue(1, 2 * Math.PI / 20),
-                1 => Simulation.SquareWaveValue(-1, 1, 10, 0.3),
-                2 => Simulation.TriangleWaveValue(-1, 1, 20),
-                3 => Simulation.SawtoothWaveValue(0, 100, 20),
-                4 => Simulation.RandomValue(0, 100, seed: 42 + i),   // 每个标签不同种子，避免完全同步
-                5 => Simulation.StepValue(0, 1, 50),
-                6 => Simulation.ConstantValue(3.14),
-                7 => Simulation.NoisySineWaveValue(1, 0, 20, 0.2),
+                0 => SimulationBuilder.SineWaveValue(1, 2 * Math.PI / 20),
+                1 => SimulationBuilder.SquareWaveValue(-1, 1, 10, 0.3),
+                2 => SimulationBuilder.TriangleWaveValue(-1, 1, 20),
+                3 => SimulationBuilder.SawtoothWaveValue(0, 100, 20),
+                4 => SimulationBuilder.RandomValue(0, 100, seed: 42 + i),   // 每个标签不同种子，避免完全同步
+                5 => SimulationBuilder.StepValue(0, 1, 50),
+                6 => SimulationBuilder.ConstantValue(3.14),
+                7 => SimulationBuilder.NoisySineWaveValue(1, 0, 20, 0.2),
                 _ => throw new InvalidOperationException()
             };
         }

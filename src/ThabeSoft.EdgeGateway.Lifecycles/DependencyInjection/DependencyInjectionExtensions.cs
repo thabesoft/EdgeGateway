@@ -18,7 +18,7 @@ public static class DependencyInjectionExtensions
             // 状态机
             descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ILifecycleStateMachineFactory, LifecycleStateMachineFactory>());
             descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ILifecycleStateMachineResolver, StrictLifecycleStateMachineFactory>());
-            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ILifecycleStateMachineResolver, RetryableLifecycleStateMachineFactory>());
+            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ILifecycleStateMachineResolver, RetryableLifecycleStateMachineResolver>());
 
 
             // 集合

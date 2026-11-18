@@ -1,6 +1,7 @@
 ﻿using ThabeSoft.EdgeGateway.Codecs.DWords;
+using ThabeSoft.EdgeGateway.Codecs.Extensions;
 
-namespace ThabeSoft.EdgeGateway.Codecs;
+namespace ThabeSoft.EdgeGateway.UnitTests.Codecs;
 
 
 [TestClass]
@@ -80,7 +81,7 @@ public class DWordCodecTests
     [DataRow(-12.3f)]
     public void BigEndian_AsFloat_RoundTrip(float expected)
     {
-        var codec = DWordCodec.BigEndian.AsFloat();
+        var codec = DWordCodec.Abcd.AsFloat();
         Span<byte> buffer = stackalloc byte[DWordCodec.ByteLength];
 
         codec.Encode(expected, buffer);
@@ -93,7 +94,7 @@ public class DWordCodecTests
     [DataRow(12345)]
     public void BigEndian_AsShort_RoundTrip(int expected)
     {
-        var codec = DWordCodec.BigEndian.AsInt();
+        var codec = DWordCodec.Abcd.AsInt();
         Span<byte> buffer = stackalloc byte[DWordCodec.ByteLength];
 
         codec.Encode(expected, buffer);
@@ -110,12 +111,12 @@ public class DWordCodecTests
     public void Encode_BufferSmall_ThrowArgumentException()
     {
         Assert.Throws<ArgumentException>(() =>
-            DWordCodec.BigEndian.Encode(0, []));
+            DWordCodec.Abcd.Encode(0, []));
     }
     [TestMethod]
     public void Encode_DataShort_ThrowArgumentException()
     {
         Assert.Throws<ArgumentException>(() =>
-            DWordCodec.BigEndian.Decode([]));
+            DWordCodec.Abcd.Decode([]));
     }
 }

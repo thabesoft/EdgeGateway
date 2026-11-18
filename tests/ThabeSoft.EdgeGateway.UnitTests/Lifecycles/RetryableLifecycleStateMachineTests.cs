@@ -1,13 +1,27 @@
-﻿namespace ThabeSoft.EdgeGateway.Lifecycles;
+﻿using Microsoft.Extensions.Logging;
+using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Lifecycles.StateMachines.Retryable;
+
+namespace ThabeSoft.EdgeGateway.UnitTests.Lifecycles;
 
 
 [TestClass]
 public class RetryableLifecycleStateMachineTests
 {
+    private RetryableLifecycleStateMachineResolver Resolver { get; set; } = null!;
+
+    [TestInitialize]
+    public void Setup()
+    {
+        var loggerFactory = LoggerFactory.Create(x => x.SetMinimumLevel(LogLevel.Trace));
+        Resolver = new RetryableLifecycleStateMachineResolver(loggerFactory);
+    }
+
+
     [TestMethod]
     public async Task StateTransitions()
     {
-        var lifecycle = LifecycleBuilder.RetryableStateMachine();
+        var lifecycle = Resolver.Resolve(LifecycleBuilder.RetryableStateMachine());
 
         // 启动
         await lifecycle.StartAsync(EmptyMethod, TestContext.CancellationToken);
@@ -49,7 +63,7 @@ public class RetryableLifecycleStateMachineTests
     [TestMethod]
     public async Task Start_Exception_StateToFaulted()
     {
-        var lifecycle = LifecycleBuilder.RetryableStateMachine();
+        var lifecycle = Resolver.Resolve(LifecycleBuilder.RetryableStateMachine());
 
         await Assert.ThrowsAsync<Exception>(async () =>
             await lifecycle.StartAsync(ExceptionMethod, TestContext.CancellationToken));
@@ -61,7 +75,7 @@ public class RetryableLifecycleStateMachineTests
     [TestMethod]
     public async Task Stop_Exception_StateToFaulted()
     {
-        var lifecycle = LifecycleBuilder.RetryableStateMachine();
+        var lifecycle = Resolver.Resolve(LifecycleBuilder.RetryableStateMachine());
 
         await lifecycle.StartAsync(EmptyMethod, TestContext.CancellationToken);
         Assert.AreEqual(LifecycleState.Running, lifecycle.State);

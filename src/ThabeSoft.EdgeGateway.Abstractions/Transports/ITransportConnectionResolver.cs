@@ -3,6 +3,6 @@
 
 public interface ITransportConnectionResolver
 {
-    bool CanResolve(TransportCreationContext context);
-    ITransportConnection Resolve(TransportCreationContext context);
+    bool CanResolve(TransportDescriptor descriptor);
+    ITransportConnection Resolve(TransportDescriptor descriptor);
 }

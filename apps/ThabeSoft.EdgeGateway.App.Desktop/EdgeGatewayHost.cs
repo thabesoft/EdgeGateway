@@ -3,7 +3,7 @@ using ThabeSoft.EdgeGateway.App.DependencyInjection;
 using ThabeSoft.EdgeGateway.App.Desktop.DependencyInjection;
 using ThabeSoft.EdgeGateway.Codecs.DependencyInjection;
 using ThabeSoft.EdgeGateway.Configuration.DependencyInjection;
-using ThabeSoft.EdgeGateway.DependencyInjection;
+using ThabeSoft.EdgeGateway.Ethernet.DependencyInjection;
 using ThabeSoft.EdgeGateway.Hosting;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.DependencyInjection;

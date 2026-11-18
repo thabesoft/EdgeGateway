@@ -1,12 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using ThabeSoft.EdgeGateway.Ethernet;
 using ThabeSoft.EdgeGateway.Ethernet.Tcp;
 using ThabeSoft.EdgeGateway.Ethernet.Udp;
 using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Transports;
 
-namespace ThabeSoft.EdgeGateway.DependencyInjection;
+namespace ThabeSoft.EdgeGateway.Ethernet.DependencyInjection;
 
 
 public static class DependencyInjectionExtensions

@@ -4,7 +4,7 @@ using ThabeSoft.EdgeGateway.Lifecycles.Utilities;
 namespace ThabeSoft.EdgeGateway.Lifecycles.StateMachines.Retryable;
 
 
-internal sealed class RetryableLifecycleStateMachineFactory(ILoggerFactory loggerFactory) : ILifecycleStateMachineResolver
+internal sealed class RetryableLifecycleStateMachineResolver(ILoggerFactory loggerFactory) : ILifecycleStateMachineResolver
 {
     public bool CanResolve(LifecycleStateMachineDescriptor descriptor)
     {

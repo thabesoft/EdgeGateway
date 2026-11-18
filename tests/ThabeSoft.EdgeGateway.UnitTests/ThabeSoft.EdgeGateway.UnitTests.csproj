@@ -2,7 +2,6 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>net462;net11.0</TargetFrameworks>
-		<RootNamespace>ThabeSoft.EdgeGateway</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -16,9 +15,12 @@
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Codecs\ThabeSoft.EdgeGateway.Codecs.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Configuration\ThabeSoft.EdgeGateway.Configuration.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Ethernet\ThabeSoft.EdgeGateway.Ethernet.csproj" />
+		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Lifecycles\ThabeSoft.EdgeGateway.Lifecycles.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Modbus\ThabeSoft.EdgeGateway.Modbus.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Serial\ThabeSoft.EdgeGateway.Serial.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Simulation\ThabeSoft.EdgeGateway.Simulation.csproj" />
+		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Triggers\ThabeSoft.EdgeGateway.Triggers.csproj" />
+		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway\ThabeSoft.EdgeGateway.csproj" />
 	</ItemGroup>
 
 </Project>

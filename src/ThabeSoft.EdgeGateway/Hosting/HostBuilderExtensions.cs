@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
 using ThabeSoft.EdgeGateway.DependencyInjection;
+using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.Guard;
@@ -14,10 +15,10 @@ public static class HostBuilderExtensions
         /// <summary>
         /// Event, Transport, Protocol, Readings, Subscriptions, Devices, Ports, Host
         /// </summary>
-        public IHostBuilder UseEdgeGateway(Action<GatewayHostBuilder> buildAction)
+        public IHostBuilder UseEdgeGateway(Action<GatewayHostBuilder>? buildAction = null)
         {
             var gatewayBuilder = new GatewayHostBuilder();
-            buildAction.Invoke(gatewayBuilder);
+            buildAction?.Invoke(gatewayBuilder);
 
 
             return hostBuilder.ConfigureServices((_, descriptors) =>
@@ -42,38 +43,38 @@ public static class HostBuilderExtensions
 public sealed class GatewayHostBuilder
 {
     // Gateway
-    internal LifecycleStateMachineDescriptor? GatewayStateMachine { get; private set => field = value.Required(); }
+    internal LifecycleStateMachineDescriptor GatewayStateMachine { get; private set => field = value.Required(); } = LifecycleBuilder.RetryableStateMachine();
 
     // Port
-    internal LifecycleStateMachineDescriptor? PortStateMachine { get; private set => field = value.Required(); }
-    internal LifecycleStateMachineDescriptor? TransportStateMachine { get; private set => field = value.Required(); }
-    internal LifecycleBatchExecutorDescriptor PortBatchExecutor { get; private set => field = value.Required(); } = new LifecycleBatchExecutorDescriptor();
+    internal LifecycleStateMachineDescriptor PortStateMachine { get; private set => field = value.Required(); } = LifecycleBuilder.RetryableStateMachine();
+    internal LifecycleStateMachineDescriptor TransportStateMachine { get; private set => field = value.Required(); } = LifecycleBuilder.StrictStateMachine();
+    internal LifecycleBatchExecutorDescriptor PortBatchExecutor { get; private set => field = value.Required(); } = LifecycleBuilder.BatchExecutor();
 
 
     // Device
-    internal LifecycleStateMachineDescriptor? DeviceStateMachine { get; private set => field = value.Required(); }
-    internal LifecycleBatchExecutorDescriptor DeviceBatchExecutor { get; private set => field = value.Required(); } = new LifecycleBatchExecutorDescriptor();
+    internal LifecycleStateMachineDescriptor DeviceStateMachine { get; private set => field = value.Required(); } = LifecycleBuilder.RetryableStateMachine();
+    internal LifecycleBatchExecutorDescriptor DeviceBatchExecutor { get; private set => field = value.Required(); } = LifecycleBuilder.BatchExecutor();
 
 
     // Subscription
-    internal LifecycleStateMachineDescriptor? SubscriptionStateMachine { get; private set => field = value.Required(); }
-    internal LifecycleBatchExecutorDescriptor SubscriptionBatchExecutor { get; private set => field = value.Required(); } = new LifecycleBatchExecutorDescriptor();
+    internal LifecycleStateMachineDescriptor SubscriptionStateMachine { get; private set => field = value.Required(); } = LifecycleBuilder.StrictStateMachine();
+    internal LifecycleBatchExecutorDescriptor SubscriptionBatchExecutor { get; private set => field = value.Required(); } = LifecycleBuilder.BatchExecutor();
 
 
     internal GatewayCreationArgs Build()
     {
         return new()
         {
-            GatewayStateMachine = GatewayStateMachine!,
+            GatewayStateMachine = GatewayStateMachine,
 
-            PortStateMachine = PortStateMachine!,
-            TransportStateMachine = TransportStateMachine!,
+            PortStateMachine = PortStateMachine,
+            TransportStateMachine = TransportStateMachine,
             PortBatchExecutor = PortBatchExecutor,
 
-            DeviceStateMachine = DeviceStateMachine!,
+            DeviceStateMachine = DeviceStateMachine,
             DeviceBatchExecutor = DeviceBatchExecutor,
 
-            SubscriptionStateMachine = SubscriptionStateMachine!,
+            SubscriptionStateMachine = SubscriptionStateMachine,
             SubscriptionBatchExecutor = SubscriptionBatchExecutor
         };
     }

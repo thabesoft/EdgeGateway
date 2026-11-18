@@ -4,7 +4,7 @@
 public sealed class ByteCodec : ICodec<byte>
 {
     private ByteCodec() { }
-    public static ICodec<byte> Instance { get; } = new ByteCodec();
+    public static ByteCodec Instance { get; } = new ByteCodec();
 
 
     public const int RequiredBytes = 1;

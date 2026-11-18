@@ -37,11 +37,7 @@ internal sealed class PortFactory(
             _ = eventPublisher.PublishAsync(new PortStateChangedEvent(port.Id, x.Old, x.New)));
 
         // 传输器
-        var transport = transportConnectionFactory.Create(new()
-        {
-            Transport = context.Port.Transport,
-            StateMachine = context.TransportStateMachine
-        });
+        var transport = transportConnectionFactory.Create(context.Port.Transport);
         // 协议访问器
         var protocolAccessors = new ConcurrentDictionary<ProtocolDescriptor, IProtocolAccessor>();
 

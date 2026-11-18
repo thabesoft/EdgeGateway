@@ -11,18 +11,18 @@ internal sealed class SerialTransportResolver(
         ILifecycleStateMachineFactory lifecycleStateMachineFactory
     ) : ITransportConnectionResolver
 {
-    public bool CanResolve(TransportCreationContext context)
+    public bool CanResolve(TransportDescriptor descriptor)
     {
-        return context.Transport is SerialTransportDescriptor;
+        return descriptor is SerialTransportDescriptor;
     }
 
-    public ITransportConnection Resolve(TransportCreationContext context)
+    public ITransportConnection Resolve(TransportDescriptor descriptor)
     {
-        if (context.Transport is not SerialTransportDescriptor serial)
+        if (descriptor is not SerialTransportDescriptor serial)
             throw new InvalidOperationException();
 
         var logger = loggerFactory.CreateLogger<SerialTransportConnection>();
-        var stateMachine = lifecycleStateMachineFactory.Create(context.StateMachine);
+        var stateMachine = lifecycleStateMachineFactory.Create(descriptor.StateMachine);
 
         return new SerialTransportConnection(descriptor: serial, stateMachine: stateMachine, logger)
         {

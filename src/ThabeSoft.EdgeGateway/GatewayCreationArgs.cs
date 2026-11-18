@@ -13,15 +13,15 @@ public sealed class GatewayCreationArgs
     // Port
     public required LifecycleStateMachineDescriptor PortStateMachine { get; init => field = value.Required(); }
     public required LifecycleStateMachineDescriptor TransportStateMachine { get; init => field = value.Required(); }
-    public LifecycleBatchExecutorDescriptor PortBatchExecutor { get; init => field = value.Required(); } = new LifecycleBatchExecutorDescriptor();
+    public required LifecycleBatchExecutorDescriptor PortBatchExecutor { get; init => field = value.Required(); }
 
 
     // Device
     public required LifecycleStateMachineDescriptor DeviceStateMachine { get; init => field = value.Required(); }
-    public LifecycleBatchExecutorDescriptor DeviceBatchExecutor { get; init => field = value.Required(); } = new LifecycleBatchExecutorDescriptor();
+    public required LifecycleBatchExecutorDescriptor DeviceBatchExecutor { get; init => field = value.Required(); }
 
 
     // Subscription
     public required LifecycleStateMachineDescriptor SubscriptionStateMachine { get; init => field = value.Required(); }
-    public LifecycleBatchExecutorDescriptor SubscriptionBatchExecutor { get; init => field = value.Required(); } = new LifecycleBatchExecutorDescriptor();
+    public required LifecycleBatchExecutorDescriptor SubscriptionBatchExecutor { get; init => field = value.Required(); }
 }

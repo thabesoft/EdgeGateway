@@ -5,11 +5,11 @@ internal sealed class TransportConnectionFactory(
         IEnumerable<ITransportConnectionResolver> resolvers
     ) : ITransportConnectionFactory
 {
-    public ITransportConnection Create(TransportCreationContext context)
+    public ITransportConnection Create(TransportDescriptor descriptor)
     {
-        var resolver = resolvers.FirstOrDefault(x => x.CanResolve(context))
-            ?? throw new InvalidOperationException($"不支持创建的传输类型({context.Transport.GetType()}):{context.Transport}");
+        var resolver = resolvers.FirstOrDefault(x => x.CanResolve(descriptor))
+            ?? throw new InvalidOperationException($"不支持创建的传输类型({descriptor.GetType()}):{descriptor}");
 
-        return resolver.Resolve(context);
+        return resolver.Resolve(descriptor);
     }
 }

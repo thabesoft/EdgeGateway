@@ -4,13 +4,17 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Time.Testing;
 using System.Collections.Concurrent;
 using System.Net;
-using ThabeSoft.EdgeGateway.DependencyInjection;
+using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ethernet;
-using ThabeSoft.EdgeGateway.Extensions;
+using ThabeSoft.EdgeGateway.Ethernet.DependencyInjection;
+using ThabeSoft.EdgeGateway.Hosting;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Modbus;
+using ThabeSoft.EdgeGateway.Modbus.DependencyInjection;
+using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Simulation;
 using ThabeSoft.EdgeGateway.Simulation.DependencyInjection;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Tags;
@@ -31,7 +35,7 @@ public class GatewayIntegrationTests
 
     private readonly IpTransportDescriptor _transportDescriptor = EthernetBuilder.Tcp(IPAddress.Loopback, 2334);
     private readonly ProtocolDescriptor _protocolDescriptor = ModbusBuilder.Ip;
-    private readonly TagDescriptor<double> _tag = ModbusBuilder.HoldingRegister(1, 0, Codec.Double);
+    private readonly TagDescriptor<double> _tag = ModbusBuilder.HoldingRegister(1, 0, CodecBuilder.DoubleBigEndian);
     private readonly TriggerDescriptor _trigger = TriggerBuilder.Interval(500);
 
 
@@ -40,6 +44,7 @@ public class GatewayIntegrationTests
     {
         _app = Host.CreateDefaultBuilder()
             .ConfigureLogging(x => x.SetMinimumLevel(LogLevel.Trace))
+            .UseEdgeGateway()
             .ConfigureServices(x => x
 
                 // 模拟器
@@ -47,7 +52,6 @@ public class GatewayIntegrationTests
                 .AddEdgeGatewayModbusSimulation()
 
                 // 网关
-                .AddEdgeGateway()
                 .AddEdgeGatewayModbus()
                 .AddEdgeGatewayEthernet())
             .Build();
@@ -67,9 +71,9 @@ public class GatewayIntegrationTests
     [TestMethod]
     public async Task StartSimulator()
     {
-        var port = Simulator.AddPort(Simulation.ModbusIpPort(_transportDescriptor));
-        var device = await port.AddDeviceAsync(Simulation.ModbusDevice(1), TestContext.CancellationToken);
-        await device.ValueAsync(_tag, _trigger, Simulation.SineWaveValue(1, 0.1), TestContext.CancellationToken);
+        var port = Simulator.AddPort(SimulationBuilder.ModbusIpPort(_transportDescriptor));
+        var device = await port.AddDeviceAsync(SimulationBuilder.ModbusDevice(1), TestContext.CancellationToken);
+        await device.ValueAsync(_tag, _trigger, SimulationBuilder.SineWaveValue(1, 0.1), TestContext.CancellationToken);
 
         // 模拟器 启动
         await port.StartAsync(TestContext.CancellationToken);

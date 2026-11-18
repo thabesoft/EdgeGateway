@@ -1,6 +1,6 @@
 ﻿using ThabeSoft.EdgeGateway.Codecs.DWords;
 
-namespace ThabeSoft.EdgeGateway.Codecs.Swappers;
+namespace ThabeSoft.EdgeGateway.UnitTests.Codecs.Swappers;
 
 
 [TestClass]

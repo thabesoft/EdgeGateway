@@ -5,6 +5,10 @@ namespace ThabeSoft.EdgeGateway.Codecs.Bits;
 
 public sealed class BitsCodec : ICodec<BitArray>
 {
+    public static BitsCodec Bits(int bitCount, BitOrder bitOrder) =>
+        new(bitCount, bitOrder);
+
+
     private BitsCodec(int bitCount, BitOrder bitOrder)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(bitCount);
@@ -16,8 +20,6 @@ public sealed class BitsCodec : ICodec<BitArray>
         RequiredBits = bitCount;
         RequiredBytes = (bitCount + 7) / 8;
     }
-    public static ICodec<BitArray> Bits(int bitCount, BitOrder bitOrder) =>
-        new BitsCodec(bitCount, bitOrder);
 
 
     public BitOrder BitOrder { get; }

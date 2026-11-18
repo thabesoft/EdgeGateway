@@ -11,18 +11,18 @@ internal sealed class UdpTransportConnectionResolver(
         ILifecycleStateMachineFactory lifecycleStateMachineFactory
     ) : ITransportConnectionResolver
 {
-    public bool CanResolve(TransportCreationContext context)
+    public bool CanResolve(TransportDescriptor descriptor)
     {
-        return context.Transport is IpTransportDescriptor ip && ip.ProtocolType == IpProtocolType.Udp;
+        return descriptor is IpTransportDescriptor ip && ip.ProtocolType == IpProtocolType.Udp;
     }
 
-    public ITransportConnection Resolve(TransportCreationContext context)
+    public ITransportConnection Resolve(TransportDescriptor descriptor)
     {
-        if (context.Transport is not IpTransportDescriptor ip || ip.ProtocolType != IpProtocolType.Udp)
+        if (descriptor is not IpTransportDescriptor ip || ip.ProtocolType != IpProtocolType.Udp)
             throw new InvalidOperationException();
 
         var logger = loggerFactory.CreateLogger<UdpTransportConnection>();
-        var stateMachine = lifecycleStateMachineFactory.Create(context.StateMachine);
+        var stateMachine = lifecycleStateMachineFactory.Create(descriptor.StateMachine);
 
         return new UdpTransportConnection(ip, stateMachine, logger)
         {

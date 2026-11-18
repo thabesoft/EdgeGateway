@@ -1,37 +1,17 @@
 ﻿using Moq;
 using System.Net;
+using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Ethernet;
+using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
-
-<<<<<<< TODO: 项目“ThabeSoft.EdgeGateway.UnitTests (net462)”的未合并的更改, 在此之前:
-using ThabeSoft.EdgeGateway.Subscription;
-=======
-using ThabeSoft.EdgeGateway.Protocols.Modbus;
-using ThabeSoft.EdgeGateway.Subscription;
->>>>>>> 晚于
-
-<<<<<<< TODO: 项目“ThabeSoft.EdgeGateway.UnitTests (net462)”的未合并的更改, 在此之前:
-using ThabeSoft.EdgeGateway.Protocols.Modbus.Modbus;
-=======
-using ThabeSoft.EdgeGateway.Protocols.Modbus;
-using ThabeSoft.EdgeGateway.Protocols.Modbus.Modbus;
->>>>>>> 晚于
-
-<<<<<<< TODO: 项目“ThabeSoft.EdgeGateway.UnitTests (net462)”的未合并的更改, 在此之前:
-using ThabeSoft.EdgeGateway.Protocols.Modbus.Modbus.Modbus.Modbus;
-using ThabeSoft.EdgeGateway.Subscription;
-=======
-using ThabeSoft.EdgeGateway.Subscription;
->>>>>>> 晚于
+using ThabeSoft.EdgeGateway.Serial;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transports;
-using ThabeSoft.EdgeGateway.Modbus;
-using ThabeSoft.EdgeGateway.Ethernet;
-using ThabeSoft.EdgeGateway.Serial;
 using ThabeSoft.EdgeGateway.Triggers;
 
-namespace ThabeSoft.EdgeGateway;
+namespace ThabeSoft.EdgeGateway.UnitTests;
 
 
 [TestClass]
@@ -86,9 +66,9 @@ public class SdkTests
         var mockDevice = new Mock<IDevice>();
         var device = mockDevice.Object;
 
-        await device.AddSubscriptionAsync(ModbusBuilder.HoldingRegister(1, 0, Codec.Double), TriggerBuilder.Interval(100), TestContext.CancellationToken);
-        await device.AddSubscriptionAsync(SubscriptionId.Create(), ModbusBuilder.HoldingRegister(1, 0, Codec.Double), TriggerBuilder.Interval(100), TestContext.CancellationToken);
-        await device.AddSubscriptionAsync(new SubscriptionDescriptor<double>() { Id = SubscriptionId.Create(), Tag = ModbusBuilder.HoldingRegister(1, 0, Codec.Double), Trigger = TriggerBuilder.Interval(100) }, TestContext.CancellationToken);
+        await device.AddSubscriptionAsync(ModbusBuilder.HoldingRegister(1, 0, CodecBuilder.DoubleBigEndian), TriggerBuilder.Interval(100), TestContext.CancellationToken);
+        await device.AddSubscriptionAsync(SubscriptionId.Create(), ModbusBuilder.HoldingRegister(1, 0, CodecBuilder.DoubleBigEndian), TriggerBuilder.Interval(100), TestContext.CancellationToken);
+        await device.AddSubscriptionAsync(new SubscriptionDescriptor<double>() { Id = SubscriptionId.Create(), Tag = ModbusBuilder.HoldingRegister(1, 0, CodecBuilder.DoubleBigEndian), Trigger = TriggerBuilder.Interval(100) }, TestContext.CancellationToken);
     }
 
     [TestMethod]

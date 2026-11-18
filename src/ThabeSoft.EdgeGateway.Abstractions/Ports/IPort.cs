@@ -22,8 +22,8 @@ public static class PortExtensions
     extension(IPort port)
     {
         public ValueTask<IDevice> AddDeviceAsync(DeviceId deviceId, ProtocolDescriptor protocol, CancellationToken cancellationToken = default) =>
-            port.AddDeviceAsync(new DeviceDescriptor() { Id = deviceId, Protocol = protocol });
+            port.AddDeviceAsync(new DeviceDescriptor() { Id = deviceId, Protocol = protocol }, cancellationToken);
         public ValueTask<IDevice> AddDeviceAsync(ProtocolDescriptor protocol, CancellationToken cancellationToken = default) =>
-            port.AddDeviceAsync(DeviceId.Create(), protocol);
+            port.AddDeviceAsync(DeviceId.Create(), protocol, cancellationToken);
     }
 }

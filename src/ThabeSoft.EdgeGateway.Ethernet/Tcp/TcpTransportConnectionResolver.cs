@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using ThabeSoft.EdgeGateway.Ethernet;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Transports;
@@ -13,14 +12,14 @@ internal sealed class TcpTransportConnectionResolver(
         ILifecycleStateMachineFactory lifecycleStateMachineFactory
     ) : ITransportConnectionResolver
 {
-    public bool CanResolve(TransportCreationContext context)
+    public bool CanResolve(TransportDescriptor descriptor)
     {
-        return context.Transport is IpTransportDescriptor ip && ip.ProtocolType == IpProtocolType.Tcp;
+        return descriptor is IpTransportDescriptor ip && ip.ProtocolType == IpProtocolType.Tcp;
     }
 
-    public ITransportConnection Resolve(TransportCreationContext context)
+    public ITransportConnection Resolve(TransportDescriptor descriptor)
     {
-        if (context.Transport is not IpTransportDescriptor ip || ip.ProtocolType != IpProtocolType.Tcp)
+        if (descriptor is not IpTransportDescriptor ip || ip.ProtocolType != IpProtocolType.Tcp)
             throw new InvalidOperationException();
 
         var logger = loggerFactory.CreateLogger<TcpTransportConnection>();

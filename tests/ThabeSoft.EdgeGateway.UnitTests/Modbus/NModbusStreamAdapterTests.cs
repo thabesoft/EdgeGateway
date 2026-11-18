@@ -1,8 +1,8 @@
 using Moq;
+using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway.Transports.Byte;
-using ThabeSoft.EdgeGateway.IO;
 
-namespace ThabeSoft.EdgeGateway.Protocol;
+namespace ThabeSoft.EdgeGateway.UnitTests.Modbus;
 
 
 [TestClass]

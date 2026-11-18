@@ -1,4 +1,6 @@
-﻿namespace ThabeSoft.EdgeGateway.Configuration;
+﻿using System.Diagnostics;
+
+namespace ThabeSoft.EdgeGateway.Configuration;
 
 
 public interface IConfigNode
@@ -33,6 +35,7 @@ public static class ConfigNodeExtensions
         /// <summary>
         /// 获取子节点
         /// </summary>
+        [DebuggerHidden]
         public IConfigNode? GetChild(string path)
         {
             return node[path];
@@ -41,10 +44,13 @@ public static class ConfigNodeExtensions
         /// <summary>
         /// 获取当前路径下的字符串属性值
         /// </summary>
+        [DebuggerHidden]
         public string? GetStringValue(string path)
         {
             return node[path]?.AsString();
         }
+
+        [DebuggerHidden]
         public IEnumerable<IConfigNode> GetChildren(string path)
         {
             return node[path]?.AsArray() ?? [];

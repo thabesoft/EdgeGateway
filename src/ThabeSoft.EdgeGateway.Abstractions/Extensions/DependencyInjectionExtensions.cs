@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Transports;
 using ThabeSoft.EdgeGateway.Triggers;
 
@@ -40,6 +41,14 @@ public static class DependencyInjectionExtensions
             where TDataType : notnull
         {
             descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigMapper<CodecDescriptor<TDataType>>, TMapper>());
+            return descriptors;
+        }
+
+
+        public IServiceCollection AddDataAddressMapper<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMapper>()
+           where TMapper : class, IConfigMapper<DataAddress>
+        {
+            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigMapper<DataAddress>, TMapper>());
             return descriptors;
         }
     }

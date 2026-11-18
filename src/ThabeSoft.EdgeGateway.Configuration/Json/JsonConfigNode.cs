@@ -45,7 +45,7 @@ internal sealed class JsonConfigNode : IConfigNode
 
     public string? AsString()
     {
-        return _content.AsValue().ToString();
+        return _content.ToString();
     }
     public IEnumerable<IConfigNode> AsArray()
     {
@@ -56,6 +56,10 @@ internal sealed class JsonConfigNode : IConfigNode
         }
     }
 
+    public override string ToString()
+    {
+        return _content.ToString();
+    }
 
 
     private JsonNode? GetByPath(string pathString)

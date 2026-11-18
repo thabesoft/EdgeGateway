@@ -64,7 +64,7 @@ public class GatewayConfigMapper(
 
     private SubscriptionConfig GetSubscriptionConfig(IConfigNode root)
     {
-        var dataType = root.GetStringValue("Codc:DataTyp").Required("缺少数据类型")
+        var dataType = root.GetStringValue("Codec:DataType").Required("缺少数据类型")
              .ToEnum<DataType>();
 
         return new()
@@ -97,7 +97,7 @@ public class GatewayConfigMapper(
             return new()
             {
                 Id = SubscriptionId.From(root.GetStringValue("Id").Required("缺少订阅Id")),
-                Trigger = MapFromCollection(triggerMappers, root.GetChild("Triggr").Required("缺少触发器")),
+                Trigger = MapFromCollection(triggerMappers, root.GetChild("Trigger").Required("缺少触发器")),
                 Tag = new
                 (
                     address: MapFromCollection(dataAddressMappers, root.GetChild("DataAddress").Required("缺少数据地址")),
@@ -116,8 +116,9 @@ public class GatewayConfigMapper(
 
     private static T MapFromCollection<T>(IEnumerable<IConfigMapper<T>> mappers, IConfigNode node)
     {
-        return mappers
-            .FirstOrDefault(x => x.CanMap(node))
-            .Map(node);
+        var mapper = mappers.FirstOrDefault(x => x.CanMap(node))
+            ?? throw new InvalidOperationException($"节点  ({node}) 无法映射, 没有可执行的映射器");
+
+        return mapper.Map(node);
     }
 }

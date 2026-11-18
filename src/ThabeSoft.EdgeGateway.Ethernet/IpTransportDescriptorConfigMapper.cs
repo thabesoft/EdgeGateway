@@ -45,6 +45,6 @@ internal sealed class IpTransportDescriptorConfigMapper(
         var retryNode = root["Retry"];
         if (retryNode is null) return RetryBuilder.Default;
 
-        return retryDescriptorMapper.Map(root);
+        return retryDescriptorMapper.Map(retryNode);
     }
 }

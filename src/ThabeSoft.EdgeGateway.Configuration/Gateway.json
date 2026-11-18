@@ -29,14 +29,13 @@
               },
               "Codec": {
                 "DataType": "Int32",
-                "Layout": "ABCD",
-                "Swaps": [ "Word", "DWord" ]
+                "Layout": "ABCD"
               },
               "DataAddress": {
                 "Kind": "Coil",
                 "SlaveId": 1,
                 "Address": 0,
-                "BitOffset": 0
+                "Quantity": 0
               },
               "Slinks": [
                 "Test"

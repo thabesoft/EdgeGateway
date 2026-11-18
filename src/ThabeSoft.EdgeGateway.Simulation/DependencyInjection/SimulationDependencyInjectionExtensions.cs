@@ -17,14 +17,26 @@ public static class SimulationDependencyInjectionExtensions
         /// <summary>
         /// 添加模拟模块
         /// </summary>
-        public IServiceCollection AddEdgeGatewaySimulation()
+        public IServiceCollection AddEdgeGatewaySimulation(SimulatorCreationArgs args)
         {
-            descriptors.TryAddSingleton<SimulationDeviceFactory>();
-            descriptors.TryAddSingleton<SimulationPortFactorySelector>();
-            descriptors.TryAddSingleton<TriggerManager>();
-            descriptors.TryAddSingleton<ISimulator, Simulator>();
+            descriptors.TryAddSingleton<SimulatorFactory>();
+            descriptors.TryAddSingleton<ISimulator>(sp =>
+            {
+                var factory = sp.GetRequiredService<SimulatorFactory>();
+                return factory.Create(args);
+            });
+
             return descriptors;
         }
+
+        public IServiceCollection AddEdgeGatewaySimulationDevice()
+        {
+            descriptors.TryAddSingleton<TriggerManager>();
+            descriptors.TryAddSingleton<SimulationPortFactory>();
+            descriptors.TryAddSingleton<SimulationDeviceFactory>();
+        }
+
+
         public IServiceCollection AddEdgeGatewaySimulationHost()
         {
             descriptors.AddHostedService<LaunchHostedService>();
@@ -38,7 +50,7 @@ public static class SimulationDependencyInjectionExtensions
         {
             descriptors.TryAddSingleton<IModbusFactory, ModbusFactory>();
             descriptors.TryAddSingleton<ISimulationDeviceResolver, ModbusSimulationSlaveFactory>();
-            descriptors.TryAddSingleton<ISimulationPortFactory, ModbusSimulationPortFactory>();
+            descriptors.TryAddSingleton<ISimulationPortResolver, ModbusSimulationPortResolver>();
             return descriptors;
         }
     }

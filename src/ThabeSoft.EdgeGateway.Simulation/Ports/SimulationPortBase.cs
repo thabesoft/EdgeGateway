@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Ports;
 
@@ -14,21 +14,20 @@ internal abstract class SimulationPortBase : ISimulationPort
     private readonly ILifecycleKeyedCollection<ISimulationDeviceId, ISimulationDevice> _devices;
     private readonly ILifecycleStateMachine _stateMachine;
     private readonly ILifecycleBatchExecutor _batchExecutor;
-    private readonly SimulationDeviceFactory _deviceFactorySelector;
+    private readonly SimulationDeviceFactory _deviceFactory;
     private readonly ILogger _logger;
 
 
-    protected SimulationPortBase(ConnectionEndpoint endpoint, SimulationDeviceFactory deviceFactory, ILogger? logger = null)
+    protected SimulationPortBase(in SimulationPortBaseArgs args)
     {
-        _deviceFactorySelector = deviceFactory;
-        _logger = logger ?? NullLogger.Instance;
+        _deviceFactory = args.DeviceFactory;
+        _logger = args.Logger;
 
+        _batchExecutor = args.LifecycleBatchExecutorFactory.Create(args.DeviceBatchExecutor);
+        _stateMachine = args.LifecycleStateMachineFactory.Create(args.PortStateMachine);
+        _devices = args.LifecycleKeyedCollectionFactory.Create<ISimulationDeviceId, ISimulationDevice>(_stateMachine);
 
-        _batchExecutor = Lifecycle.BatchExecutor(logger);
-        _stateMachine = Lifecycle.RetryableStateMachine(logger);
-        _devices = Lifecycle.KeyedCollection<ISimulationDeviceId, ISimulationDevice>(_stateMachine, logger);
-
-        Endpoint = endpoint;
+        Endpoint = args.Transport.Endpoint;
     }
 
     public LifecycleState State => _stateMachine.State;
@@ -38,7 +37,7 @@ internal abstract class SimulationPortBase : ISimulationPort
     {
         return _stateMachine.ExecuteAsync(async ct =>
         {
-            var slave = await _devices.AddAsync(simulationDeviceDescriptor.Id, () => _deviceFactorySelector.Create(simulationDeviceDescriptor), ct);
+            var slave = await _devices.AddAsync(simulationDeviceDescriptor.Id, () => _deviceFactory.Create(simulationDeviceDescriptor), ct);
             _logger.LogTrace("添加从站({Id})", simulationDeviceDescriptor.Id);
 
             OnAdded(slave);
@@ -85,6 +84,4 @@ internal abstract class SimulationPortBase : ISimulationPort
     {
         return _batchExecutor.DisposeAsync(_devices.Values);
     }
-
-   
 }

@@ -1,12 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using NModbus;
 using System.Net.Sockets;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Devices.Modbus;
 using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.Guard;
 
-namespace ThabeSoft.EdgeGateway.Ports.Modbus;
+namespace ThabeSoft.EdgeGateway.Ports.Modbus.Ip;
 
 
 internal sealed class ModbusTcpSimulationPort : SimulationPortBase
@@ -15,19 +15,15 @@ internal sealed class ModbusTcpSimulationPort : SimulationPortBase
     private Task? _listenTask;
     private readonly IModbusTcpSlaveNetwork _slaveNetWork;
     private readonly IpTransportDescriptor _ipTransportDescriptor;
-    private readonly ILogger<ModbusTcpSimulationPort> _logger;
+    private readonly ILogger _logger;
 
-    public ModbusTcpSimulationPort(
-            IpTransportDescriptor ipTransportDescriptor,
-            IModbusFactory modbusFactory,
-            SimulationDeviceFactory deviceFactorySelector,
-            ILogger<ModbusTcpSimulationPort>? logger = null
-        ) : base(ipTransportDescriptor.Endpoint, deviceFactorySelector, logger)
+
+    public ModbusTcpSimulationPort(in ModbusIpSimulationPortArgs args) : base(args.Base)
     {
-        _tcpListener = new(ipTransportDescriptor.IPEndPoint);
-        _slaveNetWork = modbusFactory.CreateSlaveNetwork(_tcpListener);
-        _ipTransportDescriptor = ipTransportDescriptor;
-        _logger = logger ?? NullLogger<ModbusTcpSimulationPort>.Instance;
+        _tcpListener = new(args.Transport.IPEndPoint);
+        _slaveNetWork = args.ModbusFactory.CreateSlaveNetwork(_tcpListener);
+        _ipTransportDescriptor = args.Transport;
+        _logger = args.Base.Logger;
     }
 
     public byte UnitId { get; }

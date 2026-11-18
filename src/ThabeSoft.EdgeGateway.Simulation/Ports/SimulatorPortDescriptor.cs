@@ -19,6 +19,5 @@ public sealed class SimulatorPortDescriptor
     public ProtocolDescriptor Protocol { get; }
 
 
-
     public override string ToString() => $"{Protocol}({Transport})";
 }

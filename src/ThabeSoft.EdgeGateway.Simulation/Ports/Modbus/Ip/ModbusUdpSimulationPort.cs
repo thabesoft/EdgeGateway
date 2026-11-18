@@ -1,12 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
-using NModbus;
+﻿using NModbus;
 using System.Net.Sockets;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Devices.Modbus;
 using ThabeSoft.EdgeGateway.Ports;
-using ThabeSoft.EdgeGateway.Transports;
 
-namespace ThabeSoft.EdgeGateway.Networks.Modbus;
+namespace ThabeSoft.EdgeGateway.Ports.Modbus.Ip;
 
 
 internal sealed class ModbusUdpSimulationPort : SimulationPortBase
@@ -14,15 +12,10 @@ internal sealed class ModbusUdpSimulationPort : SimulationPortBase
     private readonly UdpClient _udpClient;
     private readonly IModbusSlaveNetwork _slaveNetWork;
 
-    public ModbusUdpSimulationPort(
-            IpTransportDescriptor ipTransportDescriptor,
-            IModbusFactory modbusFactory,
-            SimulationDeviceFactory deviceFactorySelector,
-            ILogger<ModbusUdpSimulationPort>? logger = null
-        ) : base(ipTransportDescriptor.Endpoint, deviceFactorySelector, logger)
+    public ModbusUdpSimulationPort(in ModbusIpSimulationPortArgs args) : base(args.Base)
     {
-        _udpClient = new(ipTransportDescriptor.IPEndPoint);
-        _slaveNetWork = modbusFactory.CreateSlaveNetwork(_udpClient);
+        _udpClient = new(args.Transport.IPEndPoint);
+        _slaveNetWork = args.ModbusFactory.CreateSlaveNetwork(_udpClient);
     }
 
     public byte UnitId { get; }

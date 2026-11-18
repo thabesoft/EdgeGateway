@@ -1,16 +1,15 @@
-﻿using Microsoft.Extensions.Logging;
-using NModbus;
+﻿using NModbus;
 using NModbus.Serial;
 using System.IO.Ports;
+using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Devices.Modbus;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Transports;
-
-using SystemStopBit = System.IO.Ports.StopBits;
+using ThabeSoft.Guard;
 using SystemParity = System.IO.Ports.Parity;
-using ThabeSoft.EdgeGateway.Devices;
+using SystemStopBit = System.IO.Ports.StopBits;
 
-namespace ThabeSoft.EdgeGateway.Ports.Modbus;
+namespace ThabeSoft.EdgeGateway.Ports.Modbus.Serial;
 
 
 internal sealed class ModbusSerialSimulationPort : SimulationPortBase
@@ -21,54 +20,30 @@ internal sealed class ModbusSerialSimulationPort : SimulationPortBase
     private readonly CancellationTokenSource _slaveNetworkTaskCts = new();
 
 
-    private ModbusSerialSimulationPort(
-            ModbusFrameFormat modbusFrameFormat,
-            SerialTransportDescriptor serialTransportDescriptor,
-            IModbusFactory modbusFactory,
-            SimulationDeviceFactory deviceFactorySelector,
-            ILogger<ModbusSerialSimulationPort>? logger = null
-        ) : base(serialTransportDescriptor.Endpoint, deviceFactorySelector, logger)
+    private ModbusSerialSimulationPort(ModbusFrameFormat modbusFrame, in ModbusSerialSimulationPortArgs args) : base(args.Base)
     {
         _serialPort = new(
-            portName: serialTransportDescriptor.PortName,
-            baudRate: serialTransportDescriptor.BaudRate,
-            parity: Parse(serialTransportDescriptor.Parity),
-            dataBits: serialTransportDescriptor.DataBits,
-            stopBits: Parse(serialTransportDescriptor.StopBits));
+            portName: args.Transport.PortName,
+            baudRate: args.Transport.BaudRate,
+            parity: Parse(args.Transport.Parity),
+            dataBits: args.Transport.DataBits,
+            stopBits: Parse(args.Transport.StopBits));
 
         var serialPortAdapter = new SerialPortAdapter(_serialPort);
 
-        _slaveNetWork = modbusFrameFormat switch
+        _slaveNetWork = modbusFrame switch
         {
-            ModbusFrameFormat.Rtu => modbusFactory.CreateRtuSlaveNetwork(serialPortAdapter),
-            ModbusFrameFormat.Ascii => modbusFactory.CreateAsciiSlaveNetwork(serialPortAdapter),
+            ModbusFrameFormat.Rtu => args.ModbusFactory.CreateRtuSlaveNetwork(serialPortAdapter),
+            ModbusFrameFormat.Ascii => args.ModbusFactory.CreateAsciiSlaveNetwork(serialPortAdapter),
             _ => throw new InvalidOperationException("不支持的帧格式"),
         };
     }
-    public static ModbusSerialSimulationPort Rtu(
-            SerialTransportDescriptor serialTransportDescriptor,
-            IModbusFactory modbusFactory,
-            SimulationDeviceFactory deviceFactorySelector,
-            ILogger<ModbusSerialSimulationPort>? logger = null)
-    {
-        ArgumentNullException.ThrowIfNull(serialTransportDescriptor);
-        ArgumentNullException.ThrowIfNull(modbusFactory);
-        ArgumentNullException.ThrowIfNull(deviceFactorySelector);
 
-        return new(ModbusFrameFormat.Rtu, serialTransportDescriptor, modbusFactory, deviceFactorySelector, logger);
-    }
-    public static ModbusSerialSimulationPort Ascii(
-            SerialTransportDescriptor serialTransportDescriptor,
-            IModbusFactory modbusFactory,
-            SimulationDeviceFactory deviceFactorySelector,
-            ILogger<ModbusSerialSimulationPort>? logger = null)
-    {
-        ArgumentNullException.ThrowIfNull(serialTransportDescriptor);
-        ArgumentNullException.ThrowIfNull(modbusFactory);
-        ArgumentNullException.ThrowIfNull(deviceFactorySelector);
+    public static ModbusSerialSimulationPort Rtu(in ModbusSerialSimulationPortArgs args) =>
+        new(ModbusFrameFormat.Rtu, args);
+    public static ModbusSerialSimulationPort Ascii(in ModbusSerialSimulationPortArgs args) =>
+        new(ModbusFrameFormat.Ascii, args);
 
-        return new(ModbusFrameFormat.Ascii, serialTransportDescriptor, modbusFactory, deviceFactorySelector, logger);
-    }
 
 
     public byte UnitId { get; }

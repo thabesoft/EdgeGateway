@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Utilities;
+﻿namespace ThabeSoft.EdgeGateway.Lifecycles.Utilities;
 
 
 internal sealed class Subject<T> : IObservable<T>, IObserver<T>, IDisposable

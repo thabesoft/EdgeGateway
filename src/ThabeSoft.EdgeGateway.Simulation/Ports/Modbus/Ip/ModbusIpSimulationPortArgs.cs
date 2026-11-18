@@ -1,5 +1,5 @@
 ﻿using NModbus;
-using ThabeSoft.EdgeGateway.Transports.Ethernet;
+using ThabeSoft.EdgeGateway.Ethernet;
 using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Ports.Modbus.Ip;

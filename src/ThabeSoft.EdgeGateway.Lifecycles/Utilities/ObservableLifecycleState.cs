@@ -1,7 +1,4 @@
-﻿using ThabeSoft.EdgeGateway.Lifecycles;
-using ThabeSoft.EdgeGateway.Utilities;
-
-namespace ThabeSoft.EdgeGateway.Stateable;
+﻿namespace ThabeSoft.EdgeGateway.Lifecycles.Utilities;
 
 
 internal sealed class ObservableLifecycleState : ILifecycleStateable, ILifecycleStateNotifier, IDisposable

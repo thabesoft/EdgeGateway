@@ -3,8 +3,8 @@ using Microsoft.Extensions.Hosting;
 using System.Net;
 using System.Net.Sockets;
 using ThabeSoft.EdgeGateway.DependencyInjection;
+using ThabeSoft.EdgeGateway.Ethernet;
 using ThabeSoft.EdgeGateway.Extensions;
-using ThabeSoft.EdgeGateway.Transports.Ethernet;
 
 namespace ThabeSoft.EdgeGateway.Transports;
 

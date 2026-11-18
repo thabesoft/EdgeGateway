@@ -3,9 +3,8 @@ using Microsoft.Extensions.Logging.Abstractions;
 using System.Diagnostics;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
-using ThabeSoft.EdgeGateway.Stateable;
+using ThabeSoft.EdgeGateway.Lifecycles.Utilities;
 using ThabeSoft.EdgeGateway.StateMachines;
-using ThabeSoft.EdgeGateway.Utilities;
 
 namespace ThabeSoft.EdgeGateway.StateMachines.Stric;
 

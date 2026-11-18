@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using ThabeSoft.EdgeGateway.Guard;
+using ThabeSoft.EdgeGateway.Transports;
 using ThabeSoft.Guard;
 
-namespace ThabeSoft.EdgeGateway.Transports.Serial;
+namespace ThabeSoft.EdgeGateway.Serial;
 
 
 public sealed record class SerialTransportDescriptor : TransportDescriptor

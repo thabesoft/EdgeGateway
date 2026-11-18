@@ -3,7 +3,7 @@ using NModbus.Serial;
 using System.IO.Ports;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Devices.Modbus;
-using ThabeSoft.EdgeGateway.Transports.Serial;
+using ThabeSoft.EdgeGateway.Serial;
 using ThabeSoft.Guard;
 using SystemParity = System.IO.Ports.Parity;
 using SystemStopBit = System.IO.Ports.StopBits;

@@ -1,6 +1,7 @@
 ﻿using System.Net;
+using ThabeSoft.EdgeGateway.Transports;
 
-namespace ThabeSoft.EdgeGateway.Transports.Ethernet;
+namespace ThabeSoft.EdgeGateway.Ethernet;
 
 
 public static class EthernetBuilder

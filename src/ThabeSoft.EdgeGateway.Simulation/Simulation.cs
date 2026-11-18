@@ -24,10 +24,10 @@ using ThabeSoft.EdgeGateway.Protocols.Modbus.Modbus.Modbus;
 using ThabeSoft.EdgeGateway.Protocols.Modbus.Modbus.Modbus.Modbus;
 using ThabeSoft.EdgeGateway.Transports;
 >>>>>>> 晚于
-using ThabeSoft.EdgeGateway.Transports.Serial;
 using ThabeSoft.EdgeGateway.ValueGenerators;
-using ThabeSoft.EdgeGateway.Protocols.Modbus;
-using ThabeSoft.EdgeGateway.Transports.Ethernet;
+using ThabeSoft.EdgeGateway.Modbus;
+using ThabeSoft.EdgeGateway.Ethernet;
+using ThabeSoft.EdgeGateway.Serial;
 
 namespace ThabeSoft.EdgeGateway;
 

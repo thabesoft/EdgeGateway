@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.Net;
-using ThabeSoft.EdgeGateway.Transports.Ethernet;
+using ThabeSoft.EdgeGateway.Ethernet;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
-using ThabeSoft.EdgeGateway.Transports.Serial;
+using ThabeSoft.EdgeGateway.Serial;
 
 namespace ThabeSoft.EdgeGateway.Transports;
 

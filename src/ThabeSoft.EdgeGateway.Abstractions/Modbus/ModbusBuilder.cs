@@ -2,23 +2,18 @@
 using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Tags;
-using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.Guard;
 
-namespace ThabeSoft.EdgeGateway.Protocols.Modbus;
+namespace ThabeSoft.EdgeGateway.Modbus;
 
 
 public static class ModbusBuilder
 {
     #region --协议--
 
-    public static ModbusProtocolDescriptor Rtu { get; } =
-        new(ModbusFrameFormat.Rtu, TransportType.Serial);
-
-    public static ModbusProtocolDescriptor Ascii { get; } =
-       new(ModbusFrameFormat.Ascii, TransportType.Serial);
-
-    public static ModbusProtocolDescriptor Ip { get; } =
-       new(ModbusFrameFormat.Ip, TransportType.Ethernet);
+    public static ModbusProtocolDescriptor Rtu => ModbusProtocolDescriptor.Rtu;
+    public static ModbusProtocolDescriptor Ascii => ModbusProtocolDescriptor.Ascii;
+    public static ModbusProtocolDescriptor Ip = ModbusProtocolDescriptor.Ip;
 
     #endregion
 
@@ -41,31 +36,34 @@ public static class ModbusBuilder
     }
 
 
-    public static TagDescriptor<T> HoldingRegister<T>(byte slaveId, ushort address, ICodec<T> codec) where T : unmanaged
+    public static TagDescriptor<T> HoldingRegister<T>(byte slaveId, ushort address, CodecDescriptor<T> codec) where T : unmanaged
     {
         ArgumentNullException.ThrowIfNull(codec);
+        var codecBits = codec.AssertType<IRequiredBits>();
+
         // 位数必须能被 16 整除（整数个 word）
-        if (codec.RequiredBits <= 0 || codec.RequiredBits % 16 != 0)
+        if (codecBits.RequiredBits <= 0 || codecBits.RequiredBits % 16 != 0)
             throw new InvalidOperationException("编码器位数必须是 16 的正整数倍");
 
-        var wordCount = (ushort)codec.RequiredWords;
-        ValidateHoldingRegisterQuantity((ushort)codec.RequiredWords);
+        var wordCount = (ushort)codecBits.RequiredWords;
+        ValidateHoldingRegisterQuantity(wordCount);
 
 
         var dataAddress = ModbusDataAddress.HoldingRegister(slaveId, address, wordCount);
         return TagDescriptor.Create(dataAddress, codec);
     }
 
-    public static TagDescriptor<T> InputRegister<T>(byte slaveId, ushort address, ICodec<T> codec) where T : unmanaged
+    public static TagDescriptor<T> InputRegister<T>(byte slaveId, ushort address, CodecDescriptor<T> codec) where T : unmanaged
     {
         ArgumentNullException.ThrowIfNull(codec);
+        var codecBits = codec.AssertType<IRequiredBits>();
 
         // 位数必须能被 16 整除（整数个 word）
-        if (codec.RequiredBits <= 0 || codec.RequiredBits % 16 != 0)
+        if (codecBits.RequiredBits <= 0 || codecBits.RequiredBits % 16 != 0)
             throw new InvalidOperationException("编码器位数必须是 16 的正整数倍");
 
 
-        var wordCount = (ushort)codec.RequiredWords;
+        var wordCount = (ushort)codecBits.RequiredWords;
         ValidateInputRegisterQuantity(wordCount);
 
 

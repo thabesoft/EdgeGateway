@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
-using ThabeSoft.EdgeGateway.Utilities;
+using ThabeSoft.EdgeGateway.Lifecycles.Utilities;
 
 namespace ThabeSoft.EdgeGateway.StateMachines;
 

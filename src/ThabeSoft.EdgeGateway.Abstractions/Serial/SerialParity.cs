@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Transports.Serial;
+﻿namespace ThabeSoft.EdgeGateway.Serial;
 
 
 public enum SerialParity

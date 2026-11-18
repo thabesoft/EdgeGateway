@@ -1,4 +1,6 @@
-﻿namespace ThabeSoft.EdgeGateway.Transports.Serial;
+﻿using ThabeSoft.EdgeGateway.Transports;
+
+namespace ThabeSoft.EdgeGateway.Serial;
 
 
 public static class SerialBuilder

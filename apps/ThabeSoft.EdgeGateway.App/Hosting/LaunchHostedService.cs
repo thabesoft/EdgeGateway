@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Hosting;
 using System.Net;
+using ThabeSoft.EdgeGateway.Ethernet;
+using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway.Ports;
-using ThabeSoft.EdgeGateway.Protocols.Modbus;
 using ThabeSoft.EdgeGateway.Subscription;
-using ThabeSoft.EdgeGateway.Transports.Ethernet;
 
 namespace ThabeSoft.EdgeGateway.App.Hosting;
 

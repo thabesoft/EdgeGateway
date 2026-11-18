@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using ThabeSoft.EdgeGateway.Utilities;
+using ThabeSoft.EdgeGateway.Lifecycles.Utilities;
 
 namespace ThabeSoft.EdgeGateway.Lifecycles.BackgroundTask;
 

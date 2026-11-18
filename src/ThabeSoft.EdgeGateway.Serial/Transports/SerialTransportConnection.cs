@@ -2,8 +2,8 @@
 using RJCP.IO.Ports;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.EdgeGateway.Serial;
 using ThabeSoft.EdgeGateway.Transports.Byte;
-using ThabeSoft.EdgeGateway.Transports.Serial;
 using RJCPParity = RJCP.IO.Ports.Parity;
 using RJCPStopBit = RJCP.IO.Ports.StopBits;
 

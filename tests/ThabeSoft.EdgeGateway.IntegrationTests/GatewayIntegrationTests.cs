@@ -6,13 +6,13 @@ using System.Collections.Concurrent;
 using System.Net;
 using ThabeSoft.EdgeGateway.DependencyInjection;
 using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Ethernet;
 using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.EdgeGateway.Protocols.Modbus;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Tags;
-using ThabeSoft.EdgeGateway.Transports.Ethernet;
 using ThabeSoft.EdgeGateway.Triggers;
 
 namespace ThabeSoft.EdgeGateway;

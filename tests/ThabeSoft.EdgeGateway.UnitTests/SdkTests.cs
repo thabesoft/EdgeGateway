@@ -26,9 +26,9 @@ using ThabeSoft.EdgeGateway.Subscription;
 >>>>>>> 晚于
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transports;
-using ThabeSoft.EdgeGateway.Transports.Serial;
-using ThabeSoft.EdgeGateway.Protocols.Modbus;
-using ThabeSoft.EdgeGateway.Transports.Ethernet;
+using ThabeSoft.EdgeGateway.Modbus;
+using ThabeSoft.EdgeGateway.Ethernet;
+using ThabeSoft.EdgeGateway.Serial;
 
 namespace ThabeSoft.EdgeGateway;
 

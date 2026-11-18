@@ -4,8 +4,8 @@ using System.Collections;
 using ThabeSoft.EdgeGateway.Codecs.DWords;
 using ThabeSoft.EdgeGateway.Codecs.QWords;
 using ThabeSoft.EdgeGateway.Codecs.Words;
+using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.EdgeGateway.Protocols.Modbus;
 
 
 <<<<<<< TODO: 项目“ThabeSoft.EdgeGateway.UnitTests (net462)”的未合并的更改, 在此之前:

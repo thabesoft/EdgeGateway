@@ -4,10 +4,10 @@ using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Transports;
 
-namespace ThabeSoft.EdgeGateway.Protocols;
+namespace ThabeSoft.EdgeGateway.Protocols.Modbus;
 
 
-public static class Modbus
+public static class ModbusBuilder
 {
     #region --协议--
 

@@ -2,7 +2,7 @@
 using System.Net;
 using ThabeSoft.Guard;
 
-namespace ThabeSoft.EdgeGateway.Transports;
+namespace ThabeSoft.EdgeGateway.Transports.Ethernet;
 
 
 public sealed record IpTransportDescriptor : TransportDescriptor

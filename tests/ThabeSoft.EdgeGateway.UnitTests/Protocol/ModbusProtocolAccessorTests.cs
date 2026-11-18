@@ -5,6 +5,24 @@ using ThabeSoft.EdgeGateway.Codecs.DWords;
 using ThabeSoft.EdgeGateway.Codecs.Qword;
 using ThabeSoft.EdgeGateway.Codecs.Words;
 using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Protocols.Modbus;
+
+
+<<<<<<< TODO: 项目“ThabeSoft.EdgeGateway.UnitTests (net462)”的未合并的更改, 在此之前:
+=======
+using ThabeSoft.EdgeGateway.Protocols.Modbus;
+>>>>>>> 晚于
+<<<<<<< TODO: 项目“ThabeSoft.EdgeGateway.UnitTests (net462)”的未合并的更改, 在此之前:
+using ThabeSoft.EdgeGateway.Protocols.Modbus.Modbus;
+=======
+using ThabeSoft.EdgeGateway.Protocols.Modbus;
+using ThabeSoft.EdgeGateway.Protocols.Modbus.Modbus;
+>>>>>>> 晚于
+
+<<<<<<< TODO: 项目“ThabeSoft.EdgeGateway.UnitTests (net462)”的未合并的更改, 在此之前:
+using ThabeSoft.EdgeGateway.Protocols.Modbus.Modbus.Modbus.Modbus;
+=======
+>>>>>>> 晚于
 
 namespace ThabeSoft.EdgeGateway.Protocol;
 
@@ -22,7 +40,7 @@ public class ModbusProtocolAccessorTests
             .ReturnsAsync([value]);
 
         var device = new ModbusProtocolAccessor(mockMaster.Object);
-        var readResult = await device.ReadAsync(Modbus.Coil(0x01, 0x02), TestContext.CancellationToken);
+        var readResult = await device.ReadAsync(ModbusBuilder.Coil(0x01, 0x02), TestContext.CancellationToken);
 
         Assert.AreEqual(value, readResult);
     }
@@ -38,7 +56,7 @@ public class ModbusProtocolAccessorTests
             .ReturnsAsync([a, b, c, d]);
 
         var device = new ModbusProtocolAccessor(mockMaster.Object);
-        var readResult = await device.ReadAsync(Modbus.Coils(0x01, 0x02, 4), TestContext.CancellationToken);
+        var readResult = await device.ReadAsync(ModbusBuilder.Coils(0x01, 0x02, 4), TestContext.CancellationToken);
 
         bool[] expected = [a, b, c, d];
         Assert.AreSequenceEqual(expected, readResult);
@@ -56,7 +74,7 @@ public class ModbusProtocolAccessorTests
             .ReturnsAsync([value]);
 
         var device = new ModbusProtocolAccessor(mockMaster.Object);
-        var readResult = await device.ReadAsync(Modbus.HoldingRegister(0x01, 0x02, WordCodec.BigEndian), TestContext.CancellationToken);
+        var readResult = await device.ReadAsync(ModbusBuilder.HoldingRegister(0x01, 0x02, WordCodec.BigEndian), TestContext.CancellationToken);
 
         Assert.AreEqual(value, readResult);
         mockMaster.Verify(x => x.ReadHoldingRegistersAsync(0x01, 0x02, 1), Times.Once);
@@ -75,7 +93,7 @@ public class ModbusProtocolAccessorTests
             .ReturnsAsync([(ushort)(value >> 16), (ushort)(value & 0xFFFF)]);
 
         var device = new ModbusProtocolAccessor(mockMaster.Object);
-        var readResult = await device.ReadAsync(Modbus.HoldingRegister(0x01, 0x02, DWordCodec.BigEndian), TestContext.CancellationToken);
+        var readResult = await device.ReadAsync(ModbusBuilder.HoldingRegister(0x01, 0x02, DWordCodec.BigEndian), TestContext.CancellationToken);
 
         Assert.AreEqual(value, readResult);
         mockMaster.Verify(x => x.ReadHoldingRegistersAsync(0x01, 0x02, 2), Times.Once);
@@ -97,7 +115,7 @@ public class ModbusProtocolAccessorTests
 
         var device = new ModbusProtocolAccessor(mockMaster.Object);
         var readResult = await device.ReadAsync(
-            Modbus.HoldingRegister(0x01, 0x02, QWordCodec.BigEndian),
+            ModbusBuilder.HoldingRegister(0x01, 0x02, QWordCodec.BigEndian),
             TestContext.CancellationToken);
 
         Assert.AreEqual(value, readResult);
@@ -118,7 +136,7 @@ public class ModbusProtocolAccessorTests
             .Returns(Task.CompletedTask);
 
         var device = new ModbusProtocolAccessor(mockMaster.Object);
-        await device.WriteAsync(Modbus.Coil(0x01, 0x02), value, TestContext.CancellationToken);
+        await device.WriteAsync(ModbusBuilder.Coil(0x01, 0x02), value, TestContext.CancellationToken);
 
         mockMaster.Verify(x => x.WriteSingleCoilAsync(0x01, 0x02, value), Times.Once);
     }
@@ -135,7 +153,7 @@ public class ModbusProtocolAccessorTests
         var device = new ModbusProtocolAccessor(mockMaster.Object);
 
         await device.WriteAsync(
-            Modbus.Coils(0x01, 0x02, quantity: 4),
+            ModbusBuilder.Coils(0x01, 0x02, quantity: 4),
             bits,
             TestContext.CancellationToken);
 
@@ -166,7 +184,7 @@ public class ModbusProtocolAccessorTests
 
         var device = new ModbusProtocolAccessor(mockMaster.Object);
         await device.WriteAsync(
-            Modbus.HoldingRegister(0x01, 0x02, WordCodec.BigEndian),
+            ModbusBuilder.HoldingRegister(0x01, 0x02, WordCodec.BigEndian),
             value,
             TestContext.CancellationToken);
 
@@ -188,7 +206,7 @@ public class ModbusProtocolAccessorTests
 
         var device = new ModbusProtocolAccessor(mockMaster.Object);
         await device.WriteAsync(
-            Modbus.HoldingRegister(0x01, 0x02, DWordCodec.BigEndian),
+            ModbusBuilder.HoldingRegister(0x01, 0x02, DWordCodec.BigEndian),
             value,
             TestContext.CancellationToken);
 
@@ -217,7 +235,7 @@ public class ModbusProtocolAccessorTests
 
         var device = new ModbusProtocolAccessor(mockMaster.Object);
         await device.WriteAsync(
-            Modbus.HoldingRegister(0x01, 0x02, QWordCodec.BigEndian),
+            ModbusBuilder.HoldingRegister(0x01, 0x02, QWordCodec.BigEndian),
             value,
             TestContext.CancellationToken);
 

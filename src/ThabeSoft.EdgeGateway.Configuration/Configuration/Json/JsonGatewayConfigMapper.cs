@@ -7,10 +7,12 @@ using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Guard;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.EdgeGateway.Subscription;
+using ThabeSoft.EdgeGateway.Protocols.Modbus;
 using ThabeSoft.EdgeGateway.Subscriptions;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.EdgeGateway.Transports.Ethernet;
+using ThabeSoft.EdgeGateway.Transports.Serial;
 using ThabeSoft.EdgeGateway.Triggers;
 using ThabeSoft.EdgeGateway.Triggers.Interval;
 using ThabeSoft.Guard;
@@ -248,13 +250,13 @@ internal static class JsonGatewayConfigMapper
         {
             var bitOffset = root.GetValueStringByPath("BitOffset").Required("缺少比特偏移")
                 .ToUInt16();
-            return (Modbus.Coil(slaveId, address, bitOffset), type);
+            return (ModbusBuilder.Coil(slaveId, address, bitOffset), type);
         }
         if (kind == ModbusDataKind.Coil && type == TagValueType.Bits)
         {
             var quantity = root.GetValueStringByPath("Quantity").Required("缺少比特偏移")
                 .ToUInt16();
-            return (Modbus.Coils(slaveId, address, quantity), type);
+            return (ModbusBuilder.Coils(slaveId, address, quantity), type);
         }
 
 
@@ -262,13 +264,13 @@ internal static class JsonGatewayConfigMapper
         {
             var bitOffset = root.GetValueStringByPath("BitOffset").Required("缺少比特偏移")
                 .ToUInt16();
-            return (Modbus.DiscreteInput(slaveId, address, bitOffset), type);
+            return (ModbusBuilder.DiscreteInput(slaveId, address, bitOffset), type);
         }
         if (kind == ModbusDataKind.DiscreteInput && type == TagValueType.Bits)
         {
             var quantity = root.GetValueStringByPath("Quantity").Required("缺少比特偏移")
                 .ToUInt16();
-            return (Modbus.DiscreteInputs(slaveId, address, quantity), type);
+            return (ModbusBuilder.DiscreteInputs(slaveId, address, quantity), type);
         }
 
 
@@ -279,8 +281,8 @@ internal static class JsonGatewayConfigMapper
 
             return endianess switch
             {
-                WordEndianess.Big => (Modbus.HoldingRegister(slaveId, address, WordCodec.BigEndian.AsShort()), type),
-                WordEndianess.Little => (Modbus.HoldingRegister(slaveId, address, WordCodec.LittleEndian.AsShort()), type),
+                WordEndianess.Big => (ModbusBuilder.HoldingRegister(slaveId, address, WordCodec.BigEndian.AsShort()), type),
+                WordEndianess.Little => (ModbusBuilder.HoldingRegister(slaveId, address, WordCodec.LittleEndian.AsShort()), type),
                 _ => throw new InvalidOperationException("缺少端序")
             };
         }

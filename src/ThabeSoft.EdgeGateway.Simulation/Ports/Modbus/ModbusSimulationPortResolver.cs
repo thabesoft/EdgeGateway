@@ -6,7 +6,8 @@ using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Ports.Modbus.Ip;
 using ThabeSoft.EdgeGateway.Ports.Modbus.Serial;
 using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.EdgeGateway.Transports.Ethernet;
+using ThabeSoft.EdgeGateway.Transports.Serial;
 
 namespace ThabeSoft.EdgeGateway.Ports.Modbus;
 

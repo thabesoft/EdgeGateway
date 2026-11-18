@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using ThabeSoft.EdgeGateway.DependencyInjection;
 using ThabeSoft.EdgeGateway.Extensions;
+using ThabeSoft.EdgeGateway.Transports.Ethernet;
 
 namespace ThabeSoft.EdgeGateway.Transports;
 
@@ -28,7 +29,7 @@ public class TcpTransportConnectionTests
         using var listener = new TcpListener(IPAddress.Loopback, 0);
         listener.Start();
 
-        var transportDescriptor = Ethernet.Tcp((IPEndPoint)listener.LocalEndpoint);
+        var transportDescriptor = EthernetBuilder.Tcp((IPEndPoint)listener.LocalEndpoint);
         var transpor = resolver.Create(transportDescriptor);
 
         await transpor.StartAsync(TestContext.CancellationToken);

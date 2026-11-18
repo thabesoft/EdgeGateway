@@ -1,10 +1,9 @@
 ﻿using System.Net;
-using ThabeSoft.EdgeGateway.Transports;
 
-namespace ThabeSoft.EdgeGateway;
+namespace ThabeSoft.EdgeGateway.Transports.Ethernet;
 
 
-public static class Ethernet
+public static class EthernetBuilder
 {
     public static IpTransportDescriptor Tcp(IPEndPoint iPEndPoint, RetryDescriptor? retry = null)
         => new() { IP = iPEndPoint.Address, Port = iPEndPoint.Port, ProtocolType = IpProtocolType.Tcp, Retry = retry ?? Retry.Default };

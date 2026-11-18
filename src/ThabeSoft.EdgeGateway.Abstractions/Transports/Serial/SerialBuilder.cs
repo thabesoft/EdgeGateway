@@ -1,9 +1,7 @@
-﻿using ThabeSoft.EdgeGateway.Transports;
-
-namespace ThabeSoft.EdgeGateway;
+﻿namespace ThabeSoft.EdgeGateway.Transports.Serial;
 
 
-public static class Serial
+public static class SerialBuilder
 {
     public static SerialTransportDescriptor Port(string portName,
             int baudRate = 9600,

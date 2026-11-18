@@ -1,7 +1,7 @@
 ﻿using Avalonia.Data.Converters;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.IO.Ports;
-using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.EdgeGateway.Transports.Serial;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 

@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Protocols;
+﻿namespace ThabeSoft.EdgeGateway.Protocols.Modbus;
 
 
 public enum ModbusFrameFormat

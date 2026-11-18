@@ -2,7 +2,7 @@
 using ThabeSoft.EdgeGateway.Guard;
 using ThabeSoft.Guard;
 
-namespace ThabeSoft.EdgeGateway.Transports;
+namespace ThabeSoft.EdgeGateway.Transports.Serial;
 
 
 public sealed record class SerialTransportDescriptor : TransportDescriptor

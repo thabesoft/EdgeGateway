@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Hosting;
 using System.Net;
 using ThabeSoft.EdgeGateway.Ports;
-using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Protocols.Modbus;
 using ThabeSoft.EdgeGateway.Subscription;
-using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.EdgeGateway.Transports.Ethernet;
 
 namespace ThabeSoft.EdgeGateway.App.Hosting;
 
@@ -35,14 +35,14 @@ internal sealed class LaunchHostedService(IGateway gateway) :
     }
     private static async Task AddDeviceAsync(byte id, IPort port, CancellationToken cancellationToken)
     {
-        var device = await port.AddDeviceAsync(new() { Protocol = Modbus.Ip }, cancellationToken);
+        var device = await port.AddDeviceAsync(new() { Protocol = ModbusBuilder.Ip }, cancellationToken);
 
         var trigger = Trigger.Interval(100);
 
         for (int i = 0; i < 1; i++)
         {
             // Double 占 4 个寄存器，地址按 4 递增
-            var tag = Modbus.HoldingRegister(id, (ushort)(i * 4), Codec.Double);
+            var tag = ModbusBuilder.HoldingRegister(id, (ushort)(i * 4), Codec.Double);
             // 网关订阅
             await device.AddSubscriptionAsync(SubscriptionDescriptor.Create(tag, trigger), cancellationToken);
         }

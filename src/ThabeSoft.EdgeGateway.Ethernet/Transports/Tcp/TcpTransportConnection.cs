@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using System.Net.Sockets;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.EdgeGateway.Transports.Ethernet;
 
 namespace ThabeSoft.EdgeGateway.Transports.Tcp;
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Text.Json.Nodes;
 using ThabeSoft.EdgeGateway.Addressing;
+using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Codecs.Words;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Extensions;
@@ -189,7 +190,7 @@ internal static class JsonGatewayConfigMapper
 
         return new() { Descriptor = descriptor, ValueType = type, Trigger = null! };
     }
-    private static (SubscriptionDescriptor, TagValueType) AsSubscriptionDescriptor(this JsonNode root, ProtocolType protocolType)
+    private static (SubscriptionDescriptor, CodecKind) AsSubscriptionDescriptor(this JsonNode root, ProtocolType protocolType)
     {
         var id = root.GetValueStringByPath("Id").Required("缺少订阅Id")
             .AsSubscriptionId();
@@ -206,9 +207,9 @@ internal static class JsonGatewayConfigMapper
 
         SubscriptionDescriptor a = valueType switch
         {
-            TagValueType.Bool => Create<bool>(tag),
-            TagValueType.Int16 => Create<short>(tag),
-            TagValueType.Bits => Create<BitArray>(tag),
+            CodecKind.Bool => Create<bool>(tag),
+            CodecKind.Int16 => Create<short>(tag),
+            CodecKind.Bits => Create<BitArray>(tag),
             _ => throw new InvalidOperationException("不支持的值类型")
         };
         return (a, valueType);
@@ -231,10 +232,10 @@ internal static class JsonGatewayConfigMapper
 
         throw new InvalidOperationException("未知的触发器类型");
     }
-    private static (TagDescriptor, TagValueType) AsModbusTagDescriptor(this JsonNode root)
+    private static (TagDescriptor, CodecKind) AsModbusTagDescriptor(this JsonNode root)
     {
         var type = root.GetValueStringByPath("Type").Required("缺少标签类型")
-            .ToEnum<TagValueType>();
+            .ToEnum<CodecKind>();
 
         var kind = root.GetValueStringByPath("Kind").Required("缺少Modbu数据区域")
             .ToEnum<ModbusDataKind>();
@@ -246,13 +247,13 @@ internal static class JsonGatewayConfigMapper
            .ToUInt16();
 
 
-        if (kind == ModbusDataKind.Coil && type == TagValueType.Bool)
+        if (kind == ModbusDataKind.Coil && type == CodecKind.Bool)
         {
             var bitOffset = root.GetValueStringByPath("BitOffset").Required("缺少比特偏移")
                 .ToUInt16();
             return (ModbusBuilder.Coil(slaveId, address, bitOffset), type);
         }
-        if (kind == ModbusDataKind.Coil && type == TagValueType.Bits)
+        if (kind == ModbusDataKind.Coil && type == CodecKind.Bits)
         {
             var quantity = root.GetValueStringByPath("Quantity").Required("缺少比特偏移")
                 .ToUInt16();
@@ -260,13 +261,13 @@ internal static class JsonGatewayConfigMapper
         }
 
 
-        if (kind == ModbusDataKind.DiscreteInput && type == TagValueType.Bool)
+        if (kind == ModbusDataKind.DiscreteInput && type == CodecKind.Bool)
         {
             var bitOffset = root.GetValueStringByPath("BitOffset").Required("缺少比特偏移")
                 .ToUInt16();
             return (ModbusBuilder.DiscreteInput(slaveId, address, bitOffset), type);
         }
-        if (kind == ModbusDataKind.DiscreteInput && type == TagValueType.Bits)
+        if (kind == ModbusDataKind.DiscreteInput && type == CodecKind.Bits)
         {
             var quantity = root.GetValueStringByPath("Quantity").Required("缺少比特偏移")
                 .ToUInt16();
@@ -274,7 +275,7 @@ internal static class JsonGatewayConfigMapper
         }
 
 
-        if (kind == ModbusDataKind.HoldingRegister && type == TagValueType.Int16)
+        if (kind == ModbusDataKind.HoldingRegister && type == CodecKind.Int16)
         {
             var endianess = root.GetValueStringByPath("Endianess").Required("缺少比特偏移")
                 .ToEnum<WordEndianess>();

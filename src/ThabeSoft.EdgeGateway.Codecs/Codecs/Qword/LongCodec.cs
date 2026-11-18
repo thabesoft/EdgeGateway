@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Codecs.Qword;
+﻿namespace ThabeSoft.EdgeGateway.Codecs.QWords;
 
 
 internal sealed record class LongCodec(ICodec<ulong> Codec) : ICodec<long>

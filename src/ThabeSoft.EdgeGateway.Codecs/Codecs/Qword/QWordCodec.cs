@@ -1,6 +1,6 @@
 ﻿using System.Buffers.Binary;
 
-namespace ThabeSoft.EdgeGateway.Codecs.Qword;
+namespace ThabeSoft.EdgeGateway.Codecs.QWords;
 
 
 public sealed record class QWordCodec : ICodec<ulong>

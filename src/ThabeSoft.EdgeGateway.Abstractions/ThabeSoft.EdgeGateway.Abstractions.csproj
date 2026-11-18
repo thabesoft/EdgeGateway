@@ -5,8 +5,17 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.14" />
 	</ItemGroup>
 
+	<!--兼容包-->
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+
+		<!--不可变集合-->
+		<PackageReference Include="System.Collections.Immutable" Version="11.0.0" />
+
+	</ItemGroup>
+	
+
 	<ItemGroup>
-	  <ProjectReference Include="..\..\..\ThabeSoft.Guard\ThabeSoft.Guard\ThabeSoft.Guard.csproj" />
+		<ProjectReference Include="..\..\..\ThabeSoft.Guard\ThabeSoft.Guard\ThabeSoft.Guard.csproj" />
 	</ItemGroup>
 
 </Project>

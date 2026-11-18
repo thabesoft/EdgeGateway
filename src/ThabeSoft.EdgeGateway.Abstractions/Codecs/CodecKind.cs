@@ -1,7 +1,7 @@
-﻿namespace ThabeSoft.EdgeGateway.Tags;
+﻿namespace ThabeSoft.EdgeGateway.Codecs;
 
 
-public enum TagValueType
+public enum CodecKind
 {
     Bool, Byte,
     Int16, UInt16, Char,

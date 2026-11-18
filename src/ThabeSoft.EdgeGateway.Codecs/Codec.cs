@@ -3,7 +3,7 @@ using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Codecs.Bits;
 using ThabeSoft.EdgeGateway.Codecs.Bytes;
 using ThabeSoft.EdgeGateway.Codecs.DWords;
-using ThabeSoft.EdgeGateway.Codecs.Qword;
+using ThabeSoft.EdgeGateway.Codecs.QWords;
 using ThabeSoft.EdgeGateway.Codecs.Words;
 
 namespace ThabeSoft.EdgeGateway;

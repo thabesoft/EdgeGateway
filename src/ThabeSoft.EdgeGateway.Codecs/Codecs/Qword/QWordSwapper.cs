@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace ThabeSoft.EdgeGateway.Codecs.Qword;
+namespace ThabeSoft.EdgeGateway.Codecs.QWords;
 
 
 internal sealed record class QWordSwapper : ISwapper

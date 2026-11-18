@@ -2,7 +2,7 @@ using Moq;
 using NModbus;
 using System.Collections;
 using ThabeSoft.EdgeGateway.Codecs.DWords;
-using ThabeSoft.EdgeGateway.Codecs.Qword;
+using ThabeSoft.EdgeGateway.Codecs.QWords;
 using ThabeSoft.EdgeGateway.Codecs.Words;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Protocols.Modbus;

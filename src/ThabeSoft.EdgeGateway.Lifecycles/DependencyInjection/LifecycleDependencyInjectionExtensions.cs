@@ -5,8 +5,8 @@ using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.BackgroundTask;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.EdgeGateway.Lifecycles.StateMachines.Retryable;
 using ThabeSoft.EdgeGateway.StateMachines;
-using ThabeSoft.EdgeGateway.StateMachines.Retryable;
 using ThabeSoft.EdgeGateway.StateMachines.Stric;
 
 namespace ThabeSoft.EdgeGateway.DependencyInjection;

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using NModbus;
+using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Triggers;
 
@@ -10,6 +11,7 @@ internal sealed class ModbusSimulationDeviceResolver(
         IModbusFactory modbusFactory,
         TriggerManager triggerManager,
         ILoggerFactory loggerFactory,
+        ICodecFactory codecFactory,
         ILifecycleStateMachineFactory lifecycleStateMachineFactory
     ) : ISimulationDeviceResolver
 {
@@ -32,10 +34,11 @@ internal sealed class ModbusSimulationDeviceResolver(
                 LifecycleStateMachineFactory = lifecycleStateMachineFactory,
                 Logger = loggerFactory.CreateLogger<ModbusSimulationDevice>(),
                 TaskManager = new Utilities.TaskManager(),
-                TriggerManager = triggerManager
+                TriggerManager = triggerManager,
             },
             ModbusFactory = modbusFactory,
-            UnitId = deviceId.Value
+            UnitId = deviceId.Value,
+            CodecFactory = codecFactory
         };
 
         return new ModbusSimulationDevice(args);

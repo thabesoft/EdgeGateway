@@ -6,6 +6,7 @@ using ThabeSoft.EdgeGateway.Devices.Modbus;
 using ThabeSoft.EdgeGateway.Hosting;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Ports.Modbus;
+using ThabeSoft.EdgeGateway.Simulation;
 using ThabeSoft.EdgeGateway.Triggers;
 
 namespace ThabeSoft.EdgeGateway.DependencyInjection;

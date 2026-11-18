@@ -16,31 +16,31 @@ internal static class HostBuilderExtensions
         {
             builder.UseEdgeGateway(x =>
             {
-                x.WithGatewayStateMachine(Lifecycle.RetryableStateMachine(x => x
+                x.WithGatewayStateMachine(LifecycleBuilder.RetryableStateMachine(x => x
                     .WithStartTimeout(TimeSpan.FromSeconds(120))
                     .WithStopTimeout(TimeSpan.FromSeconds(60))
                     .WithDisposeTimeout(TimeSpan.FromSeconds(30))
                     .WithExecuteTimeout(TimeSpan.FromSeconds(30))));
 
-                x.WithPortStateMachine(Lifecycle.RetryableStateMachine(x => x
+                x.WithPortStateMachine(LifecycleBuilder.RetryableStateMachine(x => x
                     .WithStartTimeout(TimeSpan.FromSeconds(60))
                     .WithStopTimeout(TimeSpan.FromSeconds(30))
                     .WithDisposeTimeout(TimeSpan.FromSeconds(15))
                     .WithExecuteTimeout(TimeSpan.FromSeconds(30))));
 
-                x.WithTransportStateMachine(Lifecycle.RetryableStateMachine(x => x
+                x.WithTransportStateMachine(LifecycleBuilder.RetryableStateMachine(x => x
                     .WithStartTimeout(TimeSpan.FromSeconds(60))
                     .WithStopTimeout(TimeSpan.FromSeconds(30))
                     .WithDisposeTimeout(TimeSpan.FromSeconds(15))
                     .WithExecuteTimeout(TimeSpan.FromSeconds(30))));
 
-                x.WithDeviceStateMachine(Lifecycle.RetryableStateMachine(x => x
+                x.WithDeviceStateMachine(LifecycleBuilder.RetryableStateMachine(x => x
                     .WithStartTimeout(TimeSpan.FromSeconds(30))
                     .WithStopTimeout(TimeSpan.FromSeconds(15))
                     .WithDisposeTimeout(TimeSpan.FromSeconds(10))
                     .WithExecuteTimeout(TimeSpan.FromSeconds(30))));
 
-                x.WithSubscriptionStateMachine(Lifecycle.RetryableStateMachine(x => x
+                x.WithSubscriptionStateMachine(LifecycleBuilder.RetryableStateMachine(x => x
                     .WithStartTimeout(TimeSpan.FromSeconds(15))
                     .WithStopTimeout(TimeSpan.FromSeconds(10))
                     .WithDisposeTimeout(TimeSpan.FromSeconds(5))

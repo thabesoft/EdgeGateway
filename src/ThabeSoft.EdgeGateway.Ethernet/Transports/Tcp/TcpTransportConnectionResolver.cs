@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Ethernet;
-using ThabeSoft.EdgeGateway.Extensions;
+using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 
 namespace ThabeSoft.EdgeGateway.Transports.Tcp;
@@ -8,6 +8,7 @@ namespace ThabeSoft.EdgeGateway.Transports.Tcp;
 
 internal sealed class TcpTransportConnectionResolver(
         ILoggerFactory loggerFactory,
+        ILifecycleFactory lifecycleFactory,
         ILifecycleStateMachineFactory lifecycleStateMachineFactory
     ) : ITransportConnectionResolver
 {
@@ -22,11 +23,6 @@ internal sealed class TcpTransportConnectionResolver(
             throw new InvalidOperationException();
 
         var logger = loggerFactory.CreateLogger<TcpTransportConnection>();
-        var stateMachine = lifecycleStateMachineFactory.Create(context.StateMachine);
-
-        return new TcpTransportConnection(ip, stateMachine, logger)
-        {
-            DisposedCallback = async () => await stateMachine.TryDisposeAsync(logger)
-        };
+        return new TcpTransportConnection(ip, lifecycleFactory, lifecycleStateMachineFactory, logger);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using NModbus;
 using NModbus.IO;
+using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.IO;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Transports.Byte;
@@ -7,7 +8,10 @@ using ThabeSoft.EdgeGateway.Transports.Byte;
 namespace ThabeSoft.EdgeGateway.Modbus.Protocols;
 
 
-internal sealed class ModbusProtocolAccessorResolver(IModbusFactory modbusFactory) : IProtocolAccessorResolver
+internal sealed class ModbusProtocolAccessorResolver(
+        IModbusFactory modbusFactory,
+        ICodecFactory codecFactory
+    ) : IProtocolAccessorResolver
 {
     public bool CanResolve(ProtocolDescriptor descriptor)
     {
@@ -20,7 +24,7 @@ internal sealed class ModbusProtocolAccessorResolver(IModbusFactory modbusFactor
             throw new ArgumentException("描述不是 Modbus RTU。", nameof(descriptor));
 
         var modbusMaster = Create(modbus.FrameFormat, byteStream);
-        return new ModbusProtocolAccessor(modbusMaster);
+        return new ModbusProtocolAccessor(modbusMaster, codecFactory);
     }
 
 

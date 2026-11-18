@@ -15,8 +15,9 @@ internal sealed class Simulator(in SimulatorArgs args) : ISimulator, IAsyncDispo
     private readonly ILifecycleBatchExecutor _portBatchExecutor = args.LifecycleBatchExecutorFactory.Create(args.PortBatchExecutor);
     private readonly SimulationPortFactory _portFactory = args.PortFactory;
 
-    private readonly LifecycleBatchExecutorDescriptor _deviceDeviceBatchExecutor = args.DeviceBatchExecutor;
     private readonly LifecycleStateMachineDescriptor _portStateMachine = args.PortStateMachine;
+    private readonly LifecycleStateMachineDescriptor _deviceStateMachine = args.DeviceStateMachine;
+    private readonly LifecycleBatchExecutorDescriptor _deviceDeviceBatchExecutor = args.DeviceBatchExecutor;
 
 
 
@@ -39,7 +40,8 @@ internal sealed class Simulator(in SimulatorArgs args) : ISimulator, IAsyncDispo
                 {
                     Port = simulatorDescriptor,
                     DeviceBatchExecutor = _deviceDeviceBatchExecutor,
-                    PortStateMachine = _portStateMachine
+                    PortStateMachine = _portStateMachine,
+                    DeviceStateMachine = _deviceStateMachine,
                 };
 
                 var simulator = _portFactory.Create(context);

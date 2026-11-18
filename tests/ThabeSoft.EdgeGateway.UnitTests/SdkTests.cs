@@ -29,6 +29,7 @@ using ThabeSoft.EdgeGateway.Transports;
 using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway.Ethernet;
 using ThabeSoft.EdgeGateway.Serial;
+using ThabeSoft.EdgeGateway.Triggers;
 
 namespace ThabeSoft.EdgeGateway;
 
@@ -53,8 +54,8 @@ public class SdkTests
         await gateway.AddPortAsync(SerialBuilder.Port("Com1", 9600, SerialParity.None, 8), TestContext.CancellationToken);
         await gateway.AddPortAsync(SerialBuilder.Port("Com1", 9600, SerialParity.None, 8, SerialStopBits.One), TestContext.CancellationToken);
         await gateway.AddPortAsync(SerialBuilder.Port("Com1", 9600, SerialParity.None, 8, SerialStopBits.One, new(TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(30)) { BackoffMultiplier = 1.5 }), TestContext.CancellationToken);
-        await gateway.AddPortAsync(SerialBuilder.Port("Com1", retry: Retry.From(3000, 30000, 1.5)), TestContext.CancellationToken);
-        await gateway.AddPortAsync(SerialBuilder.Port("Com1", retry: Retry.From(TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(30), 1.5)), TestContext.CancellationToken);
+        await gateway.AddPortAsync(SerialBuilder.Port("Com1", retry: RetryBuilder.From(3000, 30000, 1.5)), TestContext.CancellationToken);
+        await gateway.AddPortAsync(SerialBuilder.Port("Com1", retry: RetryBuilder.From(TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(30), 1.5)), TestContext.CancellationToken);
     }
 
     [TestMethod]
@@ -85,9 +86,9 @@ public class SdkTests
         var mockDevice = new Mock<IDevice>();
         var device = mockDevice.Object;
 
-        await device.AddSubscriptionAsync(ModbusBuilder.HoldingRegister(1, 0, Codec.Double), Trigger.Interval(100), TestContext.CancellationToken);
-        await device.AddSubscriptionAsync(SubscriptionId.Create(), ModbusBuilder.HoldingRegister(1, 0, Codec.Double), Trigger.Interval(100), TestContext.CancellationToken);
-        await device.AddSubscriptionAsync(new SubscriptionDescriptor<double>() { Id = SubscriptionId.Create(), Tag = ModbusBuilder.HoldingRegister(1, 0, Codec.Double), Trigger = Trigger.Interval(100) }, TestContext.CancellationToken);
+        await device.AddSubscriptionAsync(ModbusBuilder.HoldingRegister(1, 0, Codec.Double), TriggerBuilder.Interval(100), TestContext.CancellationToken);
+        await device.AddSubscriptionAsync(SubscriptionId.Create(), ModbusBuilder.HoldingRegister(1, 0, Codec.Double), TriggerBuilder.Interval(100), TestContext.CancellationToken);
+        await device.AddSubscriptionAsync(new SubscriptionDescriptor<double>() { Id = SubscriptionId.Create(), Tag = ModbusBuilder.HoldingRegister(1, 0, Codec.Double), Trigger = TriggerBuilder.Interval(100) }, TestContext.CancellationToken);
     }
 
     [TestMethod]

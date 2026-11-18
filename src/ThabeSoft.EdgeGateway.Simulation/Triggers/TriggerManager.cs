@@ -1,10 +1,15 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
+using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Utilities;
 
 namespace ThabeSoft.EdgeGateway.Triggers;
 
-internal sealed class TriggerManager(ITriggerResolver triggerFactorySelector, ILoggerFactory loggerFactory)
+internal sealed class TriggerManager(
+        ITriggerResolver triggerFactorySelector,
+        ILifecycleFactory lifecycleFactory,
+        ILoggerFactory loggerFactory
+    )
 {
     private readonly ConcurrentDictionary<TriggerDescriptor, TriggerScheduler> _entries = [];
 
@@ -13,7 +18,7 @@ internal sealed class TriggerManager(ITriggerResolver triggerFactorySelector, IL
         var scheduler = _entries.GetOrAdd(triggerDescriptor, x =>
         {
             var trigger = triggerFactorySelector.Resolve(x);
-            return new TriggerScheduler(trigger, loggerFactory.CreateLogger<TriggerScheduler>());
+            return new TriggerScheduler(trigger, lifecycleFactory, loggerFactory.CreateLogger<TriggerScheduler>());
         });
 
         await scheduler.StartAsync(cancellationToken);

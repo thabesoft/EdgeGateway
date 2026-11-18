@@ -7,7 +7,7 @@ using ThabeSoft.EdgeGateway.Tags;
 namespace ThabeSoft.EdgeGateway.Protocols;
 
 
-internal sealed class ModbusProtocolAccessor(IModbusMaster master) : IProtocolAccessor
+internal sealed class ModbusProtocolAccessor(IModbusMaster master, ICodecFactory codecFactory) : IProtocolAccessor
 {
     private readonly SemaphoreSlim _lock = new(1, 1);
 
@@ -17,6 +17,8 @@ internal sealed class ModbusProtocolAccessor(IModbusMaster master) : IProtocolAc
         if (tag.Address is not ModbusDataAddress mosbus)
             throw new InvalidOperationException("不是有效的Modbus地址");
 
+        var codec = codecFactory.Create(tag.Codec);
+
 
         await _lock.WaitAsync(cancellationToken);
         try
@@ -24,23 +26,23 @@ internal sealed class ModbusProtocolAccessor(IModbusMaster master) : IProtocolAc
             if (mosbus.Kind == ModbusDataKind.Coil)
             {
                 var bits = await master.ReadCoilsAsync(mosbus.SlaveId, mosbus.StartAddress, mosbus.Quantity);
-                return tag.Codec.DecodeBits(bits);
+                return codec.DecodeBits(bits);
             }
             if (mosbus.Kind == ModbusDataKind.DiscreteInput)
             {
                 var bits = await master.ReadInputsAsync(mosbus.SlaveId, mosbus.StartAddress, mosbus.Quantity);
-                return tag.Codec.DecodeBits(bits);
+                return codec.DecodeBits(bits);
             }
 
             if (mosbus.Kind == ModbusDataKind.HoldingRegister)
             {
                 var words = await master.ReadHoldingRegistersAsync(mosbus.SlaveId, mosbus.StartAddress, mosbus.Quantity);
-                return tag.Codec.DecodeWords(words);
+                return codec.DecodeWords(words);
             }
             if (mosbus.Kind == ModbusDataKind.InputRegister)
             {
                 var words = await master.ReadInputRegistersAsync(mosbus.SlaveId, mosbus.StartAddress, mosbus.Quantity);
-                return tag.Codec.DecodeWords(words);
+                return codec.DecodeWords(words);
             }
         }
         finally
@@ -60,11 +62,13 @@ internal sealed class ModbusProtocolAccessor(IModbusMaster master) : IProtocolAc
             if (tag.Address is not ModbusDataAddress modbus)
                 throw new InvalidOperationException("不是有效的Modbus地址");
 
+            var codec = codecFactory.Create(tag.Codec);
+
 
             if (modbus.Kind == ModbusDataKind.Coil)
             {
                 Span<byte> cache = stackalloc byte[(modbus.Quantity + 7) / 8];
-                tag.Codec.Encode(value, cache);
+                codec.Encode(value, cache);
 
 
                 if (modbus.Quantity == 1)
@@ -86,7 +90,7 @@ internal sealed class ModbusProtocolAccessor(IModbusMaster master) : IProtocolAc
             if (modbus.Kind == ModbusDataKind.HoldingRegister)
             {
                 Span<byte> cache = stackalloc byte[modbus.Quantity * 2];
-                tag.Codec.Encode(value, cache);
+                codec.Encode(value, cache);
 
                 // Words
                 var words = new ushort[modbus.Quantity];

@@ -21,5 +21,7 @@ public sealed class SimulatorPortCreationContext
 {
     public required SimulatorPortDescriptor Port { get; init => field = value.Required(); }
     public required LifecycleStateMachineDescriptor PortStateMachine { get; init => field = value.Required(); }
+
     public required LifecycleBatchExecutorDescriptor DeviceBatchExecutor { get; init => field = value.Required(); }
+    public required LifecycleStateMachineDescriptor DeviceStateMachine { get; init => field = value.Required(); }
 }

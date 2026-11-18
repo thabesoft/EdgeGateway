@@ -20,7 +20,7 @@ public static class SerialBuilder
             DataBits = dataBits,
             Parity = parity,
             StopBits = stopBits,
-            Retry = retry ?? Retry.Default
+            Retry = retry ?? RetryBuilder.Default
         };
     }
 }

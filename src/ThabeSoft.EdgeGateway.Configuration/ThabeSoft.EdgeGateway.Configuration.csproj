@@ -6,11 +6,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Abstractions\ThabeSoft.EdgeGateway.Abstractions.csproj" />
-		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Codecs\ThabeSoft.EdgeGateway.Codecs.csproj" />
-		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Ethernet\ThabeSoft.EdgeGateway.Ethernet.csproj" />
-		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Modbus\ThabeSoft.EdgeGateway.Modbus.csproj" />
-		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Serial\ThabeSoft.EdgeGateway.Serial.csproj" />
-		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Triggers\ThabeSoft.EdgeGateway.Triggers.csproj" />
 	</ItemGroup>
 
 	

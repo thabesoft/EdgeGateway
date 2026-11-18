@@ -8,6 +8,6 @@ namespace ThabeSoft.EdgeGateway.Devices;
 
 public interface ISimulationDevice : ILifecycle, ILifecycleStateable, IAsyncDisposable
 {
-    DeviceId Id { get; }
+    ISimulationDeviceId Id { get; }
     ValueTask<IDisposable> ValueAsync<T>(TagDescriptor<T> tagDescriptor, TriggerDescriptor triggerDescriptor, IValueGenerator<T> generator, CancellationToken cancellationToken = default) where T : notnull;
 }

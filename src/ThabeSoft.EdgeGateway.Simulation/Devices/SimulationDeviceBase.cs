@@ -19,7 +19,7 @@ internal abstract class SimulationDeviceBase(in SimulationDeviceBaseArgs args) :
     private readonly ILogger _logger = args.Logger;
 
 
-    public DeviceId Id { get; } = args.Device.Id;
+    public ISimulationDeviceId Id { get; } = args.Device.Id;
     public LifecycleState State => _stateMachine.State;
 
 

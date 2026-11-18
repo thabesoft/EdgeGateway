@@ -3,7 +3,7 @@ using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Ports;
 
-namespace ThabeSoft.EdgeGateway;
+namespace ThabeSoft.EdgeGateway.Simulation;
 
 internal sealed class SimulatorFactory(
         SimulationPortFactory portFactory,
@@ -16,9 +16,15 @@ internal sealed class SimulatorFactory(
     {
         var simulatorArgs = new SimulatorArgs()
         {
-            SimulatorStateMachine = args.StateMachine,
+            SimulatorStateMachine = args.SimulatorStateMachine,
+
             PortFactory = portFactory,
             PortBatchExecutor = args.PortBatchExecutor,
+            PortStateMachine = args.PortStateMachine,
+
+            DeviceStateMachine = args.DeviceStateMachine,
+            DeviceBatchExecutor = args.DeviceBatchExecutor,
+
             LifecycleBatchExecutorFactory = lifecycleBatchExecutorFactory,
             LifecycleStateMachineFactory = lifecycleStateMachineFactory,
             Logger = loggerFactory.CreateLogger<Simulator>()

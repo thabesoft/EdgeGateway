@@ -1,37 +1,15 @@
 ﻿using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Devices.Modbus;
-using ThabeSoft.EdgeGateway.Ports;
-
-<<<<<<< TODO: 项目“ThabeSoft.EdgeGateway.Simulation (netstandard2.0)”的未合并的更改, 在此之前:
-=======
-using ThabeSoft.EdgeGateway.Protocols.Modbus;
-using ThabeSoft.EdgeGateway.Transports;
->>>>>>> 晚于
-
-<<<<<<< TODO: 项目“ThabeSoft.EdgeGateway.Simulation (net10.0)”的未合并的更改, 在此之前:
-=======
-using ThabeSoft.EdgeGateway.Protocols.Modbus;
-using ThabeSoft.EdgeGateway.Protocols.Modbus.Modbus;
-using ThabeSoft.EdgeGateway.Protocols.Modbus.Modbus.Modbus;
-using ThabeSoft.EdgeGateway.Transports;
->>>>>>> 晚于
-
-<<<<<<< TODO: 项目“ThabeSoft.EdgeGateway.Simulation (net11.0)”的未合并的更改, 在此之前:
-=======
-using ThabeSoft.EdgeGateway.Protocols.Modbus;
-using ThabeSoft.EdgeGateway.Protocols.Modbus.Modbus;
-using ThabeSoft.EdgeGateway.Protocols.Modbus.Modbus.Modbus;
-using ThabeSoft.EdgeGateway.Protocols.Modbus.Modbus.Modbus.Modbus;
-using ThabeSoft.EdgeGateway.Transports;
->>>>>>> 晚于
-using ThabeSoft.EdgeGateway.ValueGenerators;
-using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway.Ethernet;
+using ThabeSoft.EdgeGateway.Modbus;
+using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Serial;
+using ThabeSoft.EdgeGateway.ValueGenerators;
 
-namespace ThabeSoft.EdgeGateway;
+namespace ThabeSoft.EdgeGateway.Simulation;
 
-public static class Simulation
+
+public static class SimulationBuilder
 {
     public static SimulatorPortDescriptor ModbusRtuPort(SerialTransportDescriptor transportDescriptor) =>
              new(transportDescriptor, ModbusBuilder.Rtu);
@@ -39,7 +17,6 @@ public static class Simulation
         new(transportDescriptor, ModbusBuilder.Ascii);
     public static SimulatorPortDescriptor ModbusIpPort(IpTransportDescriptor transportDescriptor) =>
         new(transportDescriptor, ModbusBuilder.Ip);
-
 
 
     public static SimulationDeviceDescriptor ModbusDevice(byte unitId) =>

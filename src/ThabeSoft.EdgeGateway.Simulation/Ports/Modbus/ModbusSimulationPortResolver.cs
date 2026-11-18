@@ -4,6 +4,7 @@ using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ethernet;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway.Ports.Modbus.Ip;
 using ThabeSoft.EdgeGateway.Ports.Modbus.Serial;
 using ThabeSoft.EdgeGateway.Protocols;
@@ -36,8 +37,10 @@ internal sealed class ModbusSimulationPortResolver(
         {
             Transport = context.Port.Transport,
             PortStateMachine = context.PortStateMachine,
+
             DeviceBatchExecutor = context.DeviceBatchExecutor,
             DeviceFactory = simulationDeviceFactory,
+            DeviceStateMachine = context.DeviceStateMachine,
 
             LifecycleBatchExecutorFactory = lifecycleBatchExecutorFactory,
             LifecycleKeyedCollectionFactory = lifecycleKeyedCollectionFactory,

@@ -9,7 +9,7 @@ public class SignalTriggerTests
     public async Task WaitForNextTickAsync()
     {
         var factory = new SignalTriggerResolver();
-        var trigger = factory.Create(Trigger.Signal(out var signal));
+        var trigger = factory.Create(TriggerBuilder.Signal(out var signal));
 
         // 1. 发起等待，拿到未完成的 Task
         var task = trigger.WaitForNextTickAsync(TestContext.CancellationToken);

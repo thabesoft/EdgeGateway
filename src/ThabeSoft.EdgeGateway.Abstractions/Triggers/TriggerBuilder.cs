@@ -1,11 +1,10 @@
-﻿using ThabeSoft.EdgeGateway.Triggers;
-using ThabeSoft.EdgeGateway.Triggers.Interval;
+﻿using ThabeSoft.EdgeGateway.Triggers.Interval;
 using ThabeSoft.EdgeGateway.Triggers.Signal;
 
-namespace ThabeSoft.EdgeGateway;
+namespace ThabeSoft.EdgeGateway.Triggers;
 
 
-public static class Trigger
+public static class TriggerBuilder
 {
     public static TriggerDescriptor Signal(out ISignal signal)
     {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using System.Net.Sockets;
 using ThabeSoft.EdgeGateway.Ethernet;
+using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 
@@ -17,25 +17,25 @@ internal sealed class TcpTransportConnection : ITransportConnection
     private readonly RetryBackoff _retryBackoff;
     private readonly IpTransportDescriptor _descriptor;
     private readonly ILogger<TcpTransportConnection> _logger;
-    private readonly IDisposableLifecycle _reconnectBackgroundLifecycle;
+    private readonly ILifecycle _reconnectBackgroundLifecycle;
 
 
 
     public TcpTransportConnection(
             IpTransportDescriptor descriptor,
-            ILifecycleStateMachine stateMachine,
+            ILifecycleFactory lifecycleFactory,
+            ILifecycleStateMachineFactory lifecycleStateMachineFactory,
             ILogger<TcpTransportConnection> logger)
     {
         _logger = logger;
         _descriptor = descriptor;
-        _stateMachine = stateMachine;
         _retryBackoff = new(descriptor.Retry);
-        _reconnectBackgroundLifecycle = Lifecycle.Background(ReconnectLoopAsync, logger);
+        _stateMachine = lifecycleStateMachineFactory.Create(descriptor.StateMachine);
+        _reconnectBackgroundLifecycle = lifecycleFactory.Create(LifecycleBuilder.Background(ReconnectLoopAsync));
     }
 
     public ConnectionEndpoint Endpoint => _descriptor.Endpoint;
     public LifecycleState State => _stateMachine.State;
-    public Func<ValueTask>? DisposedCallback { get; init; }
 
 
     public async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
@@ -109,14 +109,9 @@ internal sealed class TcpTransportConnection : ITransportConnection
         try { await OnStopAsync(CancellationToken.None); }
         catch (Exception ex) { _logger.LogError(ex, "Tcp 传输停止失败"); }
 
-        // 2. 释放底层 UdpClient
-        try { _tcpClient?.Dispose(); }
-        catch (Exception ex) { _logger.LogError(ex, "TcpClient 释放失败"); }
-
-
-        if (DisposedCallback is null) return;
-        try { await DisposedCallback.Invoke(); }
-        catch (Exception ex) { _logger.LogError(ex, "Tcp传输释放回调执行异常"); }
+        _tcpClient?.DisposeSafely(_logger);
+        await SafeDisposeExtensions.DisposeSafelyAsync(_reconnectBackgroundLifecycle, _logger);
+        await _stateMachine.DisposeSafelyAsync(_logger);
     }
 
 

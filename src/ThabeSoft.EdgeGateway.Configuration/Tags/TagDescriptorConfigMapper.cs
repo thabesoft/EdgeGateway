@@ -1,12 +1,12 @@
 ﻿using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Codecs;
-using ThabeSoft.EdgeGateway.Configuration;
+using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.Guard;
 
-namespace ThabeSoft.EdgeGateway.Tags;
+namespace ThabeSoft.EdgeGateway.Configuration.Tags;
 
 public sealed class TagDescriptorConfigMapper<T>(
-        IConfigMapper<ICodec<T>> codecMapper,
+        IConfigMapper<CodecDescriptor<T>> codecMapper,
         IConfigMapper<DataAddress> dataAddressMapper
     ) : IConfigMapper<TagDescriptor<T>>
     where T : notnull

@@ -12,6 +12,7 @@ internal sealed class ModbusSimulationDevice(in ModbusSimulationDeviceArgs args)
 {
     private readonly byte _unitId = args.UnitId;
     private readonly ILogger _logger = args.Base.Logger;
+    private readonly ICodecFactory _codecFactory = args.CodecFactory;
 
 
     public IModbusSlave Slave { get; } = args.ModbusFactory.CreateSlave(args.UnitId);
@@ -22,9 +23,11 @@ internal sealed class ModbusSimulationDevice(in ModbusSimulationDeviceArgs args)
         if (tag.Address is not ModbusDataAddress address)
             return;
 
+        var codec = _codecFactory.Create(tag.Codec);
+
         if (address.Kind == ModbusDataKind.HoldingRegister)
         {
-            var words = tag.Codec.EncodeWords(value);
+            var words = codec.EncodeWords(value);
             SetHoldingRegisters(address.StartAddress, words);
         }
     }
@@ -47,5 +50,6 @@ internal readonly struct ModbusSimulationDeviceArgs
 {
     public required SimulationDeviceBaseArgs Base { get; init => field = value.Required(); }
     public required IModbusFactory ModbusFactory { get; init => field = value.Required(); }
+    public required ICodecFactory CodecFactory { get; init => field = value.Required(); }
     public required byte UnitId { get; init => field = value.Positive(); }
 }

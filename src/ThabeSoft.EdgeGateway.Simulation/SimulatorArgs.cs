@@ -16,6 +16,7 @@ internal readonly struct SimulatorArgs
 
 
     public required LifecycleBatchExecutorDescriptor DeviceBatchExecutor { get; init => field = value.Required(); }
+    public required LifecycleStateMachineDescriptor DeviceStateMachine { get; init => field = value.Required(); }
 
 
     public required ILifecycleBatchExecutorFactory LifecycleBatchExecutorFactory { get; init => field = value.Required(); }

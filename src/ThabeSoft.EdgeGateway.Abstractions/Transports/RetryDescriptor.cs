@@ -31,7 +31,7 @@ public sealed record class RetryDescriptor
     }
 }
 
-public static class Retry
+public static class RetryBuilder
 {
     public static RetryDescriptor Default { get; } = From(TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(30), 1.5);
 

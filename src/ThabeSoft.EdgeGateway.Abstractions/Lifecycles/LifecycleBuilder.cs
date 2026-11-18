@@ -5,7 +5,7 @@ using ThabeSoft.Guard;
 namespace ThabeSoft.EdgeGateway.Lifecycles;
 
 
-public static class Lifecycle
+public static class LifecycleBuilder
 {
     /// <summary>
     /// 使用委托创建生命周期

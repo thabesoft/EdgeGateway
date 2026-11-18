@@ -7,7 +7,7 @@ public class RetryableLifecycleStateMachineTests
     [TestMethod]
     public async Task StateTransitions()
     {
-        var lifecycle = Lifecycle.RetryableStateMachine();
+        var lifecycle = LifecycleBuilder.RetryableStateMachine();
 
         // 启动
         await lifecycle.StartAsync(EmptyMethod, TestContext.CancellationToken);
@@ -49,7 +49,7 @@ public class RetryableLifecycleStateMachineTests
     [TestMethod]
     public async Task Start_Exception_StateToFaulted()
     {
-        var lifecycle = Lifecycle.RetryableStateMachine();
+        var lifecycle = LifecycleBuilder.RetryableStateMachine();
 
         await Assert.ThrowsAsync<Exception>(async () =>
             await lifecycle.StartAsync(ExceptionMethod, TestContext.CancellationToken));
@@ -61,7 +61,7 @@ public class RetryableLifecycleStateMachineTests
     [TestMethod]
     public async Task Stop_Exception_StateToFaulted()
     {
-        var lifecycle = Lifecycle.RetryableStateMachine();
+        var lifecycle = LifecycleBuilder.RetryableStateMachine();
 
         await lifecycle.StartAsync(EmptyMethod, TestContext.CancellationToken);
         Assert.AreEqual(LifecycleState.Running, lifecycle.State);

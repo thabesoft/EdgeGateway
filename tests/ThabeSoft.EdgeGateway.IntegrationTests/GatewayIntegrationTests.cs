@@ -11,6 +11,7 @@ using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Simulation.DependencyInjection;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Triggers;

@@ -1,14 +1,15 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using ThabeSoft.EdgeGateway.Ethernet;
+using ThabeSoft.EdgeGateway.Ethernet.Tcp;
+using ThabeSoft.EdgeGateway.Ethernet.Udp;
 using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Transports;
-using ThabeSoft.EdgeGateway.Transports.Tcp;
-using ThabeSoft.EdgeGateway.Transports.Udp;
 
 namespace ThabeSoft.EdgeGateway.DependencyInjection;
 
 
-public static class EthernetDependencyInjectionExtensions
+public static class DependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {

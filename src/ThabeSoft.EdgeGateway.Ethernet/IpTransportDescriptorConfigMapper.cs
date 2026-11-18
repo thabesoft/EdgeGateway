@@ -1,9 +1,9 @@
 ﻿using System.Net;
 using ThabeSoft.EdgeGateway.Configuration;
-using ThabeSoft.EdgeGateway.Ethernet;
+using ThabeSoft.EdgeGateway.Transports;
 using ThabeSoft.Guard;
 
-namespace ThabeSoft.EdgeGateway.Transports;
+namespace ThabeSoft.EdgeGateway.Ethernet;
 
 
 internal sealed class IpTransportDescriptorConfigMapper(

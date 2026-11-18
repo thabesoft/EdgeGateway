@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Net.Sockets;
 using System.Threading.Channels;
-using ThabeSoft.EdgeGateway.Ethernet;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.EdgeGateway.Transports;
 
-namespace ThabeSoft.EdgeGateway.Transports.Udp;
+namespace ThabeSoft.EdgeGateway.Ethernet.Udp;
 
 
 internal sealed class UdpTransportConnection(

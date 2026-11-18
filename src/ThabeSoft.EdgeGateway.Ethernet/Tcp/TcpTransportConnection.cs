@@ -4,8 +4,9 @@ using ThabeSoft.EdgeGateway.Ethernet;
 using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.EdgeGateway.Transports;
 
-namespace ThabeSoft.EdgeGateway.Transports.Tcp;
+namespace ThabeSoft.EdgeGateway.Ethernet.Tcp;
 
 
 internal sealed class TcpTransportConnection : ITransportConnection

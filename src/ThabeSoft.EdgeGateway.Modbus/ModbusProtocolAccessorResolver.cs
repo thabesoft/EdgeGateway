@@ -1,11 +1,10 @@
 ﻿using NModbus;
 using NModbus.IO;
 using ThabeSoft.EdgeGateway.Codecs;
-using ThabeSoft.EdgeGateway.IO;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Transports.Byte;
 
-namespace ThabeSoft.EdgeGateway.Modbus.Protocols;
+namespace ThabeSoft.EdgeGateway.Modbus;
 
 
 internal sealed class ModbusProtocolAccessorResolver(

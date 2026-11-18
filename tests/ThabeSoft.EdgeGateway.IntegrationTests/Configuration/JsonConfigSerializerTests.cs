@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ThabeSoft.EdgeGateway.DependencyInjection;
+using ThabeSoft.EdgeGateway.Configuration.DependencyInjection;
 
 namespace ThabeSoft.EdgeGateway.Configuration;
 

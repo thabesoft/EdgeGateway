@@ -1,30 +1,30 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
-using ThabeSoft.EdgeGateway.Serial;
+using ThabeSoft.EdgeGateway.Transports;
 
-namespace ThabeSoft.EdgeGateway.Transports;
+namespace ThabeSoft.EdgeGateway.Ethernet.Udp;
 
 
-internal sealed class SerialTransportResolver(
+internal sealed class UdpTransportConnectionResolver(
         ILoggerFactory loggerFactory,
         ILifecycleStateMachineFactory lifecycleStateMachineFactory
     ) : ITransportConnectionResolver
 {
     public bool CanResolve(TransportCreationContext context)
     {
-        return context.Transport is SerialTransportDescriptor;
+        return context.Transport is IpTransportDescriptor ip && ip.ProtocolType == IpProtocolType.Udp;
     }
 
     public ITransportConnection Resolve(TransportCreationContext context)
     {
-        if (context.Transport is not SerialTransportDescriptor serial)
+        if (context.Transport is not IpTransportDescriptor ip || ip.ProtocolType != IpProtocolType.Udp)
             throw new InvalidOperationException();
 
-        var logger = loggerFactory.CreateLogger<SerialTransportConnection>();
+        var logger = loggerFactory.CreateLogger<UdpTransportConnection>();
         var stateMachine = lifecycleStateMachineFactory.Create(context.StateMachine);
 
-        return new SerialTransportConnection(descriptor: serial, stateMachine: stateMachine, logger)
+        return new UdpTransportConnection(ip, stateMachine, logger)
         {
             DisposedCallback = async () => await stateMachine.TryDisposeAsync(logger)
         };

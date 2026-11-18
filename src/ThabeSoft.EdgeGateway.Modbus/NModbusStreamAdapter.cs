@@ -2,12 +2,11 @@
 using System.Diagnostics;
 using ThabeSoft.EdgeGateway.Transports.Byte;
 
-namespace ThabeSoft.EdgeGateway.IO;
+namespace ThabeSoft.EdgeGateway.Modbus;
 
 
 internal sealed class NModbusStreamAdapter(IByteDuplex byteDuplex) : IStreamResource
 {
-    private readonly object _lock = new();
     public int InfiniteTimeout { get; set; } = -1;
     public int ReadTimeout { get; set; } = 3000;
     public int WriteTimeout { get; set; } = 3000;

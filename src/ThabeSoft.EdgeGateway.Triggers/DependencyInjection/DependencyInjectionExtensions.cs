@@ -6,7 +6,7 @@ using ThabeSoft.EdgeGateway.Triggers.Signal;
 namespace ThabeSoft.EdgeGateway.Triggers.DependencyInjection;
 
 
-public static class TriggerDependencyInjectionExtensions
+public static class DependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {

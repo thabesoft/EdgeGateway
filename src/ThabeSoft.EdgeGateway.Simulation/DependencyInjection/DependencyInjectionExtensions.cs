@@ -6,13 +6,12 @@ using ThabeSoft.EdgeGateway.Devices.Modbus;
 using ThabeSoft.EdgeGateway.Hosting;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Ports.Modbus;
-using ThabeSoft.EdgeGateway.Simulation;
 using ThabeSoft.EdgeGateway.Triggers;
 
-namespace ThabeSoft.EdgeGateway.DependencyInjection;
+namespace ThabeSoft.EdgeGateway.Simulation.DependencyInjection;
 
 
-public static class SimulationDependencyInjectionExtensions
+public static class DependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {

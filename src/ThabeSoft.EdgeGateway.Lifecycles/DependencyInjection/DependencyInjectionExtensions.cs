@@ -9,7 +9,7 @@ using ThabeSoft.EdgeGateway.Lifecycles.StateMachines.Stric;
 namespace ThabeSoft.EdgeGateway.Lifecycles.DependencyInjection;
 
 
-public static class LifecycleDependencyInjectionExtensions
+public static class DependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {

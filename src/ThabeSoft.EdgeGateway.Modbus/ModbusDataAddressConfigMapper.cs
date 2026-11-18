@@ -38,7 +38,7 @@ internal sealed class ModbusDataAddressConfigMapper : IConfigMapper<DataAddress>
 
     private static ProtocolType? GetProtocolType(IConfigNode root)
     {
-        var typeString = root.Parent?.Parent?["Protocol:Type"]?.AsString();
+        var typeString = root.GetParent()?.GetParent()?.GetChild("Protocol").GetStringValue("Type");
 
         if (!Enum.TryParse<ProtocolType>(typeString, true, out var type))
             return default;

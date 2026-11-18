@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Nodes;
-using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Configuration.Json;
 
@@ -14,8 +13,8 @@ internal sealed class JsonConfigNode : IConfigNode
     public JsonConfigNode(JsonNode content, IConfigNode root, IConfigNode? parent = null)
     {
         _content = content;
-        Root = root;
-        Parent = parent;
+        GetRoot = root;
+        GetParent = parent;
     }
 
     /// <summary>
@@ -24,21 +23,35 @@ internal sealed class JsonConfigNode : IConfigNode
     public JsonConfigNode(JsonNode content)
     {
         _content = content;
-        Root = this;
-        Parent = null;
+        GetRoot = this;
+        GetParent = null;
     }
 
 
-    public IConfigNode Root { get; }
-    public IConfigNode? Parent { get; }
+    public IConfigNode GetRoot { get; }
+    public IConfigNode? GetParent { get; }
+    public string GetPath => _content.GetPath();
+
+
+    public IConfigNode? this[int index]
+    {
+        get
+        {
+            var jsonNode = _content[index];
+            if (jsonNode is null) return null;
+
+            return new JsonConfigNode(jsonNode, GetRoot, this);
+        }
+    }
+
     public IConfigNode? this[string path]
     {
         get
         {
-            var jsonNode = GetByPath(path);
+            var jsonNode = _content[path];
             if (jsonNode is null) return null;
 
-            return new JsonConfigNode(jsonNode, Root, this);
+            return new JsonConfigNode(jsonNode, GetRoot, this);
         }
     }
 
@@ -52,27 +65,12 @@ internal sealed class JsonConfigNode : IConfigNode
         foreach (var i in _content.AsArray() ?? [])
         {
             if (i is null) continue;
-            yield return new JsonConfigNode(i, Root, this);
+            yield return new JsonConfigNode(i, GetRoot, this);
         }
     }
 
     public override string ToString()
     {
         return _content.ToString();
-    }
-
-
-    private JsonNode? GetByPath(string pathString)
-    {
-        var keys = pathString.Split(':', StringSplitOptions.RemoveEmptyEntries);
-
-        var currentNode = _content;
-        foreach (var key in keys)
-        {
-            currentNode = currentNode[key];
-            if (currentNode is null) return null;
-        }
-
-        return currentNode;
     }
 }

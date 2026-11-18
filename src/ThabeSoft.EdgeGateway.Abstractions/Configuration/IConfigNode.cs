@@ -5,22 +5,21 @@ namespace ThabeSoft.EdgeGateway.Configuration;
 
 public interface IConfigNode
 {
+    string GetPath();
+
     /// <summary>
     /// 根节点
     /// </summary>
-    IConfigNode Root { get; }
+    IConfigNode GetRoot();
 
     /// <summary>
     /// 父节点
     /// </summary>
-    IConfigNode? Parent { get; }
+    IConfigNode? GetParent();
 
-    /// <summary>
-    /// 获取子节点
-    /// </summary>
-    /// <param name="path">可连续深入层级   a:B:C </param>
-    /// <returns></returns>
-    IConfigNode? this[string path] { get; }
+
+    IConfigNode? GetChild(string key);
+    IConfigNode? GetChild(int index);
 
 
     string? AsString();
@@ -38,7 +37,7 @@ public static class ConfigNodeExtensions
         [DebuggerHidden]
         public IConfigNode? GetChild(string path)
         {
-            return node[path];
+            return node.GetChild(path);
         }
 
         /// <summary>
@@ -47,13 +46,13 @@ public static class ConfigNodeExtensions
         [DebuggerHidden]
         public string? GetStringValue(string path)
         {
-            return node[path]?.AsString();
+            return node.GetChild(path)?.AsString();
         }
 
         [DebuggerHidden]
         public IEnumerable<IConfigNode> GetChildren(string path)
         {
-            return node[path]?.AsArray() ?? [];
+            return node.GetChild(path)?.AsArray() ?? [];
         }
     }
 }

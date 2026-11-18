@@ -64,7 +64,7 @@ public class GatewayConfigMapper(
 
     private SubscriptionConfig GetSubscriptionConfig(IConfigNode root)
     {
-        var dataType = root.GetStringValue("Codec:DataType").Required("缺少数据类型")
+        var dataType = root["Codec"]?["DataType"]?.AsString().Required($"缺少数据类型: {root.GetPath}")
              .ToEnum<DataType>();
 
         return new()

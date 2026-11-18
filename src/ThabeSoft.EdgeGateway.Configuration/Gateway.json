@@ -40,34 +40,6 @@
               "Slinks": [
                 "Test"
               ]
-            },
-            {
-              "Id": "SubscriptionId",
-              "Trigger": {
-                "Type": "Interval",
-                "Interval": "00:00:00.100"
-              },
-              "Tag": {
-                "Kind": "Coil",
-                "Type": "Bits",
-                "SlaveId": 1,
-                "Address": 0,
-                "Quantity": 10
-              }
-            },
-            {
-              "Id": "SubscriptionId",
-              "Trigger": {
-                "Type": "Interval",
-                "Interval": "00:00:00.100"
-              },
-              "Tag": {
-                "Kind": "HoldingRegister",
-                "Type": "Int16",
-                "SlaveId": 1,
-                "Address": 0,
-                "Endianess": "Big"
-              }
             }
           ]
         }

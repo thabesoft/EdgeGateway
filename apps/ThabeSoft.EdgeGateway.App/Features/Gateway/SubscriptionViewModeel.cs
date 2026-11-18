@@ -1,7 +1,9 @@
 ﻿using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
+using ReactiveUI.Primitives;
 using SukiUI.Toasts;
 using ThabeSoft.EdgeGateway.Addressing;
+using ThabeSoft.EdgeGateway.App.Utilities;
 using ThabeSoft.EdgeGateway.Readings;
 using ThabeSoft.EdgeGateway.Subscription;
 
@@ -20,7 +22,7 @@ internal sealed partial class SubscriptionViewModel : LifecycleViewModel, IDispo
         _subscription = subscription;
         Latest = subscription.Latest;
         _subscriptionHandle = subscription.Update
-            //.ObserveOnUI()
+            .ObserveOnUI()
             .Subscribe(
                 onNext: value =>
                 {

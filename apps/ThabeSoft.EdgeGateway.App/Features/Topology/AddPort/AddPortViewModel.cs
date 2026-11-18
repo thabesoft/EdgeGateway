@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using SukiUI.Dialogs;
 using SukiUI.Toasts;
+using ThabeSoft.EdgeGateway.App.Services;
 using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
@@ -10,11 +11,12 @@ namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 internal sealed partial class AddPortViewModel(
         ISukiDialog dialog,
         ISukiToastManager sukiToastManager,
-        IGateway gateway
+        IGateway gateway,
+        ISerialPortNamesProvider serialPortNamesProvider
     ) : ObservableObject
 {
     public IpPortViewModel IpForm { get; } = new();
-    public SerialPortViewModel SerialForm { get; } = new();
+    public SerialPortViewModel SerialForm { get; } = new(serialPortNamesProvider);
 
 
     [ObservableProperty]

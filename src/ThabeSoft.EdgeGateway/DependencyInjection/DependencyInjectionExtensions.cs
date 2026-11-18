@@ -12,7 +12,7 @@ using ThabeSoft.EdgeGateway.Transports;
 namespace ThabeSoft.EdgeGateway.DependencyInjection;
 
 
-public static class CoreDependencyInjectionExtensions
+public static class DependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {

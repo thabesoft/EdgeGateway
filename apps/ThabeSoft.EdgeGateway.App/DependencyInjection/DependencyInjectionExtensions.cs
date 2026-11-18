@@ -14,7 +14,7 @@ using ThabeSoft.EdgeGateway.App.Services;
 namespace ThabeSoft.EdgeGateway.App.DependencyInjection;
 
 
-public static class AppDependencyInjectionExtensions
+public static class DependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {

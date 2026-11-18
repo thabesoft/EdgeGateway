@@ -16,37 +16,31 @@
 		<PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.4" />
 		<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
 		<PackageReference Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3" />
-		
-		
+
+
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.14" />
-		
-		
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.14" />
+
+
 		<PackageReference Include="Material.Icons" Version="3.0.2" />
 		<PackageReference Include="Material.Icons.Avalonia" Version="3.0.2" />
 		<PackageReference Include="ScottPlot.Avalonia" Version="5.1.59" />
-		
+
 		<PackageReference Include="SukiUI" Version="7.0.1" />
 		<PackageReference Include="SukiUI.Dock" Version="7.0.1" />
-		
+
 		<PackageReference Include="ReactiveUI.Avalonia" Version="12.1.6" />
 
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Ethernet\ThabeSoft.EdgeGateway.Ethernet.csproj" />
-		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Configuration\ThabeSoft.EdgeGateway.Configuration.csproj" />
-		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Lifecycles\ThabeSoft.EdgeGateway.Lifecycles.csproj" />
-		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Modbus\ThabeSoft.EdgeGateway.Modbus.csproj" />
-		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Serial\ThabeSoft.EdgeGateway.Serial.csproj" />
-		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Triggers\ThabeSoft.EdgeGateway.Triggers.csproj" />
-		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway\ThabeSoft.EdgeGateway.csproj" />
+		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Abstractions\ThabeSoft.EdgeGateway.Abstractions.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Features\Topology\TopologyView.axaml.cs">
-	    <DependentUpon>TopologyView.axaml</DependentUpon>
-	  </Compile>
+		<Compile Update="Features\Topology\TopologyView.axaml.cs">
+			<DependentUpon>TopologyView.axaml</DependentUpon>
+		</Compile>
 	</ItemGroup>
-	
+
 </Project>

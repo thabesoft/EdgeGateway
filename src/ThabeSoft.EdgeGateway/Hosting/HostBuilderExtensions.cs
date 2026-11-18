@@ -11,6 +11,9 @@ public static class HostBuilderExtensions
 {
     extension(IHostBuilder hostBuilder)
     {
+        /// <summary>
+        /// Event, Transport, Protocol, Readings, Subscriptions, Devices, Ports, Host
+        /// </summary>
         public IHostBuilder UseEdgeGateway(Action<GatewayHostBuilder> buildAction)
         {
             var gatewayBuilder = new GatewayHostBuilder();

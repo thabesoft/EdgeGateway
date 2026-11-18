@@ -18,6 +18,7 @@ internal sealed partial class TopologyViewModel : PageViewModel
     private readonly ISukiDialogManager _sukiDialogManager;
     private readonly ISukiToastManager _sukiToastManager;
     private readonly IGateway _gateway;
+    private readonly ISerialPortNamesProvider _serialPortNamesProvider;
     private readonly GatewayViewModel _gatewayViewModel;
 
 
@@ -25,6 +26,7 @@ internal sealed partial class TopologyViewModel : PageViewModel
             ISukiDialogManager sukiDialogManager,
             ISukiToastManager sukiToastManager,
             IGateway gateway,
+            ISerialPortNamesProvider serialPortNamesProvider,
             IEventSubscriber eventSubscriber,
             GatewayViewModel gatewayViewModel
     ) : base("拓扑", MaterialIconKind.Dog)
@@ -32,7 +34,9 @@ internal sealed partial class TopologyViewModel : PageViewModel
         _sukiDialogManager = sukiDialogManager;
         _sukiToastManager = sukiToastManager;
         _gateway = gateway;
+        _serialPortNamesProvider = serialPortNamesProvider;
         _gatewayViewModel = gatewayViewModel;
+
         _menu = new MenuViewModel(gatewayViewModel, eventSubscriber);
     }
 
@@ -78,7 +82,7 @@ internal sealed partial class TopologyViewModel : PageViewModel
     {
         _sukiDialogManager.CreateDialog()
             .WithTitle("创建端口")
-            .WithViewModel(dialog => new AddPortViewModel(dialog, _sukiToastManager, _gateway), false)
+            .WithViewModel(dialog => new AddPortViewModel(dialog, _sukiToastManager, _gateway, _serialPortNamesProvider), false)
             .WithActionButton("取消", dialog => dialog.Dismiss(), false, "Flat")
             .WithActionButton("创建", dialog =>
             {

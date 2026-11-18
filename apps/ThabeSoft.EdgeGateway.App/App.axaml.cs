@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.App.Common;
-using ThabeSoft.EdgeGateway.App.Hosting;
 
 namespace ThabeSoft.EdgeGateway.App;
 
@@ -20,14 +19,10 @@ public class App : Application, IAsyncDisposable
     private readonly CancellationTokenSource _luanchHostTaskCts = new();
 
 
-    public App()
+    public App(IHost host)
     {
-        _host = Host.CreateDefaultBuilder()
-            .UseEdgeGatewayApp()
-            .Build();
-
+        _host = host;
         _logger = _host.Services.GetRequiredService<ILogger<App>>();
-
     }
 
 

@@ -1,6 +1,7 @@
 ﻿using Avalonia.Data.Converters;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.IO.Ports;
+using ThabeSoft.EdgeGateway.App.Services;
 using ThabeSoft.EdgeGateway.Serial;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
@@ -8,14 +9,19 @@ namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 
 internal sealed partial class SerialPortViewModel : ViewModelBase
 {
+    private readonly ISerialPortNamesProvider _serialPortNamesProvider;
+
     public SerialParity[] ParitysOptions { get; } = [SerialParity.None, SerialParity.Odd, SerialParity.Even, SerialParity.Mark, SerialParity.Space];
     public SerialStopBits[] StopBitsOptions { get; } = [SerialStopBits.One, SerialStopBits.OnePointFive, SerialStopBits.Two];
     public int[] BaudRatesOptions { get; } = SerialTransportDescriptor.StandardBaudRates;
-    public string[] PortNameOptions => SerialPort.GetPortNames();
+    public string[] PortNameOptions => _serialPortNamesProvider.GetPortNames();
 
 
-    public SerialPortViewModel()
+    public SerialPortViewModel(ISerialPortNamesProvider serialPortNamesProvider)
     {
+        _serialPortNamesProvider = serialPortNamesProvider;
+
+
         if (PortNameOptions.Length == 1)
             PortName = PortNameOptions[0];
     }

@@ -20,19 +20,19 @@ public static class ModbusBuilder
     #region --标签--
 
     public static TagDescriptor<bool> Coil(byte slaveId, ushort address, int bitOffset = 0) =>
-        TagDescriptor.Create(ModbusDataAddress.Coil(slaveId, address, 1), Codec.Bool(bitOffset));
+        TagDescriptor.Create(ModbusDataAddress.Coil(slaveId, address, 1), CodecBuilder.Bool(bitOffset));
     public static TagDescriptor<bool> DiscreteInput(byte slaveId, ushort address, int bitOffset = 0) =>
-        TagDescriptor.Create(ModbusDataAddress.DiscreteInput(slaveId, address, 1), Codec.Bool(bitOffset));
+        TagDescriptor.Create(ModbusDataAddress.DiscreteInput(slaveId, address, 1), CodecBuilder.Bool(bitOffset));
 
     public static TagDescriptor<BitArray> Coils(byte slaveId, ushort address, ushort quantity)
     {
         ValidateCoilQuantity(quantity);
-        return TagDescriptor.Create(ModbusDataAddress.Coil(slaveId, address, quantity), Codec.BitsLsbFirst(quantity));
+        return TagDescriptor.Create(ModbusDataAddress.Coil(slaveId, address, quantity), CodecBuilder.BitsLsbFirst(quantity));
     }
     public static TagDescriptor<BitArray> DiscreteInputs(byte slaveId, ushort address, ushort quantity)
     {
         ValidateDiscreteInputQuantity(quantity);
-        return TagDescriptor.Create(ModbusDataAddress.DiscreteInput(slaveId, address, quantity), Codec.BitsLsbFirst(quantity));
+        return TagDescriptor.Create(ModbusDataAddress.DiscreteInput(slaveId, address, quantity), CodecBuilder.BitsLsbFirst(quantity));
     }
 
 

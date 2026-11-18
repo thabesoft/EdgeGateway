@@ -8,21 +8,22 @@
 		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Abstractions\ThabeSoft.EdgeGateway.Abstractions.csproj" />
 	</ItemGroup>
 
-	
+
 	<!--兼容包-->
 	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-
-		<!--Json-->
 		<PackageReference Include="System.Text.Json" Version="11.0.0" />
+	</ItemGroup>
 
-	</ItemGroup>
+
 	<ItemGroup>
-	  <None Update="Gateway.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
+		<None Update="Gateway.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
+
+
 	<ItemGroup>
-	  <Folder Include="Configuration\Mappers\" />
+		<Folder Include="Configuration\Mappers\" />
 	</ItemGroup>
 
 </Project>

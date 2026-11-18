@@ -1,9 +1,10 @@
 ﻿using Microsoft.Extensions.Hosting;
-using System.Net;
+using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Ethernet;
 using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Subscription;
+using ThabeSoft.EdgeGateway.Triggers;
 
 namespace ThabeSoft.EdgeGateway.App.Hosting;
 
@@ -42,7 +43,7 @@ internal sealed class LaunchHostedService(IGateway gateway) :
         for (int i = 0; i < 1; i++)
         {
             // Double 占 4 个寄存器，地址按 4 递增
-            var tag = ModbusBuilder.HoldingRegister(id, (ushort)(i * 4), Codec.Double);
+            var tag = ModbusBuilder.HoldingRegister(id, (ushort)(i * 4), CodecBuilder.DoubleBigEndian);
             // 网关订阅
             await device.AddSubscriptionAsync(SubscriptionDescriptor.Create(tag, trigger), cancellationToken);
         }

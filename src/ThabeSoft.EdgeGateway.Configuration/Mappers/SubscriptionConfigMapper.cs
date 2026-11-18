@@ -1,6 +1,6 @@
-﻿using ThabeSoft.EdgeGateway.Codecs;
-using ThabeSoft.EdgeGateway.Configuration;
+﻿using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Configuration.Models;
+using ThabeSoft.EdgeGateway.DataTypes;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Triggers;
 using ThabeSoft.Guard;
@@ -23,7 +23,7 @@ public class SubscriptionConfigMapper(
         var descriptor = configMapper.Map(root);
         var trigger = trigegrMapper.Map(root.GetChild("Trigger").Required("缺少触发器配置"));
         var valueType = root.GetValue("Tag:Type").Required("缺少触发器配置")
-            .ToEnum<CodecKind>();
+            .ToEnum<DataType>();
 
         return new() { Descriptor = descriptor, Trigger = trigger, ValueType = valueType };
     }

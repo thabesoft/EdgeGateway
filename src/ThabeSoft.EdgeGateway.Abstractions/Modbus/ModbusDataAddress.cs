@@ -1,15 +1,19 @@
-﻿using ThabeSoft.Guard;
+﻿using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Tags;
+using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Addressing;
 
 
 public sealed record class ModbusDataAddress : DataAddress
 {
+    public override ProtocolType ProtocolType => ProtocolType.Modbus;
     public required byte SlaveId { get; init; }
     public required ModbusDataKind Kind { get; init => field = value.Defined(); }
     public required ushort StartAddress { get; init; }
     public required ushort Quantity { get; init; }
     public required int RequiredBits { get; init; }
+
 
     private ModbusDataAddress()
     {

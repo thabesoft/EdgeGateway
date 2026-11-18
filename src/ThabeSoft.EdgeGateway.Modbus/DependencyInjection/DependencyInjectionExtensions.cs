@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NModbus;
+using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Protocols;
 
 namespace ThabeSoft.EdgeGateway.Modbus.DependencyInjection;
@@ -18,6 +19,13 @@ public static class DependencyInjectionExtensions
             descriptors.AddSingleton<IModbusFactory, ModbusFactory>();
 
             descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IProtocolAccessorResolver, ModbusProtocolAccessorResolver>());
+            return descriptors;
+        }
+
+
+        public IServiceCollection AddEdgeGatewayModbusConfig()
+        {
+            descriptors.AddProtocolDescriptorConfigMapper<ModbusProtocolDescriptorConfigMapper>();
             return descriptors;
         }
     }

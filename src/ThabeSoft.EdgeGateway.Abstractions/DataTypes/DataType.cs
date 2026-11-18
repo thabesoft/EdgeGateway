@@ -1,7 +1,7 @@
-﻿namespace ThabeSoft.EdgeGateway.Codecs;
+﻿namespace ThabeSoft.EdgeGateway.DataTypes;
 
 
-public enum CodecKind
+public enum DataType
 {
     Bool, Byte,
     Int16, UInt16, Char,

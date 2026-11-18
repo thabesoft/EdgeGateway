@@ -1,13 +1,11 @@
 ﻿namespace ThabeSoft.EdgeGateway.Triggers.Signal;
 
 
-public sealed record class SignalTriggerDescriptor : TriggerDescriptor, ISignal
+public sealed record class SignalTriggerDescriptor : TriggerDescriptor, ITriggerSignal
 {
     public SemaphoreSlim Signal { get; } = new(0);
-    void ISignal.OnSignal() => Signal.Release();
-}
+    public override TriggrType Type => TriggrType.Signal;
 
-public interface ISignal
-{
-    void OnSignal();
+
+    void ITriggerSignal.OnSignal() => Signal.Release();
 }

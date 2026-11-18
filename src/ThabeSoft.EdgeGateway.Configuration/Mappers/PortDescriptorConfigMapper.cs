@@ -1,12 +1,11 @@
-﻿using ThabeSoft.EdgeGateway.Configuration;
-using ThabeSoft.EdgeGateway.Ports;
+﻿using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Transports;
 using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Configuration.Mappers;
 
 public sealed class PortDescriptorConfigMapper(
-        IConfigMapper<TransportDescriptor> transportMapper
+       IEnumerable<IConfigMapper<TransportDescriptor>> transportMappers
     ) : IConfigMapper<PortDescriptor>
 {
     public bool CanMap(IConfigNode root)
@@ -16,9 +15,11 @@ public sealed class PortDescriptorConfigMapper(
 
     public PortDescriptor Map(IConfigNode root)
     {
-        var id = PortId.From(root.GetValue("Id").Required("缺少端口Id"));
-        var transport = transportMapper.Map(root.GetChild("Transport").Required("缺少传输配置"));
+        var transportNode = root.GetChild("Transport").Required("缺少传输配置");
+        var transport = transportMappers.FirstOrDefault(x => x.CanMap(transportNode))
+            .Map(transportNode);
 
+        var id = PortId.From(root.GetValue("Id").Required("缺少端口Id"));
         return new() { Id = id, Transport = transport };
     }
 }

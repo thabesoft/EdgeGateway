@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
-using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ports;
+using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Readings;

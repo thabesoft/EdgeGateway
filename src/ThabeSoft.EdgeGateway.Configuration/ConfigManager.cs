@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections;
-using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Configuration.Models;
+using ThabeSoft.EdgeGateway.DataTypes;
 using ThabeSoft.EdgeGateway.Subscription;
 
 namespace ThabeSoft.EdgeGateway.Configuration;
@@ -67,13 +67,13 @@ internal sealed class ConfigManager(IGateway gateway, ILogger<ConfigManager> log
             {
                 switch (subCfg.ValueType)
                 {
-                    case CodecKind.Bool:
+                    case DataType.Bool:
                         await device.AddSubscriptionAsync((SubscriptionDescriptor<bool>)subCfg.Descriptor, cancellationToken);
                         break;
-                    case CodecKind.Bits:
+                    case DataType.Bits:
                         await device.AddSubscriptionAsync((SubscriptionDescriptor<BitArray>)subCfg.Descriptor, cancellationToken);
                         break;
-                    case CodecKind.Byte:
+                    case DataType.Byte:
                         await device.AddSubscriptionAsync((SubscriptionDescriptor<byte>)subCfg.Descriptor, cancellationToken);
                         break;
                     default: throw new InvalidOperationException("不支持的值类型");

@@ -17,11 +17,16 @@ public static class DependencyInjectionExtensions
         /// </summary>
         public IServiceCollection AddEdgeGatewayEthernet()
         {
-            descriptors.AddTransportDescriptorConfigMapper<IpTransportDescriptorConfigMapper>();
-
             descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportConnectionResolver, TcpTransportConnectionResolver>());
             descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportConnectionResolver, UdpTransportConnectionResolver>());
 
+            return descriptors;
+        }
+
+
+        public IServiceCollection AddEdgeGatewayEthernetConfig()
+        {
+            descriptors.AddTransportDescriptorConfigMapper<IpTransportDescriptorConfigMapper>();
             return descriptors;
         }
     }

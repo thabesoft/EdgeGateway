@@ -1,43 +1,44 @@
 ﻿using System.Collections;
+using ThabeSoft.EdgeGateway.DataTypes;
 
 namespace ThabeSoft.EdgeGateway.Codecs;
 
 
 public abstract record class CodecDescriptor
 {
-    public abstract CodecKind Kind { get; }
+    public abstract DataType Kind { get; }
 }
 
 public abstract record class CodecDescriptor<T> : CodecDescriptor
 {
-    public override CodecKind Kind { get; } = GetKind();
+    public override DataType Kind { get; } = GetKind();
 
 
-    private static CodecKind GetKind()
+    private static DataType GetKind()
     {
         if (TypesKind.TryGetValue(typeof(T), out var kind))
             return kind;
 
         throw new InvalidOperationException("不支持的编码器值类型");
     }
-    private static Dictionary<Type, CodecKind> TypesKind { get; } = new()
+    private static Dictionary<Type, DataType> TypesKind { get; } = new()
     {
-        { typeof(bool), CodecKind.Bool },
-        { typeof(byte), CodecKind.Byte },
+        { typeof(bool), DataType.Bool },
+        { typeof(byte), DataType.Byte },
 
-        { typeof(ushort), CodecKind.UInt16 },
-        { typeof(short), CodecKind.Int16 },
-        { typeof(char), CodecKind.Char },
+        { typeof(ushort), DataType.UInt16 },
+        { typeof(short), DataType.Int16 },
+        { typeof(char), DataType.Char },
 
-        { typeof(uint), CodecKind.UInt32 },
-        { typeof(int), CodecKind.Int32 },
-        { typeof(float), CodecKind.Float },
+        { typeof(uint), DataType.UInt32 },
+        { typeof(int), DataType.Int32 },
+        { typeof(float), DataType.Float },
 
-        { typeof(ulong), CodecKind.UInt64 },
-        { typeof(long), CodecKind.Int64 },
-        { typeof(double), CodecKind.Double },
+        { typeof(ulong), DataType.UInt64 },
+        { typeof(long), DataType.Int64 },
+        { typeof(double), DataType.Double },
 
-        { typeof(BitArray), CodecKind.Bits },
-        { typeof(string), CodecKind.String }
+        { typeof(BitArray), DataType.Bits },
+        { typeof(string), DataType.String }
     };
 }

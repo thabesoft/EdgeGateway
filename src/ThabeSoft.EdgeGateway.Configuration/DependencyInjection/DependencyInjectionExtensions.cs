@@ -38,7 +38,7 @@ public static class DependencyInjectionExtensions
             descriptors.AddSingleton<IConfigMapper<PortConfig>, PortConfigMapper>();
             descriptors.AddSingleton<IConfigMapper<PortDescriptor>, PortDescriptorConfigMapper>();
 
-            // T
+            // Retry
             descriptors.AddSingleton<IConfigMapper<RetryDescriptor>, RetyrDescriptorConfigMapper>();
 
 
@@ -48,6 +48,8 @@ public static class DependencyInjectionExtensions
 
             // Subscription
             descriptors.AddSingleton<IConfigMapper<SubscriptionConfig>, SubscriptionConfigMapper>();
+
+            descriptors.AddSingleton<IConfigMapper<SubscriptionDescriptor>, SubscriptionDescriptorConfigMapper>();
             descriptors.AddSingleton<IConfigMapper<SubscriptionDescriptor<bool>>, SubscriptionDescriptorConfigMapper<bool>>();
             descriptors.AddSingleton<IConfigMapper<SubscriptionDescriptor<int>>, SubscriptionDescriptorConfigMapper<int>>();
 

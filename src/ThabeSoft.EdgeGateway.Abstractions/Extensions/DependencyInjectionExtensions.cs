@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Diagnostics.CodeAnalysis;
 using ThabeSoft.EdgeGateway.Configuration;
+using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.EdgeGateway.Extensions;
@@ -22,6 +23,13 @@ public static class DependencyInjectionExtensions
             where TMapper : class, IConfigMapper<TransportDescriptor>
         {
             descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigMapper<TransportDescriptor>, TMapper>());
+            return descriptors;
+        }
+
+        public IServiceCollection AddProtocolDescriptorConfigMapper<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMapper>()
+            where TMapper : class, IConfigMapper<ProtocolDescriptor>
+        {
+            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigMapper<ProtocolDescriptor>, TMapper>());
             return descriptors;
         }
     }

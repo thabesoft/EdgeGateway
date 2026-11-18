@@ -1,5 +1,6 @@
 ﻿
 using System.Collections;
+using ThabeSoft.EdgeGateway.DataTypes;
 using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Codecs.Bits;
@@ -9,7 +10,7 @@ internal sealed class BitsCodecResolver : ICodecResolver<BitArray>
 {
     public bool CanResolve(CodecDescriptor<BitArray> descriptor)
     {
-        return descriptor.Kind == CodecKind.Bits;
+        return descriptor.Kind == DataType.Bits;
     }
 
     public ICodec<BitArray> Resolve(CodecDescriptor<BitArray> descriptor)

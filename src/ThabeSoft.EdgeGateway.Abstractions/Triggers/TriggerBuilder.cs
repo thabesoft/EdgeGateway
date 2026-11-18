@@ -6,7 +6,7 @@ namespace ThabeSoft.EdgeGateway.Triggers;
 
 public static class TriggerBuilder
 {
-    public static TriggerDescriptor Signal(out ISignal signal)
+    public static TriggerDescriptor Signal(out ITriggerSignal signal)
     {
         var descriptor = new SignalTriggerDescriptor();
         signal = descriptor;

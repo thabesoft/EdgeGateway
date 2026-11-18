@@ -2,10 +2,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using ReactiveUI.Primitives;
 using SukiUI.Toasts;
-using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.App.Utilities;
 using ThabeSoft.EdgeGateway.Readings;
 using ThabeSoft.EdgeGateway.Subscription;
+using ThabeSoft.EdgeGateway.Tags;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Gateway;
 

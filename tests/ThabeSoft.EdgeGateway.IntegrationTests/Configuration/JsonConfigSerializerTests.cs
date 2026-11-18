@@ -1,6 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ThabeSoft.EdgeGateway.Configuration.DependencyInjection;
+using ThabeSoft.EdgeGateway.Ethernet.DependencyInjection;
+using ThabeSoft.EdgeGateway.Modbus.DependencyInjection;
+using ThabeSoft.EdgeGateway.Serial.DependencyInjection;
 
 namespace ThabeSoft.EdgeGateway.Configuration;
 
@@ -12,7 +15,12 @@ public class JsonConfigSerializerTests
     public async Task A()
     {
         var app = Host.CreateDefaultBuilder()
-            .ConfigureServices(x => x.AddEdgeGatewayJsonConfiguration())
+            .ConfigureServices(x => x
+                .AddEdgeGatewayJsonConfiguration()
+                .AddEdgeGatewaySerialConfig()
+                .AddEdgeGatewayEthernetConfig()
+                .AddEdgeGatewayModbusConfig()
+                .AddAddEdgeGatewayConifigMappers())
             .Build();
 
         var serializer = app.Services.GetRequiredService<IConfigSerializer>();

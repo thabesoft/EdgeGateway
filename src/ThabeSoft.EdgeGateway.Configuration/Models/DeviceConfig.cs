@@ -1,8 +1,8 @@
 ﻿using System.Collections.Immutable;
-using ThabeSoft.EdgeGateway.Subscriptions;
+using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.Guard;
 
-namespace ThabeSoft.EdgeGateway.Devices;
+namespace ThabeSoft.EdgeGateway.Configuration.Models;
 
 
 public sealed record class DeviceConfig

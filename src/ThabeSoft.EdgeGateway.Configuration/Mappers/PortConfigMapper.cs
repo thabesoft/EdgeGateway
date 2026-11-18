@@ -1,9 +1,10 @@
 ﻿using ThabeSoft.EdgeGateway.Configuration;
-using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Configuration.Models;
+using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Transports;
 using ThabeSoft.Guard;
 
-namespace ThabeSoft.EdgeGateway.Ports;
+namespace ThabeSoft.EdgeGateway.Configuration.Mappers;
 
 
 public class PortConfigMapper(

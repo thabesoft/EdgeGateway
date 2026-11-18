@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using ThabeSoft.EdgeGateway.Configuration.Models;
 
 namespace ThabeSoft.EdgeGateway.Configuration;
 

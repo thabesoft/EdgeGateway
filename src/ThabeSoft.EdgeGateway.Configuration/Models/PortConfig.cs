@@ -1,8 +1,8 @@
 ﻿using System.Collections.Immutable;
-using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.Guard;
 
-namespace ThabeSoft.EdgeGateway.Ports;
+namespace ThabeSoft.EdgeGateway.Configuration.Models;
 
 
 public sealed record class PortConfig

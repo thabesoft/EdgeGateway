@@ -3,7 +3,7 @@ using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.Guard;
 
-namespace ThabeSoft.EdgeGateway.Configuration.Tags;
+namespace ThabeSoft.EdgeGateway.Configuration.Mappers;
 
 public sealed class TagDescriptorConfigMapper<T>(
         IConfigMapper<CodecDescriptor<T>> codecMapper,

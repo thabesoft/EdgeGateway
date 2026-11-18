@@ -4,7 +4,7 @@ using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Triggers;
 using ThabeSoft.Guard;
 
-namespace ThabeSoft.EdgeGateway.Subscriptions;
+namespace ThabeSoft.EdgeGateway.Configuration.Models;
 
 
 public sealed record class SubscriptionConfig

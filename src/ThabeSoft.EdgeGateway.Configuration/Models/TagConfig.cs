@@ -1,7 +1,8 @@
 ﻿using ThabeSoft.EdgeGateway.Codecs;
+using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.Guard;
 
-namespace ThabeSoft.EdgeGateway.Tags;
+namespace ThabeSoft.EdgeGateway.Configuration.Models;
 
 
 public sealed class TagConfig

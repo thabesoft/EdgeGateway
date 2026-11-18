@@ -1,7 +1,6 @@
-﻿using ThabeSoft.EdgeGateway.Configuration;
-using ThabeSoft.EdgeGateway.Ports;
+﻿using ThabeSoft.EdgeGateway.Configuration.Models;
 
-namespace ThabeSoft.EdgeGateway;
+namespace ThabeSoft.EdgeGateway.Configuration.Mappers;
 
 
 public class GatewayConfigMapper(

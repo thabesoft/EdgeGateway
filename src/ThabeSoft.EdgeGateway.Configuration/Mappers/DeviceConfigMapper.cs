@@ -1,7 +1,8 @@
 ﻿using ThabeSoft.EdgeGateway.Configuration;
-using ThabeSoft.EdgeGateway.Subscriptions;
+using ThabeSoft.EdgeGateway.Configuration.Models;
+using ThabeSoft.EdgeGateway.Devices;
 
-namespace ThabeSoft.EdgeGateway.Devices;
+namespace ThabeSoft.EdgeGateway.Configuration.Mappers;
 
 public class DeviceConfigMapper(
         IConfigMapper<DeviceDescriptor> deviceDescriptorConfigMapper,

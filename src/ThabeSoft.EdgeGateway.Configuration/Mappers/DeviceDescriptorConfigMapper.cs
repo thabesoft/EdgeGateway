@@ -1,8 +1,9 @@
 ﻿using ThabeSoft.EdgeGateway.Configuration;
+using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.Guard;
 
-namespace ThabeSoft.EdgeGateway.Devices;
+namespace ThabeSoft.EdgeGateway.Configuration.Mappers;
 
 public sealed class DeviceDescriptorConfigMapper(
         IConfigMapper<ProtocolDescriptor> protocolMapper

@@ -1,4 +1,5 @@
-﻿using ThabeSoft.Guard;
+﻿using ThabeSoft.EdgeGateway.Configuration.Models;
+using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Configuration.Json;
 

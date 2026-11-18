@@ -1,12 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
+using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Utilities;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles.StateMachines.Retryable;
+namespace ThabeSoft.EdgeGateway.StateMachines.Retryable;
 
 
 internal sealed class RetryableLifecycleStateMachineFactory(ILoggerFactory loggerFactory) : ILifecycleStateMachineResolver
 {
-    public bool CanCreate(LifecycleStateMachineDescriptor descriptor)
+    public bool CanResolve(LifecycleStateMachineDescriptor descriptor)
     {
         return descriptor is RetryableLifecycleStateMachineDescriptor;
     }

@@ -1,29 +1,34 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
+using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Triggers;
 
 namespace ThabeSoft.EdgeGateway.Utilities;
 
 
-internal sealed class TriggerScheduler : ILifecycle
+internal sealed class TriggerScheduler : ILifecycle, IAsyncDisposable
 {
     private readonly ConcurrentDictionary<Guid, Action> _entries = [];
     private readonly ITrigger trigger;
     private readonly ILogger<TriggerScheduler> _logger;
-    private readonly IDisposableLifecycle _background;
+    private readonly ILifecycle _background;
 
-    public TriggerScheduler(ITrigger trigger, ILogger<TriggerScheduler> logger)
+    public TriggerScheduler(ITrigger trigger, ILifecycleFactory lifecycleFactory, ILogger<TriggerScheduler> logger)
     {
         this.trigger = trigger;
         _logger = logger;
-        _background = Lifecycle.Background(LoopAsync, logger);
+        _background = lifecycleFactory.Create(Lifecycle.Background(LoopAsync));
     }
+
 
     public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
         _background.StartAsync(cancellationToken);
     public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
         _background.StopAsync(cancellationToken);
+    public ValueTask DisposeAsync() =>
+        SafeDisposeExtensions.DisposeSafelyAsync(_background);
+
 
     public IDisposable Subcribe(Action action)
     {
@@ -44,11 +49,11 @@ internal sealed class TriggerScheduler : ILifecycle
 
                 _entries.Values.AsParallel().ForAll(x => x.Invoke());
             }
-            catch(OperationCanceledException)
+            catch (OperationCanceledException)
             {
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "触发器循环异常");
             }

@@ -1,9 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
-using System.Collections.Concurrent;
 using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Codecs;
-using ThabeSoft.EdgeGateway.Devices.Modbus;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Tags;
@@ -14,19 +11,15 @@ using ThabeSoft.EdgeGateway.ValueGenerators;
 namespace ThabeSoft.EdgeGateway.Devices;
 
 
-internal abstract class SimulationDeviceBase(
-        ModbusSimulationDeviceId id,
-        TriggerManager triggerManager,
-        ILogger? logger = null
-    ) : ISimulationDevice
+internal abstract class SimulationDeviceBase(in SimulationDeviceBaseArgs args) : ISimulationDevice
 {
-    private readonly ILifecycleStateMachine _stateMachine = Lifecycle.StrictStateMachine();
-    private readonly TaskManager _taskManager = new();
-    //private readonly ConcurrentDictionary<Guid, ITrigger> _triggers = [];
-    private ILogger _logger = logger ?? NullLogger.Instance;
+    private readonly ILifecycleStateMachine _stateMachine = args.LifecycleStateMachineFactory.Create(args.DeviceStateMachine);
+    private readonly TaskManager _taskManager = args.TaskManager;
+    private readonly TriggerManager _triggerManager = args.TriggerManager;
+    private readonly ILogger _logger = args.Logger;
 
 
-    public ISimulationDeviceId Id => id;
+    public DeviceId Id { get; } = args.Device.Id;
     public LifecycleState State => _stateMachine.State;
 
 
@@ -34,10 +27,7 @@ internal abstract class SimulationDeviceBase(
         _stateMachine.StartAsync(_taskManager.StartAsync, cancellationToken);
     public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
         _stateMachine.StartAsync(_taskManager.StopAsync, cancellationToken);
-    public ValueTask DisposeAsync() => _stateMachine.DisposeAsync(async () =>
-    {
-        await _taskManager.DisposeAsync();
-    });
+    public ValueTask DisposeAsync() => _stateMachine.DisposeAsync(_taskManager.DisposeAsync);
 
 
     public async ValueTask<IDisposable> ValueAsync<T>(TagDescriptor<T> tagDescriptor, TriggerDescriptor triggerDescriptor, IValueGenerator<T> generator, CancellationToken cancellationToken = default)
@@ -49,7 +39,7 @@ internal abstract class SimulationDeviceBase(
         if (tagDescriptor.Codec is not IRequiredBits requiredBits)
             throw new InvalidOperationException("不支持的标签");
 
-        var scheduler = await triggerManager.GetSchedulerAsync(triggerDescriptor, cancellationToken);
+        var scheduler = await _triggerManager.GetSchedulerAsync(triggerDescriptor, cancellationToken);
         return scheduler.Subcribe(() =>
         {
             var value = generator.Next();
@@ -60,23 +50,4 @@ internal abstract class SimulationDeviceBase(
     }
 
     protected abstract void OnValue<T>(TagDescriptor<T> tag, T value) where T : notnull;
-}
-
-
-internal class TriggerManager(ITriggerResolver triggerFactorySelector, ILoggerFactory loggerFactory)
-{
-    private readonly ConcurrentDictionary<TriggerDescriptor, TriggerScheduler> _entries = [];
-
-    public async ValueTask<TriggerScheduler> GetSchedulerAsync(TriggerDescriptor triggerDescriptor, CancellationToken cancellationToken)
-    {
-        var scheduler = _entries.GetOrAdd(triggerDescriptor, x =>
-        {
-            var trigger = triggerFactorySelector.Resolve(x);
-            return new TriggerScheduler(trigger, loggerFactory.CreateLogger<TriggerScheduler>());
-        });
-
-        await scheduler.StartAsync(cancellationToken);
-        return scheduler;
-    }
-
 }

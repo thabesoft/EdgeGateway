@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using ThabeSoft.EdgeGateway.Utilities;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles;
+namespace ThabeSoft.EdgeGateway.Lifecycles.BackgroundTask;
 
 
 internal sealed class BackgroundLifecycle : IDisposableLifecycle

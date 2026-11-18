@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
+using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Utilities;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+namespace ThabeSoft.EdgeGateway.StateMachines;
 
 
 internal sealed class Executor(

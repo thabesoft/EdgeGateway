@@ -16,8 +16,8 @@ internal sealed class SimulatorFactory(
     {
         var simulatorArgs = new SimulatorArgs()
         {
-            StateMachine = args.StateMachine,
-            PortFactoryFactory = portFactory,
+            SimulatorStateMachine = args.StateMachine,
+            PortFactory = portFactory,
             PortBatchExecutor = args.PortBatchExecutor,
             LifecycleBatchExecutorFactory = lifecycleBatchExecutorFactory,
             LifecycleStateMachineFactory = lifecycleStateMachineFactory,

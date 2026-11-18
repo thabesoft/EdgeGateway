@@ -1,6 +1,7 @@
-﻿using ThabeSoft.EdgeGateway.Utilities;
+﻿using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Utilities;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles;
+namespace ThabeSoft.EdgeGateway.Stateable;
 
 
 internal sealed class ObservableLifecycleState : ILifecycleStateable, ILifecycleStateNotifier, IDisposable
@@ -19,7 +20,7 @@ internal sealed class ObservableLifecycleState : ILifecycleStateable, ILifecycle
         var old = State;
         State = @new;
         _stateSubject.OnNext(new(old, @new));
-        
+
         return true;
     }
 

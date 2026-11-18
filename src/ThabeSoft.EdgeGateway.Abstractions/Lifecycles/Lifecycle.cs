@@ -1,10 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
-using ThabeSoft.EdgeGateway.Lifecycles;
-using ThabeSoft.EdgeGateway.Lifecycles.Collections;
+﻿using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.Guard;
 
-namespace ThabeSoft.EdgeGateway;
+namespace ThabeSoft.EdgeGateway.Lifecycles;
 
 
 public static class Lifecycle
@@ -12,10 +10,9 @@ public static class Lifecycle
     /// <summary>
     /// 使用委托创建生命周期
     /// </summary>
-    public static IDisposableLifecycle Background(Func<CancellationToken, Task> backgroundAction, ILogger? logger = null)
+    public static BackgroundTaskLifecycleDescriptor Background(Func<CancellationToken, Task> backgroundAction)
     {
-        ArgumentNullException.ThrowIfNull(backgroundAction);
-        return new BackgroundLifecycle(backgroundAction, logger);
+        return new BackgroundTaskLifecycleDescriptor() { Task = backgroundAction };
     }
 
 

@@ -1,13 +1,15 @@
-﻿namespace ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+﻿using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+
+namespace ThabeSoft.EdgeGateway.StateMachines;
 
 
-internal sealed class LifecycleStateMachineResolver(
+internal sealed class LifecycleStateMachineFactory(
         IEnumerable<ILifecycleStateMachineResolver> resolvers
     ) : ILifecycleStateMachineFactory
 {
     public ILifecycleStateMachine Create(LifecycleStateMachineDescriptor descriptor)
     {
-        var resolver = resolvers.FirstOrDefault(x => x.CanCreate(descriptor))
+        var resolver = resolvers.FirstOrDefault(x => x.CanResolve(descriptor))
              ?? throw new InvalidOperationException($"不支持创建的生命周期状态机({descriptor.GetType()}):{descriptor}");
 
         return resolver.Resolve(descriptor);

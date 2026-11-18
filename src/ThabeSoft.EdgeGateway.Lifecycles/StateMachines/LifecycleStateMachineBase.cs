@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
+using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+namespace ThabeSoft.EdgeGateway.StateMachines;
 
 internal abstract class LifecycleStateMachineBase : IAsyncExecutor, IExecutor
 {

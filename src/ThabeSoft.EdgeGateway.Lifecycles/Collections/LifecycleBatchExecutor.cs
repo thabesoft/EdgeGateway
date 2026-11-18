@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Utilities;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles.Collections;
+namespace ThabeSoft.EdgeGateway.Collections;
 
 
 internal sealed class LifecycleBatchExecutor(LifecycleBatchExecutorDescriptor descriptor, ILogger<LifecycleBatchExecutor> logger) : ILifecycleBatchExecutor

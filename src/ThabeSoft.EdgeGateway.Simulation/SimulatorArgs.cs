@@ -8,10 +8,14 @@ namespace ThabeSoft.EdgeGateway;
 
 internal readonly struct SimulatorArgs
 {
-    public required LifecycleStateMachineDescriptor StateMachine { get; init => field = value.Required(); }
+    public required LifecycleStateMachineDescriptor SimulatorStateMachine { get; init => field = value.Required(); }
 
-    public required SimulationPortFactory PortFactoryFactory { get; init => field = value.Required(); }
+    public required SimulationPortFactory PortFactory { get; init => field = value.Required(); }
     public required LifecycleBatchExecutorDescriptor PortBatchExecutor { get; init => field = value.Required(); }
+    public required LifecycleStateMachineDescriptor PortStateMachine { get; init => field = value.Required(); }
+
+
+    public required LifecycleBatchExecutorDescriptor DeviceBatchExecutor { get; init => field = value.Required(); }
 
 
     public required ILifecycleBatchExecutorFactory LifecycleBatchExecutorFactory { get; init => field = value.Required(); }

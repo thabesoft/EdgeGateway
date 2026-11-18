@@ -1,61 +1,83 @@
 ﻿using Microsoft.Extensions.Logging;
 using NModbus;
 using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Lifecycles.Collections;
+using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Ports.Modbus.Ip;
 using ThabeSoft.EdgeGateway.Ports.Modbus.Serial;
 using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.EdgeGateway.Ports.Modbus;
 
 
 internal sealed class ModbusSimulationPortResolver(
         IModbusFactory modbusFactory,
-        SimulationDeviceFactory deviceFactorySelector,
+        ILifecycleBatchExecutorFactory lifecycleBatchExecutorFactory,
+        ILifecycleKeyedCollectionFactory lifecycleKeyedCollectionFactory,
+        ILifecycleStateMachineFactory lifecycleStateMachineFactory,
+        SimulationDeviceFactory simulationDeviceFactory,
         ILoggerFactory loggerFactory
     ) : ISimulationPortResolver
 {
-    public bool CanCreate(SimulatorPortDescriptor descriptor)
+    public bool CanCreate(SimulatorPortCreationContext context)
     {
-        return descriptor.Protocol.Type == ProtocolType.Modbus;
+        return context.Port.Protocol.Type == ProtocolType.Modbus;
     }
 
-    public ISimulationPort Resolve(SimulatorPortDescriptor descriptor)
+    public ISimulationPort Resolve(SimulatorPortCreationContext context)
     {
-        if (descriptor.Protocol is not ModbusProtocolDescriptor modbus)
+        if (context.Port.Protocol is not ModbusProtocolDescriptor modbus)
             throw new InvalidOperationException("不是Modbus协议");
 
 
         var baseArgs = new SimulationPortBaseArgs()
         {
-            Transport = descriptor.Transport,
-            PortStateMachine = 
+            Transport = context.Port.Transport,
+            PortStateMachine = context.PortStateMachine,
+            DeviceBatchExecutor = context.DeviceBatchExecutor,
+            DeviceFactory = simulationDeviceFactory,
+
+            LifecycleBatchExecutorFactory = lifecycleBatchExecutorFactory,
+            LifecycleKeyedCollectionFactory = lifecycleKeyedCollectionFactory,
+            LifecycleStateMachineFactory = lifecycleStateMachineFactory,
+            Logger = loggerFactory.CreateLogger<SimulationPortBase>()
         };
 
 
-        if (descriptor.Transport is SerialTransportDescriptor serial)
+        if (context.Port.Transport is SerialTransportDescriptor serial)
         {
             var args = new ModbusSerialSimulationPortArgs()
             {
-
+                Base = baseArgs,
+                ModbusFactory = modbusFactory,
+                Transport = serial
             };
 
             if (modbus.FrameFormat == ModbusFrameFormat.Rtu)
-                return ModbusSerialSimulationPort.Rtu(serial, modbusFactory, deviceFactorySelector, loggerFactory.CreateLogger<ModbusSerialSimulationPort>());
+                return ModbusSerialSimulationPort.Rtu(args);
 
             if (modbus.FrameFormat == ModbusFrameFormat.Ascii)
-                return ModbusSerialSimulationPort.Ascii(serial, modbusFactory, deviceFactorySelector, loggerFactory.CreateLogger<ModbusSerialSimulationPort>());
+                return ModbusSerialSimulationPort.Ascii(args);
         }
 
-        if (descriptor.Transport is IpTransportDescriptor ip)
+        if (context.Port.Transport is IpTransportDescriptor ip)
         {
+            var args = new ModbusIpSimulationPortArgs()
+            {
+                Base = baseArgs,
+                ModbusFactory = modbusFactory,
+                Transport = ip
+            };
+
             if (ip.ProtocolType == IpProtocolType.Tcp)
-                return new ModbusTcpSimulationPort(ip, modbusFactory, deviceFactorySelector, loggerFactory.CreateLogger<ModbusTcpSimulationPort>());
+                return new ModbusTcpSimulationPort(args);
 
             if (ip.ProtocolType == IpProtocolType.Udp)
-                return new ModbusUdpSimulationPort(ip, modbusFactory, deviceFactorySelector, loggerFactory.CreateLogger<ModbusUdpSimulationPort>());
+                return new ModbusUdpSimulationPort(args);
         }
 
 
-        throw new InvalidOperationException($"不支持的描述符: {descriptor}");
+        throw new InvalidOperationException($"不支持的描述符: {context}");
     }
 }

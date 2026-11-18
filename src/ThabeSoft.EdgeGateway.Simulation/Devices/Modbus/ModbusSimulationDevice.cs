@@ -1,24 +1,20 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 using NModbus;
 using ThabeSoft.EdgeGateway.Addressing;
+using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Tags;
+using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Devices.Modbus;
 
 
-internal sealed class ModbusSimulationDevice(
-        ModbusSimulationDeviceId id,
-        IModbusFactory modbusFactory,
-        TriggerManager triggerManager,
-        ILogger<ModbusSimulationDevice>? logger = null
-    ) : SimulationDeviceBase(id, triggerManager, logger)
+internal sealed class ModbusSimulationDevice(in ModbusSimulationDeviceArgs args) : SimulationDeviceBase(args.Base)
 {
+    private readonly byte _unitId = args.UnitId;
+    private readonly ILogger _logger = args.Base.Logger;
 
-    private readonly ILogger<ModbusSimulationDevice> _logger = logger ?? NullLogger<ModbusSimulationDevice>.Instance;
-    private byte _unitId = id.Value;
 
-    public IModbusSlave Slave { get; } = modbusFactory.CreateSlave(id.Value);
+    public IModbusSlave Slave { get; } = args.ModbusFactory.CreateSlave(args.UnitId);
 
 
     protected override void OnValue<T>(TagDescriptor<T> tag, T value)
@@ -44,4 +40,12 @@ internal sealed class ModbusSimulationDevice(
         Slave.DataStore.HoldingRegisters.WritePoints(address, values);
         _logger.LogTrace("Slave[{Id}] 设置保持寄存器值: ({Address},{values})", _unitId, address, string.Join(" ", values));
     }
+}
+
+
+internal readonly struct ModbusSimulationDeviceArgs
+{
+    public required SimulationDeviceBaseArgs Base { get; init => field = value.Required(); }
+    public required IModbusFactory ModbusFactory { get; init => field = value.Required(); }
+    public required byte UnitId { get; init => field = value.Positive(); }
 }

@@ -1,8 +1,8 @@
 ﻿namespace ThabeSoft.EdgeGateway.Devices;
 
 
-public interface ISimulationDeviceResolver
+internal interface ISimulationDeviceResolver
 {
-    bool CanResolve(SimulationDeviceDescriptor descriptor);
-    ISimulationDevice Resolve(SimulationDeviceDescriptor descriptor);
+    bool CanResolve(SimulationDeviceCreationContext context);
+    ISimulationDevice Resolve(SimulationDeviceCreationContext context);
 }

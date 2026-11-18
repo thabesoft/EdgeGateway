@@ -6,6 +6,7 @@ using ThabeSoft.EdgeGateway.Devices.Modbus;
 using ThabeSoft.EdgeGateway.Hosting;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Ports.Modbus;
+using ThabeSoft.EdgeGateway.Triggers;
 
 namespace ThabeSoft.EdgeGateway.DependencyInjection;
 
@@ -34,6 +35,8 @@ public static class SimulationDependencyInjectionExtensions
             descriptors.TryAddSingleton<TriggerManager>();
             descriptors.TryAddSingleton<SimulationPortFactory>();
             descriptors.TryAddSingleton<SimulationDeviceFactory>();
+
+            return descriptors;
         }
 
 
@@ -49,7 +52,7 @@ public static class SimulationDependencyInjectionExtensions
         public IServiceCollection AddEdgeGatewayModbusSimulation()
         {
             descriptors.TryAddSingleton<IModbusFactory, ModbusFactory>();
-            descriptors.TryAddSingleton<ISimulationDeviceResolver, ModbusSimulationSlaveFactory>();
+            descriptors.TryAddSingleton<ISimulationDeviceResolver, ModbusSimulationDeviceResolver>();
             descriptors.TryAddSingleton<ISimulationPortResolver, ModbusSimulationPortResolver>();
             return descriptors;
         }

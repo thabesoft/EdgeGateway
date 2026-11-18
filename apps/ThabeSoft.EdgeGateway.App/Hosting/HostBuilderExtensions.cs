@@ -3,6 +3,7 @@ using ThabeSoft.EdgeGateway.App.DependencyInjection;
 using ThabeSoft.EdgeGateway.DependencyInjection;
 using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Hosting;
+using ThabeSoft.EdgeGateway.Lifecycles;
 
 namespace ThabeSoft.EdgeGateway.App.Hosting;
 

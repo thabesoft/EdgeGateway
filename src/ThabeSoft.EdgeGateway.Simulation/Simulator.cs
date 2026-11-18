@@ -11,9 +11,12 @@ namespace ThabeSoft.EdgeGateway;
 internal sealed class Simulator(in SimulatorArgs args) : ISimulator, IAsyncDisposable
 {
     private readonly ConcurrentDictionary<ConnectionEndpoint, ISimulationPort> _ports = [];
-    private readonly ILifecycleStateMachine _stateMachine = args.LifecycleStateMachineFactory.Create(args.StateMachine);
+    private readonly ILifecycleStateMachine _stateMachine = args.LifecycleStateMachineFactory.Create(args.SimulatorStateMachine);
     private readonly ILifecycleBatchExecutor _portBatchExecutor = args.LifecycleBatchExecutorFactory.Create(args.PortBatchExecutor);
-    private readonly SimulationPortFactory _portFactory = args.PortFactoryFactory;
+    private readonly SimulationPortFactory _portFactory = args.PortFactory;
+
+    private readonly LifecycleBatchExecutorDescriptor _deviceDeviceBatchExecutor = args.DeviceBatchExecutor;
+    private readonly LifecycleStateMachineDescriptor _portStateMachine = args.PortStateMachine;
 
 
 
@@ -32,7 +35,14 @@ internal sealed class Simulator(in SimulatorArgs args) : ISimulator, IAsyncDispo
                 if (_ports.ContainsKey(key))
                     throw new InvalidOperationException("已存在");
 
-                var simulator = _portFactory.Create(simulatorDescriptor);
+                var context = new SimulatorPortCreationContext()
+                {
+                    Port = simulatorDescriptor,
+                    DeviceBatchExecutor = _deviceDeviceBatchExecutor,
+                    PortStateMachine = _portStateMachine
+                };
+
+                var simulator = _portFactory.Create(context);
                 _ports[key] = simulator;
 
                 return simulator;

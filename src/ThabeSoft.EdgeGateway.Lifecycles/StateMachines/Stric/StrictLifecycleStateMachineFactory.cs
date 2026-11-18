@@ -1,11 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
+using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Utilities;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles.StateMachines.Stric;
+namespace ThabeSoft.EdgeGateway.StateMachines.Stric;
 
 internal sealed class StrictLifecycleStateMachineFactory(ILoggerFactory loggerFactory) : ILifecycleStateMachineResolver
 {
-    public bool CanCreate(LifecycleStateMachineDescriptor descriptor)
+    public bool CanResolve(LifecycleStateMachineDescriptor descriptor)
     {
         return descriptor is StrictLifecycleStateMachineDescriptor;
     }

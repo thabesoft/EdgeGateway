@@ -16,6 +16,7 @@ internal abstract class SimulationPortBase : ISimulationPort
     private readonly ILifecycleBatchExecutor _batchExecutor;
     private readonly SimulationDeviceFactory _deviceFactory;
     private readonly ILogger _logger;
+    private readonly LifecycleStateMachineDescriptor _deviceStateMachine;
 
 
     protected SimulationPortBase(in SimulationPortBaseArgs args)
@@ -26,6 +27,7 @@ internal abstract class SimulationPortBase : ISimulationPort
         _batchExecutor = args.LifecycleBatchExecutorFactory.Create(args.DeviceBatchExecutor);
         _stateMachine = args.LifecycleStateMachineFactory.Create(args.PortStateMachine);
         _devices = args.LifecycleKeyedCollectionFactory.Create<ISimulationDeviceId, ISimulationDevice>(_stateMachine);
+        _deviceStateMachine = args.DeviceStateMachine;
 
         Endpoint = args.Transport.Endpoint;
     }
@@ -37,7 +39,7 @@ internal abstract class SimulationPortBase : ISimulationPort
     {
         return _stateMachine.ExecuteAsync(async ct =>
         {
-            var slave = await _devices.AddAsync(simulationDeviceDescriptor.Id, () => _deviceFactory.Create(simulationDeviceDescriptor), ct);
+            var slave = await _devices.AddAsync(simulationDeviceDescriptor.Id, () => _deviceFactory.Create(new() { Device = simulationDeviceDescriptor , DeviceStateMachine = _deviceStateMachine }), ct);
             _logger.LogTrace("添加从站({Id})", simulationDeviceDescriptor.Id);
 
             OnAdded(slave);

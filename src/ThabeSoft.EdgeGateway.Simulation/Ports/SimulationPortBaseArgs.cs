@@ -15,6 +15,7 @@ internal readonly struct SimulationPortBaseArgs
 
     public required SimulationDeviceFactory DeviceFactory { get; init => field = value.Required(); }
     public required LifecycleBatchExecutorDescriptor DeviceBatchExecutor { get; init => field = value.Required(); }
+    public required LifecycleStateMachineDescriptor DeviceStateMachine { get; init => field = value.Required(); }
 
 
     public required ILifecycleBatchExecutorFactory LifecycleBatchExecutorFactory { get; init => field = value.Required(); }

@@ -9,4 +9,8 @@
 	  <ProjectReference Include="..\..\..\ThabeSoft.Guard\ThabeSoft.Guard\ThabeSoft.Guard.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Transports\Ethernet\" />
+	</ItemGroup>
+
 </Project>

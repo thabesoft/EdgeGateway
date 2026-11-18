@@ -3,6 +3,6 @@
 
 public interface ILifecycleStateMachineResolver
 {
-    bool CanCreate(LifecycleStateMachineDescriptor descriptor);
+    bool CanResolve(LifecycleStateMachineDescriptor descriptor);
     ILifecycleStateMachine Resolve(LifecycleStateMachineDescriptor descriptor);
 }

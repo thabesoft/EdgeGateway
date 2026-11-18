@@ -14,6 +14,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Codecs\ThabeSoft.EdgeGateway.Codecs.csproj" />
+		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Configuration\ThabeSoft.EdgeGateway.Configuration.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Ethernet\ThabeSoft.EdgeGateway.Ethernet.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Modbus\ThabeSoft.EdgeGateway.Modbus.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Serial\ThabeSoft.EdgeGateway.Serial.csproj" />

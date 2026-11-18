@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using ThabeSoft.EdgeGateway.DependencyInjection;
 
 namespace ThabeSoft.EdgeGateway.Configuration;
 
@@ -9,14 +11,12 @@ public class JsonConfigSerializerTests
     [TestMethod]
     public async Task A()
     {
-        var serializer = new JsonConfigSerializer();
-        var config = await serializer.DeserializeStringAsync(ConfigJsonString, TestContext.CancellationToken);
+        var app = Host.CreateDefaultBuilder()
+            .ConfigureServices(x => x.AddEdgeGatewayJsonConfiguration())
+            .Build();
 
-        TestContext.WriteLine(JsonSerializer.Serialize(config, new JsonSerializerOptions
-        {
-            WriteIndented = true,
-            IgnoreReadOnlyProperties = false
-        }));
+        var serializer = app.Services.GetRequiredService<IConfigSerializer>();
+        var config = await serializer.DeserializeStringAsync(ConfigJsonString, TestContext.CancellationToken);
 
         Assert.AreEqual(2, config.Ports.Length);
     }

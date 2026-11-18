@@ -17,10 +17,13 @@ public static class DependencyInjectionExtensions
     {
         public IServiceCollection AddEdgeGatewayJsonConfiguration()
         {
-            descriptors.TryAddSingleton(_ => new ConfigFileWatcher("Gateway.json", TimeSpan.FromSeconds(1)));
-            descriptors.TryAddSingleton<ConfigManager>();
-            descriptors.AddHostedService<JsonFileConfigHostedService>();
-            descriptors.TryAddSingleton<IConfigSerializer, JsonConfigSerializer>();
+            //descriptors.TryAddSingleton(_ => new ConfigFileWatcher("Gateway.json", TimeSpan.FromSeconds(1)));
+            //descriptors.TryAddSingleton<ConfigManager>();
+            //descriptors.AddHostedService<JsonFileConfigHostedService>();
+            //descriptors.TryAddSingleton<IConfigSerializer, JsonConfigSerializer>();
+
+            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigSerializer, JsonConfigSerializer>());
+            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigNodeParser, JsonConfigNodeParser>());
 
             return descriptors;
         }

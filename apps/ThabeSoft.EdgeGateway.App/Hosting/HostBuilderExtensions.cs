@@ -1,9 +1,12 @@
 ﻿using Microsoft.Extensions.Hosting;
 using ThabeSoft.EdgeGateway.App.DependencyInjection;
+using ThabeSoft.EdgeGateway.Codecs.DependencyInjection;
 using ThabeSoft.EdgeGateway.DependencyInjection;
 using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Hosting;
 using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Lifecycles.DependencyInjection;
+using ThabeSoft.EdgeGateway.Triggers.DependencyInjection;
 
 namespace ThabeSoft.EdgeGateway.App.Hosting;
 

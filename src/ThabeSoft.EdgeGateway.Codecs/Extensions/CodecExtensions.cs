@@ -1,29 +1,28 @@
-﻿using ThabeSoft.EdgeGateway.Codecs;
-using ThabeSoft.EdgeGateway.Codecs.DWords;
+﻿using ThabeSoft.EdgeGateway.Codecs.DWords;
 using ThabeSoft.EdgeGateway.Codecs.QWords;
 using ThabeSoft.EdgeGateway.Codecs.Words;
 
-namespace ThabeSoft.EdgeGateway;
+namespace ThabeSoft.EdgeGateway.Codecs.Extensions;
 
 
-public static class CodecExtensions
+internal static class CodecExtensions
 {
     extension<TWordCodec>(TWordCodec codec)
-        where TWordCodec : ICodec<ushort>, IRequiredBits
+        where TWordCodec : ICodec<ushort>
     {
         public ICodec<short> AsShort() => new ShortCodec(codec);
         public ICodec<char> AsChar() => new CharCodec(codec);
     }
 
     extension<TDWordCodec>(TDWordCodec codec)
-        where TDWordCodec : ICodec<uint>, IRequiredBits
+        where TDWordCodec : ICodec<uint>
     {
         public ICodec<int> AsInt() => new IntCodec(codec);
         public ICodec<float> AsFloat() => new FloatCodec(codec);
     }
 
     extension<TQWordCodec>(TQWordCodec codec)
-        where TQWordCodec : ICodec<ulong>, IRequiredBits
+        where TQWordCodec : ICodec<ulong>
     {
         public ICodec<long> AsLong() => new LongCodec(codec);
         public ICodec<double> AsDouble() => new DoubleCodec(codec);

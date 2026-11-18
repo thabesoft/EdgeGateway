@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using ThabeSoft.EdgeGateway.Lifecycles;
-using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 
-namespace ThabeSoft.EdgeGateway.Collections;
+namespace ThabeSoft.EdgeGateway.Lifecycles.Collections;
 
 
 internal sealed class LifecycleKeyedCollectionFactory(ILoggerFactory loggerFactory) : ILifecycleKeyedCollectionFactory

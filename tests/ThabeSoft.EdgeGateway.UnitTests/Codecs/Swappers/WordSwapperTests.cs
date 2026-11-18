@@ -34,7 +34,7 @@ public class WordSwapperTests
     [TestMethod]
     public void Swap_WrongLength_Throws()
     {
-        Assert.Throws<ArgumentException>(() => DWordSwapper.ABCD.Swap([1]));
-        Assert.Throws<ArgumentException>(() => DWordSwapper.ABCD.Swap([1, 2, 3]));
+        Assert.Throws<ArgumentException>(() => DWordSwapper.Abcd.Swap([1]));
+        Assert.Throws<ArgumentException>(() => DWordSwapper.Abcd.Swap([1, 2, 3]));
     }
 }

@@ -1,4 +1,5 @@
-﻿using ThabeSoft.EdgeGateway.Codecs.QWords;
+﻿using ThabeSoft.EdgeGateway.Codecs.Extensions;
+using ThabeSoft.EdgeGateway.Codecs.QWords;
 
 namespace ThabeSoft.EdgeGateway.Codecs;
 

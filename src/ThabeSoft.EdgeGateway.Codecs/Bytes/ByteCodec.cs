@@ -1,15 +1,13 @@
 ﻿namespace ThabeSoft.EdgeGateway.Codecs.Bytes;
 
 
-public sealed record class ByteCodec : ICodec<byte>
+public sealed class ByteCodec : ICodec<byte>
 {
     private ByteCodec() { }
     public static ICodec<byte> Instance { get; } = new ByteCodec();
 
 
     public const int RequiredBytes = 1;
-    public int RequiredBits { get; } = RequiredBytes * 8;
-
 
 
     public int Encode(byte value, Span<byte> buffer)
@@ -28,7 +26,4 @@ public sealed record class ByteCodec : ICodec<byte>
 
         return raw[0];
     }
-
-    int ICodec.Encode(object value, Span<byte> buffer) => Encode((byte)value, buffer);
-    object ICodec.Decode(ReadOnlySpan<byte> raw) => Decode(raw);
 }

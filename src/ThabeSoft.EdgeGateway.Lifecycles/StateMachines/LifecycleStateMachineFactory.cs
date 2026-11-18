@@ -1,6 +1,4 @@
-﻿using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
-
-namespace ThabeSoft.EdgeGateway.StateMachines;
+﻿namespace ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 
 
 internal sealed class LifecycleStateMachineFactory(

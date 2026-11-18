@@ -1,7 +1,7 @@
 ﻿namespace ThabeSoft.EdgeGateway.Codecs;
 
 
-internal interface ISwapper : IRequiredBits
+internal interface ISwapper
 {
     void Swap(Span<byte> bytes);
 }

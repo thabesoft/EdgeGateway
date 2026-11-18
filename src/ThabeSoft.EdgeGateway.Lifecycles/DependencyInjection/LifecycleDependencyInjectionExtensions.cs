@@ -1,15 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using ThabeSoft.EdgeGateway.Collections;
-using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.BackgroundTask;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines.Retryable;
-using ThabeSoft.EdgeGateway.StateMachines;
-using ThabeSoft.EdgeGateway.StateMachines.Stric;
+using ThabeSoft.EdgeGateway.Lifecycles.StateMachines.Stric;
 
-namespace ThabeSoft.EdgeGateway.DependencyInjection;
+namespace ThabeSoft.EdgeGateway.Lifecycles.DependencyInjection;
 
 
 public static class LifecycleDependencyInjectionExtensions

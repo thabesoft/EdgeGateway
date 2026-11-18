@@ -1,16 +1,18 @@
-﻿using System.Collections.Immutable;
-
-namespace ThabeSoft.EdgeGateway.Codecs.QWords;
+﻿namespace ThabeSoft.EdgeGateway.Codecs.QWords;
 
 
-internal sealed record class QWordSwapper : ISwapper
+internal sealed class QWordSwapper : ISwapper
 {
-    public static ISwapper BigEndian { get; } = new QWordSwapper([]);
-    public static ISwapper LittleEndian { get; } = new QWordSwapper([QWordSwap.DWord, QWordSwap.Word, QWordSwap.Byte]);
+    public static QWordSwapper BigEndian { get; } = new QWordSwapper([]);
+    public static QWordSwapper LittleEndian { get; } = new QWordSwapper([QWordSwap.DWord, QWordSwap.Word, QWordSwap.Byte]);
 
 
-    private readonly ImmutableArray<QWordSwap> _swaps = [];
+    public static QWordSwapper Create(params IEnumerable<QWordSwap> swaps) =>
+       new QWordSwapper(swaps);
 
+
+
+    private readonly QWordSwap[] _swaps = [];
     private QWordSwapper(IEnumerable<QWordSwap> swaps)
     {
         ArgumentNullException.ThrowIfNull(swaps);
@@ -20,12 +22,9 @@ internal sealed record class QWordSwapper : ISwapper
 
         _swaps = [.. swaps];
     }
-    public static ISwapper From(params IEnumerable<QWordSwap> swaps) =>
-        new QWordSwapper(swaps);
 
 
     private const int RequiredBytes = 8;
-    public int RequiredBits { get; } = RequiredBytes * 8;
 
 
     public void Swap(Span<byte> bytes)

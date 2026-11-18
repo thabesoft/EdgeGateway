@@ -1,10 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using ThabeSoft.EdgeGateway.Triggers;
 using ThabeSoft.EdgeGateway.Triggers.Interval;
 using ThabeSoft.EdgeGateway.Triggers.Signal;
 
-namespace ThabeSoft.EdgeGateway.DependencyInjection;
+namespace ThabeSoft.EdgeGateway.Triggers.DependencyInjection;
 
 
 public static class TriggerDependencyInjectionExtensions

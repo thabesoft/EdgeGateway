@@ -13,7 +13,7 @@ public class DWordCodecTests
     [DataRow(uint.MaxValue)]
     public void ABCD_RoundTrip(uint value)
     {
-        var codec = DWordCodec.ABCD;
+        var codec = DWordCodec.Abcd;
 
         Span<byte> cache = stackalloc byte[DWordCodec.ByteLength];
         codec.Encode(value, cache);
@@ -29,7 +29,7 @@ public class DWordCodecTests
     [DataRow(uint.MaxValue)]
     public void BADC_RoundTrip(uint value)
     {
-        var codec = DWordCodec.BADC;
+        var codec = DWordCodec.Badc;
 
         Span<byte> cache = stackalloc byte[DWordCodec.ByteLength];
         codec.Encode(value, cache);
@@ -45,7 +45,7 @@ public class DWordCodecTests
     [DataRow(uint.MaxValue)]
     public void CDAB_RoundTrip(uint value)
     {
-        var codec = DWordCodec.CDAB;
+        var codec = DWordCodec.Cdab;
 
         Span<byte> cache = stackalloc byte[DWordCodec.ByteLength];
         codec.Encode(value, cache);
@@ -61,7 +61,7 @@ public class DWordCodecTests
     [DataRow(uint.MaxValue)]
     public void DCBA_RoundTrip(uint value)
     {
-        var codec = DWordCodec.DCBA;
+        var codec = DWordCodec.Dcba;
 
         Span<byte> cache = stackalloc byte[DWordCodec.ByteLength];
         codec.Encode(value, cache);

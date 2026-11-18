@@ -1,8 +1,12 @@
 ﻿namespace ThabeSoft.EdgeGateway.Codecs.Bytes;
 
 
-public sealed record class BoolCodec : ICodec<bool>
+public sealed class BoolCodec : ICodec<bool>
 {
+    public static ICodec<bool> BitOffset(int bitOffset) =>
+      new BoolCodec(bitOffset);
+
+
     private readonly int _bitOffset;
     private BoolCodec(int bitOffset)
     {
@@ -12,14 +16,7 @@ public sealed record class BoolCodec : ICodec<bool>
         _bitOffset = bitOffset;
     }
 
-    public static ICodec<bool> BitOffset(int bitOffset) =>
-        new BoolCodec(bitOffset);
-
-
-
     public const int RequiredBytes = 1;
-    public int RequiredBits { get; } = RequiredBytes;
-
 
 
     public int Encode(bool value, Span<byte> buffer)
@@ -43,7 +40,4 @@ public sealed record class BoolCodec : ICodec<bool>
 
         return (raw[0] & (1 << _bitOffset)) != 0;
     }
-
-    int ICodec.Encode(object value, Span<byte> buffer) => Encode((bool)value, buffer);
-    object ICodec.Decode(ReadOnlySpan<byte> raw) => Decode(raw);
 }

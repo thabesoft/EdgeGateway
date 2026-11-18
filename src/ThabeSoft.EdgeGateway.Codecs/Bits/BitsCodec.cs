@@ -3,7 +3,7 @@
 namespace ThabeSoft.EdgeGateway.Codecs.Bits;
 
 
-public sealed record class BitsCodec : ICodec<BitArray>
+public sealed class BitsCodec : ICodec<BitArray>
 {
     private BitsCodec(int bitCount, BitOrder bitOrder)
     {
@@ -61,8 +61,4 @@ public sealed record class BitsCodec : ICodec<BitArray>
         }
         return bits;
     }
-
-
-    int ICodec.Encode(object value, Span<byte> buffer) => Encode((BitArray)value, buffer);
-    object ICodec.Decode(ReadOnlySpan<byte> raw) => Decode(raw);
 }

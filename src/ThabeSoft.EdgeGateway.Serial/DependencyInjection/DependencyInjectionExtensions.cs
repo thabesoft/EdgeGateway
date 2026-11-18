@@ -22,7 +22,7 @@ public static class DependencyInjectionExtensions
 
         public IServiceCollection AddEdgeGatewaySerialConfig()
         {
-            descriptors.AddTransportDescriptorConfigMapper<SerialTransportDescriptorConfigMapper>();
+            descriptors.AddTransportConfigMapper<SerialTransportDescriptorConfigMapper>();
             return descriptors;
         }
     }

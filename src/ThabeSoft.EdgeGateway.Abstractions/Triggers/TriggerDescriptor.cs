@@ -3,5 +3,5 @@
 
 public abstract record class TriggerDescriptor
 {
-    public abstract TriggrType Type { get; }
+    public abstract TriggerType Type { get; }
 }

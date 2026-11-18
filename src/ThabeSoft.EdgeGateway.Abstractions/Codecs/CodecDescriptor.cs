@@ -6,12 +6,12 @@ namespace ThabeSoft.EdgeGateway.Codecs;
 
 public abstract record class CodecDescriptor
 {
-    public abstract DataType Kind { get; }
+    public abstract DataType DataType { get; }
 }
 
 public abstract record class CodecDescriptor<T> : CodecDescriptor
 {
-    public override DataType Kind { get; } = GetKind();
+    public override DataType DataType { get; } = GetKind();
 
 
     private static DataType GetKind()

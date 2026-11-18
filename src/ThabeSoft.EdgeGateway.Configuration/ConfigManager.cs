@@ -1,8 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using System.Collections;
 using ThabeSoft.EdgeGateway.Configuration.Models;
-using ThabeSoft.EdgeGateway.DataTypes;
-using ThabeSoft.EdgeGateway.Subscription;
 
 namespace ThabeSoft.EdgeGateway.Configuration;
 
@@ -56,29 +53,18 @@ internal sealed class ConfigManager(IGateway gateway, ILogger<ConfigManager> log
         _current = newConfig;
     }
 
-    private async Task AddPortRecursiveAsync(PortConfig portCfg, CancellationToken cancellationToken)
+    private async Task AddPortRecursiveAsync(PortConfig portConfig, CancellationToken cancellationToken)
     {
-        var port = await gateway.AddPortAsync(portCfg.Descriptor, cancellationToken);
-        foreach (var deviceCfg in portCfg.Devices)
+        var port = await gateway.AddPortAsync(portConfig.Descriptor, cancellationToken);
+
+        foreach (var deviceConfig in portConfig.Devices)
         {
-            var device = await port.AddDeviceAsync(deviceCfg.Descriptor, cancellationToken);
+            var device = await port.AddDeviceAsync(deviceConfig.Descriptor, cancellationToken);
 
-            foreach (var subCfg in deviceCfg.Subscriptions)
+            foreach (var subscriptionsConfig in deviceConfig.Subscriptions)
             {
-                switch (subCfg.ValueType)
-                {
-                    case DataType.Bool:
-                        await device.AddSubscriptionAsync((SubscriptionDescriptor<bool>)subCfg.Descriptor, cancellationToken);
-                        break;
-                    case DataType.Bits:
-                        await device.AddSubscriptionAsync((SubscriptionDescriptor<BitArray>)subCfg.Descriptor, cancellationToken);
-                        break;
-                    case DataType.Byte:
-                        await device.AddSubscriptionAsync((SubscriptionDescriptor<byte>)subCfg.Descriptor, cancellationToken);
-                        break;
-                    default: throw new InvalidOperationException("不支持的值类型");
-                }
-
+                var descriptor = subscriptionsConfig.Descriptor;
+                await descriptor.AddToDeviceAsync(device, cancellationToken);
             }
         }
     }

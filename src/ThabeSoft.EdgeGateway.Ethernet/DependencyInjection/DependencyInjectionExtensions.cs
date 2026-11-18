@@ -26,7 +26,7 @@ public static class DependencyInjectionExtensions
 
         public IServiceCollection AddEdgeGatewayEthernetConfig()
         {
-            descriptors.AddTransportDescriptorConfigMapper<IpTransportDescriptorConfigMapper>();
+            descriptors.AddTransportConfigMapper<IpTransportDescriptorConfigMapper>();
             return descriptors;
         }
     }

@@ -10,7 +10,7 @@ internal sealed class BitsCodecResolver : ICodecResolver<BitArray>
 {
     public bool CanResolve(CodecDescriptor<BitArray> descriptor)
     {
-        return descriptor.Kind == DataType.Bits;
+        return descriptor.DataType == DataType.Bits;
     }
 
     public ICodec<BitArray> Resolve(CodecDescriptor<BitArray> descriptor)

@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ThabeSoft.EdgeGateway.Codecs.DependencyInjection;
 using ThabeSoft.EdgeGateway.Configuration.DependencyInjection;
 using ThabeSoft.EdgeGateway.Ethernet.DependencyInjection;
 using ThabeSoft.EdgeGateway.Modbus.DependencyInjection;
 using ThabeSoft.EdgeGateway.Serial.DependencyInjection;
+using ThabeSoft.EdgeGateway.Triggers.DependencyInjection;
 
 namespace ThabeSoft.EdgeGateway.Configuration;
 
@@ -16,15 +18,19 @@ public class JsonConfigSerializerTests
     {
         var app = Host.CreateDefaultBuilder()
             .ConfigureServices(x => x
-                .AddEdgeGatewayJsonConfiguration()
+                .AddEdgeGatewayJsonConfigurationProvider()
+                .AddAddEdgeGatewayConifigMappers()
                 .AddEdgeGatewaySerialConfig()
                 .AddEdgeGatewayEthernetConfig()
                 .AddEdgeGatewayModbusConfig()
-                .AddAddEdgeGatewayConifigMappers())
+                .AddEdgeGatewayCodecConfig()
+                .AddEdgeGatewayTriggersConfig()
+            )
             .Build();
 
+        const string path = @"D:\Src\Data\Code\VisualStudio\ThabeSoft\ThabeSoft.EdgeGateway\src\ThabeSoft.EdgeGateway.Configuration\Gateway.json";
         var serializer = app.Services.GetRequiredService<IConfigSerializer>();
-        var config = await serializer.DeserializeStringAsync(ConfigJsonString, TestContext.CancellationToken);
+        var config = await serializer.DeserializeFileAsync(path, TestContext.CancellationToken);
 
         Assert.AreEqual(2, config.Ports.Length);
     }

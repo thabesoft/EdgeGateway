@@ -1,6 +1,5 @@
 ﻿using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.EdgeGateway.Transports;
 using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Modbus;
@@ -10,17 +9,17 @@ internal sealed class ModbusProtocolDescriptorConfigMapper : IConfigMapper<Proto
 {
     public bool CanMap(IConfigNode root)
     {
-        if (!Enum.TryParse<TransportType>(root.GetValue("Type"), true, out var enumValue))
+        if (!Enum.TryParse<ProtocolType>(root.GetStringValue("Type"), true, out var enumValue))
             return false;
 
-        return enumValue == TransportType.Serial;
+        return enumValue == ProtocolType.Modbus;
     }
 
     public ProtocolDescriptor Map(IConfigNode root)
     {
-        var frameFormat = root.GetValue("FrameFormat").Required("缺少帧类型")
+        var frameFormat = root.GetStringValue("FrameFormat").Required("缺少帧类型")
                 .ToEnum<ModbusFrameFormat>();
 
-        return ModbusProtocolDescriptor.Creaete(frameFormat);
+        return ModbusProtocolDescriptor.Create(frameFormat);
     }
 }

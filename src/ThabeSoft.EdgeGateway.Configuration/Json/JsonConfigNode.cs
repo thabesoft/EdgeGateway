@@ -4,51 +4,71 @@ using ThabeSoft.Guard;
 namespace ThabeSoft.EdgeGateway.Configuration.Json;
 
 
-internal sealed class JsonConfigNode(JsonNode node) : IConfigNode
+internal sealed class JsonConfigNode : IConfigNode
 {
-    public IConfigNode? GetChild(string path)
-    {
-        var jsonNode = GetByPath(path);
-        if (jsonNode is null) return null;
+    private readonly JsonNode _content;
 
-        return new JsonConfigNode(jsonNode);
+    /// <summary>
+    /// 子节点
+    /// </summary>
+    public JsonConfigNode(JsonNode content, IConfigNode root, IConfigNode? parent = null)
+    {
+        _content = content;
+        Root = root;
+        Parent = parent;
     }
 
-    public IEnumerable<IConfigNode> GetChildren(string path)
+    /// <summary>
+    /// 根节点
+    /// </summary>
+    public JsonConfigNode(JsonNode content)
     {
-        foreach (var i in GetByPath(path)?.AsArray() ?? [])
+        _content = content;
+        Root = this;
+        Parent = null;
+    }
+
+
+    public IConfigNode Root { get; }
+    public IConfigNode? Parent { get; }
+    public IConfigNode? this[string path]
+    {
+        get
+        {
+            var jsonNode = GetByPath(path);
+            if (jsonNode is null) return null;
+
+            return new JsonConfigNode(jsonNode, Root, this);
+        }
+    }
+
+
+    public string? AsString()
+    {
+        return _content.AsValue().ToString();
+    }
+    public IEnumerable<IConfigNode> AsArray()
+    {
+        foreach (var i in _content.AsArray() ?? [])
         {
             if (i is null) continue;
-            yield return new JsonConfigNode(i);
+            yield return new JsonConfigNode(i, Root, this);
         }
     }
 
-    public string? GetValue(string path)
-    {
-        return GetByPath(path)?.ToString();
-    }
 
-    private JsonNode? GetByPath(string path)
-    {
-        var paths = path.Split(':', StringSplitOptions.RemoveEmptyEntries);
 
-        var current = node;
-        foreach (var i in paths)
+    private JsonNode? GetByPath(string pathString)
+    {
+        var keys = pathString.Split(':', StringSplitOptions.RemoveEmptyEntries);
+
+        var currentNode = _content;
+        foreach (var key in keys)
         {
-            current = node[i];
-            if (current is null) return null;
+            currentNode = currentNode[key];
+            if (currentNode is null) return null;
         }
 
-        return current;
-    }
-}
-
-
-internal sealed class JsonConfigNodeParser : IConfigNodeParser
-{
-    public async ValueTask<IConfigNode> ParseAsync(Stream stream, CancellationToken cancellationToken = default)
-    {
-        var root = await JsonNode.ParseAsync(stream, cancellationToken: cancellationToken);
-        return new JsonConfigNode(root.Required("网关配置不可为空"));
+        return currentNode;
     }
 }

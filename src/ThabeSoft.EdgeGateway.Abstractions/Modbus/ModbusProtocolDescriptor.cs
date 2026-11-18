@@ -32,7 +32,7 @@ public sealed record class ModbusProtocolDescriptor : ProtocolDescriptor
     public static ModbusProtocolDescriptor Ascii { get; } = new(ModbusFrameFormat.Ascii, TransportType.Serial);
     public static ModbusProtocolDescriptor Ip { get; } = new(ModbusFrameFormat.Ip, TransportType.Ethernet);
 
-    public static ModbusProtocolDescriptor Creaete(ModbusFrameFormat format)
+    public static ModbusProtocolDescriptor Create(ModbusFrameFormat format)
     {
         return format switch
         {

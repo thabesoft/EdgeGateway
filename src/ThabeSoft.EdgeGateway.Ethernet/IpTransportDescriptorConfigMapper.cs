@@ -12,7 +12,7 @@ internal sealed class IpTransportDescriptorConfigMapper(
 {
     public bool CanMap(IConfigNode root)
     {
-        if (!Enum.TryParse<TransportType>(root.GetValue("Type"), true, out var enumValue))
+        if (!Enum.TryParse<TransportType>(root["Type"]?.AsString(), true, out var enumValue))
             return false;
 
         return enumValue == TransportType.Ethernet;
@@ -20,26 +20,31 @@ internal sealed class IpTransportDescriptorConfigMapper(
 
     public TransportDescriptor Map(IConfigNode root)
     {
-        var type = root.GetValue("Type").Required("缺少类型")
+        var type = root["Type"]?.AsString().Required("缺少传输类型")
              .ToEnum<TransportType>();
 
         if (type != TransportType.Ethernet)
             throw new InvalidOperationException("不支持");
 
-
-        var ipProtocolType = root.GetValue("ProtocolType").Required("")
-              .ToEnum<IpProtocolType>();
-
-        var ip = IPAddress.Parse(root.GetValue("Ip").Required(""));
-        var port = root.GetValue("Port").Required("").ToInt32();
-        var retry = retryDescriptorMapper.Map(root.GetChild("Retry").Required());
+        var ip = IPAddress.Parse(root.GetStringValue("Ip").Required("缺少Ip"));
+        var port = root.GetStringValue("Port").Required("缺少端口").ToInt32();
+        var ipProtocolType = root.GetStringValue("ProtocolType").Required("缺少Ip协议类型")
+            .ToEnum<IpProtocolType>();
 
         return new IpTransportDescriptor()
         {
             IP = ip,
             Port = port,
             ProtocolType = ipProtocolType,
-            Retry = retry
+            Retry = MapRetryOrDefault(root)
         };
+    }
+
+    private RetryDescriptor MapRetryOrDefault(IConfigNode root)
+    {
+        var retryNode = root["Retry"];
+        if (retryNode is null) return RetryBuilder.Default;
+
+        return retryDescriptorMapper.Map(root);
     }
 }

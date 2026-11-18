@@ -67,7 +67,7 @@ internal static class EdgeGatewayHost
                 descriptors.AddEdgeGatewayAppDesktop();
 
                 // 用配置初始化
-                descriptors.AddEdgeGatewayJsonConfiguration();
+                descriptors.AddEdgeGatewayJsonConfigurationProvider();
             })
             .Build();
     }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Triggers.Interval;
 using ThabeSoft.EdgeGateway.Triggers.Signal;
 
@@ -20,6 +21,12 @@ public static class DependencyInjectionExtensions
             descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ITriggerResolver, IntervalTriggerResolver>());
             descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ITriggerResolver, SignalTriggerResolver>());
 
+            return descriptors;
+        }
+
+        public IServiceCollection AddEdgeGatewayTriggersConfig()
+        {
+            descriptors.AddTriggerConfigMapper<IntervalTriggerDescriptorConfigMapper>();
             return descriptors;
         }
     }

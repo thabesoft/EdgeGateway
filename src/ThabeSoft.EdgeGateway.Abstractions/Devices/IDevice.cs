@@ -35,7 +35,12 @@ public static class DeviceExtensions
                 CancellationToken cancellationToken = default
             ) where T : notnull
         {
-            var descriptor = SubscriptionDescriptor.Create(id, tag, trigger);
+            var descriptor = new SubscriptionDescriptor<T>
+            {
+                Id = id,
+                Tag = tag,
+                Trigger = trigger
+            };
             return device.AddSubscriptionAsync(descriptor, cancellationToken);
         }
 

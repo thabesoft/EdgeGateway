@@ -1,6 +1,6 @@
 ﻿namespace ThabeSoft.EdgeGateway.Triggers;
 
-public enum TriggrType : byte
+public enum TriggerType : byte
 {
     Signal,
     Interval,

@@ -25,7 +25,7 @@ public static class DependencyInjectionExtensions
 
         public IServiceCollection AddEdgeGatewayModbusConfig()
         {
-            descriptors.AddProtocolDescriptorConfigMapper<ModbusProtocolDescriptorConfigMapper>();
+            descriptors.AddProtocolConfigMapper<ModbusProtocolDescriptorConfigMapper>();
             return descriptors;
         }
     }

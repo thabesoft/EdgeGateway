@@ -5,6 +5,6 @@ namespace ThabeSoft.EdgeGateway.Triggers.Interval;
 
 public sealed record class IntervalTriggerDescriptor : TriggerDescriptor
 {
-    public override TriggrType Type => TriggrType.Interval;
+    public override TriggerType Type => TriggerType.Interval;
     public required TimeSpan Interval { get; init => field = value.Positive(); }
 }

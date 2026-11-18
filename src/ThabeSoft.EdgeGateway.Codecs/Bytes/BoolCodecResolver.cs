@@ -8,7 +8,7 @@ internal sealed class BoolCodecResolver : ICodecResolver<bool>
 {
     public bool CanResolve(CodecDescriptor<bool> descriptor)
     {
-        return descriptor.Kind == DataType.Bool;
+        return descriptor.DataType == DataType.Bool;
     }
 
     public ICodec<bool> Resolve(CodecDescriptor<bool> descriptor)

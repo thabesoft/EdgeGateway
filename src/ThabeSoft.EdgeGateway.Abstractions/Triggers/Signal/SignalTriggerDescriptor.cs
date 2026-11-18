@@ -4,7 +4,7 @@
 public sealed record class SignalTriggerDescriptor : TriggerDescriptor, ITriggerSignal
 {
     public SemaphoreSlim Signal { get; } = new(0);
-    public override TriggrType Type => TriggrType.Signal;
+    public override TriggerType Type => TriggerType.Signal;
 
 
     void ITriggerSignal.OnSignal() => Signal.Release();

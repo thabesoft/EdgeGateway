@@ -8,15 +8,15 @@ internal sealed class IntervalTriggerDescriptorConfigMapper : IConfigMapper<Trig
 {
     public bool CanMap(IConfigNode root)
     {
-        if (!Enum.TryParse<TriggrType>(root.GetValue("Type"), true, out var enumValue))
+        if (!Enum.TryParse<TriggerType>(root.GetStringValue("Type"), true, out var enumValue))
             return false;
 
-        return enumValue == TriggrType.Interval;
+        return enumValue == TriggerType.Interval;
     }
 
     public TriggerDescriptor Map(IConfigNode root)
     {
-        var timespan = root.GetValue("Interval").Required("缺少间隔时间")
+        var timespan = root.GetStringValue("Interval").Required("缺少间隔时间")
                 .ToTimeSpan();
 
         return TriggerBuilder.Interval(timespan);

@@ -7,6 +7,6 @@ namespace ThabeSoft.EdgeGateway.Configuration.Models;
 
 public sealed class TagConfig
 {
-    public required TagDescriptor Descriptor { get; init => field = value.Required(); }
+    public required ITagDescriptor Descriptor { get; init => field = value.Required(); }
     public required DataType Kind { get; init => field = value.Required(); }
 }

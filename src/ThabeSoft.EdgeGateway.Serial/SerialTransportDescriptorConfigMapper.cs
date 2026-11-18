@@ -11,7 +11,7 @@ internal sealed class SerialTransportDescriptorConfigMapper(
 {
     public bool CanMap(IConfigNode root)
     {
-        if (!Enum.TryParse<TransportType>(root.GetValue("Type"), true, out var enumValue))
+        if (!Enum.TryParse<TransportType>(root.GetStringValue("Type"), true, out var enumValue))
             return false;
 
         return enumValue == TransportType.Serial;
@@ -19,31 +19,31 @@ internal sealed class SerialTransportDescriptorConfigMapper(
 
     public TransportDescriptor Map(IConfigNode root)
     {
-        var type = root.GetValue("Type").Required("缺少类型")
+        var type = root.GetStringValue("Type").Required("缺少类型")
              .ToEnum<TransportType>();
 
         if (type != TransportType.Serial)
             throw new InvalidOperationException("不支持");
 
 
-        var portName = root.GetValue("PortName").Required("缺少串口名称")
+        var portName = root.GetStringValue("PortName").Required("缺少串口名称")
                 .PortName();
 
-        var baudRate = root.GetValue("BaudRate").Required("缺少波特率")
+        var baudRate = root.GetStringValue("BaudRate").Required("缺少波特率")
             .ToInt32()
             .StandardBaudRate();
 
-        var dataBits = root.GetValue("DataBits").Required("缺少数据位")
+        var dataBits = root.GetStringValue("DataBits").Required("缺少数据位")
             .ToInt32()
             .DataBits();
 
-        var parity = root.GetValue("Parity").Required("缺少校验值")
+        var parity = root.GetStringValue("Parity").Required("缺少校验值")
             .ToEnum<SerialParity>();
 
-        var stopBits = root.GetValue("StopBits").Required("缺少停止位")
+        var stopBits = root.GetStringValue("StopBits").Required("缺少停止位")
             .ToEnum<SerialStopBits>();
 
-        var retry = retryDescriptorMapper.Map(root.GetChild("Retry").Required(""));
+        var retry = retryDescriptorMapper.Map(root["Retry"].Required(""));
 
         return new SerialTransportDescriptor()
         {

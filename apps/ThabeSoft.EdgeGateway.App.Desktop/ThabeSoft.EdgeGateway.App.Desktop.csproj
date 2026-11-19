@@ -25,6 +25,12 @@
 		<ProjectReference Include="..\ThabeSoft.EdgeGateway.App\ThabeSoft.EdgeGateway.App.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Update="appsettings.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
 	<!-- Aot-->
 	<PropertyGroup>
 

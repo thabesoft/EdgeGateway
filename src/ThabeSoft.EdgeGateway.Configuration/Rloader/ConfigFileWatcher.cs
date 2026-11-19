@@ -1,45 +1,44 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
+using ThabeSoft.EdgeGateway.Extensions;
 
-namespace ThabeSoft.EdgeGateway.Configuration;
+namespace ThabeSoft.EdgeGateway.Configuration.Rloader;
 
 
 public sealed class ConfigFileWatcher : IDisposable
 {
     private readonly FileSystemWatcher _watcher;
-    private readonly TimeSpan _debounce;
+    private readonly IDisposable? _optionChangeDisposable;
     private readonly ILogger<ConfigFileWatcher> _logger;
+
+    private TimeSpan _debounce;
     private readonly SemaphoreSlim _debounceLock = new(1, 1);
     private CancellationTokenSource? _debounceCts;
 
 
-    public event Func<CancellationToken, Task>? Changed;
-
-
-    public ConfigFileWatcher(string filePath, TimeSpan? debounce = null, ILogger<ConfigFileWatcher>? logger = null)
+    public ConfigFileWatcher(IOptionsMonitor<ConfigReloadOptions> options, ILogger<ConfigFileWatcher> logger)
     {
-        var fullPath = Path.GetFullPath(filePath);
-        var dir = Path.GetDirectoryName(fullPath)!;
+        var fullPath = Path.GetFullPath(options.CurrentValue.FilePath);
+        var dir = Path.GetDirectoryName(fullPath);
         var fileName = Path.GetFileName(fullPath);
 
-        _debounce = debounce ?? TimeSpan.FromMilliseconds(500);
-        _logger = logger ?? NullLogger<ConfigFileWatcher>.Instance;
+        FilePath = fullPath;
+
+        _optionChangeDisposable = options.OnChange(x => _debounce = x.DebouncePeriod);
+        _logger = logger;
 
         _watcher = new FileSystemWatcher(dir, fileName)
         {
             NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.FileName,
             EnableRaisingEvents = true
         };
-
-        // 用同一个处理器，统一防抖
         _watcher.Changed += OnFileChanged;
         _watcher.Created += OnFileChanged;
         _watcher.Renamed += OnFileChanged;
-        
-        FilePath = fullPath;
     }
 
-    public string FilePath { get;  }
+    public event Func<CancellationToken, Task>? Changed;
+    public string FilePath { get; }
 
 
     private async void OnFileChanged(object sender, FileSystemEventArgs e)
@@ -69,10 +68,14 @@ public sealed class ConfigFileWatcher : IDisposable
 
     public void Dispose()
     {
+        _optionChangeDisposable?.DisposeSafely(_logger);
+
         _watcher.EnableRaisingEvents = false;
-        _watcher.Dispose();
+        _watcher?.DisposeSafely(_logger);
+
         _debounceCts?.Cancel();
-        _debounceCts?.Dispose();
-        _debounceLock.Dispose();
+        _debounceCts?.DisposeSafely(_logger);
+
+        _debounceLock.DisposeSafely(_logger);
     }
 }

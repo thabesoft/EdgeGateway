@@ -1,12 +1,13 @@
 ﻿using Microsoft.Extensions.Hosting;
 
-namespace ThabeSoft.EdgeGateway.Configuration.Json;
+namespace ThabeSoft.EdgeGateway.Configuration.Rloader;
 
 
-internal sealed class JsonFileConfigHostedService(
-    IConfigSerializer configSerializer,
-    ConfigFileWatcher configFileWatcher, 
-    ConfigManager configManager) : IHostedService
+internal sealed class ConfigFileReloadHostedService(
+        IConfigSerializer configSerializer,
+        ConfigFileWatcher configFileWatcher,
+        ConfigManager configManager
+    ) : IHostedService
 {
     public async Task StartAsync(CancellationToken cancellationToken)
     {

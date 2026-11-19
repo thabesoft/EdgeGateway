@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Configuration.Models;
 
-namespace ThabeSoft.EdgeGateway.Configuration;
+namespace ThabeSoft.EdgeGateway.Configuration.Rloader;
 
 
 internal sealed class ConfigManager(IGateway gateway, ILogger<ConfigManager> logger)

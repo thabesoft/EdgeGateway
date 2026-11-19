@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Events;
-using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Ports;
+using ThabeSoft.EdgeGateway.Primitives;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.Guard;
@@ -54,25 +54,22 @@ internal sealed class DeviceFactory(
             SubscriptionBatchExecutor = args.SubscriptionBatchExecutorDescriptor
         });
 
-        // 订阅依赖
-        var devicDependencies = new DeviceArgs()
-        {
-            PortState = args.PortState,
-            Logger = logger,
-            DeviceStateMachine = deviceStateMachine,
-            SubscriptionManager = subscriptionManager,
-        };
-
         // 构建
-        return new(devicDependencies, args.Device)
-        {
-            DisposedCallback = async () =>
+        return new
+        (
+            id: args.Device.Id,
+            protocolType: args.Device.Protocol.Type,
+            stateMachine: deviceStateMachine,
+            subscriptionManager: subscriptionManager,
+            portState: args.PortState,
+            logger: logger,
+            onDispose: async () =>
             {
-                await subscriptionManager.TryDisposeAsync(logger);
-                deviceStateEventDisposable.TryDispose(logger);
-                await deviceStateMachine.TryDisposeAsync(logger);
+                await Safe.TryDisposeAsync(subscriptionManager, logger);
+                await Safe.TryDisposeAsync(deviceStateEventDisposable, logger);
+                await Safe.TryDisposeAsync(deviceStateMachine, logger);
             }
-        };
+        );
     }
 
 

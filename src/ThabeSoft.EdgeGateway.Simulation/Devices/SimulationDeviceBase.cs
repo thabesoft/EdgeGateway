@@ -1,18 +1,22 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Codecs;
+using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.EdgeGateway.Primitives;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Triggers;
 using ThabeSoft.EdgeGateway.Utilities;
 using ThabeSoft.EdgeGateway.ValueGenerators;
 
-namespace ThabeSoft.EdgeGateway.Devices;
+namespace ThabeSoft.EdgeGateway.Simulation.Devices;
 
 
 internal abstract class SimulationDeviceBase(in SimulationDeviceBaseArgs args) : ISimulationDevice
 {
+    private DisposeFlag _disposeFlag = new();
+
     private readonly ILifecycleStateMachine _stateMachine = args.LifecycleStateMachineFactory.Create(args.DeviceStateMachine);
     private readonly TaskManager _taskManager = args.TaskManager;
     private readonly TriggerManager _triggerManager = args.TriggerManager;
@@ -24,10 +28,17 @@ internal abstract class SimulationDeviceBase(in SimulationDeviceBaseArgs args) :
 
 
     public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StartAsync(_taskManager.StartAsync, cancellationToken);
+        _stateMachine.TransitionToRunningAsync(_taskManager.StartAsync, cancellationToken);
     public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StartAsync(_taskManager.StopAsync, cancellationToken);
-    public ValueTask DisposeAsync() => _stateMachine.DisposeAsync(_taskManager.DisposeAsync);
+        _stateMachine.TransitionToRunningAsync(_taskManager.StopAsync, cancellationToken);
+    
+    public async ValueTask DisposeAsync()
+    {
+        if (!_disposeFlag.TryMarkDisposed()) return;
+
+        await Safe.DisposeSafelyAsync(_taskManager, _logger);
+        await Safe.DisposeSafelyAsync(_stateMachine, _logger);
+    }
 
 
     public async ValueTask<IDisposable> ValueAsync<T>(TagDescriptor<T> tagDescriptor, TriggerDescriptor triggerDescriptor, IValueGenerator<T> generator, CancellationToken cancellationToken = default)

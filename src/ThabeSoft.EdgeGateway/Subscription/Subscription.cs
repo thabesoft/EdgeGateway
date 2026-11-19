@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
-using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.EdgeGateway.Primitives;
 using ThabeSoft.EdgeGateway.Readings;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Triggers;
@@ -10,13 +10,13 @@ using ThabeSoft.Guard;
 namespace ThabeSoft.EdgeGateway.Subscription;
 
 
-internal interface IAsyncDisposableSubscription : ISubscription, IAsyncDisposable;
-
-
-internal sealed class Subscription<T>(in SubscriptionArgs<T> dependencies) :
-    ISubscription<T>, IAsyncDisposableSubscription, IAsyncDisposable
+internal sealed class Subscription<T>(
+        in SubscriptionArgs<T> dependencies
+    ) : ISubscription<T>, IAsyncDisposable
     where T : notnull
 {
+
+    private DisposeFlag _disposeFlag = new();
     private IDisposable? _triggerTick;
     private readonly ILifecycleStateable _deviceState = dependencies.DeviceState;
     private readonly ITriggerScheduler _triggerScheduler = dependencies.TriggerScheduler;
@@ -25,6 +25,7 @@ internal sealed class Subscription<T>(in SubscriptionArgs<T> dependencies) :
     private readonly ReadingObservable<T> _readingObservable = dependencies.ReadingObservable;
     private readonly TriggerDescriptor _triggerDescriptor = dependencies.Subscription.Trigger;
     private readonly ILogger _logger = dependencies.Logger;
+    private readonly Func<ValueTask>? _onDisposeCallback = dependencies.DisposeCallback;
 
 
 
@@ -35,15 +36,30 @@ internal sealed class Subscription<T>(in SubscriptionArgs<T> dependencies) :
     public IObservable<Reading<T>> Update => _readingObservable;
     IObservable<Reading> ISubscription.Update => _readingObservable;
     public LifecycleState State => _stateMachine.State;
-    public Func<ValueTask>? DisposedCallback { get; init; }
 
 
-    public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
-         _stateMachine.StartAsync(OnStartAsync, cancellationToken);
-    public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
-         _stateMachine.StopAsync(OnStopAsync, cancellationToken);
-    public ValueTask DisposeAsync() =>
-         _stateMachine.DisposeAsync(OnDisposeAsync);
+    public ValueTask StartAsync(CancellationToken cancellationToken = default)
+    {
+        _disposeFlag.ThrowIfDisposed(this);
+        return _stateMachine.TransitionToRunningAsync(OnStartAsync, cancellationToken);
+    }
+    public ValueTask StopAsync(CancellationToken cancellationToken = default)
+    {
+        _disposeFlag.ThrowIfDisposed(this);
+        return _stateMachine.TransitionToStoppedAsync(OnStopAsync, cancellationToken);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (!_disposeFlag.TryMarkDisposed()) return;
+
+        _triggerTick?.TryDispose(_logger);
+
+
+        if (_onDisposeCallback is null) return;
+        try { await _onDisposeCallback.Invoke(); }
+        catch (Exception ex) { _logger.LogError(ex, "订阅释放回调异常"); }
+    }
 
 
     private ValueTask OnStartAsync(CancellationToken cancellationToken)
@@ -61,16 +77,6 @@ internal sealed class Subscription<T>(in SubscriptionArgs<T> dependencies) :
         _triggerTick?.Dispose();
         return ValueTask.CompletedTask;
     }
-    private async ValueTask OnDisposeAsync()
-    {
-        _triggerTick?.TryDispose(_logger);
-
-        if (DisposedCallback is null) return;
-
-        try { await DisposedCallback.Invoke(); }
-        catch (Exception ex) { _logger.LogError(ex, "订阅释放回调异常"); }
-    }
-
 
     private async ValueTask UpdateAsync(CancellationToken cancellationToken)
     {
@@ -111,4 +117,6 @@ internal readonly struct SubscriptionArgs<T> where T : notnull
 
     public required ITriggerScheduler TriggerScheduler { get; init => field = value.Required(); }
     public required ILogger Logger { get; init => field = value.Required(); }
+
+    public Func<ValueTask> DisposeCallback { get; init; }
 }

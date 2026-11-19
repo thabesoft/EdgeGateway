@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.EdgeGateway.Primitives;
 using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.EdgeGateway.Ethernet.Udp;
@@ -24,9 +24,13 @@ internal sealed class UdpTransportConnectionResolver(
         var logger = loggerFactory.CreateLogger<UdpTransportConnection>();
         var stateMachine = lifecycleStateMachineFactory.Create(descriptor.StateMachine);
 
-        return new UdpTransportConnection(ip, stateMachine, logger)
-        {
-            DisposedCallback = async () => await stateMachine.TryDisposeAsync(logger)
-        };
+        return new UdpTransportConnection
+        (
+           ip: ip.IP,
+           port: ip.Port,
+           endpoint: ip.Endpoint,
+           stateMachine: stateMachine,
+           logger: logger, onDispose: () => Safe.DisposeSafelyAsync(stateMachine, logger)
+        );
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Lifecycles.Utilities;
+using ThabeSoft.EdgeGateway.Primitives;
 
 namespace ThabeSoft.EdgeGateway.Lifecycles.StateMachines.Stric;
 
@@ -17,26 +18,26 @@ internal sealed class StrictLifecycleStateMachineFactory(ILoggerFactory loggerFa
             throw new InvalidOperationException($"不支持的描述符: {descriptor}");
 
 
-        var state = new ObservableLifecycleState();
-        var locker = new Locker(1, 1);
-        var executor = new Executor(state, locker) { ExecuteTimeout = descriptor.ExecuteTimeout };
         var logger = loggerFactory.CreateLogger<StrictLifecycleStateMachine>();
+        var stateLogger = loggerFactory.CreateLogger<ObservableLifecycleState>();
 
-        return new StrictLifecycleStateMachine(
-                descriptor: strict,
-                lifecycleState: state,
-                executor: executor,
-                locker: locker,
-                logger: logger
-            )
-        {
-            DisposedCallback = () =>
+        var state = new ObservableLifecycleState(stateLogger);
+        var locker = new Locker(1, 1) { Timeout = descriptor.TransitionWaitTimeout };
+        var executor = new Executor(state, locker) { ExecuteTimeout = descriptor.ExecuteTimeout };
+
+
+        return new StrictLifecycleStateMachine
+        (
+            descriptor: strict,
+            lifecycleState: state,
+            executor: executor,
+            locker: locker,
+            logger: logger,
+            onDispose: async () =>
             {
-                locker.Dispose();
-                state.Dispose();
-
-                return ValueTask.CompletedTask;
+                locker.DisposeSafely(logger);
+                state.DisposeSafely(stateLogger);
             }
-        };
+        );
     }
 }

@@ -3,6 +3,7 @@ using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Events;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Ports;
+using ThabeSoft.EdgeGateway.Primitives;
 
 namespace ThabeSoft.EdgeGateway.Subscription;
 
@@ -14,28 +15,32 @@ internal sealed class SubscriptionManager(
         ILifecycleBatchExecutor batchExecutor,
         ISubscriptionCreator subscriptionCreator,
         IEventPublisher eventPublisher,
-        ILogger<SubscriptionManager> logger
+        ILogger<SubscriptionManager> logger,
+        Func<ValueTask> onDispose
     ) : IAsyncDisposable
 {
     private readonly PortId _portId = portId;
     private readonly DeviceId _deviceId = deviceId;
+    private readonly AsyncDisposableToken _disposeToken = new(onDispose, logger);
 
 
     public IReadOnlyDictionary<SubscriptionId, ISubscription> Items => collection.Items;
-    public Func<ValueTask>? DisposedCallback { get; init; }
 
 
-    public ValueTask StartAllAsync(CancellationToken cancellationToken = default) =>
-        batchExecutor.StartBatchAsync(collection.Values, cancellationToken);
-
-    public ValueTask StopAllAsync(CancellationToken cancellationToken = default) =>
-        batchExecutor.StopBatchAsync(collection.Values, cancellationToken);
-    public async ValueTask DisposeAsync()
+    public ValueTask StartAllAsync(CancellationToken cancellationToken = default)
     {
-        if (DisposedCallback is null) return;
-
-        try { await DisposedCallback.Invoke(); }
-        catch (Exception ex) { logger.LogError(ex, "订阅管理器释放回调异常"); }
+        _disposeToken.ThrowIfDisposed(this);
+        return batchExecutor.StartBatchAsync(collection.Values, cancellationToken);
+    }
+    public ValueTask StopAllAsync(CancellationToken cancellationToken = default)
+    {
+        _disposeToken.ThrowIfDisposed(this);
+        return batchExecutor.StopBatchAsync(collection.Values, cancellationToken);
+    }
+    public ValueTask TerminateAllAsync(CancellationToken cancellationToken = default)
+    {
+        _disposeToken.ThrowIfDisposed(this);
+        return batchExecutor.TerminateBatchAsync(collection.Values, cancellationToken);
     }
 
     public async ValueTask<ISubscription<T>> AddAsync<T>(SubscriptionDescriptor<T> descriptor, CancellationToken cancellationToken = default)
@@ -54,4 +59,7 @@ internal sealed class SubscriptionManager(
         _ = eventPublisher.PublishAsync(new SubscriptionRemovedEvent(_portId, _deviceId, id));
         return true;
     }
+
+
+    public ValueTask DisposeAsync() => _disposeToken.DisposeAsync();
 }

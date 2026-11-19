@@ -41,7 +41,7 @@ public static class LifecycleBuilder
         {
             StartTimeout = builder.StartTimeout,
             StopTimeout = builder.StopTimeout,
-            DisposedTimeout = builder.DisposeTimeout,
+            TerminatingTimeout = builder.DisposeTimeout,
             ExecuteTimeout = builder.ExecuteTimeout
         };
     }
@@ -55,7 +55,7 @@ public static class LifecycleBuilder
         {
             StartTimeout = builder.StartTimeout,
             StopTimeout = builder.StopTimeout,
-            DisposedTimeout = builder.DisposeTimeout,
+            TerminatingTimeout = builder.DisposeTimeout,
             ExecuteTimeout = builder.ExecuteTimeout
         };
     }

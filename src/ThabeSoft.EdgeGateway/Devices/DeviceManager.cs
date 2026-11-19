@@ -2,6 +2,7 @@
 using ThabeSoft.EdgeGateway.Events;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Ports;
+using ThabeSoft.EdgeGateway.Primitives;
 
 namespace ThabeSoft.EdgeGateway.Devices;
 
@@ -12,25 +13,18 @@ internal sealed class DeviceManager(
         ILifecycleBatchExecutor batchExecutor,
         Func<DeviceDescriptor, Device> deviceCreator,
         IEventPublisher eventPublisher,
-        ILogger<DeviceManager> logger
+        ILogger<DeviceManager> logger,
+        Func<ValueTask> onDispose
     ) : IAsyncDisposable
 {
+    private DisposeFlag _disposeFlag = new();
     public IReadOnlyDictionary<DeviceId, IDevice> Items => collection.Items;
-    public Func<ValueTask>? DisposedCallback { get; init; }
 
 
     public ValueTask StartAllAsync(CancellationToken cancellationToken = default) =>
         batchExecutor.StartBatchAsync(collection.Values, cancellationToken);
-
     public ValueTask StopAllAsync(CancellationToken cancellationToken = default) =>
         batchExecutor.StopBatchAsync(collection.Values, cancellationToken);
-    public async ValueTask DisposeAsync()
-    {
-        if (DisposedCallback is null) return;
-
-        try { await DisposedCallback.Invoke(); }
-        catch (Exception ex) { logger.LogError(ex, "设备管理器释放回调异常"); }
-    }
 
     public async ValueTask<IDevice> AddAsync(DeviceDescriptor descriptor, CancellationToken cancellationToken = default)
     {
@@ -45,5 +39,11 @@ internal sealed class DeviceManager(
 
         _ = eventPublisher.PublishAsync(new DeviceRemovedEvent(portId, deviceId));
         return true;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (!_disposeFlag.TryMarkDisposed()) return;
+        await Safe.DisposeSafelyAsync(onDispose, logger);
     }
 }

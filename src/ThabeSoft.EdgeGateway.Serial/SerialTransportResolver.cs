@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.EdgeGateway.Primitives;
 using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.EdgeGateway.Serial;
@@ -24,9 +24,12 @@ internal sealed class SerialTransportResolver(
         var logger = loggerFactory.CreateLogger<SerialTransportConnection>();
         var stateMachine = lifecycleStateMachineFactory.Create(descriptor.StateMachine);
 
-        return new SerialTransportConnection(descriptor: serial, stateMachine: stateMachine, logger)
-        {
-            DisposedCallback = async () => await stateMachine.TryDisposeAsync(logger)
-        };
+        return new SerialTransportConnection
+        (
+            descriptor: serial,
+            stateMachine: stateMachine,
+            logger: logger,
+            onDispose: () => Safe.DisposeSafelyAsync(stateMachine, logger)
+        );
     }
 }

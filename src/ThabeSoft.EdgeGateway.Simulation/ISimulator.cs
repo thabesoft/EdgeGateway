@@ -9,5 +9,5 @@ public interface ISimulator : ILifecycle, ILifecycleStateable
 {
     IReadOnlyCollection<ISimulationPort> Ports { get; }
     ISimulationPort AddPort(SimulatorPortDescriptor simulatorDescriptor);
-    void RemovePort(ConnectionEndpoint endpoint);
+    ValueTask RemovePortAsync(ConnectionEndpoint endpoint, CancellationToken cancellationToken = default);
 }

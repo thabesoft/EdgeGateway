@@ -38,7 +38,7 @@ internal sealed class ConfigScriptRunner(ISimulator simulator, IOptions<Simulato
             // 清空端口
             foreach (var i in simulator.Ports)
             {
-                simulator.RemovePort(i.Endpoint);
+                simulator.RemovePortAsync(i.Endpoint);
             }
 
             // 3. 执行脚本

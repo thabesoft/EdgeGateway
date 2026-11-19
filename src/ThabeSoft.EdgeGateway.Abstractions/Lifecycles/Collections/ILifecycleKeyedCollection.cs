@@ -10,7 +10,14 @@ public interface ILifecycleKeyedCollection<TKey, TLifecycle> : IAsyncDisposable
 {
     IReadOnlyDictionary<TKey, TLifecycle> Items { get; }
 
-    ValueTask<TLifecycle> AddAsync(TKey key, Func<TLifecycle> getValueHandler, CancellationToken cancellationToken = default);
+    /// <summary>
+    /// 添加一个生命周期对象, 集合接管该对象
+    /// </summary>
+    ValueTask<TLifecycle> AddAsync(TKey key, Func<TLifecycle> lifecycleProvider, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// 从集合中移除并停止和释放生命周期
+    /// </summary>
     ValueTask<bool> RemoveAsync(TKey key, CancellationToken cancellationToken = default);
 }
 

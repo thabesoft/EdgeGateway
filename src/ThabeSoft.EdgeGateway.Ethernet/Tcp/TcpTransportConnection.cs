@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Net.Sockets;
-using ThabeSoft.EdgeGateway.Ethernet;
-using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.EdgeGateway.Primitives;
 using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.EdgeGateway.Ethernet.Tcp;
@@ -11,6 +10,8 @@ namespace ThabeSoft.EdgeGateway.Ethernet.Tcp;
 
 internal sealed class TcpTransportConnection : ITransportConnection
 {
+    private readonly DisposeFlag _disposeFlag = new();
+
     private readonly ILifecycleStateMachine _stateMachine;
     private TcpClient? _tcpClient;
     private readonly AsyncGate _reconnectGate = new();
@@ -41,6 +42,8 @@ internal sealed class TcpTransportConnection : ITransportConnection
 
     public async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
     {
+        _disposeFlag.ThrowIfDisposed(this);
+
         if (_tcpClient?.Connected != true)
         {
             _reconnectGate.Open();
@@ -63,6 +66,8 @@ internal sealed class TcpTransportConnection : ITransportConnection
     }
     public async ValueTask WriteAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
     {
+        _disposeFlag.ThrowIfDisposed(this);
+
         if (_tcpClient?.Connected != true)
         {
             _reconnectGate.Open();
@@ -85,13 +90,28 @@ internal sealed class TcpTransportConnection : ITransportConnection
     }
 
 
-    public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StartAsync(OnStartAsync, cancellationToken);
-    public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StopAsync(OnStopAsync, cancellationToken);
-    public ValueTask DisposeAsync() =>
-        _stateMachine.DisposeAsync(OnDisposeAsync);
+    public ValueTask StartAsync(CancellationToken cancellationToken = default)
+    {
+        _disposeFlag.ThrowIfDisposed(this);
+        return _stateMachine.TransitionToRunningAsync(OnStartAsync, cancellationToken);
+    }
+    public ValueTask StopAsync(CancellationToken cancellationToken = default)
+    {
+        _disposeFlag.ThrowIfDisposed(this);
+        return _stateMachine.TransitionToStoppedAsync(OnStopAsync, cancellationToken);
+    }
 
+    public async ValueTask DisposeAsync()
+    {
+        if (!_disposeFlag.TryMarkDisposed()) return;
+
+        try { await OnStopAsync(CancellationToken.None); }
+        catch (Exception ex) { _logger.LogError(ex, "Tcp 传输停止失败"); }
+
+        await Safe.DisposeSafelyAsync(_tcpClient, _logger);
+        await Safe.DisposeSafelyAsync(_reconnectBackgroundLifecycle, _logger);
+        await Safe.DisposeSafelyAsync(_stateMachine, _logger);
+    }
 
 
     private async ValueTask OnStartAsync(CancellationToken cancellationToken)
@@ -105,16 +125,6 @@ internal sealed class TcpTransportConnection : ITransportConnection
     {
         await _reconnectBackgroundLifecycle.StopAsync(cancellationToken);
     }
-    private async ValueTask OnDisposeAsync()
-    {
-        try { await OnStopAsync(CancellationToken.None); }
-        catch (Exception ex) { _logger.LogError(ex, "Tcp 传输停止失败"); }
-
-        _tcpClient?.DisposeSafely(_logger);
-        await SafeDisposeExtensions.DisposeSafelyAsync(_reconnectBackgroundLifecycle, _logger);
-        await _stateMachine.DisposeSafelyAsync(_logger);
-    }
-
 
     private async Task ReconnectLoopAsync(CancellationToken cancellationToken)
     {

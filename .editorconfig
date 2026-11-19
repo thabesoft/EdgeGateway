@@ -2,3 +2,16 @@
 
 # IDE0160: 转换为块范围限定的 namespace
 dotnet_diagnostic.IDE0160.severity = silent
+
+
+# 私有实例字段 下划线前缀 camelCase
+dotnet_naming_symbols.private_instance_fields.applicable_kinds = field
+dotnet_naming_symbols.private_instance_fields.applicable_accessibilities = private,protected,protected_internal,private_protected,internal
+dotnet_naming_symbols.private_instance_fields.applicable_modifiers = !static
+
+dotnet_naming_style.underscore_camel.required_prefix = _
+dotnet_naming_style.underscore_camel.capitalization = camel_case
+
+dotnet_naming_rule.private_field_underscore.severity = suggestion
+dotnet_naming_rule.private_field_underscore.symbols = private_instance_fields
+dotnet_naming_rule.private_field_underscore.style = underscore_camel

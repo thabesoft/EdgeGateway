@@ -2,6 +2,7 @@
 using RJCP.IO.Ports;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.EdgeGateway.Primitives;
 using ThabeSoft.EdgeGateway.Transports;
 using ThabeSoft.EdgeGateway.Transports.Byte;
 using RJCPParity = RJCP.IO.Ports.Parity;
@@ -13,9 +14,12 @@ namespace ThabeSoft.EdgeGateway.Serial;
 internal sealed class SerialTransportConnection(
         SerialTransportDescriptor descriptor,
         ILifecycleStateMachine stateMachine,
-        ILogger<SerialTransportConnection> logger
+        ILogger<SerialTransportConnection> logger,
+        Func<ValueTask> onDispose
     ) : ITransportConnection, IReadBufferDiscardable
 {
+    private readonly DisposeFlag _disposeFlag = new();
+
     private readonly SerialPortStream _serialPort = new(
             port: descriptor.PortName,
             baud: descriptor.BaudRate,
@@ -51,11 +55,16 @@ internal sealed class SerialTransportConnection(
 
 
     public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
-        stateMachine.StartAsync(OnStartAsync, cancellationToken);
+        stateMachine.TransitionToRunningAsync(OnStartAsync, cancellationToken);
     public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
-        stateMachine.StopAsync(OnStopAsync, cancellationToken);
-    public ValueTask DisposeAsync() =>
-        stateMachine.DisposeAsync(OnDisposeAsync);
+        stateMachine.TransitionToStoppedAsync(OnStopAsync, cancellationToken);
+    public async ValueTask DisposeAsync()
+    {
+        if (!_disposeFlag.TryMarkDisposed()) return;
+
+        await Safe.DisposeSafelyAsync(_serialPort, logger);
+        await Safe.TryEexecuteAsync(onDispose, logger);
+    }
 
 
 
@@ -69,26 +78,6 @@ internal sealed class SerialTransportConnection(
         _serialPort.Close();
         return ValueTask.CompletedTask;
     }
-    private async ValueTask OnDisposeAsync()
-    {
-        try
-        {
-#if NETSTANDARD2_0
-        _serialPort.Dispose();
-#else
-        await _serialPort.DisposeAsync();
-#endif
-        }
-        catch(Exception ex)
-        {
-            logger.LogError(ex, "串口释放失败");
-        }
-
-        if (DisposedCallback is null) return;
-        try { await DisposedCallback.Invoke(); }
-        catch (Exception ex) { logger.LogError(ex, "串行传输释放回调执行异常"); }
-    }
-
 
 
     public static RJCPParity Parse(SerialParity parity) => parity switch

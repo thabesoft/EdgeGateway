@@ -2,16 +2,15 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Diagnostics.CodeAnalysis;
 using ThabeSoft.EdgeGateway.Codecs;
-using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Transports;
 using ThabeSoft.EdgeGateway.Triggers;
 
-namespace ThabeSoft.EdgeGateway.Extensions;
+namespace ThabeSoft.EdgeGateway.Configuration;
 
 
-public static class DependencyInjectionExtensions
+public static class ConfigDependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {

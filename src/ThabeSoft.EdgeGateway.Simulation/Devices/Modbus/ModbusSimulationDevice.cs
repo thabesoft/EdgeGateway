@@ -2,6 +2,7 @@
 using NModbus;
 using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Codecs;
+using ThabeSoft.EdgeGateway.Simulation.Devices;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.Guard;
 

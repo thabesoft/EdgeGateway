@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.EdgeGateway.Primitives;
 using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.EdgeGateway.Ports;
@@ -61,13 +61,14 @@ internal abstract class SimulationPortBase : ISimulationPort
 
 
     public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StartAsync(OnStartAsync, cancellationToken);
+        _stateMachine.TransitionToRunningAsync(OnStartAsync, cancellationToken);
     public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StopAsync(OnStopAsync, cancellationToken);
-    public ValueTask DisposeAsync() =>
-        _stateMachine.DisposeAsync(OnDisposeAsync);
-    public async void Dispose() =>
-         DisposeAsync().AsTask().GetAwaiter().GetResult();
+        _stateMachine.TransitionToStoppedAsync(OnStopAsync, cancellationToken);
+    public async ValueTask DisposeAsync()
+    {
+        //TODO: 没有释放幂等
+        await Safe.DisposeSafelyAsync(_stateMachine);
+    }
 
 
 
@@ -84,6 +85,6 @@ internal abstract class SimulationPortBase : ISimulationPort
     }
     protected virtual async ValueTask OnDisposeAsync()
     {
-        await SafeDisposeExtensions.DisposeSafelyAsync(_batchExecutor);
+        await Safe.DisposeSafelyAsync(_batchExecutor);
     }
 }

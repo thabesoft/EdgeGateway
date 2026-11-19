@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
-using ThabeSoft.EdgeGateway.Extensions;
+using ThabeSoft.EdgeGateway.Primitives;
 
 namespace ThabeSoft.EdgeGateway.Lifecycles.Collections;
 
@@ -22,7 +22,7 @@ internal sealed class LifecycleKeyedCollection<TKey, TLifecycle>(
         var item = getValueHandler();
         if (!_items.TryAdd(key, item))
         {
-            await SafeDisposeExtensions.DisposeSafelyAsync(item, logger);
+            await Safe.DisposeSafelyAsync(item, logger);
             throw new InvalidOperationException($"{key} 已存在, 无法添加");
         }
 
@@ -35,7 +35,7 @@ internal sealed class LifecycleKeyedCollection<TKey, TLifecycle>(
             catch
             {
                 _items.TryRemove(key, out _);
-                await SafeDisposeExtensions.DisposeSafelyAsync(item, logger);
+                await Safe.DisposeSafelyAsync(item, logger);
                 throw;
             }
         }
@@ -50,7 +50,7 @@ internal sealed class LifecycleKeyedCollection<TKey, TLifecycle>(
         try { await item.StopAsync(cancellationToken); }
         catch (Exception ex) { logger.LogError(ex, "移除 [{Type}]  时发生错误, 停止失败", item.GetType()); }
 
-        await SafeDisposeExtensions.DisposeSafelyAsync(item, logger);
+        await Safe.DisposeSafelyAsync(item, logger);
 
         return true;
     }
@@ -60,7 +60,7 @@ internal sealed class LifecycleKeyedCollection<TKey, TLifecycle>(
         {
             try
             {
-                await SafeDisposeExtensions.DisposeSafelyAsync(item, logger);
+                await Safe.DisposeSafelyAsync(item, logger);
             }
             catch (Exception ex)
             {

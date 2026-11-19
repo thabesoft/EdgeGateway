@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.Utilities;
 
 namespace ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
@@ -23,12 +22,12 @@ internal sealed class Executor(
         Func<CancellationToken, ValueTask> action,
         CancellationToken cancellationToken = default)
     {
-        ObjectDisposedException.ThrowIf(lifecycleStateable.State is LifecycleState.Disposed, this);
+        ObjectDisposedException.ThrowIf(lifecycleStateable.State is LifecycleState.Terminated, this);
         ArgumentNullException.ThrowIfNull(action);
 
-        using var _ = await locker.WaiAsync(cancellationToken);
+        using var _ = await locker.WaitAsync(cancellationToken);
 
-        ObjectDisposedException.ThrowIf(lifecycleStateable.State is LifecycleState.Disposed, this);
+        ObjectDisposedException.ThrowIf(lifecycleStateable.State is LifecycleState.Terminated, this);
         await action.InvokeWithTimeoutAsync(ExecuteTimeout, "执行", cancellationToken);
 
     }
@@ -38,12 +37,12 @@ internal sealed class Executor(
         Func<CancellationToken, ValueTask<TResult>> action,
         CancellationToken cancellationToken = default)
     {
-        ObjectDisposedException.ThrowIf(lifecycleStateable.State is LifecycleState.Disposed, this);
+        ObjectDisposedException.ThrowIf(lifecycleStateable.State is LifecycleState.Terminated, this);
         ArgumentNullException.ThrowIfNull(action);
 
-        using var _ = await locker.WaiAsync(cancellationToken);
+        using var _ = await locker.WaitAsync(cancellationToken);
 
-        ObjectDisposedException.ThrowIf(lifecycleStateable.State is LifecycleState.Disposed, this);
+        ObjectDisposedException.ThrowIf(lifecycleStateable.State is LifecycleState.Terminated, this);
         return await action.InvokeWithTimeoutAsync(ExecuteTimeout, "执行", cancellationToken);
 
     }
@@ -51,11 +50,11 @@ internal sealed class Executor(
     [DebuggerStepThrough]
     public void Execute(Action action)
     {
-        ObjectDisposedException.ThrowIf(lifecycleStateable.State is LifecycleState.Disposed, this);
+        ObjectDisposedException.ThrowIf(lifecycleStateable.State is LifecycleState.Terminated, this);
         ArgumentNullException.ThrowIfNull(action);
 
         using var _ = locker.Wait();
-        ObjectDisposedException.ThrowIf(lifecycleStateable.State is LifecycleState.Disposed, this);
+        ObjectDisposedException.ThrowIf(lifecycleStateable.State is LifecycleState.Terminated, this);
 
         action();
     }
@@ -63,11 +62,11 @@ internal sealed class Executor(
     [DebuggerStepThrough]
     public TResult Execute<TResult>(Func<TResult> action)
     {
-        ObjectDisposedException.ThrowIf(lifecycleStateable.State is LifecycleState.Disposed, this);
+        ObjectDisposedException.ThrowIf(lifecycleStateable.State is LifecycleState.Terminated, this);
         ArgumentNullException.ThrowIfNull(action);
 
         using var _ = locker.Wait();
-        ObjectDisposedException.ThrowIf(lifecycleStateable.State is LifecycleState.Disposed, this);
+        ObjectDisposedException.ThrowIf(lifecycleStateable.State is LifecycleState.Terminated, this);
 
         return action();
     }

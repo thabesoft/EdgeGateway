@@ -2,48 +2,56 @@
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Ports;
+using ThabeSoft.EdgeGateway.Primitives;
 
 namespace ThabeSoft.EdgeGateway;
 
 
-internal sealed class Gateway(in GatewayArgs dependencies) :
+internal sealed class Gateway(
+        ILifecycleStateMachine _stateMachine,
+        PortManager _portManager,
+        ILogger<Gateway> _logger,
+        Func<ValueTask> onDispose
+    ) :
     IGateway, IAsyncDisposable
 {
-    private readonly ILifecycleStateMachine _stateMachine = dependencies.GatwayStateMachine;
-    private readonly PortManager _portManager = dependencies.PortManager;
-    private readonly ILogger _logger = dependencies.Logger;
+    private readonly DisposeFlag _disposeFlag = new();
 
 
     public LifecycleState State => _stateMachine.State;
     public IReadOnlyDictionary<PortId, IPort> Ports => _portManager.Items;
-    public Func<ValueTask>? DisposedCallback { get; init; }
 
 
-    public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StartAsync(_portManager.StartAllAsync, cancellationToken);
-    public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StopAsync(_portManager.StopAllAsync, cancellationToken);
-    public ValueTask DisposeAsync() =>
-        _stateMachine.DisposeAsync(OnDisposeAsync);
-
+    public ValueTask StartAsync(CancellationToken cancellationToken = default)
+    {
+        _disposeFlag.ThrowIfDisposed(this);
+        return _stateMachine.TransitionToRunningAsync(_portManager.StartAllAsync, cancellationToken);
+    }
+    public ValueTask StopAsync(CancellationToken cancellationToken = default)
+    {
+        _disposeFlag.ThrowIfDisposed(this);
+        return _stateMachine.TransitionToStoppedAsync(_portManager.StopAllAsync, cancellationToken);
+    }
 
 
     public async ValueTask<IPort> AddPortAsync(PortDescriptor descriptor, CancellationToken cancellationToken = default)
     {
+        _disposeFlag.ThrowIfDisposed(this);
+
         return await _stateMachine.ExecuteAsync(ct =>
             _portManager.AddAsync(descriptor, ct), cancellationToken);
     }
     public async ValueTask<bool> RemovePortAsync(PortId id, CancellationToken cancellationToken = default)
     {
+        _disposeFlag.ThrowIfDisposed(this);
+
         return await _stateMachine.ExecuteAsync(ct =>
             _portManager.RemoveAsync(id, ct), cancellationToken);
     }
 
-    private async ValueTask OnDisposeAsync()
+    public async ValueTask DisposeAsync()
     {
-        if (DisposedCallback is null) return;
-
-        try { await DisposedCallback.Invoke(); }
-        catch (Exception ex) { _logger.LogError(ex, "网关释放回调执行异常"); }
+        if (!_disposeFlag.TryMarkDisposed()) return;
+        await Safe.TryEexecuteAsync(onDispose, _logger);
     }
 }

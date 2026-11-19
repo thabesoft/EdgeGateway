@@ -83,7 +83,7 @@ internal sealed class LaunchHostedService(ISimulator simulator, ILogger<LaunchHo
 
 
                 await network.DisposeAsync();
-                simulator.RemovePort(network.Endpoint);
+                simulator.RemovePortAsync(network.Endpoint);
                 await Task.Delay(Random.Shared.Next(1000, 3000), cancellationToken);
             }
         }

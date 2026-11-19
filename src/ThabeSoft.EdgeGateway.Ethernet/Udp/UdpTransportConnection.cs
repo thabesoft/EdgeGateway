@@ -1,34 +1,42 @@
 ﻿using Microsoft.Extensions.Logging;
+using System.Net;
 using System.Net.Sockets;
 using System.Threading.Channels;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.EdgeGateway.Primitives;
 using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.EdgeGateway.Ethernet.Udp;
 
 
 internal sealed class UdpTransportConnection(
-        IpTransportDescriptor descriptor,
+        IPAddress ip,
+        int port,
+        ConnectionEndpoint endpoint,
         ILifecycleStateMachine stateMachine,
-        ILogger<UdpTransportConnection> logger
+        ILogger<UdpTransportConnection> logger,
+        Func<ValueTask> onDispose
     ) : ITransportConnection
 {
-    private readonly UdpClient _udpClient = new();
+    private readonly DisposeFlag _disposeFlag = new();
 
+    private readonly UdpClient _udpClient = new();
     private Task? _receiveLoop;
     private CancellationTokenSource? _receiveCts;
     private Channel<byte[]>? _datagrams;
 
 
 
-    public ConnectionEndpoint Endpoint { get; } = descriptor.Endpoint;
+    public ConnectionEndpoint Endpoint { get; } = endpoint;
     public LifecycleState State => stateMachine.State;
     public Func<ValueTask>? DisposedCallback { get; init; }
 
 
     public ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
     {
+        _disposeFlag.ThrowIfDisposed(this);
+
         return stateMachine.ExecuteAsync
         (
             handler: async ct =>
@@ -51,6 +59,8 @@ internal sealed class UdpTransportConnection(
     }
     public async ValueTask WriteAsync(ReadOnlyMemory<byte> data, CancellationToken cancellationToken = default)
     {
+        _disposeFlag.ThrowIfDisposed(this);
+
         await stateMachine.ExecuteAsync
         (
             handler: ct => _udpClient.SendAsync(data, ct),
@@ -59,18 +69,29 @@ internal sealed class UdpTransportConnection(
     }
 
 
-    public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
-        stateMachine.StartAsync(OnStartAsync, cancellationToken);
-    public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
-        stateMachine.StopAsync(OnStopAsync, cancellationToken);
-    public ValueTask DisposeAsync() =>
-        stateMachine.DisposeAsync(OnDisposeAsync);
+    public ValueTask StartAsync(CancellationToken cancellationToken = default)
+    {
+        _disposeFlag.ThrowIfDisposed(this);
+        return stateMachine.TransitionToRunningAsync(OnStartAsync, cancellationToken);
+    }
+    public ValueTask StopAsync(CancellationToken cancellationToken = default)
+    {
+        _disposeFlag.ThrowIfDisposed(this);
+        return stateMachine.TransitionToStoppedAsync(OnStopAsync, cancellationToken);
+    }
+    public async ValueTask DisposeAsync()
+    {
+        if (!_disposeFlag.TryMarkDisposed()) return;
+
+        await Safe.DisposeSafelyAsync(_udpClient, logger);
+        await Safe.TryEexecuteAsync(onDispose, logger);
+    }
 
 
 
     private ValueTask OnStartAsync(CancellationToken cancellationToken)
     {
-        _udpClient.Connect(descriptor.IP, descriptor.Port);
+        _udpClient.Connect(ip, port);
 
         // 每次启动创建新的 Channel 和 CTS
         _datagrams = Channel.CreateUnbounded<byte[]>();
@@ -110,23 +131,6 @@ internal sealed class UdpTransportConnection(
         _receiveCts = null;
         _datagrams = null;
     }
-    private async ValueTask OnDisposeAsync()
-    {
-        try { await OnStopAsync(CancellationToken.None); }
-        catch (Exception ex) { logger.LogError(ex, "释放 UdpClient 停止失败"); }
-
-        // 2. 释放底层 UdpClient
-        try { _udpClient.Dispose(); }
-        catch (Exception ex) { logger.LogError(ex, "释放 UdpClient 失败"); }
-
-
-        if (DisposedCallback is null) return;
-        try { await DisposedCallback.Invoke(); }
-        catch (Exception ex) { logger.LogError(ex, "网关释放回调执行异常"); }
-    }
-
-
-
     private async Task ReceiveLoopAsync(CancellationToken ct)
     {
         while (!ct.IsCancellationRequested)

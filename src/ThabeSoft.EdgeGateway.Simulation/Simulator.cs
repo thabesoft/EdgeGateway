@@ -1,9 +1,9 @@
 ﻿using System.Collections.Concurrent;
-using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Ports;
+using ThabeSoft.EdgeGateway.Primitives;
 using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.EdgeGateway.Simulation;
@@ -52,23 +52,27 @@ internal sealed class Simulator(in SimulatorArgs args) : ISimulator, IAsyncDispo
             }
         );
     }
-    public void RemovePort(ConnectionEndpoint endpoint)
+    public ValueTask RemovePortAsync(ConnectionEndpoint endpoint, CancellationToken cancellationToken)
     {
-        _stateMachine.Execute
-       (
-           handler: () =>
-           {
-               if (_ports.TryRemove(endpoint, out var port))
-                   port.Dispose();
-           }
-       );
+        return _stateMachine.ExecuteAsync(async ct =>
+        {
+            if (_ports.TryRemove(endpoint, out var port))
+                await port.DisposeAsync();
+
+        }, cancellationToken);
     }
 
 
     public ValueTask StartAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StartAsync(ct => _portBatchExecutor.StartBatchAsync(_ports.Values, ct), cancellationToken);
+        _stateMachine.TransitionToRunningAsync(ct => _portBatchExecutor.StartBatchAsync(_ports.Values, ct), cancellationToken);
     public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
-        _stateMachine.StartAsync(ct => _portBatchExecutor.StopBatchAsync(_ports.Values, ct), cancellationToken);
-    public ValueTask DisposeAsync() =>
-        _stateMachine.DisposeAsync(async () => await SafeDisposeExtensions.DisposeSafelyBatchAsync(_ports.Values));
+        _stateMachine.TransitionToRunningAsync(ct => _portBatchExecutor.StopBatchAsync(_ports.Values, ct), cancellationToken);
+
+    public async ValueTask DisposeAsync()
+    {
+        // TODO : 没有幂等释放
+
+        await Safe.DisposeSafelyAsync(_stateMachine);
+        await Safe.DisposeSafelyBatchAsync(_ports.Values);
+    }
 }

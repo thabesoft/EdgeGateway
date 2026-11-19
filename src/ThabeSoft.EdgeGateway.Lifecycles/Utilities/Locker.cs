@@ -16,7 +16,7 @@ internal sealed class Locker(SemaphoreSlim semaphoreSlim) : IDisposable
     public TimeSpan Timeout { get; init => field = value.Positive(); } = TimeSpan.FromSeconds(5);
 
 
-    public async Task<IDisposable> WaiAsync(CancellationToken cancellationToken = default)
+    public async Task<IDisposable> WaitAsync(CancellationToken cancellationToken = default)
     {
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         cts.CancelAfter(Timeout);

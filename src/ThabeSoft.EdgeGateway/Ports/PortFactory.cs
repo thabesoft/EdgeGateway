@@ -2,8 +2,8 @@
 using System.Collections.Concurrent;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Events;
-using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.EdgeGateway.Primitives;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transports;
@@ -62,30 +62,23 @@ internal sealed class PortFactory(
             })
         });
 
-        // 端口依赖
-        var portDependencies = new PortArgs()
-        {
-            GatewayLifecycleState = context.GatewayLifecycleState,
-
-            Port = context.Port,
-            PortStateMachine = portStateMachine,
-
-            DeviceManager = deviceManager,
-            TransportConnectionLifeCycle = transport,
-
-            Logger = logger
-        };
-
-        return new Port(portDependencies)
-        {
-            DisposedCallback = async () =>
+        return new Port
+        (
+            portId: port.Id,
+            connectionEndpoint: port.Transport.Endpoint,
+            gatewayLifecycleStateable: context.GatewayLifecycleState,
+            stateMachine: portStateMachine,
+            deviceManager: deviceManager,
+            transportConnectionLifeCycle: transport,
+            logger: logger,
+            onDispose: async () =>
             {
-                await deviceManager.TryDisposeAsync();
+                await Safe.DisposeSafelyAsync(deviceManager, logger);
                 protocolAccessors.Clear();
-                await transport.TryDisposeAsync();
-                deviceStateEventDisposable.TryDispose();
-                await portStateMachine.TryDisposeAsync();
+                await Safe.DisposeSafelyAsync(transport, logger);
+                await Safe.DisposeSafelyAsync(deviceStateEventDisposable, logger);
+                await Safe.DisposeSafelyAsync(portStateMachine, logger);
             }
-        };
+        );
     }
 }

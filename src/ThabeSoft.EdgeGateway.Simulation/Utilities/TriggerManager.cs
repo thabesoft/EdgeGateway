@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
-using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.EdgeGateway.Primitives;
 using ThabeSoft.EdgeGateway.Triggers;
 
 namespace ThabeSoft.EdgeGateway.Utilities;
@@ -27,7 +27,7 @@ internal sealed class TriggerScheduler : ILifecycle, IAsyncDisposable
     public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
         _background.StopAsync(cancellationToken);
     public ValueTask DisposeAsync() =>
-        SafeDisposeExtensions.DisposeSafelyAsync(_background);
+        Safe.DisposeSafelyAsync(_background);
 
 
     public IDisposable Subcribe(Action action)

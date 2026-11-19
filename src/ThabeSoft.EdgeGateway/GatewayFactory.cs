@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Events;
-using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Ports;
+using ThabeSoft.EdgeGateway.Primitives;
 
 namespace ThabeSoft.EdgeGateway;
 
@@ -45,23 +45,18 @@ internal sealed class GatewayFactory(
             })
         });
 
-        // 网关依赖
-        var gatewaytDependencies = new GatewayArgs()
-        {
-            GatwayStateMachine = gatewayStateMachine,
-            PortManager = portManager,
-            Logger = logger
-        };
 
-
-        return new Gateway(gatewaytDependencies)
-        {
-            DisposedCallback = async () =>
+        return new Gateway
+        (
+            _stateMachine: gatewayStateMachine,
+            _portManager: portManager,
+            _logger: logger,
+            onDispose: async () =>
             {
-                await portManager.TryDisposeAsync();
-                gatewayStateEventDisposable.TryDispose();
-                await gatewayStateMachine.TryDisposeAsync();
+                await Safe.DisposeSafelyAsync(portManager, logger);
+                await Safe.DisposeSafelyAsync(gatewayStateEventDisposable, logger);
+                await Safe.DisposeSafelyAsync(gatewayStateMachine, logger);
             }
-        };
+        );
     }
 }

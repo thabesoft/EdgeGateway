@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using ThabeSoft.EdgeGateway.Extensions;
+using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Triggers.Interval;
 using ThabeSoft.EdgeGateway.Triggers.Signal;
 

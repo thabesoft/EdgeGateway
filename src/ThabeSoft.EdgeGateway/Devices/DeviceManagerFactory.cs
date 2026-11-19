@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Events;
-using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
+using ThabeSoft.EdgeGateway.Primitives;
 
 namespace ThabeSoft.EdgeGateway.Devices;
 
@@ -27,14 +27,12 @@ internal sealed class DeviceManagerFactory(
             batchExecutor: batchExecutor,
             deviceCreator: args.DevicCreator,
             eventPublisher: eventPublisher,
-            logger: logger
-        )
-        {
-            DisposedCallback = async () =>
+            logger: logger,
+            onDispose: async () =>
             {
-                await SafeDisposeExtensions.DisposeSafelyAsync(batchExecutor, logger);
-                await SafeDisposeExtensions.DisposeSafelyAsync(collection, logger);
+                await Safe.DisposeSafelyAsync(batchExecutor, logger);
+                await Safe.DisposeSafelyAsync(collection, logger);
             }
-        };
+        );
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines.Retryable;
+using ThabeSoft.EdgeGateway.Primitives;
 
 namespace ThabeSoft.EdgeGateway.UnitTests.Lifecycles;
 
@@ -24,40 +25,40 @@ public class RetryableLifecycleStateMachineTests
         var lifecycle = Resolver.Resolve(LifecycleBuilder.RetryableStateMachine());
 
         // 启动
-        await lifecycle.StartAsync(EmptyMethod, TestContext.CancellationToken);
+        await lifecycle.TransitionToRunningAsync(EmptyMethod, TestContext.CancellationToken);
         Assert.AreEqual(LifecycleState.Running, lifecycle.State);
 
         // 启动之后可以再次启动
-        await lifecycle.StartAsync(EmptyMethod, TestContext.CancellationToken);
+        await lifecycle.TransitionToRunningAsync(EmptyMethod, TestContext.CancellationToken);
         Assert.AreEqual(LifecycleState.Running, lifecycle.State);
 
         // 启动后停止
-        await lifecycle.StopAsync(EmptyMethod, TestContext.CancellationToken);
+        await lifecycle.TransitionToStoppedAsync(EmptyMethod, TestContext.CancellationToken);
         Assert.AreEqual(LifecycleState.Stopped, lifecycle.State);
 
         // 停止之后可以再次停止
-        await lifecycle.StopAsync(EmptyMethod, TestContext.CancellationToken);
+        await lifecycle.TransitionToStoppedAsync(EmptyMethod, TestContext.CancellationToken);
         Assert.AreEqual(LifecycleState.Stopped, lifecycle.State);
 
         // 停止之后可以再次启动
-        await lifecycle.StartAsync(EmptyMethod, TestContext.CancellationToken);
+        await lifecycle.TransitionToRunningAsync(EmptyMethod, TestContext.CancellationToken);
         Assert.AreEqual(LifecycleState.Running, lifecycle.State);
 
         // 运行状态可以直接释放
-        await lifecycle.DisposeAsync(EmptyMethod);
-        Assert.AreEqual(LifecycleState.Disposed, lifecycle.State);
+        await Safe.DisposeSafelyAsync(lifecycle);
+        Assert.AreEqual(LifecycleState.Terminated, lifecycle.State);
 
         // 释放之后不可启动
         await Assert.ThrowsAsync<ObjectDisposedException>(async () =>
-            await lifecycle.StartAsync(EmptyMethod, TestContext.CancellationToken));
+            await lifecycle.TransitionToRunningAsync(EmptyMethod, TestContext.CancellationToken));
 
         // 释放之后不可停止
         await Assert.ThrowsAsync<ObjectDisposedException>(async () =>
-            await lifecycle.StopAsync(EmptyMethod, TestContext.CancellationToken));
+            await lifecycle.TransitionToStoppedAsync(EmptyMethod, TestContext.CancellationToken));
 
         // 幂等释放
-        await lifecycle.DisposeAsync(EmptyMethod);
-        Assert.AreEqual(LifecycleState.Disposed, lifecycle.State);
+        await Safe.DisposeSafelyAsync(lifecycle);
+        Assert.AreEqual(LifecycleState.Terminated, lifecycle.State);
     }
 
     [TestMethod]
@@ -66,7 +67,7 @@ public class RetryableLifecycleStateMachineTests
         var lifecycle = Resolver.Resolve(LifecycleBuilder.RetryableStateMachine());
 
         await Assert.ThrowsAsync<Exception>(async () =>
-            await lifecycle.StartAsync(ExceptionMethod, TestContext.CancellationToken));
+            await lifecycle.TransitionToRunningAsync(ExceptionMethod, TestContext.CancellationToken));
 
         // 启动失败
         Assert.AreEqual(LifecycleState.Faulted, lifecycle.State);
@@ -77,11 +78,11 @@ public class RetryableLifecycleStateMachineTests
     {
         var lifecycle = Resolver.Resolve(LifecycleBuilder.RetryableStateMachine());
 
-        await lifecycle.StartAsync(EmptyMethod, TestContext.CancellationToken);
+        await lifecycle.TransitionToRunningAsync(EmptyMethod, TestContext.CancellationToken);
         Assert.AreEqual(LifecycleState.Running, lifecycle.State);
 
         await Assert.ThrowsAsync<Exception>(async () =>
-            await lifecycle.StopAsync(ExceptionMethod, TestContext.CancellationToken));
+            await lifecycle.TransitionToStoppedAsync(ExceptionMethod, TestContext.CancellationToken));
 
         // 启动失败
         Assert.AreEqual(LifecycleState.Faulted, lifecycle.State);

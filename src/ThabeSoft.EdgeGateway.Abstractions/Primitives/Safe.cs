@@ -1,49 +1,23 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace ThabeSoft.EdgeGateway.Extensions;
+namespace ThabeSoft.EdgeGateway.Primitives;
 
 
-public static class SafeDisposeExtensions
+public static class Safe
 {
-    extension<T>(T obj) where T : IAsyncDisposable
+    public static async ValueTask<bool> TryEexecuteAsync(Func<ValueTask> handler, ILogger? logger = null, string errorMessage = null)
     {
-        public async ValueTask<bool> TryDisposeAsync(ILogger? logger = null)
+        try
         {
-            try
-            {
-                await obj.DisposeAsync();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                (logger ?? NullLogger.Instance).LogError(ex, "资源释放失败");
-                return false;
-            }
+            await handler.Invoke();
+            return true;
         }
-
-        public async ValueTask DisposeSafelyAsync(ILogger? logger = null) =>
-           await obj.TryDisposeAsync(logger);
-    }
-
-    extension<T>(T obj) where T : IDisposable
-    {
-        public bool TryDispose(ILogger? logger = null)
+        catch (Exception ex)
         {
-            try
-            {
-                obj.Dispose();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                (logger ?? NullLogger.Instance).LogError(ex, "资源释放失败");
-                return false;
-            }
+            (logger ?? NullLogger.Instance).LogError(ex, errorMessage ?? "执行失败");
+            return false;
         }
-
-        public void DisposeSafely(ILogger? logger = null) =>
-            obj.TryDispose(logger);
     }
 
 
@@ -70,9 +44,11 @@ public static class SafeDisposeExtensions
     /// <summary>
     /// 尝试识别并释放未知对象
     /// </summary>
-    public static async ValueTask DisposeSafelyAsync(object? obj, ILogger? logger = null) =>
-        await TryDisposeAsync(obj, logger);
+    public static async ValueTask DisposeSafelyAsync(object? obj, ILogger? logger = null)
+    {
 
+        await TryDisposeAsync(obj, logger);
+    }
 
     /// <summary>
     /// 安全释放所有对象

@@ -3,7 +3,7 @@
 namespace ThabeSoft.EdgeGateway.Utilities;
 
 
-internal sealed class TaskManager
+internal sealed class TaskManager : IAsyncDisposable
 {
     private readonly ConcurrentDictionary<Guid, TaskEntry> _entries = [];
     private readonly object _lock = new();
@@ -48,7 +48,7 @@ internal sealed class TaskManager
         {
             if (_running) return;
             _running = true;
-            _lifetimeCts ??= new CancellationTokenSource();
+            _lifetimeCts ??= CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             _startSignal.TrySetResult();   // 放行“挂起”的任务
         }
 
@@ -58,7 +58,6 @@ internal sealed class TaskManager
             entry.Task ??= RunAsync(entry, _lifetimeCts.Token);
         }
     }
-
     public async ValueTask StopAsync(CancellationToken cancellationToken = default)
     {
         lock (_lock)
@@ -76,6 +75,7 @@ internal sealed class TaskManager
         try { Task.WhenAll(tasks!).Wait(cancellationToken); }
         catch (OperationCanceledException) { }
     }
+
 
     public async ValueTask DisposeAsync()
     {

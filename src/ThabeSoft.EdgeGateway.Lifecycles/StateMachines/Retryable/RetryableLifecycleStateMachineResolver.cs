@@ -1,10 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Lifecycles.Utilities;
+using ThabeSoft.EdgeGateway.Primitives;
 
 namespace ThabeSoft.EdgeGateway.Lifecycles.StateMachines.Retryable;
 
 
-internal sealed class RetryableLifecycleStateMachineResolver(ILoggerFactory loggerFactory) : ILifecycleStateMachineResolver
+internal sealed class RetryableLifecycleStateMachineResolver(
+        ILoggerFactory loggerFactory
+    ) : ILifecycleStateMachineResolver
 {
     public bool CanResolve(LifecycleStateMachineDescriptor descriptor)
     {
@@ -17,26 +20,26 @@ internal sealed class RetryableLifecycleStateMachineResolver(ILoggerFactory logg
             throw new InvalidOperationException($"不支持的描述符: {descriptor}");
 
 
-        var state = new ObservableLifecycleState();
-        var locker = new Locker(1, 1);
-        var executor = new Executor(state, locker) { ExecuteTimeout = descriptor.ExecuteTimeout };
         var logger = loggerFactory.CreateLogger<RetryableLifecycleStateMachine>();
+        var stateLogger = loggerFactory.CreateLogger<ObservableLifecycleState>();
 
-        return new RetryableLifecycleStateMachine(
-                descriptor: strict,
-                lifecycleState: state,
-                executor: executor,
-                locker: locker,
-                logger: logger
-            )
-        {
-            DisposedCallback = () =>
+        var state = new ObservableLifecycleState(stateLogger);
+        var locker = new Locker(1, 1) { Timeout = descriptor.TransitionWaitTimeout };
+        var executor = new Executor(state, locker) { ExecuteTimeout = descriptor.ExecuteTimeout };
+
+
+        return new RetryableLifecycleStateMachine
+        (
+            descriptor: strict,
+            lifecycleState: state,
+            executor: executor,
+            locker: locker,
+            logger: logger,
+            onDispose: async () =>
             {
-                locker.Dispose();
-                state.Dispose();
-
-                return ValueTask.CompletedTask;
+                locker.DisposeSafely(logger);
+                state.DisposeSafely(stateLogger);
             }
-        };
+        );
     }
 }

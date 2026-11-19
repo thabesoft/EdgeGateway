@@ -9,11 +9,16 @@ public enum LifecycleState : byte
     /// <summary>从未启动</summary>
     Created,
 
+    /// <summary>操作失败</summary>
+    Faulted,
+
+
     /// <summary>正在启动中</summary>
     Starting,
 
     /// <summary>正在运行中</summary>
     Running,
+
 
     /// <summary>正在停止中</summary>
     Stopping,
@@ -21,9 +26,10 @@ public enum LifecycleState : byte
     /// <summary>已停止</summary>
     Stopped,
 
-    /// <summary>启动或者停止失败</summary>
-    Faulted,
 
-    /// <summary>已彻底释放</summary>
-    Disposed,
+    /// <summary> 终止中 </summary>
+    Terminating,
+
+    /// <summary>已终止</summary>
+    Terminated
 }

@@ -8,7 +8,7 @@ namespace ThabeSoft.EdgeGateway.Lifecycles.Collections;
 internal sealed class LifecycleKeyedCollection<TKey, TLifecycle>(
         ILifecycleStateable stateSource,
         ILogger<LifecycleKeyedCollection<TKey, TLifecycle>> logger
-    ) : ILifecycleKeyedCollection<TKey, TLifecycle>, IAsyncDisposable
+    ) : ILifecycleKeyedCollection<TKey, TLifecycle>
     where TKey : notnull
     where TLifecycle : ILifecycle
 {

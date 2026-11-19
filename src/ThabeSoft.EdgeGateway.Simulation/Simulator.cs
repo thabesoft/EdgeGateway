@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
@@ -69,8 +70,5 @@ internal sealed class Simulator(in SimulatorArgs args) : ISimulator, IAsyncDispo
     public ValueTask StopAsync(CancellationToken cancellationToken = default) =>
         _stateMachine.StartAsync(ct => _portBatchExecutor.StopBatchAsync(_ports.Values, ct), cancellationToken);
     public ValueTask DisposeAsync() =>
-        _stateMachine.DisposeAsync(async () =>
-        {
-            await _portBatchExecutor.DisposeBatchAsync(Ports);
-        });
+        _stateMachine.DisposeAsync(async () => await SafeDisposeExtensions.DisposeSafelyBatchAsync(_ports.Values));
 }

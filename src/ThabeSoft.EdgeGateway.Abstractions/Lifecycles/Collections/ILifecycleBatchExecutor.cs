@@ -8,5 +8,4 @@ public interface ILifecycleBatchExecutor
 {
     ValueTask StartBatchAsync(IEnumerable<ILifecycle> lifecycles, CancellationToken cancellationToken = default);
     ValueTask StopBatchAsync(IEnumerable<ILifecycle> lifecycles, CancellationToken cancellationToken = default);
-    ValueTask DisposeBatchAsync(IEnumerable<ILifecycle> lifecycles);
 }

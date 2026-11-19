@@ -4,7 +4,7 @@
 /// <summary>
 /// 带有 键 的生命周期集合
 /// </summary>
-public interface ILifecycleKeyedCollection<TKey, TLifecycle>
+public interface ILifecycleKeyedCollection<TKey, TLifecycle> : IAsyncDisposable
     where TKey : notnull
     where TLifecycle : ILifecycle
 {

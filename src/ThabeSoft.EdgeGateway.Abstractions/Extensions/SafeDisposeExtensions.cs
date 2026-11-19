@@ -72,4 +72,21 @@ public static class SafeDisposeExtensions
     /// </summary>
     public static async ValueTask DisposeSafelyAsync(object? obj, ILogger? logger = null) =>
         await TryDisposeAsync(obj, logger);
+
+
+    /// <summary>
+    /// 安全释放所有对象
+    /// </summary>
+    public static async ValueTask<int> DisposeSafelyBatchAsync(IEnumerable<object> objects, ILogger? logger = null)
+    {
+        int count = 0;
+
+        foreach (var obj in objects)
+        {
+            if (await TryDisposeAsync(obj, logger) == true)
+                count++;
+        }
+
+        return count;
+    }
 }

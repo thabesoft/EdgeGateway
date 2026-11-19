@@ -34,7 +34,7 @@ internal sealed class SubscriptionManagerFactory(
         {
             DisposedCallback = async () =>
             {
-                await SafeDisposeExtensions.DisposeSafelyAsync(batchExecutor, logger);
+                //SafeDisposeExtensions.DisposeSafelyBatchAsync(collection.Items);
                 await SafeDisposeExtensions.DisposeSafelyAsync(collection, logger);
             }
         };

@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.Diagnostics;
-using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles.Utilities;
 
 namespace ThabeSoft.EdgeGateway.Lifecycles.Collections;
@@ -15,7 +14,6 @@ internal sealed class LifecycleBatchExecutor(
     private readonly int _concurrency = descriptor.Concurrency;
     private readonly TimeSpan _itemStartTimeout = descriptor.ItemStartTimeout;
     private readonly TimeSpan _itemStopTimeout = descriptor.ItemStopTimeout;
-    private readonly TimeSpan _itemDisposeTimeout = descriptor.ItemDisposeTimeout;
 
 
     [DebuggerStepThrough]
@@ -85,21 +83,5 @@ internal sealed class LifecycleBatchExecutor(
 
         if (errors.Count == 0) return;
         throw new AggregateException(errors);
-    }
-
-    [DebuggerStepThrough]
-    public async ValueTask DisposeBatchAsync(IEnumerable<ILifecycle> lifecycles)
-    {
-        foreach (var lifecycle in lifecycles)
-        {
-            try
-            {
-                await TimeoutExtensions.ExecuteAsync(() => SafeDisposeExtensions.DisposeSafelyAsync(lifecycle, logger), _itemDisposeTimeout, "释放");
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "{Type} 释放失败", lifecycle.GetType());
-            }
-        }
     }
 }

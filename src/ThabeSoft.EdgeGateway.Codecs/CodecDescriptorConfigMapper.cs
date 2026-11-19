@@ -1,16 +1,18 @@
-﻿using System.Collections;
+﻿using Microsoft.Extensions.Logging;
+using System.Collections;
 using ThabeSoft.EdgeGateway.Codecs.Bits;
 using ThabeSoft.EdgeGateway.Codecs.DWords;
 using ThabeSoft.EdgeGateway.Codecs.QWords;
 using ThabeSoft.EdgeGateway.Codecs.Words;
 using ThabeSoft.EdgeGateway.Configuration;
+using ThabeSoft.EdgeGateway.Configuration.Nodes;
 using ThabeSoft.EdgeGateway.DataTypes;
 using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Codecs;
 
 
-internal sealed class CodecDescriptorConfigMapper :
+internal sealed class CodecDescriptorConfigMapper(ILogger<CodecDescriptorConfigMapper> logger) :
     IConfigMapper<CodecDescriptor<ushort>>, IConfigMapper<CodecDescriptor<short>>, IConfigMapper<CodecDescriptor<char>>,
     IConfigMapper<CodecDescriptor<uint>>, IConfigMapper<CodecDescriptor<int>>, IConfigMapper<CodecDescriptor<float>>,
     IConfigMapper<CodecDescriptor<ulong>>, IConfigMapper<CodecDescriptor<long>>, IConfigMapper<CodecDescriptor<double>>,
@@ -19,7 +21,7 @@ internal sealed class CodecDescriptorConfigMapper :
 {
     public bool CanMap(IConfigNode root)
     {
-        if (!Enum.TryParse<DataType>(root.GetStringValue("DataType"), true, out var enumValue))
+        if (!Enum.TryParse<DataType>(root.GetStringByPath("DataType"), true, out var enumValue))
             return false;
 
         return enumValue is DataType.Int32 or DataType.Int32 or DataType.Float;
@@ -61,39 +63,46 @@ internal sealed class CodecDescriptorConfigMapper :
 
     private static int GetBoolBitOffset(IConfigNode node)
     {
-        return node.GetStringValue("BitOffset").Required("缺少位偏移")
+        return node.GetStringByPath("BitOffset").Required("缺少位偏移")
             .ToInt32();
     }
     private static BitOrder GetBitOrder(IConfigNode node)
     {
-        return node.GetStringValue("BitOrder").Required("缺少位序")
+        return node.GetStringByPath("BitOrder").Required("缺少位序")
             .ToEnum<BitOrder>();
     }
     private static int GetBitCount(IConfigNode node)
     {
-        return node.GetStringValue("BitCount").Required("缺少位数")
+        return node.GetStringByPath("BitCount").Required("缺少位数")
             .ToInt32();
     }
 
 
     private static WordEndianess GetWordEndianess(IConfigNode node)
     {
-        return node.GetStringValue("Endianess").Required("缺少字节序")
+        return node.GetStringByPath("Endianess").Required("缺少字节序")
             .ToEnum<WordEndianess>();
     }
     private static DWordLayout GetDWordEndianess(IConfigNode node)
     {
-        return node.GetStringValue("Layout").Required("缺少字节布局")
+        return node.GetStringByPath("Layout").Required("缺少字节布局")
             .ToEnum<DWordLayout>();
     }
-    private static IEnumerable<QWordSwap> GetQWordEndianess(IConfigNode node)
+    private IEnumerable<QWordSwap> GetQWordEndianess(IConfigNode node)
     {
-        foreach (var i in node.GetChildren("Swaps"))
+        foreach (var i in node.EnumerateChildrenByPath("Swaps"))
         {
             var str = i.AsString();
             if (string.IsNullOrWhiteSpace(str)) continue;
 
-            yield return str.ToEnum<QWordSwap>();
+            if (Enum.TryParse<QWordSwap>(str, ignoreCase: true, out var swap))
+            {
+                yield return swap;
+            }
+            else
+            {
+                logger.LogWarning("无效的 QWordSwap 值: {Value}", str);
+            }
         }
     }
 }

@@ -19,6 +19,7 @@ public class JsonConfigSerializerTests
     {
         var app = Host.CreateDefaultBuilder()
             .ConfigureServices(x => x
+                .AddEdgeGatewayConfiguration()
                 .AddEdgeGatewayJsonConfigurationProvider()
                 .AddAddEdgeGatewayConifigMappers()
                 .AddEdgeGatewaySerialConfig()

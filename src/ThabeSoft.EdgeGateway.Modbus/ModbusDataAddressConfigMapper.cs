@@ -1,5 +1,6 @@
 ﻿using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Configuration;
+using ThabeSoft.EdgeGateway.Configuration.Nodes;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.Guard;
@@ -16,13 +17,13 @@ internal sealed class ModbusDataAddressConfigMapper : IConfigMapper<DataAddress>
 
     public DataAddress Map(IConfigNode root)
     {
-        var kind = root.GetStringValue("Kind").Required("缺少数据区域类型")
+        var kind = root.GetStringByPath("Kind").Required("缺少数据区域类型")
                 .ToEnum<ModbusDataKind>();
-        var slaveId = root.GetStringValue("SlaveId").Required("缺少从站Id")
+        var slaveId = root.GetStringByPath("SlaveId").Required("缺少从站Id")
                 .ToByte();
-        var address = root.GetStringValue("Address").Required("缺少数据起始地址")
+        var address = root.GetStringByPath("Address").Required("缺少数据起始地址")
                 .ToUInt16();
-        var quantity = root.GetStringValue("Quantity").Required("缺少数据数量")
+        var quantity = root.GetStringByPath("Quantity").Required("缺少数据数量")
                 .ToUInt16();
 
         return kind switch
@@ -38,7 +39,7 @@ internal sealed class ModbusDataAddressConfigMapper : IConfigMapper<DataAddress>
 
     private static ProtocolType? GetProtocolType(IConfigNode root)
     {
-        var typeString = root.GetParent()?.GetParent()?.GetChild("Protocol").GetStringValue("Type");
+        var typeString = root.GetByPath("......Protocol.Type")?.AsString();
 
         if (!Enum.TryParse<ProtocolType>(typeString, true, out var type))
             return default;

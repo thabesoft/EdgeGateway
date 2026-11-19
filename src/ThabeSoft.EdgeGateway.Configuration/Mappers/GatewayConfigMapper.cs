@@ -2,6 +2,7 @@
 using System.Collections;
 using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Configuration.Models;
+using ThabeSoft.EdgeGateway.Configuration.Nodes;
 using ThabeSoft.EdgeGateway.DataTypes;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ports;
@@ -32,7 +33,7 @@ public class GatewayConfigMapper(
     {
         return new()
         {
-            Ports = [.. root.GetChildren("Ports").Select(GetPortConfig)]
+            Ports = [.. root.EnumerateChildrenByPath("Ports").Select(GetPortConfig)]
         };
     }
 
@@ -42,10 +43,10 @@ public class GatewayConfigMapper(
         {
             Descriptor = new()
             {
-                Id = PortId.From(root.GetStringValue("Id").Required("缺少端口Id")),
-                Transport = MapFromCollection(transportMappers, root.GetChild("Transport").Required("缺少传输配置"))
+                Id = PortId.From(root.GetStringByPath("Id").Required("缺少端口Id")),
+                Transport = MapFromCollection(transportMappers, root.GetByPath("Transport").Required("缺少传输配置"))
             },
-            Devices = [.. root.GetChildren("Devices").Select(GetDeviceConfig)]
+            Devices = [.. root.EnumerateChildrenByPath("Devices").Select(GetDeviceConfig)]
         };
     }
 
@@ -55,16 +56,16 @@ public class GatewayConfigMapper(
         {
             Descriptor = new()
             {
-                Id = DeviceId.From(root.GetStringValue("Id").Required("缺少设备Id")),
-                Protocol = MapFromCollection(protocolMappers, root.GetChild("Protocol").Required("缺少协议配置"))
+                Id = DeviceId.From(root.GetStringByPath("Id").Required("缺少设备Id")),
+                Protocol = MapFromCollection(protocolMappers, root.GetByPath("Protocol").Required("缺少协议配置"))
             },
-            Subscriptions = [.. root.GetChildren("Subscriptions").Select(GetSubscriptionConfig)]
+            Subscriptions = [.. root.EnumerateChildrenByPath("Subscriptions").Select(GetSubscriptionConfig)]
         };
     }
 
     private SubscriptionConfig GetSubscriptionConfig(IConfigNode root)
     {
-        var dataType = root["Codec"]?["DataType"]?.AsString().Required($"缺少数据类型: {root.GetPath}")
+        var dataType = root.GetByPath("Codec.DataType")?.AsString().Required($"缺少数据类型: {root.GetPath()}")
              .ToEnum<DataType>();
 
         return new()
@@ -96,11 +97,11 @@ public class GatewayConfigMapper(
         {
             return new()
             {
-                Id = SubscriptionId.From(root.GetStringValue("Id").Required("缺少订阅Id")),
-                Trigger = MapFromCollection(triggerMappers, root.GetChild("Trigger").Required("缺少触发器")),
+                Id = SubscriptionId.From(root.GetStringByPath("Id").Required("缺少订阅Id")),
+                Trigger = MapFromCollection(triggerMappers, root.GetByPath("Trigger").Required("缺少触发器")),
                 Tag = new
                 (
-                    address: MapFromCollection(dataAddressMappers, root.GetChild("DataAddress").Required("缺少数据地址")),
+                    address: MapFromCollection(dataAddressMappers, root.GetByPath("DataAddress").Required("缺少数据地址")),
                     codec: GetCodecDescriptor<T>(root)
                 )
             };
@@ -109,7 +110,7 @@ public class GatewayConfigMapper(
         CodecDescriptor<T> GetCodecDescriptor<T>(IConfigNode root) where T : notnull
         {
             var codecs = serviceProvider.GetServices<IConfigMapper<CodecDescriptor<T>>>();
-            return MapFromCollection(codecs, root.GetChild("Codec").Required("缺少数据编码器"));
+            return MapFromCollection(codecs, root.GetByPath("Codec").Required("缺少数据编码器"));
         }
     }
 

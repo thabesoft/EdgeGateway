@@ -1,4 +1,5 @@
-﻿using ThabeSoft.EdgeGateway.Transports;
+﻿using ThabeSoft.EdgeGateway.Configuration.Nodes;
+using ThabeSoft.EdgeGateway.Transports;
 using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Configuration.Mappers;
@@ -12,9 +13,9 @@ public class RetryDescriptorConfigMapper : IConfigMapper<RetryDescriptor>
     }
     public RetryDescriptor Map(IConfigNode root)
     {
-        var startInterval = root.GetStringValue("StartInterval").Required().ToTimeSpan();
-        var maxInterval = root.GetStringValue("MaxInterval").Required().ToTimeSpan();
-        var backoffMultiplier = root.GetStringValue("BackoffMultiplier").Required().ToDouble();
+        var startInterval = root.GetStringByPath("StartInterval").Required().ToTimeSpan();
+        var maxInterval = root.GetStringByPath("MaxInterval").Required().ToTimeSpan();
+        var backoffMultiplier = root.GetStringByPath("BackoffMultiplier").Required().ToDouble();
 
         return new(startInterval, maxInterval) { BackoffMultiplier = backoffMultiplier };
     }

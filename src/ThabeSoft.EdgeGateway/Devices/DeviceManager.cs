@@ -1,62 +1,49 @@
-﻿using ThabeSoft.EdgeGateway.Events;
+﻿using Microsoft.Extensions.Logging;
+using ThabeSoft.EdgeGateway.Events;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Ports;
-using ThabeSoft.EdgeGateway.Utilities;
 
 namespace ThabeSoft.EdgeGateway.Devices;
 
 
-internal sealed class DeviceManager : IAsyncDisposable
+internal sealed class DeviceManager(
+        PortId portId,
+        ILifecycleKeyedCollection<DeviceId, IDevice> collection,
+        ILifecycleBatchExecutor batchExecutor,
+        Func<DeviceDescriptor, Device> deviceCreator,
+        IEventPublisher eventPublisher,
+        ILogger<DeviceManager> logger
+    ) : IAsyncDisposable
 {
-    private readonly ILifecycleKeyedCollection<DeviceId, Device> _collection;
-    private readonly ILifecycleBatchExecutor _batchExecutor;
-    private readonly PortId _portId;
-    private readonly IEventPublisher _eventPublisher;
-    private readonly Func<DeviceDescriptor, Device> _devicCreator;
-
-
-    public DeviceManager(
-            in DeviceManagerCreationArgs args,
-            IEventPublisher eventPublisher,
-            ILifecycleKeyedCollectionFactory lifecycleKeyedCollectionFactory,
-            ILifecycleBatchExecutorFactory lifecycleBatchExecutorFactory)
-    {
-        _devicCreator = args.DevicCreator;
-        _portId = args.Port.Id;
-        _eventPublisher = eventPublisher;
-
-        _collection = lifecycleKeyedCollectionFactory.Create<DeviceId, Device>(args.PortLifecycleState);
-        _batchExecutor = lifecycleBatchExecutorFactory.Create(args.DeviceBatchExecutorDescriptor);
-
-        Items = new ReadOnlyDictionaryView<DeviceId, Device, IDevice>(_collection.Items);
-    }
-
-    public IReadOnlyDictionary<DeviceId, IDevice> Items { get; }
+    public IReadOnlyDictionary<DeviceId, IDevice> Items => collection.Items;
+    public Func<ValueTask>? DisposedCallback { get; init; }
 
 
     public ValueTask StartAllAsync(CancellationToken cancellationToken = default) =>
-        _batchExecutor.StartAsync(_collection.Values, cancellationToken);
+        batchExecutor.StartAsync(collection.Values, cancellationToken);
 
     public ValueTask StopAllAsync(CancellationToken cancellationToken = default) =>
-        _batchExecutor.StopAsync(_collection.Values, cancellationToken);
+        batchExecutor.StopAsync(collection.Values, cancellationToken);
     public async ValueTask DisposeAsync()
     {
-        await _batchExecutor.DisposeAsync(_collection.Values);
-        await _collection.DisposeAsync();
+        if (DisposedCallback is null) return;
+
+        try { await DisposedCallback.Invoke(); }
+        catch (Exception ex) { logger.LogError(ex, "设备管理器释放回调异常"); }
     }
 
     public async ValueTask<IDevice> AddAsync(DeviceDescriptor descriptor, CancellationToken cancellationToken = default)
     {
-        var device = await _collection.AddAsync(descriptor.Id, () => _devicCreator.Invoke(descriptor), cancellationToken);
-        _ = _eventPublisher.PublishAsync(new DeviceAddedEvent(_portId, device.Id));
+        var device = await collection.AddAsync(descriptor.Id, () => deviceCreator.Invoke(descriptor), cancellationToken);
+        _ = eventPublisher.PublishAsync(new DeviceAddedEvent(portId, device.Id));
         return device;
     }
     public async ValueTask<bool> RemoveAsync(DeviceId deviceId, CancellationToken cancellationToken = default)
     {
-        var result = await _collection.RemoveAsync(deviceId, cancellationToken);
+        var result = await collection.RemoveAsync(deviceId, cancellationToken);
         if (!result) return false;
 
-        _ = _eventPublisher.PublishAsync(new DeviceRemovedEvent(_portId, deviceId));
+        _ = eventPublisher.PublishAsync(new DeviceRemovedEvent(portId, deviceId));
         return true;
     }
 }

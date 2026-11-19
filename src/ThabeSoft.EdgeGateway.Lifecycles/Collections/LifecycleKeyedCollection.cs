@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
+using ThabeSoft.EdgeGateway.Extensions;
 
 namespace ThabeSoft.EdgeGateway.Lifecycles.Collections;
 
@@ -7,9 +8,9 @@ namespace ThabeSoft.EdgeGateway.Lifecycles.Collections;
 internal sealed class LifecycleKeyedCollection<TKey, TLifecycle>(
         ILifecycleStateable stateSource,
         ILogger<LifecycleKeyedCollection<TKey, TLifecycle>> logger
-    ) : ILifecycleKeyedCollection<TKey, TLifecycle>
+    ) : ILifecycleKeyedCollection<TKey, TLifecycle>, IAsyncDisposable
     where TKey : notnull
-    where TLifecycle : ILifecycle, IAsyncDisposable
+    where TLifecycle : ILifecycle
 {
     private readonly ConcurrentDictionary<TKey, TLifecycle> _items = [];
 
@@ -21,7 +22,7 @@ internal sealed class LifecycleKeyedCollection<TKey, TLifecycle>(
         var item = getValueHandler();
         if (!_items.TryAdd(key, item))
         {
-            await item.DisposeAsync();
+            await SafeDisposeExtensions.DisposeSafelyAsync(item, logger);
             throw new InvalidOperationException($"{key} 已存在, 无法添加");
         }
 
@@ -34,8 +35,7 @@ internal sealed class LifecycleKeyedCollection<TKey, TLifecycle>(
             catch
             {
                 _items.TryRemove(key, out _);
-                try { await item.DisposeAsync(); } catch { }
-
+                await SafeDisposeExtensions.DisposeSafelyAsync(item, logger);
                 throw;
             }
         }
@@ -50,18 +50,17 @@ internal sealed class LifecycleKeyedCollection<TKey, TLifecycle>(
         try { await item.StopAsync(cancellationToken); }
         catch (Exception ex) { logger.LogError(ex, "移除 [{Type}]  时发生错误, 停止失败", item.GetType()); }
 
-        try { await item.DisposeAsync(); }
-        catch (Exception ex) { logger.LogError(ex, "移除 [{Type}] 时发生错误, 释放失败", key); }
+        await SafeDisposeExtensions.DisposeSafelyAsync(item, logger);
 
         return true;
     }
     public async ValueTask DisposeAsync()
     {
-        foreach (var i in _items.Values)
+        foreach (var item in _items.Values)
         {
             try
             {
-                await i.DisposeAsync();
+                await SafeDisposeExtensions.DisposeSafelyAsync(item, logger);
             }
             catch (Exception ex)
             {

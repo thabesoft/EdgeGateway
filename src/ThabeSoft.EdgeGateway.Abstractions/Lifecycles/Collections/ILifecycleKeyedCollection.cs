@@ -4,9 +4,9 @@
 /// <summary>
 /// 带有 键 的生命周期集合
 /// </summary>
-public interface ILifecycleKeyedCollection<TKey, TLifecycle> : IAsyncDisposable
+public interface ILifecycleKeyedCollection<TKey, TLifecycle>
     where TKey : notnull
-    where TLifecycle : ILifecycle, IAsyncDisposable
+    where TLifecycle : ILifecycle
 {
     IReadOnlyDictionary<TKey, TLifecycle> Items { get; }
 
@@ -14,11 +14,18 @@ public interface ILifecycleKeyedCollection<TKey, TLifecycle> : IAsyncDisposable
     ValueTask<bool> RemoveAsync(TKey key, CancellationToken cancellationToken = default);
 }
 
+/// <summary>
+/// 带有 键 的生命周期集合
+/// </summary>
+public interface ILifecycleKeyedCollection<TKey> : ILifecycleKeyedCollection<TKey, ILifecycle>
+    where TKey : notnull;
+
+
 public static class LifecycleKeyedCollectionExtensions
 {
     extension<TKey, TLifecycle>(ILifecycleKeyedCollection<TKey, TLifecycle> collection)
         where TKey : notnull
-        where TLifecycle : ILifecycle, IAsyncDisposable
+        where TLifecycle : ILifecycle
     {
         public IEnumerable<TKey> Keys => collection.Items.Keys;
         public IEnumerable<TLifecycle> Values => collection.Items.Values;

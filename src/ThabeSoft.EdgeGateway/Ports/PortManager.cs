@@ -1,58 +1,46 @@
-﻿using ThabeSoft.EdgeGateway.Events;
+﻿using Microsoft.Extensions.Logging;
+using ThabeSoft.EdgeGateway.Events;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
-using ThabeSoft.EdgeGateway.Utilities;
 
 namespace ThabeSoft.EdgeGateway.Ports;
 
 
-internal sealed class PortManager : IAsyncDisposable
+internal sealed class PortManager(
+        ILifecycleKeyedCollection<PortId, IPort> collection,
+        ILifecycleBatchExecutor batchExecutor,
+        Func<PortDescriptor, Port> portCreator,
+        IEventPublisher eventPublisher,
+        ILogger<PortManager> logger
+    ) : IAsyncDisposable
 {
-    private readonly ILifecycleKeyedCollection<PortId, Port> _collection;
-    private readonly ILifecycleBatchExecutor _batchExecutor;
-    private readonly IEventPublisher _eventPublisher;
-    private readonly Func<PortDescriptor, Port> _portCreator;
-
-
-    public PortManager(
-            PortManagerCreationArgs dependencies,
-            IEventPublisher eventPublisher,
-            ILifecycleKeyedCollectionFactory lifecycleKeyedCollectionFactory,
-            ILifecycleBatchExecutorFactory lifecycleBatchExecutorFactory)
-    {
-        _portCreator = dependencies.PortCreator;
-        _eventPublisher = eventPublisher;
-
-        _collection = lifecycleKeyedCollectionFactory.Create<PortId, Port>(dependencies.GatwayLifecycleState);
-        _batchExecutor = lifecycleBatchExecutorFactory.Create(dependencies.PortBatchExecutorDescriptor);
-
-        Items = new ReadOnlyDictionaryView<PortId, Port, IPort>(_collection.Items);
-    }
-
-    public IReadOnlyDictionary<PortId, IPort> Items { get; }
+    public IReadOnlyDictionary<PortId, IPort> Items => collection.Items;
+    public Func<ValueTask>? DisposedCallback { get; init; }
 
 
     public ValueTask StartAllAsync(CancellationToken cancellationToken = default) =>
-        _batchExecutor.StartAsync(_collection.Values, cancellationToken);
+        batchExecutor.StartAsync(collection.Values, cancellationToken);
 
     public ValueTask StopAllAsync(CancellationToken cancellationToken = default) =>
-        _batchExecutor.StopAsync(_collection.Values, cancellationToken);
+        batchExecutor.StopAsync(collection.Values, cancellationToken);
     public async ValueTask DisposeAsync()
     {
-        await _batchExecutor.DisposeAsync(_collection.Values);
-        await _collection.DisposeAsync();
+        if (DisposedCallback is null) return;
+
+        try { await DisposedCallback.Invoke(); }
+        catch (Exception ex) { logger.LogError(ex, "设备管理器释放回调异常"); }
     }
 
     public async ValueTask<IPort> AddAsync(PortDescriptor descriptor, CancellationToken cancellationToken = default)
     {
-        var port = await _collection.AddAsync(descriptor.Id, () => _portCreator.Invoke(descriptor), cancellationToken);
-        await _eventPublisher.PublishAsync(new PortAddedEvent(descriptor.Id));
+        var port = await collection.AddAsync(descriptor.Id, () => portCreator.Invoke(descriptor), cancellationToken);
+        await eventPublisher.PublishAsync(new PortAddedEvent(descriptor.Id));
 
         return port;
     }
     public async ValueTask<bool> RemoveAsync(PortId id, CancellationToken cancellationToken = default)
     {
-        var result = await _collection.RemoveAsync(id, cancellationToken);
-        await _eventPublisher.PublishAsync(new PortRemovedEvent(id));
+        var result = await collection.RemoveAsync(id, cancellationToken);
+        await eventPublisher.PublishAsync(new PortRemovedEvent(id));
 
         return result;
     }

@@ -14,7 +14,7 @@ internal interface IAsyncDisposableSubscription : ISubscription, IAsyncDisposabl
 
 
 internal sealed class Subscription<T>(in SubscriptionArgs<T> dependencies) :
-    ISubscription<T>, IAsyncDisposableSubscription
+    ISubscription<T>, IAsyncDisposableSubscription, IAsyncDisposable
     where T : notnull
 {
     private IDisposable? _triggerTick;

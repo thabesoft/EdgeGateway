@@ -51,7 +51,7 @@ internal sealed class DeviceFactory(
             Port = args.Port,
             DeviceState = deviceStateMachine,
             SubscriptionCreator = subscriptionCreator,
-            SubscriptionBatchExecutorDescriptor = args.SubscriptionBatchExecutorDescriptor
+            SubscriptionBatchExecutor = args.SubscriptionBatchExecutorDescriptor
         });
 
         // 订阅依赖

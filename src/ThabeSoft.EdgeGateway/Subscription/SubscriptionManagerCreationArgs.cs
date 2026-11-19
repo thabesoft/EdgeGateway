@@ -15,5 +15,5 @@ internal readonly struct SubscriptionManagerCreationArgs
     public required ILifecycleStateable DeviceState { get; init => field = value.Required(); }
 
     public required ISubscriptionCreator SubscriptionCreator { get; init => field = value.Required(); }
-    public required LifecycleBatchExecutorDescriptor SubscriptionBatchExecutorDescriptor { get; init => field = value.Required(); }
+    public required LifecycleBatchExecutorDescriptor SubscriptionBatchExecutor { get; init => field = value.Required(); }
 }

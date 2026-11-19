@@ -1,4 +1,6 @@
-﻿using ThabeSoft.EdgeGateway.Events;
+﻿using Microsoft.Extensions.Logging;
+using ThabeSoft.EdgeGateway.Events;
+using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 
 namespace ThabeSoft.EdgeGateway.Devices;
@@ -7,15 +9,32 @@ namespace ThabeSoft.EdgeGateway.Devices;
 internal sealed class DeviceManagerFactory(
         IEventPublisher eventPublisher,
         ILifecycleKeyedCollectionFactory lifecycleKeyedCollectionFactory,
-        ILifecycleBatchExecutorFactory lifecycleBatchExecutorFactory
+        ILifecycleBatchExecutorFactory lifecycleBatchExecutorFactory,
+        ILoggerFactory loggerFactory
     )
 {
     public DeviceManager Create(in DeviceManagerCreationArgs args)
     {
-        return new(
-            args: args,
+        var portId = args.Port.Id;
+        var collection = lifecycleKeyedCollectionFactory.Create<DeviceId, IDevice>(args.PortLifecycleState);
+        var batchExecutor = lifecycleBatchExecutorFactory.Create(args.DeviceBatchExecutorDescriptor);
+        var logger = loggerFactory.CreateLogger<DeviceManager>();
+
+        return new
+        (
+            portId: portId,
+            collection: collection,
+            batchExecutor: batchExecutor,
+            deviceCreator: args.DevicCreator,
             eventPublisher: eventPublisher,
-            lifecycleKeyedCollectionFactory: lifecycleKeyedCollectionFactory,
-            lifecycleBatchExecutorFactory: lifecycleBatchExecutorFactory);
+            logger: logger
+        )
+        {
+            DisposedCallback = async () =>
+            {
+                await SafeDisposeExtensions.DisposeSafelyAsync(batchExecutor, logger);
+                await SafeDisposeExtensions.DisposeSafelyAsync(collection, logger);
+            }
+        };
     }
 }

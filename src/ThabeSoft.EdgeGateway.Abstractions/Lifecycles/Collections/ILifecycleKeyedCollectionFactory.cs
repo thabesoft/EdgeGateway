@@ -5,5 +5,5 @@ public interface ILifecycleKeyedCollectionFactory
 {
     ILifecycleKeyedCollection<TKey, TLifecycle> Create<TKey, TLifecycle>(ILifecycleStateable hostState)
         where TKey : notnull
-        where TLifecycle : ILifecycle, IAsyncDisposable;
+        where TLifecycle : ILifecycle;
 }

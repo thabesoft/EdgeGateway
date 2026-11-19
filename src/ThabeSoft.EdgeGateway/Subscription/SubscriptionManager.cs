@@ -21,7 +21,7 @@ internal sealed class SubscriptionManager(
 {
     private readonly PortId _portId = portId;
     private readonly DeviceId _deviceId = deviceId;
-    private readonly AsyncDisposableToken _disposeToken = new(onDispose, logger);
+    private readonly DisposeFlag _disposeFlag = new();
 
 
     public IReadOnlyDictionary<SubscriptionId, ISubscription> Items => collection.Items;
@@ -29,30 +29,27 @@ internal sealed class SubscriptionManager(
 
     public ValueTask StartAllAsync(CancellationToken cancellationToken = default)
     {
-        _disposeToken.ThrowIfDisposed(this);
+        _disposeFlag.ThrowIfDisposed(this);
         return batchExecutor.StartBatchAsync(collection.Values, cancellationToken);
     }
     public ValueTask StopAllAsync(CancellationToken cancellationToken = default)
     {
-        _disposeToken.ThrowIfDisposed(this);
+        _disposeFlag.ThrowIfDisposed(this);
         return batchExecutor.StopBatchAsync(collection.Values, cancellationToken);
     }
-    public ValueTask TerminateAllAsync(CancellationToken cancellationToken = default)
-    {
-        _disposeToken.ThrowIfDisposed(this);
-        return batchExecutor.TerminateBatchAsync(collection.Values, cancellationToken);
-    }
-
     public async ValueTask<ISubscription<T>> AddAsync<T>(SubscriptionDescriptor<T> descriptor, CancellationToken cancellationToken = default)
         where T : notnull
     {
-        var subscription = await collection.AddAsync(descriptor.Id, () => subscriptionCreator.Create(descriptor), cancellationToken);
+        _disposeFlag.ThrowIfDisposed(this);
 
+        var subscription = await collection.AddAsync(descriptor.Id, () => subscriptionCreator.Create(descriptor), cancellationToken);
         _ = eventPublisher.PublishAsync(new SubscriptionAddedEvent(_portId, _deviceId, subscription.Id));
         return (ISubscription<T>)subscription;
     }
     public async ValueTask<bool> RemoveAsync(SubscriptionId id, CancellationToken cancellationToken = default)
     {
+        _disposeFlag.ThrowIfDisposed(this);
+
         var result = await collection.RemoveAsync(id, cancellationToken);
         if (!result) return false;
 
@@ -60,6 +57,9 @@ internal sealed class SubscriptionManager(
         return true;
     }
 
-
-    public ValueTask DisposeAsync() => _disposeToken.DisposeAsync();
+    public async ValueTask DisposeAsync()
+    {
+        if (!_disposeFlag.TryMarkDisposed()) return;
+        await Safe.DisposeSafelyAsync(onDispose, logger);
+    }
 }

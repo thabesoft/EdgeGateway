@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.Hosting;
 using ThabeSoft.EdgeGateway.App.DependencyInjection;
 using ThabeSoft.EdgeGateway.App.Desktop.DependencyInjection;
+using ThabeSoft.EdgeGateway.App.Hosting;
 using ThabeSoft.EdgeGateway.Codecs.DependencyInjection;
-using ThabeSoft.EdgeGateway.Configuration.DependencyInjection;
+using ThabeSoft.EdgeGateway.Configuration.Hosting;
 using ThabeSoft.EdgeGateway.Ethernet.DependencyInjection;
 using ThabeSoft.EdgeGateway.Hosting;
 using ThabeSoft.EdgeGateway.Lifecycles;
@@ -51,6 +52,8 @@ internal static class EdgeGatewayHost
                     .WithDisposeTimeout(TimeSpan.FromSeconds(5))
                     .WithExecuteTimeout(TimeSpan.FromSeconds(30))));
             })
+            .UseEdgeGatewayJsonConfig()
+            .UseEdgeGatewayApp()
             .ConfigureServices(descriptors =>
             {
                 descriptors.AddEdgeGatewayTriggers();
@@ -60,14 +63,6 @@ internal static class EdgeGatewayHost
                 descriptors.AddEdgeGatewaySerial();
                 descriptors.AddEdgeGatewayEthernet();
                 descriptors.AddEdgeGatewayModbus();
-
-                // APP
-                descriptors.AddEdgeGatewayApp();
-                descriptors.AddEdgeGatewayAppHost();
-                descriptors.AddEdgeGatewayAppDesktop();
-
-                // 用配置初始化
-                descriptors.AddEdgeGatewayJsonConfigProvider();
             })
             .Build();
     }

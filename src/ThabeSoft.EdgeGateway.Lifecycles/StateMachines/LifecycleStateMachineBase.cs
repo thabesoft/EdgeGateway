@@ -102,20 +102,13 @@ internal abstract class LifecycleStateMachineBase(
 
     private bool CheckCanTransitionToRunning()
     {
-        ThrowIfDisposed();
+        _disposeFlag.ThrowIfDisposed(this);
         return CanTransitionToRunning();
     }
 
     private bool CheckCanTransitionToStopped()
     {
-        ThrowIfDisposed();
+        _disposeFlag.ThrowIfDisposed(this);
         return CanTransitionToStopped();
     }
-    private bool CheckCanTransitionToTerminated()
-    {
-        ThrowIfDisposed();
-        return CanTransitionToTerminated();
-    }
-
-    private void ThrowIfDisposed() => ObjectDisposedException.ThrowIf(Interlocked.CompareExchange(ref _disposed, 1, 1) == 1, this);
 }

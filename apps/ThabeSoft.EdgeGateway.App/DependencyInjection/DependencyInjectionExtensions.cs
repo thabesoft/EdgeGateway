@@ -24,7 +24,7 @@ public static class DependencyInjectionExtensions
         public IServiceCollection AddEdgeGatewayApp()
         {
             // Services
-            descriptors.AddSingleton<ClipboardService>();
+            
             descriptors.AddSingleton<NavigationService>();
 
             descriptors.AddSingleton<ISukiToastManager, SukiToastManager>();
@@ -58,6 +58,8 @@ public static class DependencyInjectionExtensions
             descriptors.AddHostedService<LaunchHostedService>();
             return descriptors;
         }
+
+
 
 
         private IServiceCollection AddViewMapping<TView, TViewModel>(ServiceLifetime lifetime)

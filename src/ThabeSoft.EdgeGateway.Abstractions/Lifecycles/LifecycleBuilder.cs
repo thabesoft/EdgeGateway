@@ -90,10 +90,10 @@ public sealed class LifecycleStateMachineDescriptorConfigurator
 
 public sealed class LifecycleBatchExecutorDescriptorConfigurator
 {
-    internal TimeSpan ItemStartTimeout { get; private set => field = value.Positive(); }
-    internal TimeSpan ItemStopTimeout { get; private set => field = value.Positive(); }
-    internal TimeSpan ItemDisposeTimeout { get; private set => field = value.Positive(); }
-    internal int MaxConcurrency { get; private set => field = value.Positive(); }
+    internal int MaxConcurrency { get; private set => field = value.Positive(); } = 3;
+    internal TimeSpan ItemStartTimeout { get; private set => field = value.Positive(); } = TimeSpan.FromSeconds(3);
+    internal TimeSpan ItemStopTimeout { get; private set => field = value.Positive(); } = TimeSpan.FromSeconds(3);
+    internal TimeSpan ItemDisposeTimeout { get; private set => field = value.Positive(); } = TimeSpan.FromSeconds(3);
 
 
     public LifecycleBatchExecutorDescriptorConfigurator WithItemStartTimeout(TimeSpan timeout) { ItemStartTimeout = timeout; return this; }
@@ -104,7 +104,7 @@ public sealed class LifecycleBatchExecutorDescriptorConfigurator
     public LifecycleBatchExecutorDescriptorConfigurator WithItemStopTimeout(double timeoutMs) => WithItemStopTimeout(TimeSpan.FromMilliseconds(timeoutMs));
 
 
-    public LifecycleBatchExecutorDescriptorConfigurator WithItemDisposeTimeout(TimeSpan timeout) { ItemStartTimeout = timeout; return this; }
+    public LifecycleBatchExecutorDescriptorConfigurator WithItemDisposeTimeout(TimeSpan timeout) { ItemStopTimeout = timeout; return this; }
     public LifecycleBatchExecutorDescriptorConfigurator WithItemDisposeTimeout(double timeoutMs) => WithItemDisposeTimeout(TimeSpan.FromMilliseconds(timeoutMs));
 
 

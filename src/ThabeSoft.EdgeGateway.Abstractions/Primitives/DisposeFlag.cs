@@ -44,6 +44,7 @@ public struct DisposeFlag : IDisposeMarker
 /// <summary>
 /// 异步释放令牌：持有一段异步清理回调，幂等执行，支持查询释放状态
 /// </summary>
+[Obsolete]
 public readonly struct AsyncDisposableToken(Func<ValueTask> onDispose, ILogger? logger = null) : IAsyncDisposable, IDisposeMarker
 {
     private readonly DisposeFlag _flag = new();

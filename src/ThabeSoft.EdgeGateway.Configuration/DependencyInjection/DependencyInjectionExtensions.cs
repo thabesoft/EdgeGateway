@@ -47,7 +47,7 @@ public static class DependencyInjectionExtensions
 
 
             descriptors.TryAddSingleton<ConfigFileWatcher>();
-            descriptors.TryAddSingleton<ConfigManager>();
+            descriptors.TryAddSingleton<ConfigApplier>();
             descriptors.AddHostedService<ConfigFileReloadHostedService>();
             return descriptors;
         }

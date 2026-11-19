@@ -1,10 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
+using System.Collections;
 using ThabeSoft.EdgeGateway.Configuration.Models;
 
 namespace ThabeSoft.EdgeGateway.Configuration.Rloader;
 
 
-internal sealed class ConfigManager(IGateway gateway, ILogger<ConfigManager> logger)
+internal sealed class ConfigApplier(IGateway gateway, ILogger<ConfigApplier> logger)
 {
     private GatewayConfig _current = new();
 

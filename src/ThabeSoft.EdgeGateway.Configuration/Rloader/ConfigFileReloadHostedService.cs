@@ -6,7 +6,7 @@ namespace ThabeSoft.EdgeGateway.Configuration.Rloader;
 internal sealed class ConfigFileReloadHostedService(
         IConfigSerializer configSerializer,
         ConfigFileWatcher configFileWatcher,
-        ConfigManager configManager
+        ConfigApplier configManager
     ) : IHostedService
 {
     public async Task StartAsync(CancellationToken cancellationToken)

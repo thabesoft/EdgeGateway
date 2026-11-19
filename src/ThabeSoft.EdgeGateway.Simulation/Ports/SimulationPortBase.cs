@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
@@ -38,7 +39,7 @@ internal abstract class SimulationPortBase : ISimulationPort
     {
         return _stateMachine.ExecuteAsync(async ct =>
         {
-            var slave = await _devices.AddAsync(simulationDeviceDescriptor.Id, () => _deviceFactory.Create(new() { Device = simulationDeviceDescriptor , DeviceStateMachine = _deviceStateMachine }), ct);
+            var slave = await _devices.AddAsync(simulationDeviceDescriptor.Id, () => _deviceFactory.Create(new() { Device = simulationDeviceDescriptor, DeviceStateMachine = _deviceStateMachine }), ct);
             _logger.LogTrace("添加从站({Id})", simulationDeviceDescriptor.Id);
 
             OnAdded(slave);
@@ -75,14 +76,14 @@ internal abstract class SimulationPortBase : ISimulationPort
 
     protected virtual ValueTask OnStartAsync(CancellationToken cancellationToken)
     {
-        return _batchExecutor.StartAsync(_devices.Values, cancellationToken);
+        return _batchExecutor.StartBatchAsync(_devices.Values, cancellationToken);
     }
     protected virtual ValueTask OnStopAsync(CancellationToken cancellationToken)
     {
-        return _batchExecutor.StopAsync(_devices.Values, cancellationToken);
+        return _batchExecutor.StopBatchAsync(_devices.Values, cancellationToken);
     }
-    protected virtual ValueTask OnDisposeAsync()
+    protected virtual async ValueTask OnDisposeAsync()
     {
-        return _batchExecutor.DisposeAsync(_devices.Values);
+        await SafeDisposeExtensions.DisposeSafelyAsync(_batchExecutor);
     }
 }

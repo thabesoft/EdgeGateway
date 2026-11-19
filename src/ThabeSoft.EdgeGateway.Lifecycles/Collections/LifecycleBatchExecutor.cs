@@ -1,12 +1,16 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using ThabeSoft.EdgeGateway.Extensions;
 using ThabeSoft.EdgeGateway.Lifecycles.Utilities;
 
 namespace ThabeSoft.EdgeGateway.Lifecycles.Collections;
 
 
-internal sealed class LifecycleBatchExecutor(LifecycleBatchExecutorDescriptor descriptor, ILogger<LifecycleBatchExecutor> logger) : ILifecycleBatchExecutor
+internal sealed class LifecycleBatchExecutor(
+        LifecycleBatchExecutorDescriptor descriptor,
+        ILogger<LifecycleBatchExecutor> logger
+    ) : ILifecycleBatchExecutor
 {
     private readonly int _concurrency = descriptor.Concurrency;
     private readonly TimeSpan _itemStartTimeout = descriptor.ItemStartTimeout;
@@ -15,7 +19,7 @@ internal sealed class LifecycleBatchExecutor(LifecycleBatchExecutorDescriptor de
 
 
     [DebuggerStepThrough]
-    public async ValueTask StartAsync(IEnumerable<ILifecycle> lifecycles, CancellationToken cancellationToken = default)
+    public async ValueTask StartBatchAsync(IEnumerable<ILifecycle> lifecycles, CancellationToken cancellationToken = default)
     {
         var parallelOptions = new ParallelOptions
         {
@@ -38,7 +42,14 @@ internal sealed class LifecycleBatchExecutor(LifecycleBatchExecutorDescriptor de
                 errors.Add(ex);
                 logger.LogError(ex, "{Type} 启动失败", lifecycle.GetType());
 
-                try { await lifecycle.StopAsync(ct); } catch { }
+                try
+                {
+                    await TimeoutExtensions.ExecuteAsync(lifecycle.StopAsync, _itemStopTimeout, "停止");
+                }
+                catch (Exception stopEx)
+                {
+                    logger.LogCritical(stopEx, "{Type} 启动失败后，Stop 超时或者异常，资源泄漏风险", lifecycle.GetType());
+                }
             }
         });
 
@@ -47,7 +58,7 @@ internal sealed class LifecycleBatchExecutor(LifecycleBatchExecutorDescriptor de
     }
 
     [DebuggerStepThrough]
-    public async ValueTask StopAsync(IEnumerable<ILifecycle> lifecycles, CancellationToken cancellationToken)
+    public async ValueTask StopBatchAsync(IEnumerable<ILifecycle> lifecycles, CancellationToken cancellationToken)
     {
         var parallelOptions = new ParallelOptions
         {
@@ -63,7 +74,7 @@ internal sealed class LifecycleBatchExecutor(LifecycleBatchExecutorDescriptor de
 
             try
             {
-                await TimeoutExtensions.ExecuteAsync(lifecycle.StopAsync, _itemStopTimeout, "停止", cancellationToken);
+                await TimeoutExtensions.ExecuteAsync(lifecycle.StopAsync, _itemStopTimeout, "停止", ct);
             }
             catch (Exception ex)
             {
@@ -77,13 +88,13 @@ internal sealed class LifecycleBatchExecutor(LifecycleBatchExecutorDescriptor de
     }
 
     [DebuggerStepThrough]
-    public async ValueTask DisposeAsync<TLifecycle>(IEnumerable<TLifecycle> lifecycles) where TLifecycle : ILifecycle, IAsyncDisposable
+    public async ValueTask DisposeBatchAsync(IEnumerable<ILifecycle> lifecycles)
     {
         foreach (var lifecycle in lifecycles)
         {
             try
             {
-                await TimeoutExtensions.ExecuteAsync(lifecycle.DisposeAsync, _itemDisposeTimeout, "释放");
+                await TimeoutExtensions.ExecuteAsync(() => SafeDisposeExtensions.DisposeSafelyAsync(lifecycle, logger), _itemDisposeTimeout, "释放");
             }
             catch (Exception ex)
             {

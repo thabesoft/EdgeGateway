@@ -6,6 +6,7 @@
 /// </summary>
 public interface ILifecycleBatchExecutor
 {
-    ValueTask StartAsync(IEnumerable<ILifecycle> lifecycles, CancellationToken cancellationToken = default);
-    ValueTask StopAsync(IEnumerable<ILifecycle> lifecycles, CancellationToken cancellationToken = default);
+    ValueTask StartBatchAsync(IEnumerable<ILifecycle> lifecycles, CancellationToken cancellationToken = default);
+    ValueTask StopBatchAsync(IEnumerable<ILifecycle> lifecycles, CancellationToken cancellationToken = default);
+    ValueTask DisposeBatchAsync(IEnumerable<ILifecycle> lifecycles);
 }

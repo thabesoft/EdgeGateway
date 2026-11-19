@@ -20,10 +20,10 @@ internal sealed class DeviceManager(
 
 
     public ValueTask StartAllAsync(CancellationToken cancellationToken = default) =>
-        batchExecutor.StartAsync(collection.Values, cancellationToken);
+        batchExecutor.StartBatchAsync(collection.Values, cancellationToken);
 
     public ValueTask StopAllAsync(CancellationToken cancellationToken = default) =>
-        batchExecutor.StopAsync(collection.Values, cancellationToken);
+        batchExecutor.StopBatchAsync(collection.Values, cancellationToken);
     public async ValueTask DisposeAsync()
     {
         if (DisposedCallback is null) return;

@@ -7,7 +7,7 @@ internal sealed class LifecycleKeyedCollectionFactory(ILoggerFactory loggerFacto
 {
     public ILifecycleKeyedCollection<TKey, TLifecycle> Create<TKey, TLifecycle>(ILifecycleStateable hostState)
         where TKey : notnull
-        where TLifecycle : ILifecycle, IAsyncDisposable
+        where TLifecycle : ILifecycle
     {
         var logger = loggerFactory.CreateLogger<LifecycleKeyedCollection<TKey, TLifecycle>>();
         return new LifecycleKeyedCollection<TKey, TLifecycle>(hostState, logger);

@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions"  />
-		<PackageReference Include="System.Reactive"  />
-		<PackageReference Include="System.Threading.Channels"/>
+		<PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+		<PackageReference Include="System.Reactive" />
+		<PackageReference Include="System.Threading.Channels" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,5 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using ThabeSoft.Configuration;
+using ThabeSoft.Configuration.Mappers;
+using ThabeSoft.Configuration.Models;
+using ThabeSoft.Configuration.Rloader;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Events;
 using ThabeSoft.EdgeGateway.Hosting;
@@ -78,6 +82,22 @@ public static class DependencyInjectionExtensions
         {
             descriptors.TryAddSingleton<ReadingSinkBus>();
             descriptors.TryAddSingleton<IReadingSink, TestReadingSink>();
+
+            return descriptors;
+        }
+
+
+        /// <summary>
+        /// 提供配置解析映射能力
+        /// </summary>
+        public IServiceCollection AddEdgeGatewayConfiguration()
+        {
+            descriptors.TryAddSingleton<IConfigApplier, ConfigApplier>();
+
+            // Gateway
+            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigMapper<GatewayConfig>, GatewayConfigMapper>());
+            // Retry
+            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigMapper<RetryDescriptor>, RetryDescriptorConfigMapper>());
 
             return descriptors;
         }

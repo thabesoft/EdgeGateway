@@ -50,7 +50,7 @@ internal static class EdgeGatewayHost
                     .WithDisposeTimeout(TimeSpan.FromSeconds(5))
                     .WithExecuteTimeout(TimeSpan.FromSeconds(30))));
             })
-            .UseEdgeGatewayJsonConfig()
+            .UseJsonConfig("Gateway:Config")
             .UseEdgeGatewayApp()
             .ConfigureServices(descriptors =>
             {

@@ -1,12 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using ThabeSoft.Configuration.Json;
-using ThabeSoft.Configuration.Mappers;
-using ThabeSoft.Configuration.Models;
 using ThabeSoft.Configuration.Nodes;
 using ThabeSoft.Configuration.Paths;
 using ThabeSoft.Configuration.Rloader;
-using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.Configuration.DependencyInjection;
 
@@ -59,19 +56,6 @@ public static class DependencyInjectionExtensions
         {
             descriptors.TryAddSingleton<IConfigSerializer, JsonConfigSerializer>();
             descriptors.TryAddSingleton<IConfigNodeParser, JsonConfigNodeParser>();
-
-            return descriptors;
-        }
-
-        /// <summary>
-        /// 提供配置解析映射能力
-        /// </summary>
-        public IServiceCollection AddEdgeGatewayConfigMappers()
-        {
-            // Gateway
-            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigMapper<GatewayConfig>, GatewayConfigMapper>());
-            // Retry
-            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigMapper<RetryDescriptor>, RetryDescriptorConfigMapper>());
 
             return descriptors;
         }

@@ -31,6 +31,7 @@ public static class HostBuilderExtensions
                 descriptors.AddEdgeGatewaySubscriptions();
                 descriptors.AddEdgeGatewayDevices();
                 descriptors.AddEdgeGatewayPorts();
+                descriptors.AddEdgeGatewayConfiguration();
 
                 descriptors.AddEdgeGateway(gatewayBuilder.Build());
                 descriptors.AddEdgeGatewayHost();

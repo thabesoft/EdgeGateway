@@ -13,6 +13,7 @@
     <Project Path="infrastructures/ThabeSoft.Codecs.Abstractions/ThabeSoft.Codecs.Abstractions.csproj" Id="d21c3e31-5a11-4be1-9531-a11c4a34c794" />
     <Project Path="infrastructures/ThabeSoft.Codecs/ThabeSoft.Codecs.csproj" />
     <Project Path="infrastructures/ThabeSoft.Configuration.Abstractions/ThabeSoft.Configuration.Abstractions.csproj" Id="7e5f9387-e90d-436a-85f8-6aacc6a031c9" />
+    <Project Path="infrastructures/ThabeSoft.Configuration/ThabeSoft.Configuration.csproj" Id="d0049221-208f-4e2b-b55f-ed9a16adb0e8" />
     <Project Path="infrastructures/ThabeSoft.Primitives/ThabeSoft.Primitives.csproj" Id="4695430b-a564-4139-93bd-286bb2e1fd98" />
   </Folder>
   <Folder Name="/Modules/">

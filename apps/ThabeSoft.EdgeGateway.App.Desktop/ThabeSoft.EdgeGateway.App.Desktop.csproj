@@ -13,7 +13,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\infrastructures\ThabeSoft.Codecs\ThabeSoft.Codecs.csproj" />
-		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Configuration\ThabeSoft.EdgeGateway.Configuration.csproj" />
+		<ProjectReference Include="..\..\infrastructures\ThabeSoft.Configuration\ThabeSoft.Configuration.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Ethernet\ThabeSoft.EdgeGateway.Ethernet.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Lifecycles\ThabeSoft.EdgeGateway.Lifecycles.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Mitsubishi\ThabeSoft.EdgeGateway.Mitsubishi.csproj" />

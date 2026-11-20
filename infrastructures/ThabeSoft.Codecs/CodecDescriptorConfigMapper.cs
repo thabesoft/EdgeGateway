@@ -6,8 +6,8 @@ using ThabeSoft.EdgeGateway.Codecs.QWords;
 using ThabeSoft.EdgeGateway.Codecs.Words;
 using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Configuration.Nodes;
-using ThabeSoft.EdgeGateway.DataTypes;
-using ThabeSoft.EdgeGateway.Primitives.Guard;
+using ThabeSoft.Primitives;
+using ThabeSoft.Primitives.Guard;
 
 namespace ThabeSoft.EdgeGateway.Codecs;
 

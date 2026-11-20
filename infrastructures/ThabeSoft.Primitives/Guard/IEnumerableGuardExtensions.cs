@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Primitives.Guard;
+﻿namespace ThabeSoft.Primitives.Guard;
 
 
 public static class IEnumerableGuardExtensions

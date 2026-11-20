@@ -1,5 +1,5 @@
 ﻿using ThabeSoft.EdgeGateway.Configuration.Nodes;
-using ThabeSoft.EdgeGateway.Primitives.Guard;
+using ThabeSoft.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.EdgeGateway.Configuration.Mappers;

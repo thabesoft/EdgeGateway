@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Primitives.Guard;
+using ThabeSoft.Primitives.Guard;
 
 namespace ThabeSoft.EdgeGateway.Configuration.Models;
 

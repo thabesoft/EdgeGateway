@@ -3,7 +3,7 @@ using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Events;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Ports;
-using ThabeSoft.EdgeGateway.Primitives;
+using ThabeSoft.Primitives;
 
 namespace ThabeSoft.EdgeGateway.Subscription;
 

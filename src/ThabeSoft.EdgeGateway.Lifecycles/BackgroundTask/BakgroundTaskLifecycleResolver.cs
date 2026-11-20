@@ -1,6 +1,6 @@
 ﻿
 using Microsoft.Extensions.Logging;
-using ThabeSoft.EdgeGateway.Primitives.Guard;
+using ThabeSoft.Primitives.Guard;
 
 namespace ThabeSoft.EdgeGateway.Lifecycles.BackgroundTask;
 

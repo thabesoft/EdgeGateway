@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using ThabeSoft.EdgeGateway.Primitives;
+using ThabeSoft.Primitives;
 
 namespace ThabeSoft.EdgeGateway.Lifecycles.Utilities;
 

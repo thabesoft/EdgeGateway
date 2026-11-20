@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
-using ThabeSoft.EdgeGateway.Primitives;
 using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.Primitives;
 
 namespace ThabeSoft.EdgeGateway.Ethernet.Udp;
 

@@ -4,8 +4,8 @@ using ThabeSoft.EdgeGateway.Events;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Ports;
-using ThabeSoft.EdgeGateway.Primitives;
-using ThabeSoft.EdgeGateway.Primitives.Guard;
+using ThabeSoft.Primitives;
+using ThabeSoft.Primitives.Guard;
 
 namespace ThabeSoft.EdgeGateway.Subscription;
 

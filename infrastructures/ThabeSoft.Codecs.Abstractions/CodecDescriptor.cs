@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using ThabeSoft.EdgeGateway.DataTypes;
+using ThabeSoft.Primitives;
 
 namespace ThabeSoft.EdgeGateway.Codecs;
 

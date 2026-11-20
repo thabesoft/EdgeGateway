@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using ThabeSoft.EdgeGateway.Primitives;
+using ThabeSoft.Primitives;
 
 namespace ThabeSoft.EdgeGateway.Configuration.Rloader;
 

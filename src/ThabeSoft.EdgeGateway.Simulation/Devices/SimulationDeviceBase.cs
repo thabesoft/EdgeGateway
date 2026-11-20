@@ -4,11 +4,11 @@ using ThabeSoft.EdgeGateway.Codecs;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
-using ThabeSoft.EdgeGateway.Primitives;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Triggers;
 using ThabeSoft.EdgeGateway.Utilities;
 using ThabeSoft.EdgeGateway.ValueGenerators;
+using ThabeSoft.Primitives;
 
 namespace ThabeSoft.EdgeGateway.Simulation.Devices;
 

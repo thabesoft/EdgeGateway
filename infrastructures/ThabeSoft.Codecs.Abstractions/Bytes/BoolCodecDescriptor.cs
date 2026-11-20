@@ -1,5 +1,5 @@
 ﻿using ThabeSoft.EdgeGateway.Primitives;
-using ThabeSoft.EdgeGateway.Primitives.Guard;
+using ThabeSoft.Primitives.Guard;
 
 namespace ThabeSoft.EdgeGateway.Codecs.Bytes;
 

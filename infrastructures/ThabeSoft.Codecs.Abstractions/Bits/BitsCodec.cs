@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using ThabeSoft.EdgeGateway.Primitives.Guard;
+using ThabeSoft.Primitives.Guard;
 
 namespace ThabeSoft.EdgeGateway.Codecs.Bits;
 

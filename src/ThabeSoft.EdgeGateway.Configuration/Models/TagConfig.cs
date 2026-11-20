@@ -1,6 +1,6 @@
-﻿using ThabeSoft.EdgeGateway.DataTypes;
-using ThabeSoft.EdgeGateway.Primitives.Guard;
+﻿using ThabeSoft.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Tags;
+using ThabeSoft.Primitives;
 
 namespace ThabeSoft.EdgeGateway.Configuration.Models;
 

@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace ThabeSoft.EdgeGateway.Primitives.Guard;
+namespace ThabeSoft.Primitives.Guard;
 
 
 public static class StringGuardExtensions

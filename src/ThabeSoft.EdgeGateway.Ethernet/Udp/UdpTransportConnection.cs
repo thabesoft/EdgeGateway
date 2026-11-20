@@ -4,8 +4,8 @@ using System.Net.Sockets;
 using System.Threading.Channels;
 using ThabeSoft.EdgeGateway.Lifecycles;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
-using ThabeSoft.EdgeGateway.Primitives;
 using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.Primitives;
 
 namespace ThabeSoft.EdgeGateway.Ethernet.Udp;
 

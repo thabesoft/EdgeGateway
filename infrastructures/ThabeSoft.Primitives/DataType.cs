@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.DataTypes;
+﻿namespace ThabeSoft.Primitives;
 
 
 public enum DataType

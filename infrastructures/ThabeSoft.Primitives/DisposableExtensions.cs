@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace ThabeSoft.EdgeGateway.Primitives;
+namespace ThabeSoft.Primitives;
 
 
 public static class DisposableExtensions

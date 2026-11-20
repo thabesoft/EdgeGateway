@@ -1,7 +1,7 @@
 ﻿
 using System.Collections;
-using ThabeSoft.EdgeGateway.DataTypes;
-using ThabeSoft.EdgeGateway.Primitives.Guard;
+using ThabeSoft.Primitives;
+using ThabeSoft.Primitives.Guard;
 
 namespace ThabeSoft.EdgeGateway.Codecs.Bits;
 

@@ -2,7 +2,7 @@
 using System.Net;
 using System.Runtime.CompilerServices;
 
-namespace ThabeSoft.EdgeGateway.Primitives.Guard;
+namespace ThabeSoft.Primitives.Guard;
 
 
 public static class ThabeSoftEnumGuard

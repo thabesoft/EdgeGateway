@@ -2,11 +2,11 @@
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.Primitives.Guard;
 
-namespace ThabeSoft.Configuration.Models;
+namespace ThabeSoft.EdgeGateway.Configuration.Models;
 
 
 public sealed record class DeviceConfig
 {
-    public DeviceDescriptor Descriptor { get; init => field = value.Required(); }
+    public required DeviceDescriptor Descriptor { get; init => field = value.Required(); }
     public ImmutableArray<SubscriptionConfig> Subscriptions { get; init => field = [.. value.WhereNotNull()]; } = [];
 }

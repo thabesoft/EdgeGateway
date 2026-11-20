@@ -1,18 +1,23 @@
 ﻿using Microsoft.Extensions.Logging;
-using System.Collections;
-using ThabeSoft.Configuration.Models;
 using ThabeSoft.EdgeGateway;
+using ThabeSoft.EdgeGateway.Configuration.Models;
 
 namespace ThabeSoft.Configuration.Rloader;
 
 
-internal sealed class ConfigApplier(IGateway gateway, ILogger<ConfigApplier> logger)
+
+internal sealed class GatewayConfigApplier(
+        IGateway gateway,
+        ILogger<GatewayConfigApplier> logger
+    ) : IConfigReloadApplier
 {
     private GatewayConfig _current = new();
 
 
-    public async Task ApplyAsync(GatewayConfig newConfig, CancellationToken cancellationToken = default)
+    public async Task ApplyAsync(object config, CancellationToken cancellationToken = default)
     {
+        if (config is not GatewayConfig newConfig) return;
+
         var oldPorts = _current.Ports.ToDictionary(p => p.Descriptor.Id);
         var newPorts = newConfig.Ports.ToDictionary(p => p.Descriptor.Id);
 

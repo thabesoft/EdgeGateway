@@ -2,7 +2,7 @@
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.Primitives;
 
-namespace ThabeSoft.Configuration.Models;
+namespace ThabeSoft.EdgeGateway.Configuration.Models;
 
 
 public sealed class TagConfig

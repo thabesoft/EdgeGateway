@@ -1,7 +1,7 @@
 ﻿using System.Collections.Immutable;
 using ThabeSoft.Primitives.Guard;
 
-namespace ThabeSoft.Configuration.Models;
+namespace ThabeSoft.EdgeGateway.Configuration.Models;
 
 
 public sealed record class GatewayConfig

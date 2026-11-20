@@ -1,7 +1,7 @@
-﻿using ThabeSoft.Configuration.Models;
+﻿using ThabeSoft.EdgeGateway.Configuration.Models;
 using ThabeSoft.EdgeGateway.Subscription;
 
-namespace ThabeSoft.Configuration.Diff;
+namespace ThabeSoft.EdgeGateway.Configuration.Diff;
 
 
 internal sealed class ConfigDiffCalculator

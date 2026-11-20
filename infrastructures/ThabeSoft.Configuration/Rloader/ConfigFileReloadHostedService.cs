@@ -6,7 +6,7 @@ namespace ThabeSoft.Configuration.Rloader;
 internal sealed class ConfigFileReloadHostedService(
         IConfigSerializer configSerializer,
         ConfigFileWatcher configFileWatcher,
-        IConfigApplier configManager
+        IConfigReloadApplier configManager
     ) : IHostedService
 {
     public async Task StartAsync(CancellationToken cancellationToken)

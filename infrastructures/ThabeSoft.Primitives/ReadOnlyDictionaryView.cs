@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace ThabeSoft.EdgeGateway.Utilities;
 
 
-internal sealed class ReadOnlyDictionaryView<TKey, TValue, TView>(IReadOnlyDictionary<TKey, TValue> items) : IReadOnlyDictionary<TKey, TView>
+public sealed class ReadOnlyDictionaryView<TKey, TValue, TView>(IReadOnlyDictionary<TKey, TValue> items) : IReadOnlyDictionary<TKey, TView>
     where TKey : notnull
     where TValue : TView
 {

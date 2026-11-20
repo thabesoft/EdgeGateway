@@ -56,16 +56,6 @@ public static class DependencyInjectionExtensions
 
             return descriptors;
         }
-
-
-        public IServiceCollection AddEdgeGatewayEvents()
-        {
-            descriptors.TryAddSingleton<EventBus>();
-            descriptors.TryAddSingleton<IEventPublisher>(sp => sp.GetRequiredService<EventBus>());
-            descriptors.TryAddSingleton<IEventSubscriber>(sp => sp.GetRequiredService<EventBus>());
-
-            return descriptors;
-        }
         public IServiceCollection AddEdgeGatewayTransport()
         {
             descriptors.TryAddSingleton<ITransportConnectionFactory, TransportConnectionFactory>();

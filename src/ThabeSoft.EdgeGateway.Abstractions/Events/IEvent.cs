@@ -5,9 +5,6 @@ using ThabeSoft.EdgeGateway.Subscription;
 
 namespace ThabeSoft.EdgeGateway.Events;
 
-public interface IEvent;
-
-
 public readonly record struct GatewayStateChangedEvent(LifecycleState Old, LifecycleState New) : IEvent;
 
 

@@ -1,7 +1,7 @@
 ﻿using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.Transports;
 
-namespace ThabeSoft.EdgeGateway.Modbus;
+namespace ThabeSoft.Protocols.Modbus;
 
 
 public sealed record class ModbusProtocolDescriptor : ProtocolDescriptor

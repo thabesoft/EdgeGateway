@@ -2,7 +2,7 @@ using ThabeSoft.Codecs;
 using ThabeSoft.Configuration.Diff;
 using ThabeSoft.Configuration.Models;
 using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Modbus;
+using ThabeSoft.Protocols.Modbus;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.Transports.Serial;
 using ThabeSoft.EdgeGateway.Subscription;

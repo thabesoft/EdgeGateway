@@ -1,15 +1,13 @@
-﻿using ThabeSoft.EdgeGateway.Addressing;
-using ThabeSoft.Configuration;
+﻿using ThabeSoft.Configuration;
 using ThabeSoft.Configuration.Nodes;
 using ThabeSoft.EdgeGateway.Primitives;
 using ThabeSoft.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.Protocols;
 
-namespace ThabeSoft.EdgeGateway.Modbus;
+namespace ThabeSoft.Protocols.Modbus;
 
 
-internal sealed class ModbusDataAddressConfigMapper : IConfigMapper<ProtocolAddress>
+internal sealed class ModbusProtocolAddressConfigMapper : IConfigMapper<ProtocolAddress>
 {
     public bool CanMap(IConfigNode root)
     {

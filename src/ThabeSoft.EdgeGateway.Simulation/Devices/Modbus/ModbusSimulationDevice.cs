@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using NModbus;
 using ThabeSoft.Codecs;
-using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.Primitives.Guard;
 using ThabeSoft.Protocols;
+using ThabeSoft.Protocols.Modbus;
 
 namespace ThabeSoft.EdgeGateway.Simulation.Devices.Modbus;
 

@@ -3,14 +3,27 @@
 namespace ThabeSoft.Protocols;
 
 
-
+/// <summary>
+/// 表示一个数据访问描述符
+/// </summary>
 public interface IDataAccessDescriptor
 {
+    /// <summary>
+    /// 协议地址
+    /// </summary>
     ProtocolAddress Address { get; }
+
+    /// <summary>
+    /// 编码器
+    /// </summary>
     CodecDescriptor Codec { get; }
 }
 
 
+/// <summary>
+/// 表示一个数据访问描述符
+/// </summary>
+/// <typeparam name="T">数据在C#中的类型</typeparam>
 public sealed record class DataAccessDescriptor<T> : IDataAccessDescriptor
      where T : notnull
 {
@@ -30,9 +43,15 @@ public sealed record class DataAccessDescriptor<T> : IDataAccessDescriptor
         Codec = codec;
     }
 
-
-    public CodecDescriptor<T> Codec { get; }
+    /// <summary>
+    /// 协议地址
+    /// </summary>
     public ProtocolAddress Address { get; }
+
+    /// <summary>
+    /// 编码器
+    /// </summary>
+    public CodecDescriptor<T> Codec { get; }
 
     CodecDescriptor IDataAccessDescriptor.Codec => Codec;
 

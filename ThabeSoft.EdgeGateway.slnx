@@ -7,6 +7,7 @@
   </Folder>
   <Folder Name="/Core/">
     <Project Path="src/ThabeSoft.EdgeGateway.Abstractions/ThabeSoft.EdgeGateway.Abstractions.csproj" Id="2c45d842-15d4-4141-a034-745e2f81d658" />
+    <Project Path="src/ThabeSoft.EdgeGateway.Simulation/ThabeSoft.EdgeGateway.Simulation.csproj" />
     <Project Path="src/ThabeSoft.EdgeGateway/ThabeSoft.EdgeGateway.csproj" />
   </Folder>
   <Folder Name="/Infrastructures/">
@@ -24,17 +25,6 @@
     <Project Path="infrastructures/ThabeSoft.Transports.Serial/ThabeSoft.Transports.Serial.csproj" Id="336fd480-eae9-4892-be9f-a8fff9a565ab" />
     <Project Path="infrastructures/ThabeSoft.Triggers.Abstractions/ThabeSoft.Triggers.Abstractions.csproj" Id="a30948c2-5b64-4e38-b39a-67e216e8e8e5" />
     <Project Path="infrastructures/ThabeSoft.Triggers/ThabeSoft.Triggers.csproj" Id="e786af9c-f964-4a26-9e5d-78ad2122838b" />
-  </Folder>
-  <Folder Name="/Modules/">
-    <Project Path="src/ThabeSoft.EdgeGateway.Simulation/ThabeSoft.EdgeGateway.Simulation.csproj" />
-  </Folder>
-  <Folder Name="/Modules/Connections/">
-    <Project Path="src/ThabeSoft.EdgeGateway.Ethernet/ThabeSoft.EdgeGateway.Ethernet.csproj" Id="9293874d-7505-40a5-b5fc-1f88aa38a405" />
-    <Project Path="src/ThabeSoft.EdgeGateway.Serial/ThabeSoft.EdgeGateway.Serial.csproj" Id="7f4865ff-6e31-4577-89ad-3073834fd687" />
-  </Folder>
-  <Folder Name="/Modules/Protocol/">
-    <Project Path="src/ThabeSoft.EdgeGateway.Mitsubishi/ThabeSoft.EdgeGateway.Mitsubishi.csproj" Id="274375c8-ff68-4c02-b4a3-59deb87c0e49" />
-    <Project Path="src/ThabeSoft.EdgeGateway.Modbus/ThabeSoft.EdgeGateway.Modbus.csproj" Id="46b694ef-1a71-4cda-a6b3-e93906a3047f" />
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="tests/ThabeSoft.EdgeGateway.IntegrationTests/ThabeSoft.EdgeGateway.IntegrationTests.csproj" Id="861f1cea-1f75-45c5-b940-1c2408bc5670" />

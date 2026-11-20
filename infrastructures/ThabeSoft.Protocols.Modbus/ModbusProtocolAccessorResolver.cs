@@ -5,7 +5,7 @@ using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.Protocols;
 using ThabeSoft.Transports.Byte;
 
-namespace ThabeSoft.EdgeGateway.Modbus;
+namespace ThabeSoft.Protocols.Modbus;
 
 
 internal sealed class ModbusProtocolAccessorResolver(

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using System.Net;
 using ThabeSoft.Codecs;
 using ThabeSoft.Transports.Ethernet;
-using ThabeSoft.EdgeGateway.Modbus;
+using ThabeSoft.Protocols.Modbus;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Simulation;
 using ThabeSoft.Triggers;

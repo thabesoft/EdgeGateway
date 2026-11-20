@@ -3,7 +3,7 @@ using System.Net;
 using ThabeSoft.Codecs;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.Transports.Ethernet;
-using ThabeSoft.EdgeGateway.Modbus;
+using ThabeSoft.Protocols.Modbus;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.Transports.Serial;

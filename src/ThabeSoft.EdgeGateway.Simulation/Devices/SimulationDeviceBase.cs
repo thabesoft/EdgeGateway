@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.Codecs;
-using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Utilities;
 using ThabeSoft.EdgeGateway.ValueGenerators;
@@ -8,6 +7,7 @@ using ThabeSoft.Lifecycles;
 using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.Primitives;
 using ThabeSoft.Protocols;
+using ThabeSoft.Protocols.Modbus;
 using ThabeSoft.Triggers;
 
 namespace ThabeSoft.EdgeGateway.Simulation.Devices;

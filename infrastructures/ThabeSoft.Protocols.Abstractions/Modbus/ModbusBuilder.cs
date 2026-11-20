@@ -1,10 +1,8 @@
 ﻿using System.Collections;
-using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.Codecs;
 using ThabeSoft.Primitives.Guard;
-using ThabeSoft.Protocols;
 
-namespace ThabeSoft.EdgeGateway.Modbus;
+namespace ThabeSoft.Protocols.Modbus;
 
 
 public static class ModbusBuilder

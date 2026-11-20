@@ -4,7 +4,7 @@ using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.Transports.Ethernet;
 using ThabeSoft.Lifecycles.Collections;
 using ThabeSoft.Lifecycles.StateMachines;
-using ThabeSoft.EdgeGateway.Modbus;
+using ThabeSoft.Protocols.Modbus;
 using ThabeSoft.EdgeGateway.Ports.Modbus.Ip;
 using ThabeSoft.EdgeGateway.Ports.Modbus.Serial;
 using ThabeSoft.EdgeGateway.Protocols;

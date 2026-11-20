@@ -1,7 +1,7 @@
 ﻿using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Devices.Modbus;
 using ThabeSoft.Transports.Ethernet;
-using ThabeSoft.EdgeGateway.Modbus;
+using ThabeSoft.Protocols.Modbus;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.Transports.Serial;
 using ThabeSoft.EdgeGateway.ValueGenerators;

@@ -4,7 +4,7 @@ using NModbus;
 using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.Protocols;
 
-namespace ThabeSoft.EdgeGateway.Modbus.DependencyInjection;
+namespace ThabeSoft.Protocols.Modbus.DependencyInjection;
 
 
 public static class DependencyInjectionExtensions
@@ -12,9 +12,9 @@ public static class DependencyInjectionExtensions
     extension(IServiceCollection descriptors)
     {
         /// <summary>
-        /// 添加 Modbus 模块
+        /// 提供 Modbus 协议访问能力
         /// </summary>
-        public IServiceCollection AddEdgeGatewayModbus()
+        public IServiceCollection AddModbusProtocol()
         {
             descriptors.AddSingleton<IModbusFactory, ModbusFactory>();
 
@@ -22,11 +22,14 @@ public static class DependencyInjectionExtensions
             return descriptors;
         }
 
-
-        public IServiceCollection AddEdgeGatewayModbusConfig()
+        /// <summary>
+        /// 提供 Modbus 协议配置解析能力
+        /// </summary>
+        public IServiceCollection AddModbusProtocolConfig()
         {
             descriptors.AddProtocolConfigMapper<ModbusProtocolDescriptorConfigMapper>();
-            descriptors.AddDataAddressMapper<ModbusDataAddressConfigMapper>();
+            descriptors.AddDataAddressMapper<ModbusProtocolAddressConfigMapper>();
+
             return descriptors;
         }
     }

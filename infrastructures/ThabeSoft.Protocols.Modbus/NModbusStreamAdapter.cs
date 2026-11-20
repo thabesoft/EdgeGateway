@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using ThabeSoft.Transports.Byte;
 
-namespace ThabeSoft.EdgeGateway.Modbus;
+namespace ThabeSoft.Protocols.Modbus;
 
 
 internal sealed class NModbusStreamAdapter(IByteDuplex byteDuplex) : IStreamResource

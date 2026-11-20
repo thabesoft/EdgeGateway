@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using ThabeSoft.Codecs;
 using ThabeSoft.Transports.Ethernet;
-using ThabeSoft.EdgeGateway.Modbus;
+using ThabeSoft.Protocols.Modbus;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.Triggers;

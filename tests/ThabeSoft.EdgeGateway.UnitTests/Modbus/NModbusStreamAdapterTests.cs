@@ -1,5 +1,5 @@
 using Moq;
-using ThabeSoft.EdgeGateway.Modbus;
+using ThabeSoft.Protocols.Modbus;
 using ThabeSoft.Transports.Byte;
 
 namespace ThabeSoft.EdgeGateway.UnitTests.Modbus;

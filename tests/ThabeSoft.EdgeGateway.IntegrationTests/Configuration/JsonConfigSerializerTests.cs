@@ -4,7 +4,7 @@ using ThabeSoft.Codecs.DependencyInjection;
 using ThabeSoft.Configuration;
 using ThabeSoft.Configuration.Hosting;
 using ThabeSoft.Transports.Ethernet.DependencyInjection;
-using ThabeSoft.EdgeGateway.Modbus.DependencyInjection;
+using ThabeSoft.Protocols.Modbus.DependencyInjection;
 using ThabeSoft.Transports.Serial.DependencyInjection;
 using ThabeSoft.Triggers.DependencyInjection;
 

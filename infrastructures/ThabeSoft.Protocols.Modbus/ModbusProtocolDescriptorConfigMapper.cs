@@ -3,7 +3,7 @@ using ThabeSoft.Configuration.Nodes;
 using ThabeSoft.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Protocols;
 
-namespace ThabeSoft.EdgeGateway.Modbus;
+namespace ThabeSoft.Protocols.Modbus;
 
 
 internal sealed class ModbusProtocolDescriptorConfigMapper : IConfigMapper<ProtocolDescriptor>

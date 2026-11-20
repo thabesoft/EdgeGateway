@@ -2,7 +2,7 @@
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.Protocols;
 
-namespace ThabeSoft.EdgeGateway.Addressing;
+namespace ThabeSoft.Protocols.Modbus;
 
 
 public sealed record class ModbusProtocolAddress : ProtocolAddress

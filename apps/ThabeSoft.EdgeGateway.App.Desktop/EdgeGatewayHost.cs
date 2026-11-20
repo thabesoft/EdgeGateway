@@ -6,7 +6,7 @@ using ThabeSoft.Transports.Ethernet.DependencyInjection;
 using ThabeSoft.EdgeGateway.Hosting;
 using ThabeSoft.Lifecycles;
 using ThabeSoft.Lifecycles.DependencyInjection;
-using ThabeSoft.EdgeGateway.Modbus.DependencyInjection;
+using ThabeSoft.Protocols.Modbus.DependencyInjection;
 using ThabeSoft.Transports.Serial.DependencyInjection;
 using ThabeSoft.Triggers.DependencyInjection;
 using System.ComponentModel.Design;
@@ -63,13 +63,16 @@ internal static class EdgeGatewayHost
                 descriptors.AddCodecs();
                 descriptors.AddCodecsConfig();
 
+                // 传输
                 descriptors.AddSerialTransport();
                 descriptors.AddSerialTransportConfig();
 
                 descriptors.AddEthernetTransport();
                 descriptors.AddEthernetTransportConfig();
 
-                descriptors.AddEdgeGatewayModbus();
+                // 协议
+                descriptors.AddModbusProtocol();
+                descriptors.AddModbusProtocolConfig();
             })
             .Build();
     }

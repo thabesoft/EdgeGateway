@@ -6,7 +6,7 @@ using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Serial;
 using ThabeSoft.EdgeGateway.Subscription;
-using ThabeSoft.EdgeGateway.Triggers;
+using ThabeSoft.Triggers;
 
 namespace ThabeSoft.EdgeGateway.IntegrationTests;
 

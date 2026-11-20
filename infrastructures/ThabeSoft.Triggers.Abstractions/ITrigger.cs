@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Triggers;
+﻿namespace ThabeSoft.Triggers;
 
 
 public interface ITrigger : IAsyncDisposable

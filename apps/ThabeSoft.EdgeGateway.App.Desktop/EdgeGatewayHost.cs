@@ -8,7 +8,7 @@ using ThabeSoft.Lifecycles;
 using ThabeSoft.Lifecycles.DependencyInjection;
 using ThabeSoft.EdgeGateway.Modbus.DependencyInjection;
 using ThabeSoft.EdgeGateway.Serial.DependencyInjection;
-using ThabeSoft.EdgeGateway.Triggers.DependencyInjection;
+using ThabeSoft.Triggers.DependencyInjection;
 
 namespace ThabeSoft.EdgeGateway.App.Desktop;
 
@@ -54,7 +54,7 @@ internal static class EdgeGatewayHost
             .UseEdgeGatewayApp()
             .ConfigureServices(descriptors =>
             {
-                descriptors.AddEdgeGatewayTriggers();
+                descriptors.AddTriggers();
                 descriptors.AddLifecycles();
                 descriptors.AddCodecs();
 

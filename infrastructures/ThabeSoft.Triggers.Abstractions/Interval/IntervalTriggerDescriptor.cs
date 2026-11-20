@@ -1,6 +1,6 @@
 ﻿using ThabeSoft.Primitives.Guard;
 
-namespace ThabeSoft.EdgeGateway.Triggers.Interval;
+namespace ThabeSoft.Triggers.Interval;
 
 
 public sealed record class IntervalTriggerDescriptor : TriggerDescriptor

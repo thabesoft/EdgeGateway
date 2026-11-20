@@ -6,7 +6,7 @@ using ThabeSoft.EdgeGateway.Ethernet;
 using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Simulation;
-using ThabeSoft.EdgeGateway.Triggers;
+using ThabeSoft.Triggers;
 using ThabeSoft.EdgeGateway.ValueGenerators;
 
 namespace ThabeSoft.EdgeGateway.Simulator.Hosting;

@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Triggers;
+﻿namespace ThabeSoft.Triggers;
 
 public enum TriggerType : byte
 {

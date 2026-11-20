@@ -2,17 +2,17 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Diagnostics.CodeAnalysis;
 using ThabeSoft.Configuration;
-using ThabeSoft.EdgeGateway.Triggers.Interval;
-using ThabeSoft.EdgeGateway.Triggers.Signal;
+using ThabeSoft.Triggers.Interval;
+using ThabeSoft.Triggers.Signal;
 
-namespace ThabeSoft.EdgeGateway.Triggers.DependencyInjection;
+namespace ThabeSoft.Triggers.DependencyInjection;
 
 
 public static class DependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {
-        public IServiceCollection AddEdgeGatewayTriggers()
+        public IServiceCollection AddTriggers()
         {
             descriptors.TryAddSingleton<ITriggerScheduler, TriggerScheduler>();
             descriptors.TryAddSingleton<ITriggerFactory, TriggerFactory>();
@@ -25,14 +25,14 @@ public static class DependencyInjectionExtensions
             return descriptors;
         }
 
-        public IServiceCollection AddEdgeGatewayTriggersConfig()
+        public IServiceCollection AddTriggersConfig()
         {
             descriptors.AddTriggerConfigMapper<IntervalTriggerDescriptorConfigMapper>();
             return descriptors;
         }
 
 
-        public IServiceCollection AddTriggerConfigMapper<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMapper>()
+        private IServiceCollection AddTriggerConfigMapper<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMapper>()
            where TMapper : class, IConfigMapper<TriggerDescriptor>
         {
             descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigMapper<TriggerDescriptor>, TMapper>());

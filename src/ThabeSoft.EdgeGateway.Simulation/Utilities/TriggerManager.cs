@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using ThabeSoft.Lifecycles;
-using ThabeSoft.EdgeGateway.Triggers;
+using ThabeSoft.Triggers;
 using ThabeSoft.Primitives;
 
 namespace ThabeSoft.EdgeGateway.Utilities;

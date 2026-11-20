@@ -5,7 +5,7 @@ using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.Lifecycles;
 using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Tags;
-using ThabeSoft.EdgeGateway.Triggers;
+using ThabeSoft.Triggers;
 using ThabeSoft.EdgeGateway.Utilities;
 using ThabeSoft.EdgeGateway.ValueGenerators;
 using ThabeSoft.Primitives;

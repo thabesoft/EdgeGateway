@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 
-namespace ThabeSoft.EdgeGateway.Triggers;
+namespace ThabeSoft.Triggers;
 
 
 internal sealed class TriggerScheduler(

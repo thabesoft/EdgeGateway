@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using ThabeSoft.Lifecycles;
 using ThabeSoft.EdgeGateway.Utilities;
 
-namespace ThabeSoft.EdgeGateway.Triggers;
+namespace ThabeSoft.Triggers;
 
 internal sealed class TriggerManager(
         ITriggerResolver triggerFactorySelector,

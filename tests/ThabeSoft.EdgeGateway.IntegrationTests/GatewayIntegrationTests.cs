@@ -18,7 +18,7 @@ using ThabeSoft.EdgeGateway.Simulation;
 using ThabeSoft.EdgeGateway.Simulation.DependencyInjection;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Tags;
-using ThabeSoft.EdgeGateway.Triggers;
+using ThabeSoft.Triggers;
 
 namespace ThabeSoft.EdgeGateway;
 

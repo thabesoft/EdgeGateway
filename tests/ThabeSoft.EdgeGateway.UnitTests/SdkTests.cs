@@ -9,7 +9,7 @@ using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Serial;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transports;
-using ThabeSoft.EdgeGateway.Triggers;
+using ThabeSoft.Triggers;
 
 namespace ThabeSoft.EdgeGateway.UnitTests;
 

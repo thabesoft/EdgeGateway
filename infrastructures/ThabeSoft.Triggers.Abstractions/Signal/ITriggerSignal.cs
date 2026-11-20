@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Triggers.Signal;
+﻿namespace ThabeSoft.Triggers.Signal;
 
 
 public interface ITriggerSignal

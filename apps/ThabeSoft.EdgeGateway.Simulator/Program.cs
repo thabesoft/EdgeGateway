@@ -3,7 +3,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Simulation.DependencyInjection;
 using ThabeSoft.EdgeGateway.Simulator.Hosting;
-using ThabeSoft.EdgeGateway.Triggers.DependencyInjection;
+using ThabeSoft.Triggers.DependencyInjection;
 
 Console.Title = "ModbusSalveSimulator";
 

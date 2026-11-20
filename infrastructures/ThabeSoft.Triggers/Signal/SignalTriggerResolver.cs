@@ -1,6 +1,6 @@
 ﻿using ThabeSoft.Primitives.Guard;
 
-namespace ThabeSoft.EdgeGateway.Triggers.Signal;
+namespace ThabeSoft.Triggers.Signal;
 
 internal sealed class SignalTriggerResolver : ITriggerResolver
 {

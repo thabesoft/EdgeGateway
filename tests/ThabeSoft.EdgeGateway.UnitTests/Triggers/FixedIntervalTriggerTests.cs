@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Time.Testing;
-using ThabeSoft.EdgeGateway.Triggers;
-using ThabeSoft.EdgeGateway.Triggers.Interval;
+using ThabeSoft.Triggers;
+using ThabeSoft.Triggers.Interval;
 
 namespace ThabeSoft.EdgeGateway.UnitTests.Triggers;
 

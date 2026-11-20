@@ -1,5 +1,5 @@
-﻿using ThabeSoft.EdgeGateway.Triggers;
-using ThabeSoft.EdgeGateway.Triggers.Signal;
+﻿using ThabeSoft.Triggers;
+using ThabeSoft.Triggers.Signal;
 
 namespace ThabeSoft.EdgeGateway.UnitTests.Triggers;
 

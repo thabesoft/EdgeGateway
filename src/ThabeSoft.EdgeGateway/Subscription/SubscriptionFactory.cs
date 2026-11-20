@@ -7,7 +7,7 @@ using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Readings;
-using ThabeSoft.EdgeGateway.Triggers;
+using ThabeSoft.Triggers;
 using ThabeSoft.Primitives;
 
 namespace ThabeSoft.EdgeGateway.Subscription;

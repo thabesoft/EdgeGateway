@@ -19,7 +19,7 @@
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Modbus\ThabeSoft.EdgeGateway.Modbus.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Serial\ThabeSoft.EdgeGateway.Serial.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Simulation\ThabeSoft.EdgeGateway.Simulation.csproj" />
-		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Triggers\ThabeSoft.EdgeGateway.Triggers.csproj" />
+		<ProjectReference Include="..\..\src\ThabeSoft.Triggers\ThabeSoft.Triggers.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway\ThabeSoft.EdgeGateway.csproj" />
 	</ItemGroup>
 

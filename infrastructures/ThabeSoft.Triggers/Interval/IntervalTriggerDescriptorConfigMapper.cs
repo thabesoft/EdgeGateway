@@ -2,7 +2,7 @@
 using ThabeSoft.Configuration.Nodes;
 using ThabeSoft.Primitives.Guard;
 
-namespace ThabeSoft.EdgeGateway.Triggers.Interval;
+namespace ThabeSoft.Triggers.Interval;
 
 
 internal sealed class IntervalTriggerDescriptorConfigMapper : IConfigMapper<TriggerDescriptor>

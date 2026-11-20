@@ -6,7 +6,7 @@ using ThabeSoft.Configuration.Hosting;
 using ThabeSoft.EdgeGateway.Ethernet.DependencyInjection;
 using ThabeSoft.EdgeGateway.Modbus.DependencyInjection;
 using ThabeSoft.EdgeGateway.Serial.DependencyInjection;
-using ThabeSoft.EdgeGateway.Triggers.DependencyInjection;
+using ThabeSoft.Triggers.DependencyInjection;
 
 namespace ThabeSoft.EdgeGateway.IntegrationTests.Configuration;
 

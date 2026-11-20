@@ -9,7 +9,7 @@ using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Transports;
-using ThabeSoft.EdgeGateway.Triggers;
+using ThabeSoft.Triggers;
 using ThabeSoft.Primitives;
 using ThabeSoft.Configuration;
 using ThabeSoft.EdgeGateway.Configuration.Models;

@@ -4,7 +4,7 @@ using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Readings;
 using ThabeSoft.EdgeGateway.Tags;
-using ThabeSoft.EdgeGateway.Triggers;
+using ThabeSoft.Triggers;
 using ThabeSoft.Primitives;
 
 namespace ThabeSoft.EdgeGateway.Subscription;

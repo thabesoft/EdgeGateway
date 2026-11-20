@@ -3,7 +3,7 @@ using NModbus;
 using ThabeSoft.Codecs;
 using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Simulation.Devices.Modbus;
-using ThabeSoft.EdgeGateway.Triggers;
+using ThabeSoft.Triggers;
 
 namespace ThabeSoft.EdgeGateway.Devices.Modbus;
 

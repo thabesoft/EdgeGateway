@@ -17,6 +17,8 @@
     <Project Path="infrastructures/ThabeSoft.Lifecycles.Abstractions/ThabeSoft.Lifecycles.Abstractions.csproj" Id="ded1c87a-a1ea-42f7-85eb-cf35f16148d6" />
     <Project Path="infrastructures/ThabeSoft.Lifecycles/ThabeSoft.Lifecycles.csproj" />
     <Project Path="infrastructures/ThabeSoft.Primitives/ThabeSoft.Primitives.csproj" Id="4695430b-a564-4139-93bd-286bb2e1fd98" />
+    <Project Path="infrastructures/ThabeSoft.Triggers.Abstractions/ThabeSoft.Triggers.Abstractions.csproj" Id="a30948c2-5b64-4e38-b39a-67e216e8e8e5" />
+    <Project Path="infrastructures/ThabeSoft.Triggers/ThabeSoft.Triggers.csproj" Id="e786af9c-f964-4a26-9e5d-78ad2122838b" />
   </Folder>
   <Folder Name="/Modules/">
     <Project Path="src/ThabeSoft.EdgeGateway.Simulation/ThabeSoft.EdgeGateway.Simulation.csproj" />

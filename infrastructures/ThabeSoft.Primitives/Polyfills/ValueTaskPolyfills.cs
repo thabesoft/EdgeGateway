@@ -4,17 +4,25 @@
 namespace System.Threading.Tasks;
 #pragma warning restore IDE0130 // 命名空间与文件夹结构不匹配
 
-public static class ValueTaskPolyfills
+public static class ValueTaskPolyFills
 {
     extension(ValueTask)
     {
+        /// <summary>
+        /// 兼容语法 返回 default
+        /// </summary>
         public static ValueTask CompletedTask => default;
 
+
+        /// <summary>
+        /// 从结果创建
+        /// </summary>
         public static ValueTask<T> FromResult<T>(T result)
         {
             return new(result);
         }
     }
+
 }
 
 #endif

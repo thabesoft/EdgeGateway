@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>ThabeSoft.Triggers</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="System.Threading.Tasks.Extensions" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\ThabeSoft.Primitives\ThabeSoft.Primitives.csproj" />
+	</ItemGroup>
+
+</Project>

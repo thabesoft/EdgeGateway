@@ -5,7 +5,7 @@ using SukiUI.Toasts;
 using ThabeSoft.EdgeGateway.App.Utilities;
 using ThabeSoft.EdgeGateway.Readings;
 using ThabeSoft.EdgeGateway.Subscription;
-using ThabeSoft.EdgeGateway.Tags;
+using ThabeSoft.Protocols;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Gateway;
 
@@ -38,7 +38,7 @@ internal sealed partial class SubscriptionViewModel : LifecycleViewModel, IDispo
     }
 
     public SubscriptionId Id => _subscription.Id;
-    public DataAddress Address => _subscription.Address;
+    public ProtocolAddress Address => _subscription.Address;
     [ObservableProperty] public partial Reading? Latest { get; set; }
     public RingBuffer<double> Buffer => _buffer;
 

@@ -1,12 +1,12 @@
-﻿using ThabeSoft.Primitives.Guard;
-using ThabeSoft.EdgeGateway.Tags;
-using ThabeSoft.Primitives;
+﻿using ThabeSoft.Primitives;
+using ThabeSoft.Primitives.Guard;
+using ThabeSoft.Protocols;
 
 namespace ThabeSoft.EdgeGateway.Configuration.Models;
 
 
 public sealed class TagConfig
 {
-    public required ITagDescriptor Descriptor { get; init => field = value.Required(); }
+    public required IDataAccessDescriptor Descriptor { get; init => field = value.Required(); }
     public required DataType Kind { get; init => field = value.Required(); }
 }

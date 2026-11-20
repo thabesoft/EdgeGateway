@@ -1,6 +1,6 @@
 ﻿using ThabeSoft.Lifecycles;
 using ThabeSoft.EdgeGateway.Readings;
-using ThabeSoft.EdgeGateway.Tags;
+using ThabeSoft.Protocols;
 
 namespace ThabeSoft.EdgeGateway.Subscription;
 
@@ -8,7 +8,7 @@ namespace ThabeSoft.EdgeGateway.Subscription;
 public interface ISubscription : ILifecycleWithState
 {
     SubscriptionId Id { get; }
-    DataAddress Address { get; }
+    ProtocolAddress Address { get; }
     Reading? Latest { get; }
     IObservable<Reading> Update { get; }
 }

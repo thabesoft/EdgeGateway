@@ -1,9 +1,9 @@
 ﻿using ThabeSoft.EdgeGateway.Protocols;
 
-namespace ThabeSoft.EdgeGateway.Tags;
+namespace ThabeSoft.Protocols;
 
 
-public abstract record class DataAddress
+public abstract record class ProtocolAddress
 {
     public abstract ProtocolType ProtocolType { get; }
 }

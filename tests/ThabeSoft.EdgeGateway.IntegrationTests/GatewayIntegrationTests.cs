@@ -35,7 +35,7 @@ public class GatewayIntegrationTests
 
     private readonly IpTransportDescriptor _transportDescriptor = EthernetBuilder.Tcp(IPAddress.Loopback, 2334);
     private readonly ProtocolDescriptor _protocolDescriptor = ModbusBuilder.Ip;
-    private readonly TagDescriptor<double> _tag = ModbusBuilder.HoldingRegister(1, 0, CodecBuilder.DoubleBigEndian);
+    private readonly DataAddressDescriptor<double> _tag = ModbusBuilder.HoldingRegister(1, 0, CodecBuilder.DoubleBigEndian);
     private readonly TriggerDescriptor _trigger = TriggerBuilder.Interval(500);
 
 

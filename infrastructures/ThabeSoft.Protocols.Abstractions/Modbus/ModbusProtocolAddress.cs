@@ -1,11 +1,11 @@
 ﻿using ThabeSoft.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.EdgeGateway.Tags;
+using ThabeSoft.Protocols;
 
 namespace ThabeSoft.EdgeGateway.Addressing;
 
 
-public sealed record class ModbusDataAddress : DataAddress
+public sealed record class ModbusProtocolAddress : ProtocolAddress
 {
     public override ProtocolType ProtocolType => ProtocolType.Modbus;
     public required byte SlaveId { get; init; }
@@ -15,7 +15,7 @@ public sealed record class ModbusDataAddress : DataAddress
     public required int RequiredBits { get; init; }
 
 
-    private ModbusDataAddress()
+    private ModbusProtocolAddress()
     {
 
     }
@@ -25,7 +25,7 @@ public sealed record class ModbusDataAddress : DataAddress
 
 
 
-    public static ModbusDataAddress Coil(byte slaveId, ushort address, ushort quantity)
+    public static ModbusProtocolAddress Coil(byte slaveId, ushort address, ushort quantity)
     {
         return new()
         {
@@ -36,7 +36,7 @@ public sealed record class ModbusDataAddress : DataAddress
             RequiredBits = quantity
         };
     }
-    public static ModbusDataAddress DiscreteInput(byte slaveId, ushort address, ushort quantity)
+    public static ModbusProtocolAddress DiscreteInput(byte slaveId, ushort address, ushort quantity)
     {
         return new()
         {
@@ -47,7 +47,7 @@ public sealed record class ModbusDataAddress : DataAddress
             RequiredBits = quantity
         };
     }
-    public static ModbusDataAddress HoldingRegister(byte slaveId, ushort address, ushort quantity)
+    public static ModbusProtocolAddress HoldingRegister(byte slaveId, ushort address, ushort quantity)
     {
         return new()
         {
@@ -58,7 +58,7 @@ public sealed record class ModbusDataAddress : DataAddress
             RequiredBits = quantity * 16
         };
     }
-    public static ModbusDataAddress InputRegister(byte slaveId, ushort address, ushort quantity)
+    public static ModbusProtocolAddress InputRegister(byte slaveId, ushort address, ushort quantity)
     {
         return new()
         {

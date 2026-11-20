@@ -7,6 +7,7 @@ using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.Transports;
 using ThabeSoft.Primitives;
+using ThabeSoft.Protocols;
 
 namespace ThabeSoft.EdgeGateway.Ports;
 

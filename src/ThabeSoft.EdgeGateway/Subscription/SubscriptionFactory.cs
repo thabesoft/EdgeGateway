@@ -9,6 +9,7 @@ using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Readings;
 using ThabeSoft.Triggers;
 using ThabeSoft.Primitives;
+using ThabeSoft.Protocols;
 
 namespace ThabeSoft.EdgeGateway.Subscription;
 

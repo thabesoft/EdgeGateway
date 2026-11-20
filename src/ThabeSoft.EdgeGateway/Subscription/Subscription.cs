@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.Logging;
+using ThabeSoft.EdgeGateway.Readings;
 using ThabeSoft.Lifecycles;
 using ThabeSoft.Lifecycles.StateMachines;
-using ThabeSoft.Primitives.Guard;
-using ThabeSoft.EdgeGateway.Readings;
-using ThabeSoft.EdgeGateway.Tags;
-using ThabeSoft.Triggers;
 using ThabeSoft.Primitives;
+using ThabeSoft.Primitives.Guard;
+using ThabeSoft.Protocols;
+using ThabeSoft.Triggers;
 
 namespace ThabeSoft.EdgeGateway.Subscription;
 
@@ -30,7 +30,7 @@ internal sealed class Subscription<T>(
 
 
     public SubscriptionId Id { get; } = dependencies.Subscription.Id;
-    public DataAddress Address { get; } = dependencies.Subscription.Tag.Address;
+    public ProtocolAddress Address { get; } = dependencies.Subscription.Tag.Address;
     public Reading<T>? Latest => _readingSource.Latest;
     Reading? ISubscription.Latest => _readingSource.Latest;
     public IObservable<Reading<T>> Update => _readingObservable;

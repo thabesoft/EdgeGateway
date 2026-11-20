@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using ThabeSoft.Codecs;
 using ThabeSoft.Configuration;
 using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.EdgeGateway.Tags;
+using ThabeSoft.Protocols;
 using ThabeSoft.Transports;
 using ThabeSoft.Triggers;
 
@@ -46,9 +46,9 @@ public static class ConfigDependencyInjectionExtensions
 
 
         public IServiceCollection AddDataAddressMapper<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMapper>()
-           where TMapper : class, IConfigMapper<DataAddress>
+           where TMapper : class, IConfigMapper<ProtocolAddress>
         {
-            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigMapper<DataAddress>, TMapper>());
+            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigMapper<ProtocolAddress>, TMapper>());
             return descriptors;
         }
     }

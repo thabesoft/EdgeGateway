@@ -1,7 +1,7 @@
 ﻿using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.Primitives.Guard;
-using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.Triggers;
+using ThabeSoft.Protocols;
 
 namespace ThabeSoft.EdgeGateway.Subscription;
 
@@ -13,7 +13,7 @@ public interface ISubscriptionDescriptor
 {
     SubscriptionId Id { get; }
     TriggerDescriptor Trigger { get; }
-    ITagDescriptor Tag { get; }
+    IDataAccessDescriptor Tag { get; }
 
     ValueTask<ISubscription> AddToDeviceAsync(IDevice device, CancellationToken cancellationToken = default);
 }
@@ -25,9 +25,9 @@ public sealed record class SubscriptionDescriptor<T> : ISubscriptionDescriptor
     where T : notnull
 {
     public SubscriptionId Id { get; init => field = value.Required(); } = SubscriptionId.Create();
-    public required TagDescriptor<T> Tag { get; init => field = value.Required(); }
+    public required DataAccessDescriptor<T> Tag { get; init => field = value.Required(); }
     public required TriggerDescriptor Trigger { get; init => field = value.Required(); }
-    ITagDescriptor ISubscriptionDescriptor.Tag => Tag;
+    IDataAccessDescriptor ISubscriptionDescriptor.Tag => Tag;
 
 
     public ValueTask<ISubscription<T>> AddToDeviceAsync(IDevice device, CancellationToken cancellationToken = default) =>
@@ -38,12 +38,12 @@ public sealed record class SubscriptionDescriptor<T> : ISubscriptionDescriptor
 
 public static class SubscriptionDescriptor
 {
-    public static SubscriptionDescriptor<T> Create<T>(SubscriptionId id, TagDescriptor<T> tag, TriggerDescriptor trigger) where T : notnull
+    public static SubscriptionDescriptor<T> Create<T>(SubscriptionId id, DataAccessDescriptor<T> tag, TriggerDescriptor trigger) where T : notnull
     {
         return new() { Id = id, Tag = tag, Trigger = trigger };
     }
 
-    public static SubscriptionDescriptor<T> Create<T>(TagDescriptor<T> tag, TriggerDescriptor trigger) where T : notnull
+    public static SubscriptionDescriptor<T> Create<T>(DataAccessDescriptor<T> tag, TriggerDescriptor trigger) where T : notnull
     {
         return Create(SubscriptionId.Create(), tag, trigger);
     }

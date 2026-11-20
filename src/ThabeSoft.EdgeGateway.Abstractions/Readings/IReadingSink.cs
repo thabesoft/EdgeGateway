@@ -1,7 +1,7 @@
 ﻿using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.Primitives.Guard;
-using ThabeSoft.EdgeGateway.Tags;
+using ThabeSoft.Protocols;
 
 namespace ThabeSoft.EdgeGateway.Readings;
 
@@ -19,5 +19,5 @@ public readonly record struct ReadingContext
 {
     public required PortId PortId { get; init => field = value.Required(); }
     public required DeviceId DeviceId { get; init => field = value.Required(); }
-    public required DataAddress DataAddress { get; init => field = value.Required(); }
+    public required ProtocolAddress DataAddress { get; init => field = value.Required(); }
 }

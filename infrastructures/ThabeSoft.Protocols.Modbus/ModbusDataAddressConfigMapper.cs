@@ -4,19 +4,19 @@ using ThabeSoft.Configuration.Nodes;
 using ThabeSoft.EdgeGateway.Primitives;
 using ThabeSoft.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.EdgeGateway.Tags;
+using ThabeSoft.Protocols;
 
 namespace ThabeSoft.EdgeGateway.Modbus;
 
 
-internal sealed class ModbusDataAddressConfigMapper : IConfigMapper<DataAddress>
+internal sealed class ModbusDataAddressConfigMapper : IConfigMapper<ProtocolAddress>
 {
     public bool CanMap(IConfigNode root)
     {
         return GetProtocolType(root) == ProtocolType.Modbus;
     }
 
-    public DataAddress Map(IConfigNode root)
+    public ProtocolAddress Map(IConfigNode root)
     {
         var kind = root.GetStringByPath("Kind").Required("缺少数据区域类型")
                 .ToEnum<ModbusDataKind>();
@@ -29,10 +29,10 @@ internal sealed class ModbusDataAddressConfigMapper : IConfigMapper<DataAddress>
 
         return kind switch
         {
-            ModbusDataKind.Coil => ModbusDataAddress.Coil(slaveId, address, quantity),
-            ModbusDataKind.DiscreteInput => ModbusDataAddress.DiscreteInput(slaveId, address, quantity),
-            ModbusDataKind.HoldingRegister => ModbusDataAddress.HoldingRegister(slaveId, address, quantity),
-            ModbusDataKind.InputRegister => ModbusDataAddress.InputRegister(slaveId, address, quantity),
+            ModbusDataKind.Coil => ModbusProtocolAddress.Coil(slaveId, address, quantity),
+            ModbusDataKind.DiscreteInput => ModbusProtocolAddress.DiscreteInput(slaveId, address, quantity),
+            ModbusDataKind.HoldingRegister => ModbusProtocolAddress.HoldingRegister(slaveId, address, quantity),
+            ModbusDataKind.InputRegister => ModbusProtocolAddress.InputRegister(slaveId, address, quantity),
             _ => throw new InvalidOperationException($"无法处理的数据区域: {kind}")
         };
     }

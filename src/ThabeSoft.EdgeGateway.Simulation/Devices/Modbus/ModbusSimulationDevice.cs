@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using NModbus;
-using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.Codecs;
+using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.Primitives.Guard;
-using ThabeSoft.EdgeGateway.Tags;
+using ThabeSoft.Protocols;
 
 namespace ThabeSoft.EdgeGateway.Simulation.Devices.Modbus;
 
@@ -19,9 +19,9 @@ internal sealed class ModbusSimulationDevice(in ModbusSimulationDeviceArgs args)
     public IModbusSlave Slave { get; } = args.ModbusFactory.CreateSlave(args.UnitId);
 
 
-    protected override void OnValue<T>(TagDescriptor<T> tag, T value)
+    protected override void OnValue<T>(DataAccessDescriptor<T> tag, T value)
     {
-        if (tag.Address is not ModbusDataAddress address)
+        if (tag.Address is not ModbusProtocolAddress address)
             return;
 
         var codec = _codecFactory.Create(tag.Codec);

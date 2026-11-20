@@ -1,14 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
-using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.Codecs;
+using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.Lifecycles;
-using ThabeSoft.Lifecycles.StateMachines;
-using ThabeSoft.EdgeGateway.Tags;
-using ThabeSoft.Triggers;
 using ThabeSoft.EdgeGateway.Utilities;
 using ThabeSoft.EdgeGateway.ValueGenerators;
+using ThabeSoft.Lifecycles;
+using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.Primitives;
+using ThabeSoft.Protocols;
+using ThabeSoft.Triggers;
 
 namespace ThabeSoft.EdgeGateway.Simulation.Devices;
 
@@ -41,10 +41,10 @@ internal abstract class SimulationDeviceBase(in SimulationDeviceBaseArgs args) :
     }
 
 
-    public async ValueTask<IDisposable> ValueAsync<T>(TagDescriptor<T> tagDescriptor, TriggerDescriptor triggerDescriptor, IValueGenerator<T> generator, CancellationToken cancellationToken = default)
+    public async ValueTask<IDisposable> ValueAsync<T>(DataAccessDescriptor<T> tagDescriptor, TriggerDescriptor triggerDescriptor, IValueGenerator<T> generator, CancellationToken cancellationToken = default)
         where T : notnull
     {
-        if (tagDescriptor.Address is not ModbusDataAddress dataAddrss)
+        if (tagDescriptor.Address is not ModbusProtocolAddress dataAddrss)
             throw new InvalidOperationException("不支持的标签");
 
         if (tagDescriptor.Codec is not IRequiredBits requiredBits)
@@ -60,5 +60,5 @@ internal abstract class SimulationDeviceBase(in SimulationDeviceBaseArgs args) :
         });
     }
 
-    protected abstract void OnValue<T>(TagDescriptor<T> tag, T value) where T : notnull;
+    protected abstract void OnValue<T>(DataAccessDescriptor<T> tag, T value) where T : notnull;
 }

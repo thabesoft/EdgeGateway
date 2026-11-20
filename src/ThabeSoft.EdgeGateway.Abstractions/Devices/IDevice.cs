@@ -1,8 +1,8 @@
 ﻿using ThabeSoft.Lifecycles;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
-using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.Triggers;
+using ThabeSoft.Protocols;
 
 namespace ThabeSoft.EdgeGateway.Devices;
 
@@ -30,7 +30,7 @@ public static class DeviceExtensions
     {
         public ValueTask<ISubscription<T>> AddSubscriptionAsync<T>(
                 SubscriptionId id,
-                TagDescriptor<T> tag,
+                DataAccessDescriptor<T> tag,
                 TriggerDescriptor trigger,
                 CancellationToken cancellationToken = default
             ) where T : notnull
@@ -45,7 +45,7 @@ public static class DeviceExtensions
         }
 
         public ValueTask<ISubscription<T>> AddSubscriptionAsync<T>(
-                TagDescriptor<T> tag,
+                DataAccessDescriptor<T> tag,
                 TriggerDescriptor trigger,
                 CancellationToken cancellationToken = default
             ) where T : notnull

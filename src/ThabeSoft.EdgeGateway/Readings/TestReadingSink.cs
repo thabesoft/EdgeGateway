@@ -2,7 +2,7 @@
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.Primitives.Guard;
-using ThabeSoft.EdgeGateway.Tags;
+using ThabeSoft.Protocols;
 
 namespace ThabeSoft.EdgeGateway.Readings;
 
@@ -32,7 +32,7 @@ internal sealed class TestReadingSink(ILogger<TestReadingSink> logger) : IReadin
     {
         public required PortId PortId { get; init => field = value.Required(); }
         public required DeviceId DeviceId { get; init => field = value.Required(); }
-        public required DataAddress DataAddress { get; init => field = value.Required(); }
+        public required ProtocolAddress DataAddress { get; init => field = value.Required(); }
         public required DateTimeOffset Timestamp { get; init => field = value.NotDefault("时间戳异常"); }
         public required ReadingQuality Quality { get; init => field = value.Defined("不支持的质量类型"); }
         public required object Value { get; init => field = value.Required("值不可为空"); }

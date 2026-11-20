@@ -1,6 +1,7 @@
-﻿using ThabeSoft.Transports.Byte;
+﻿using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.Transports.Byte;
 
-namespace ThabeSoft.EdgeGateway.Protocols;
+namespace ThabeSoft.Protocols;
 
 
 public interface IProtocolAccessorResolver

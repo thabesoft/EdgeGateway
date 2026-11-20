@@ -1,20 +1,20 @@
 ﻿using ThabeSoft.Codecs;
 
-namespace ThabeSoft.EdgeGateway.Tags;
+namespace ThabeSoft.Protocols;
 
 
 
-public interface ITagDescriptor
+public interface IDataAccessDescriptor
 {
-    DataAddress Address { get; }
+    ProtocolAddress Address { get; }
     CodecDescriptor Codec { get; }
 }
 
 
-public sealed record class TagDescriptor<T> : ITagDescriptor
+public sealed record class DataAccessDescriptor<T> : IDataAccessDescriptor
      where T : notnull
 {
-    public TagDescriptor(DataAddress address, CodecDescriptor<T> codec)
+    public DataAccessDescriptor(ProtocolAddress address, CodecDescriptor<T> codec)
     {
         ArgumentNullException.ThrowIfNull(address);
         ArgumentNullException.ThrowIfNull(codec);
@@ -32,14 +32,14 @@ public sealed record class TagDescriptor<T> : ITagDescriptor
 
 
     public CodecDescriptor<T> Codec { get; }
-    public DataAddress Address { get; }
+    public ProtocolAddress Address { get; }
 
-    CodecDescriptor ITagDescriptor.Codec => Codec;
+    CodecDescriptor IDataAccessDescriptor.Codec => Codec;
 
 }
 
-public abstract record class TagDescriptor
+public abstract record class DataAccessDescriptor
 {
-    public static TagDescriptor<T> Create<T>(DataAddress address, CodecDescriptor<T> codec) where T : notnull
+    public static DataAccessDescriptor<T> Create<T>(ProtocolAddress address, CodecDescriptor<T> codec) where T : notnull
         => new(address, codec);
 }

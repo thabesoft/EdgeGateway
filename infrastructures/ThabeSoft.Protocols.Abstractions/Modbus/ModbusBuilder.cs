@@ -2,7 +2,7 @@
 using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.Codecs;
 using ThabeSoft.Primitives.Guard;
-using ThabeSoft.EdgeGateway.Tags;
+using ThabeSoft.Protocols;
 
 namespace ThabeSoft.EdgeGateway.Modbus;
 
@@ -19,24 +19,24 @@ public static class ModbusBuilder
 
     #region --标签--
 
-    public static TagDescriptor<bool> Coil(byte slaveId, ushort address, int bitOffset = 0) =>
-        TagDescriptor.Create(ModbusDataAddress.Coil(slaveId, address, 1), CodecBuilder.Bool(bitOffset));
-    public static TagDescriptor<bool> DiscreteInput(byte slaveId, ushort address, int bitOffset = 0) =>
-        TagDescriptor.Create(ModbusDataAddress.DiscreteInput(slaveId, address, 1), CodecBuilder.Bool(bitOffset));
+    public static DataAccessDescriptor<bool> Coil(byte slaveId, ushort address, int bitOffset = 0) =>
+        DataAccessDescriptor.Create(ModbusProtocolAddress.Coil(slaveId, address, 1), CodecBuilder.Bool(bitOffset));
+    public static DataAccessDescriptor<bool> DiscreteInput(byte slaveId, ushort address, int bitOffset = 0) =>
+        DataAccessDescriptor.Create(ModbusProtocolAddress.DiscreteInput(slaveId, address, 1), CodecBuilder.Bool(bitOffset));
 
-    public static TagDescriptor<BitArray> Coils(byte slaveId, ushort address, ushort quantity)
+    public static DataAccessDescriptor<BitArray> Coils(byte slaveId, ushort address, ushort quantity)
     {
         ValidateCoilQuantity(quantity);
-        return TagDescriptor.Create(ModbusDataAddress.Coil(slaveId, address, quantity), CodecBuilder.BitsLsbFirst(quantity));
+        return DataAccessDescriptor.Create(ModbusProtocolAddress.Coil(slaveId, address, quantity), CodecBuilder.BitsLsbFirst(quantity));
     }
-    public static TagDescriptor<BitArray> DiscreteInputs(byte slaveId, ushort address, ushort quantity)
+    public static DataAccessDescriptor<BitArray> DiscreteInputs(byte slaveId, ushort address, ushort quantity)
     {
         ValidateDiscreteInputQuantity(quantity);
-        return TagDescriptor.Create(ModbusDataAddress.DiscreteInput(slaveId, address, quantity), CodecBuilder.BitsLsbFirst(quantity));
+        return DataAccessDescriptor.Create(ModbusProtocolAddress.DiscreteInput(slaveId, address, quantity), CodecBuilder.BitsLsbFirst(quantity));
     }
 
 
-    public static TagDescriptor<T> HoldingRegister<T>(byte slaveId, ushort address, CodecDescriptor<T> codec) where T : unmanaged
+    public static DataAccessDescriptor<T> HoldingRegister<T>(byte slaveId, ushort address, CodecDescriptor<T> codec) where T : unmanaged
     {
         ArgumentNullException.ThrowIfNull(codec);
         var codecBits = codec.AssertType<IRequiredBits>();
@@ -49,11 +49,11 @@ public static class ModbusBuilder
         ValidateHoldingRegisterQuantity(wordCount);
 
 
-        var dataAddress = ModbusDataAddress.HoldingRegister(slaveId, address, wordCount);
-        return TagDescriptor.Create(dataAddress, codec);
+        var dataAddress = ModbusProtocolAddress.HoldingRegister(slaveId, address, wordCount);
+        return DataAccessDescriptor.Create(dataAddress, codec);
     }
 
-    public static TagDescriptor<T> InputRegister<T>(byte slaveId, ushort address, CodecDescriptor<T> codec) where T : unmanaged
+    public static DataAccessDescriptor<T> InputRegister<T>(byte slaveId, ushort address, CodecDescriptor<T> codec) where T : unmanaged
     {
         ArgumentNullException.ThrowIfNull(codec);
         var codecBits = codec.AssertType<IRequiredBits>();
@@ -67,8 +67,8 @@ public static class ModbusBuilder
         ValidateInputRegisterQuantity(wordCount);
 
 
-        var dataAddress = ModbusDataAddress.InputRegister(slaveId, address, wordCount);
-        return TagDescriptor.Create(dataAddress, codec);
+        var dataAddress = ModbusProtocolAddress.InputRegister(slaveId, address, wordCount);
+        return DataAccessDescriptor.Create(dataAddress, codec);
     }
 
     #endregion

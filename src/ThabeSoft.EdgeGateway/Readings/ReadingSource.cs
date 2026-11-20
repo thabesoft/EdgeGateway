@@ -1,13 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.EdgeGateway.Tags;
+using ThabeSoft.Protocols;
 
 namespace ThabeSoft.EdgeGateway.Readings;
 
 
 internal sealed class ReadingSource<T>(
-    TagDescriptor<T> tagDescriptor,
+    DataAccessDescriptor<T> tagDescriptor,
     IProtocolAccessor protocolAccessor,
     ILogger<ReadingSource<T>>? logger = null
     ) where T : notnull

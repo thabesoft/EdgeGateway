@@ -1,18 +1,18 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Collections;
 using ThabeSoft.Codecs;
+using ThabeSoft.Configuration;
 using ThabeSoft.Configuration.Nodes;
+using ThabeSoft.EdgeGateway.Configuration.Models;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ports;
-using ThabeSoft.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
-using ThabeSoft.EdgeGateway.Tags;
+using ThabeSoft.Primitives;
+using ThabeSoft.Primitives.Guard;
+using ThabeSoft.Protocols;
 using ThabeSoft.Transports;
 using ThabeSoft.Triggers;
-using ThabeSoft.Primitives;
-using ThabeSoft.Configuration;
-using ThabeSoft.EdgeGateway.Configuration.Models;
 
 namespace ThabeSoft.EdgeGateway.Configuration.Mappers;
 
@@ -22,7 +22,7 @@ public class GatewayConfigMapper(
         IEnumerable<IConfigMapper<TransportDescriptor>> transportMappers,
         IEnumerable<IConfigMapper<ProtocolDescriptor>> protocolMappers,
         IEnumerable<IConfigMapper<TriggerDescriptor>> triggerMappers,
-        IEnumerable<IConfigMapper<DataAddress>> dataAddressMappers
+        IEnumerable<IConfigMapper<ProtocolAddress>> protocolAddressMappers
     ) : IConfigMapper<GatewayConfig>
 {
     public bool CanMap(IConfigNode root)
@@ -102,7 +102,7 @@ public class GatewayConfigMapper(
                 Trigger = MapFromCollection(triggerMappers, root.GetByPath("Trigger").Required("缺少触发器")),
                 Tag = new
                 (
-                    address: MapFromCollection(dataAddressMappers, root.GetByPath("DataAddress").Required("缺少数据地址")),
+                    address: MapFromCollection(protocolAddressMappers, root.GetByPath("DataAddress").Required("缺少数据地址")),
                     codec: GetCodecDescriptor<T>(root)
                 )
             };

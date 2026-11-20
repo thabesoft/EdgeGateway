@@ -2,8 +2,7 @@
 using System.Buffers.Binary;
 using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.Codecs;
-using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.EdgeGateway.Tags;
+using ThabeSoft.Protocols;
 
 namespace ThabeSoft.EdgeGateway.Modbus;
 
@@ -12,10 +11,10 @@ internal sealed class ModbusProtocolAccessor(IModbusMaster master, ICodecFactory
 {
     private readonly SemaphoreSlim _lock = new(1, 1);
 
-    public async ValueTask<T> ReadAsync<T>(TagDescriptor<T> tag, CancellationToken cancellationToken = default)
+    public async ValueTask<T> ReadAsync<T>(DataAccessDescriptor<T> tag, CancellationToken cancellationToken = default)
         where T : notnull
     {
-        if (tag.Address is not ModbusDataAddress mosbus)
+        if (tag.Address is not ModbusProtocolAddress mosbus)
             throw new InvalidOperationException("不是有效的Modbus地址");
 
         var codec = codecFactory.Create(tag.Codec);
@@ -54,13 +53,13 @@ internal sealed class ModbusProtocolAccessor(IModbusMaster master, ICodecFactory
         throw new InvalidProgramException();
     }
 
-    public async ValueTask WriteAsync<T>(TagDescriptor<T> tag, T value, CancellationToken cancellationToken = default)
+    public async ValueTask WriteAsync<T>(DataAccessDescriptor<T> tag, T value, CancellationToken cancellationToken = default)
         where T : notnull
     {
         await _lock.WaitAsync(cancellationToken);
         try
         {
-            if (tag.Address is not ModbusDataAddress modbus)
+            if (tag.Address is not ModbusProtocolAddress modbus)
                 throw new InvalidOperationException("不是有效的Modbus地址");
 
             var codec = codecFactory.Create(tag.Codec);

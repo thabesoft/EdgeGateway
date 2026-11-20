@@ -8,6 +8,7 @@ using ThabeSoft.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.Primitives;
+using ThabeSoft.Protocols;
 
 namespace ThabeSoft.EdgeGateway.Devices;
 

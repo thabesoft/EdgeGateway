@@ -3,7 +3,7 @@
 	<!-- See https://aka.ms/dotnet/msbuild/customize for more details on customizing your build -->
 	<PropertyGroup>
 
-		<TargetFrameworks>netstandard2.0;net8.0;net10.0;net11.0</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net10.0;net11.0</TargetFrameworks>
 		
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
@@ -13,7 +13,7 @@
 
 	<!--运行时语法兼容-->
 	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-		<PackageReference Include="PolyShim" Version="2.16.0">
+		<PackageReference Include="PolyShim" >
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
@@ -21,7 +21,7 @@
 
 
 	<!-- Aot-->
-	<PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+	<PropertyGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">
 
 		<!-- 开启 AOT 发布 -->
 		<PublishAot>true</PublishAot>

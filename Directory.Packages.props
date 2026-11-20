@@ -1,0 +1,49 @@
+<Project>
+	<PropertyGroup>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+	</PropertyGroup>
+	<ItemGroup>
+		<!--系统-->
+		<PackageVersion Include="System.Threading.Channels" Version="10.0.14" />
+		<PackageVersion Include="System.Text.Json" Version="11.0.0" />
+		<PackageVersion Include="System.Collections.Immutable" Version="11.0.0" />
+		<PackageVersion Include="System.Reactive" Version="7.0.0" />
+		<PackageVersion Include="System.Threading.Channels" Version="11.0.0" />
+		<PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
+		<!--微软-->
+		<PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="5.9.0" />
+		<PackageVersion Include="Microsoft.Bcl.TimeProvider" Version="11.0.0" />
+		<PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.14" />
+		<PackageVersion Include="Microsoft.Extensions.Logging" Version="11.0.0" />
+		<PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="11.0.0" />
+		<PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />
+		<PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.14" />
+		<PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.14" />
+		<PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.14" />
+		<PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="11.0.0" />
+		<!--测试-->
+		<PackageVersion Include="Microsoft.Extensions.TimeProvider.Testing" Version="10.11.0" />
+		<PackageVersion Include="Moq" Version="4.21.0" />
+		<!--扩展-->
+		<PackageVersion Include="PolyShim" Version="2.16.0" />
+		<PackageVersion Include="RJCP.SerialPortStream" Version="3.0.5" />
+		<PackageVersion Include="System.IO.Ports" Version="10.0.14" />
+		<PackageVersion Include="NModbus" Version="3.0.83" />
+		<PackageVersion Include="NModbus.Serial" Version="3.0.83" />
+		<!--UI-->
+		<PackageVersion Include="Avalonia" Version="12.1.4" />
+		<PackageVersion Include="Avalonia.Controls.DataGrid" Version="12.1.2" />
+		<PackageVersion Include="Avalonia.Themes.Fluent" Version="12.1.4" />
+		<PackageVersion Include="Avalonia.Fonts.Inter" Version="12.1.4" />
+		<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+		<PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3" />
+		<PackageVersion Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
+		<PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+		<PackageVersion Include="Material.Icons" Version="3.0.2" />
+		<PackageVersion Include="Material.Icons.Avalonia" Version="3.0.2" />
+		<PackageVersion Include="ScottPlot.Avalonia" Version="5.1.59" />
+		<PackageVersion Include="SukiUI" Version="7.0.1" />
+		<PackageVersion Include="SukiUI.Dock" Version="7.0.1" />
+		<PackageVersion Include="ReactiveUI.Avalonia" Version="12.1.6" />
+	</ItemGroup>
+</Project>

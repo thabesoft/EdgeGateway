@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
-	  <PackageReference Include="System.Threading.Channels" Version="10.0.14" />
+		<PackageReference Include="System.Threading.Channels"  />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>ThabeSoft.Codecs</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="System.Collections.Immutable"  />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\ThabeSoft.Primitives\ThabeSoft.Primitives.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -7,7 +7,7 @@ using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Transports;
 using ThabeSoft.EdgeGateway.Triggers;
 
-namespace ThabeSoft.EdgeGateway.Configuration;
+namespace ThabeSoft.Configuration;
 
 
 public static class ConfigDependencyInjectionExtensions

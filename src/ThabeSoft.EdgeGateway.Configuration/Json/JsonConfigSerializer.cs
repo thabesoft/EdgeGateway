@@ -1,8 +1,8 @@
-﻿using ThabeSoft.EdgeGateway.Configuration.Models;
-using ThabeSoft.EdgeGateway.Configuration.Nodes;
+﻿using ThabeSoft.Configuration.Models;
+using ThabeSoft.Configuration.Nodes;
 using ThabeSoft.Primitives.Guard;
 
-namespace ThabeSoft.EdgeGateway.Configuration.Json;
+namespace ThabeSoft.Configuration.Json;
 
 
 internal sealed class JsonConfigSerializer(

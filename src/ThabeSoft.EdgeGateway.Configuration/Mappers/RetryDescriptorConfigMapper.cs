@@ -1,8 +1,8 @@
-﻿using ThabeSoft.EdgeGateway.Configuration.Nodes;
+﻿using ThabeSoft.Configuration.Nodes;
 using ThabeSoft.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Transports;
 
-namespace ThabeSoft.EdgeGateway.Configuration.Mappers;
+namespace ThabeSoft.Configuration.Mappers;
 
 
 public class RetryDescriptorConfigMapper : IConfigMapper<RetryDescriptor>

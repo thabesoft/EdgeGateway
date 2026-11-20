@@ -1,8 +1,8 @@
 using System.Text;
 using System.Text.Json.Nodes;
-using ThabeSoft.EdgeGateway.Configuration;
-using ThabeSoft.EdgeGateway.Configuration.Json.Nodes;
-using ThabeSoft.EdgeGateway.Configuration.Paths;
+using ThabeSoft.Configuration;
+using ThabeSoft.Configuration.Json.Nodes;
+using ThabeSoft.Configuration.Paths;
 using ThabeSoft.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Transports;

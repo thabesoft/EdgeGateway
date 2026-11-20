@@ -1,9 +1,9 @@
 ﻿using System.Text.Json.Nodes;
-using ThabeSoft.EdgeGateway.Configuration.Json.Nodes;
-using ThabeSoft.EdgeGateway.Configuration.Nodes;
-using ThabeSoft.EdgeGateway.Configuration.Paths;
+using ThabeSoft.Configuration.Json.Nodes;
+using ThabeSoft.Configuration.Nodes;
+using ThabeSoft.Configuration.Paths;
 
-namespace ThabeSoft.EdgeGateway.Configuration.Json;
+namespace ThabeSoft.Configuration.Json;
 
 internal sealed class JsonConfigNodeParser(IConfigPathEvaluator configPathEvaluator) : IConfigNodeParser
 {

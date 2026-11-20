@@ -4,8 +4,8 @@ using ThabeSoft.EdgeGateway.Codecs.Bits;
 using ThabeSoft.EdgeGateway.Codecs.DWords;
 using ThabeSoft.EdgeGateway.Codecs.QWords;
 using ThabeSoft.EdgeGateway.Codecs.Words;
-using ThabeSoft.EdgeGateway.Configuration;
-using ThabeSoft.EdgeGateway.Configuration.Nodes;
+using ThabeSoft.Configuration;
+using ThabeSoft.Configuration.Nodes;
 using ThabeSoft.Primitives;
 using ThabeSoft.Primitives.Guard;
 

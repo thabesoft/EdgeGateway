@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
-using ThabeSoft.EdgeGateway.Configuration.DependencyInjection;
+using ThabeSoft.Configuration.DependencyInjection;
 
-namespace ThabeSoft.EdgeGateway.Configuration.Hosting;
+namespace ThabeSoft.Configuration.Hosting;
 
 public static class HostBuilderExtensions
 {

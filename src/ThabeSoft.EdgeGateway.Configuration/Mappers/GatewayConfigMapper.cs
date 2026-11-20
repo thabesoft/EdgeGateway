@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Collections;
 using ThabeSoft.EdgeGateway.Codecs;
-using ThabeSoft.EdgeGateway.Configuration.Models;
-using ThabeSoft.EdgeGateway.Configuration.Nodes;
+using ThabeSoft.Configuration.Models;
+using ThabeSoft.Configuration.Nodes;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.Primitives.Guard;
@@ -13,7 +13,7 @@ using ThabeSoft.EdgeGateway.Transports;
 using ThabeSoft.EdgeGateway.Triggers;
 using ThabeSoft.Primitives;
 
-namespace ThabeSoft.EdgeGateway.Configuration.Mappers;
+namespace ThabeSoft.Configuration.Mappers;
 
 
 public class GatewayConfigMapper(

@@ -1,9 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
-using ThabeSoft.EdgeGateway.App.DependencyInjection;
-using ThabeSoft.EdgeGateway.App.Desktop.DependencyInjection;
+using ThabeSoft.Configuration.Hosting;
 using ThabeSoft.EdgeGateway.App.Hosting;
 using ThabeSoft.EdgeGateway.Codecs.DependencyInjection;
-using ThabeSoft.EdgeGateway.Configuration.Hosting;
 using ThabeSoft.EdgeGateway.Ethernet.DependencyInjection;
 using ThabeSoft.EdgeGateway.Hosting;
 using ThabeSoft.EdgeGateway.Lifecycles;

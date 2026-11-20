@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Text.Json.Nodes;
-using ThabeSoft.EdgeGateway.Configuration.Nodes;
-using ThabeSoft.EdgeGateway.Configuration.Paths;
+using ThabeSoft.Configuration.Nodes;
+using ThabeSoft.Configuration.Paths;
 
-namespace ThabeSoft.EdgeGateway.Configuration.Json.Nodes;
+namespace ThabeSoft.Configuration.Json.Nodes;
 
 
 internal sealed class JsonArrayConfigNode(

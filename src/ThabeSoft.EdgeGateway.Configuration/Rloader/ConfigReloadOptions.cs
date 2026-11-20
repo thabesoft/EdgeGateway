@@ -1,6 +1,6 @@
 ﻿using ThabeSoft.EdgeGateway.Options;
 
-namespace ThabeSoft.EdgeGateway.Configuration.Rloader;
+namespace ThabeSoft.Configuration.Rloader;
 
 
 public record class ConfigReloadOptions

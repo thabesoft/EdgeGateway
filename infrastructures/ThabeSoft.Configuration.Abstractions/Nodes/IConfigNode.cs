@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace ThabeSoft.EdgeGateway.Configuration.Nodes;
+namespace ThabeSoft.Configuration.Nodes;
 
 
 public interface IConfigNode

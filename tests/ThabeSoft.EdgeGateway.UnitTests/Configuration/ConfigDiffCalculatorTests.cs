@@ -1,6 +1,6 @@
 using ThabeSoft.EdgeGateway.Codecs;
-using ThabeSoft.EdgeGateway.Configuration.Diff;
-using ThabeSoft.EdgeGateway.Configuration.Models;
+using ThabeSoft.Configuration.Diff;
+using ThabeSoft.Configuration.Models;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway.Ports;

@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Configuration.Paths;
+﻿namespace ThabeSoft.Configuration.Paths;
 
 public interface IConfigPathParser
 {

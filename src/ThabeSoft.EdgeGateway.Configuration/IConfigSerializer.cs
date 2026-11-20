@@ -1,7 +1,7 @@
 ﻿using System.Text;
-using ThabeSoft.EdgeGateway.Configuration.Models;
+using ThabeSoft.Configuration.Models;
 
-namespace ThabeSoft.EdgeGateway.Configuration;
+namespace ThabeSoft.Configuration;
 
 
 public interface IConfigSerializer

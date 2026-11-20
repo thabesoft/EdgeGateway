@@ -1,6 +1,6 @@
-﻿using ThabeSoft.EdgeGateway.Configuration.Nodes;
+﻿using ThabeSoft.Configuration.Nodes;
 
-namespace ThabeSoft.EdgeGateway.Configuration.Paths;
+namespace ThabeSoft.Configuration.Paths;
 
 public interface IConfigPathEvaluator
 {

@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Configuration.Nodes;
+﻿namespace ThabeSoft.Configuration.Nodes;
 
 
 public interface IConfigNodeParser

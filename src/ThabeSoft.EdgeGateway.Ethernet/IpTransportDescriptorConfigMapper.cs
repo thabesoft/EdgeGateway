@@ -1,6 +1,6 @@
 ﻿using System.Net;
-using ThabeSoft.EdgeGateway.Configuration;
-using ThabeSoft.EdgeGateway.Configuration.Nodes;
+using ThabeSoft.Configuration;
+using ThabeSoft.Configuration.Nodes;
 using ThabeSoft.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Transports;
 

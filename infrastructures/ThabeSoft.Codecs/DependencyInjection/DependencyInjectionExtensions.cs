@@ -6,7 +6,7 @@ using ThabeSoft.EdgeGateway.Codecs.Bytes;
 using ThabeSoft.EdgeGateway.Codecs.DWords;
 using ThabeSoft.EdgeGateway.Codecs.QWords;
 using ThabeSoft.EdgeGateway.Codecs.Words;
-using ThabeSoft.EdgeGateway.Configuration;
+using ThabeSoft.Configuration;
 
 namespace ThabeSoft.EdgeGateway.Codecs.DependencyInjection;
 

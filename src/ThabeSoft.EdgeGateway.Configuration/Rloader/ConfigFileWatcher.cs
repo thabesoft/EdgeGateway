@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Options;
 using ThabeSoft.Primitives;
 
-namespace ThabeSoft.EdgeGateway.Configuration.Rloader;
+namespace ThabeSoft.Configuration.Rloader;
 
 
 public sealed class ConfigFileWatcher : IDisposable

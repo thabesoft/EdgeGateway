@@ -2,7 +2,7 @@
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Subscription;
 
-namespace ThabeSoft.EdgeGateway.Configuration.Diff;
+namespace ThabeSoft.Configuration.Diff;
 
 
 public sealed class PortDiffResult

@@ -2,7 +2,7 @@
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.Primitives.Guard;
 
-namespace ThabeSoft.EdgeGateway.Configuration.Models;
+namespace ThabeSoft.Configuration.Models;
 
 
 public sealed record class PortConfig

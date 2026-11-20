@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Configuration.Paths;
+﻿namespace ThabeSoft.Configuration.Paths;
 
 internal sealed class ConfigPathParser : IConfigPathParser
 {

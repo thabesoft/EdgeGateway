@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections;
-using ThabeSoft.EdgeGateway.Configuration.Models;
+using ThabeSoft.Configuration.Models;
+using ThabeSoft.EdgeGateway;
 
-namespace ThabeSoft.EdgeGateway.Configuration.Rloader;
+namespace ThabeSoft.Configuration.Rloader;
 
 
 internal sealed class ConfigApplier(IGateway gateway, ILogger<ConfigApplier> logger)

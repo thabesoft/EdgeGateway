@@ -1,14 +1,14 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using ThabeSoft.EdgeGateway.Configuration.Json;
-using ThabeSoft.EdgeGateway.Configuration.Mappers;
-using ThabeSoft.EdgeGateway.Configuration.Models;
-using ThabeSoft.EdgeGateway.Configuration.Nodes;
-using ThabeSoft.EdgeGateway.Configuration.Paths;
-using ThabeSoft.EdgeGateway.Configuration.Rloader;
+using ThabeSoft.Configuration.Json;
+using ThabeSoft.Configuration.Mappers;
+using ThabeSoft.Configuration.Models;
+using ThabeSoft.Configuration.Nodes;
+using ThabeSoft.Configuration.Paths;
+using ThabeSoft.Configuration.Rloader;
 using ThabeSoft.EdgeGateway.Transports;
 
-namespace ThabeSoft.EdgeGateway.Configuration.DependencyInjection;
+namespace ThabeSoft.Configuration.DependencyInjection;
 
 
 public static class DependencyInjectionExtensions

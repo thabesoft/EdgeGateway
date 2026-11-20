@@ -1,6 +1,6 @@
 ﻿using ThabeSoft.EdgeGateway.Addressing;
-using ThabeSoft.EdgeGateway.Configuration;
-using ThabeSoft.EdgeGateway.Configuration.Nodes;
+using ThabeSoft.Configuration;
+using ThabeSoft.Configuration.Nodes;
 using ThabeSoft.EdgeGateway.Primitives;
 using ThabeSoft.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Protocols;

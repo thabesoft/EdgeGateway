@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using ThabeSoft.EdgeGateway.Configuration;
+using ThabeSoft.Configuration;
 using ThabeSoft.EdgeGateway.Ethernet.Tcp;
 using ThabeSoft.EdgeGateway.Ethernet.Udp;
 using ThabeSoft.EdgeGateway.Transports;

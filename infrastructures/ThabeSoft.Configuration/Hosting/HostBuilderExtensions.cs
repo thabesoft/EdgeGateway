@@ -7,7 +7,7 @@ public static class HostBuilderExtensions
 {
     extension(IHostBuilder builder)
     {
-        public IHostBuilder UseJsonConfig(string optionSectionName)
+        public IHostBuilder UseJsonConfig(string optionSectionName = "Config")
         {
             return builder.ConfigureServices((_, descriptors) =>
             {

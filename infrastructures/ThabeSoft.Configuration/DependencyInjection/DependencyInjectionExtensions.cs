@@ -26,7 +26,7 @@ public static class DependencyInjectionExtensions
         /// <summary>
         /// 提供配置文件自动加载能力
         /// </summary>
-        public IServiceCollection AddEdgeGatewayConfigurationReloader(string optionSectionName)
+        public IServiceCollection AddEdgeGatewayConfigurationReloader(string optionSectionName = "Config")
         {
             descriptors.AddOptions<ConfigReloadOptions>()
                 .BindConfiguration(optionSectionName)

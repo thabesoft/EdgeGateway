@@ -1,4 +1,4 @@
-﻿using ThabeSoft.Guard;
+﻿using ThabeSoft.EdgeGateway.Primitives.Guard;
 
 namespace ThabeSoft.EdgeGateway.Lifecycles;
 

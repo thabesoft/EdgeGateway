@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Net;
+using ThabeSoft.EdgeGateway.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Transports;
-using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Ethernet;
 

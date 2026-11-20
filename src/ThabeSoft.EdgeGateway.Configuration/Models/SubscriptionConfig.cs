@@ -1,5 +1,5 @@
-﻿using ThabeSoft.EdgeGateway.Subscription;
-using ThabeSoft.Guard;
+﻿using ThabeSoft.EdgeGateway.Primitives.Guard;
+using ThabeSoft.EdgeGateway.Subscription;
 
 namespace ThabeSoft.EdgeGateway.Configuration.Models;
 

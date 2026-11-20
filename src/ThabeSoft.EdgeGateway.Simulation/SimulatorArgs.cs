@@ -2,7 +2,7 @@
 using ThabeSoft.EdgeGateway.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Ports;
-using ThabeSoft.Guard;
+using ThabeSoft.EdgeGateway.Primitives.Guard;
 
 namespace ThabeSoft.EdgeGateway;
 

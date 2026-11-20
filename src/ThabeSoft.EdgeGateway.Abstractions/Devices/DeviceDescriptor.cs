@@ -1,5 +1,5 @@
-﻿using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.Guard;
+﻿using ThabeSoft.EdgeGateway.Primitives.Guard;
+using ThabeSoft.EdgeGateway.Protocols;
 
 namespace ThabeSoft.EdgeGateway.Devices;
 

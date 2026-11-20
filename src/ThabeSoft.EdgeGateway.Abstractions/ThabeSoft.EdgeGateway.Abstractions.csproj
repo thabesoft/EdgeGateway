@@ -16,10 +16,5 @@
 		<PackageReference Include="System.Collections.Immutable" Version="11.0.0" />
 
 	</ItemGroup>
-	
-
-	<ItemGroup>
-		<ProjectReference Include="..\..\..\ThabeSoft.Guard\ThabeSoft.Guard\ThabeSoft.Guard.csproj" />
-	</ItemGroup>
 
 </Project>

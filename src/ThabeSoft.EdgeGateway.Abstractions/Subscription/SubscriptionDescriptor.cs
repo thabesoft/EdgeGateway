@@ -1,7 +1,7 @@
 ﻿using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Triggers;
-using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Subscription;
 

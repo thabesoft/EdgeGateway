@@ -1,6 +1,4 @@
 ﻿using System.Buffers.Binary;
-using ThabeSoft.EdgeGateway.Codecs.Words;
-using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Codecs.QWords;
 

@@ -1,6 +1,6 @@
 ﻿using NModbus;
+using ThabeSoft.EdgeGateway.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Serial;
-using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Ports.Modbus.Serial;
 

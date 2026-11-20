@@ -1,6 +1,6 @@
 ﻿using ThabeSoft.EdgeGateway.Configuration.Models;
 using ThabeSoft.EdgeGateway.Configuration.Nodes;
-using ThabeSoft.Guard;
+using ThabeSoft.EdgeGateway.Primitives.Guard;
 
 namespace ThabeSoft.EdgeGateway.Configuration.Json;
 

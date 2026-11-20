@@ -7,7 +7,7 @@ using ThabeSoft.EdgeGateway.Codecs.Words;
 using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Configuration.Nodes;
 using ThabeSoft.EdgeGateway.DataTypes;
-using ThabeSoft.Guard;
+using ThabeSoft.EdgeGateway.Primitives.Guard;
 
 namespace ThabeSoft.EdgeGateway.Codecs;
 

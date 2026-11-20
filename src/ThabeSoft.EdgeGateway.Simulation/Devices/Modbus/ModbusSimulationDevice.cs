@@ -2,11 +2,11 @@
 using NModbus;
 using ThabeSoft.EdgeGateway.Addressing;
 using ThabeSoft.EdgeGateway.Codecs;
-using ThabeSoft.EdgeGateway.Simulation.Devices;
+using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.EdgeGateway.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Tags;
-using ThabeSoft.Guard;
 
-namespace ThabeSoft.EdgeGateway.Devices.Modbus;
+namespace ThabeSoft.EdgeGateway.Simulation.Devices.Modbus;
 
 
 internal sealed class ModbusSimulationDevice(in ModbusSimulationDeviceArgs args) : SimulationDeviceBase(args.Base)

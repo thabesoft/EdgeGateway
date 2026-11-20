@@ -6,12 +6,12 @@ using ThabeSoft.EdgeGateway.Configuration.Nodes;
 using ThabeSoft.EdgeGateway.DataTypes;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ports;
+using ThabeSoft.EdgeGateway.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Transports;
 using ThabeSoft.EdgeGateway.Triggers;
-using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Configuration.Mappers;
 

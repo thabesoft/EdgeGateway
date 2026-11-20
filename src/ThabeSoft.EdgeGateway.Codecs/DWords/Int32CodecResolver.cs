@@ -1,5 +1,5 @@
 ﻿using ThabeSoft.EdgeGateway.Codecs.Extensions;
-using ThabeSoft.Guard;
+using ThabeSoft.EdgeGateway.Primitives.Guard;
 
 namespace ThabeSoft.EdgeGateway.Codecs.DWords;
 

@@ -5,6 +5,7 @@ using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Devices.Modbus;
 using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway.Serial;
+using ThabeSoft.EdgeGateway.Simulation.Devices.Modbus;
 using SystemParity = System.IO.Ports.Parity;
 using SystemStopBit = System.IO.Ports.StopBits;
 

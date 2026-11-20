@@ -2,6 +2,7 @@
 using System.Net.Sockets;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Devices.Modbus;
+using ThabeSoft.EdgeGateway.Simulation.Devices.Modbus;
 
 namespace ThabeSoft.EdgeGateway.Ports.Modbus.Ip;
 

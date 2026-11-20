@@ -1,7 +1,7 @@
 ﻿using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ports;
+using ThabeSoft.EdgeGateway.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Tags;
-using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Readings;
 

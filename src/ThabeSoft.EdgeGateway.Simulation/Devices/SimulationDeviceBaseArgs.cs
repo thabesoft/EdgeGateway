@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.EdgeGateway.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Triggers;
 using ThabeSoft.EdgeGateway.Utilities;
-using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Devices;
 

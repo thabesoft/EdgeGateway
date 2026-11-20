@@ -1,9 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Threading.Channels;
-using ThabeSoft.EdgeGateway.Addressing;
-using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Ports;
-using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Readings;
 

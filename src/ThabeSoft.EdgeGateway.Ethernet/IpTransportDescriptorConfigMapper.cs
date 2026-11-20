@@ -1,8 +1,8 @@
 ﻿using System.Net;
 using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Configuration.Nodes;
+using ThabeSoft.EdgeGateway.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Transports;
-using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Ethernet;
 

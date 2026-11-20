@@ -1,6 +1,6 @@
-﻿using ThabeSoft.EdgeGateway.Protocols;
+﻿using ThabeSoft.EdgeGateway.Primitives.Guard;
+using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Tags;
-using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Addressing;
 

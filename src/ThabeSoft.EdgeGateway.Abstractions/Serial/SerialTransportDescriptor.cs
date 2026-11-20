@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using ThabeSoft.EdgeGateway.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Transports;
-using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.Serial;
 

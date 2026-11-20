@@ -3,9 +3,9 @@ using System.Text.Json.Nodes;
 using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Configuration.Json.Nodes;
 using ThabeSoft.EdgeGateway.Configuration.Paths;
+using ThabeSoft.EdgeGateway.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Transports;
-using ThabeSoft.Guard;
 
 namespace ThabeSoft.EdgeGateway.UnitTests.Configuration;
 

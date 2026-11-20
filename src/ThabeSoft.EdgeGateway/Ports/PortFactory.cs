@@ -18,7 +18,7 @@ internal sealed class PortFactory(
         IEventPublisher eventPublisher,
         DeviceManagerFactory deviceManagerFactory,
         ITransportConnectionFactory transportConnectionFactory,
-        ProtocolAccessorFactory protocolAccessorResolver,
+        IProtocolAccessorFactory protocolAccessorResolver,
         DeviceFactory deviceFactory,
         ILoggerFactory loggerFactory
     )

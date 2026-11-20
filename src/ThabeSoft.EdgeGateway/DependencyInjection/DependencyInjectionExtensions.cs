@@ -96,23 +96,5 @@ public static class DependencyInjectionExtensions
 
             return descriptors;
         }
-
-        /// <summary>
-        /// 提供网关传输管理能力
-        /// </summary>
-        public IServiceCollection AddEdgeGatewayTransports()
-        {
-            descriptors.TryAddSingleton<ITransportConnectionFactory, TransportConnectionFactory>();
-            return descriptors;
-        }
-
-        /// <summary>
-        /// 提供网关协议管理能力
-        /// </summary>
-        public IServiceCollection AddEdgeGatewayProtocols()
-        {
-            descriptors.TryAddSingleton<ProtocolAccessorFactory>();
-            return descriptors;
-        }
     }
 }

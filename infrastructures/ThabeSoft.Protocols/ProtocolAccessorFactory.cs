@@ -4,7 +4,7 @@ using ThabeSoft.Transports.Byte;
 namespace ThabeSoft.EdgeGateway.Protocols;
 
 
-internal sealed class ProtocolAccessorFactory(IEnumerable<IProtocolAccessorResolver> resolvers)
+internal sealed class ProtocolAccessorFactory(IEnumerable<IProtocolAccessorResolver> resolvers) : IProtocolAccessorFactory
 {
     public IProtocolAccessor Create(ProtocolDescriptor descriptor, IByteDuplex byteDuplex)
     {

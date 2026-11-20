@@ -23,9 +23,6 @@ public static class HostBuilderExtensions
 
             return hostBuilder.ConfigureServices((_, descriptors) =>
             {
-                descriptors.AddEdgeGatewayTransports();
-                descriptors.AddEdgeGatewayProtocols();
-
                 descriptors.AddEdgeGatewayReadings();
                 descriptors.AddEdgeGatewaySubscriptions();
                 descriptors.AddEdgeGatewayDevices();

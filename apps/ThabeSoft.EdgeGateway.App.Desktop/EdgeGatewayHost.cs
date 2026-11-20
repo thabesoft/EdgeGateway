@@ -9,7 +9,8 @@ using ThabeSoft.Lifecycles.DependencyInjection;
 using ThabeSoft.Protocols.Modbus.DependencyInjection;
 using ThabeSoft.Transports.Serial.DependencyInjection;
 using ThabeSoft.Triggers.DependencyInjection;
-using System.ComponentModel.Design;
+using ThabeSoft.Transports.DependencyInjection;
+using ThabeSoft.Protocols.DependencyInjection;
 
 namespace ThabeSoft.EdgeGateway.App.Desktop;
 
@@ -64,6 +65,8 @@ internal static class EdgeGatewayHost
                 descriptors.AddCodecsConfig();
 
                 // 传输
+                descriptors.AddTransports();
+
                 descriptors.AddSerialTransport();
                 descriptors.AddSerialTransportConfig();
 
@@ -71,6 +74,8 @@ internal static class EdgeGatewayHost
                 descriptors.AddEthernetTransportConfig();
 
                 // 协议
+                descriptors.AddProtocols();
+
                 descriptors.AddModbusProtocol();
                 descriptors.AddModbusProtocolConfig();
             })

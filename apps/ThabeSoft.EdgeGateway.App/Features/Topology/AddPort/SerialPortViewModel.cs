@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.IO.Ports;
 using ThabeSoft.EdgeGateway.App.Services;
-using ThabeSoft.EdgeGateway.Serial;
+using ThabeSoft.Transports.Serial;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 

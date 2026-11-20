@@ -1,5 +1,5 @@
 ﻿using ThabeSoft.Primitives.Guard;
-using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.Transports;
 
 namespace ThabeSoft.EdgeGateway.Ports;
 

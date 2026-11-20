@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Ethernet;
+﻿namespace ThabeSoft.Transports.Ethernet;
 
 public enum IpProtocolType
 {

@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.Lifecycles.StateMachines;
-using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.Transports;
 using ThabeSoft.Primitives;
 
-namespace ThabeSoft.EdgeGateway.Ethernet.Udp;
+namespace ThabeSoft.Transports.Ethernet.Udp;
 
 
 internal sealed class UdpTransportConnectionResolver(

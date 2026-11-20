@@ -2,13 +2,14 @@
 using ThabeSoft.Configuration.Hosting;
 using ThabeSoft.EdgeGateway.App.Hosting;
 using ThabeSoft.Codecs.DependencyInjection;
-using ThabeSoft.EdgeGateway.Ethernet.DependencyInjection;
+using ThabeSoft.Transports.Ethernet.DependencyInjection;
 using ThabeSoft.EdgeGateway.Hosting;
 using ThabeSoft.Lifecycles;
 using ThabeSoft.Lifecycles.DependencyInjection;
 using ThabeSoft.EdgeGateway.Modbus.DependencyInjection;
-using ThabeSoft.EdgeGateway.Serial.DependencyInjection;
+using ThabeSoft.Transports.Serial.DependencyInjection;
 using ThabeSoft.Triggers.DependencyInjection;
+using System.ComponentModel.Design;
 
 namespace ThabeSoft.EdgeGateway.App.Desktop;
 
@@ -54,12 +55,20 @@ internal static class EdgeGatewayHost
             .UseEdgeGatewayApp()
             .ConfigureServices(descriptors =>
             {
-                descriptors.AddTriggers();
                 descriptors.AddLifecycles();
-                descriptors.AddCodecs();
 
-                descriptors.AddEdgeGatewaySerial();
-                descriptors.AddEdgeGatewayEthernet();
+                descriptors.AddTriggers();
+                descriptors.AddTriggersConfig();
+
+                descriptors.AddCodecs();
+                descriptors.AddCodecsConfig();
+
+                descriptors.AddSerialTransport();
+                descriptors.AddSerialTransportConfig();
+
+                descriptors.AddEthernetTransport();
+                descriptors.AddEthernetTransportConfig();
+
                 descriptors.AddEdgeGatewayModbus();
             })
             .Build();

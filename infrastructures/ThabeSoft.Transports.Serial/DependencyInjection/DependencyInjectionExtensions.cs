@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.Transports.DependencyInjection;
 
-namespace ThabeSoft.EdgeGateway.Serial.DependencyInjection;
+namespace ThabeSoft.Transports.Serial.DependencyInjection;
 
 
 public static class DependencyInjectionExtensions
@@ -10,16 +10,18 @@ public static class DependencyInjectionExtensions
     extension(IServiceCollection descriptors)
     {
         /// <summary>
-        /// 添加串口模块
+        /// 提供串行传输能力
         /// </summary>
-        public IServiceCollection AddEdgeGatewaySerial()
+        public IServiceCollection AddSerialTransport()
         {
             descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportConnectionResolver, SerialTransportResolver>());
             return descriptors;
         }
 
-
-        public IServiceCollection AddEdgeGatewaySerialConfig()
+        /// <summary>
+        /// 提供串行传输配置映射能力
+        /// </summary>
+        public IServiceCollection AddSerialTransportConfig()
         {
             descriptors.AddTransportConfigMapper<SerialTransportDescriptorConfigMapper>();
             return descriptors;

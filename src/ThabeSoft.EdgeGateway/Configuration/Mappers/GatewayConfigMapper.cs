@@ -8,7 +8,7 @@ using ThabeSoft.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Tags;
-using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.Transports;
 using ThabeSoft.Triggers;
 using ThabeSoft.Primitives;
 using ThabeSoft.Configuration;

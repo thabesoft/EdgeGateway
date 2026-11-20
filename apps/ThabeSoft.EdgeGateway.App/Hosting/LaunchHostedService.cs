@@ -1,7 +1,7 @@
 ﻿using HarfBuzzSharp;
 using Microsoft.Extensions.Hosting;
 using ThabeSoft.Codecs;
-using ThabeSoft.EdgeGateway.Ethernet;
+using ThabeSoft.Transports.Ethernet;
 using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Subscription;

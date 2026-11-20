@@ -5,7 +5,7 @@ using ThabeSoft.Configuration.Json.Nodes;
 using ThabeSoft.Configuration.Paths;
 using ThabeSoft.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.Transports;
 
 namespace ThabeSoft.EdgeGateway.UnitTests.Configuration;
 

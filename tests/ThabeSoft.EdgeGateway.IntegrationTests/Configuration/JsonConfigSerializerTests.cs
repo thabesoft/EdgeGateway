@@ -3,9 +3,9 @@ using Microsoft.Extensions.Hosting;
 using ThabeSoft.Codecs.DependencyInjection;
 using ThabeSoft.Configuration;
 using ThabeSoft.Configuration.Hosting;
-using ThabeSoft.EdgeGateway.Ethernet.DependencyInjection;
+using ThabeSoft.Transports.Ethernet.DependencyInjection;
 using ThabeSoft.EdgeGateway.Modbus.DependencyInjection;
-using ThabeSoft.EdgeGateway.Serial.DependencyInjection;
+using ThabeSoft.Transports.Serial.DependencyInjection;
 using ThabeSoft.Triggers.DependencyInjection;
 
 namespace ThabeSoft.EdgeGateway.IntegrationTests.Configuration;

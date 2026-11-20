@@ -2,13 +2,13 @@
 using System.Net;
 using ThabeSoft.Codecs;
 using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Ethernet;
+using ThabeSoft.Transports.Ethernet;
 using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.EdgeGateway.Serial;
+using ThabeSoft.Transports.Serial;
 using ThabeSoft.EdgeGateway.Subscription;
-using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.Transports;
 using ThabeSoft.Triggers;
 
 namespace ThabeSoft.EdgeGateway.UnitTests;

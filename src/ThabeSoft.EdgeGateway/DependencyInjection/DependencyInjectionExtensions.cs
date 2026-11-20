@@ -11,7 +11,7 @@ using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Readings;
 using ThabeSoft.EdgeGateway.Subscription;
-using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.Transports;
 
 namespace ThabeSoft.EdgeGateway.DependencyInjection;
 

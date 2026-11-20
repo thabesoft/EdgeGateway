@@ -1,5 +1,5 @@
 ﻿using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.Transports;
 
 namespace ThabeSoft.EdgeGateway.Modbus;
 

@@ -5,7 +5,7 @@ using ThabeSoft.EdgeGateway.Events;
 using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
-using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.Transports;
 using ThabeSoft.Primitives;
 
 namespace ThabeSoft.EdgeGateway.Ports;

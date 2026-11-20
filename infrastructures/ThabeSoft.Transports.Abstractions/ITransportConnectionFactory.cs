@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Transports;
+﻿namespace ThabeSoft.Transports;
 
 
 public interface ITransportConnectionFactory

@@ -1,6 +1,6 @@
 ﻿using ThabeSoft.Lifecycles;
 using ThabeSoft.EdgeGateway.Ports;
-using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.Transports;
 
 namespace ThabeSoft.EdgeGateway;
 

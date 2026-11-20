@@ -1,9 +1,9 @@
 ﻿using ThabeSoft.Configuration;
 using ThabeSoft.Configuration.Nodes;
 using ThabeSoft.Primitives.Guard;
-using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.Transports;
 
-namespace ThabeSoft.EdgeGateway.Serial;
+namespace ThabeSoft.Transports.Serial;
 
 
 internal sealed class SerialTransportDescriptorConfigMapper(

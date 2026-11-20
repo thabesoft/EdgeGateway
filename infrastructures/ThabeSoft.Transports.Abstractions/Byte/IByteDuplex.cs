@@ -1,3 +1,3 @@
-﻿namespace ThabeSoft.EdgeGateway.Transports.Byte;
+﻿namespace ThabeSoft.Transports.Byte;
 
 public interface IByteDuplex : IByteReader, IByteWriter;

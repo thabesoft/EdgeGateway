@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.Lifecycles.StateMachines;
-using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.Transports;
 using ThabeSoft.Primitives;
 
-namespace ThabeSoft.EdgeGateway.Serial;
+namespace ThabeSoft.Transports.Serial;
 
 
 internal sealed class SerialTransportResolver(

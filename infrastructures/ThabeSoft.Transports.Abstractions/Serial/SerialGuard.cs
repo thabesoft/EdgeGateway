@@ -2,7 +2,7 @@
 using ThabeSoft.EdgeGateway.Primitives;
 using ThabeSoft.Primitives.Guard;
 
-namespace ThabeSoft.EdgeGateway.Serial;
+namespace ThabeSoft.Transports.Serial;
 
 
 public static class SerialGuard

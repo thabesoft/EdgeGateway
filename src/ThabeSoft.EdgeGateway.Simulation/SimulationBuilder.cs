@@ -1,9 +1,9 @@
 ﻿using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Devices.Modbus;
-using ThabeSoft.EdgeGateway.Ethernet;
+using ThabeSoft.Transports.Ethernet;
 using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway.Ports;
-using ThabeSoft.EdgeGateway.Serial;
+using ThabeSoft.Transports.Serial;
 using ThabeSoft.EdgeGateway.ValueGenerators;
 
 namespace ThabeSoft.EdgeGateway.Simulation;

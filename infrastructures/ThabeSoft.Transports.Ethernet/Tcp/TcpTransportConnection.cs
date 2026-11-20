@@ -2,10 +2,10 @@
 using System.Net.Sockets;
 using ThabeSoft.Lifecycles;
 using ThabeSoft.Lifecycles.StateMachines;
-using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.Transports;
 using ThabeSoft.Primitives;
 
-namespace ThabeSoft.EdgeGateway.Ethernet.Tcp;
+namespace ThabeSoft.Transports.Ethernet.Tcp;
 
 
 internal sealed class TcpTransportConnection : ITransportConnection

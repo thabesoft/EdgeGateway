@@ -5,7 +5,7 @@ using ThabeSoft.Codecs;
 using ThabeSoft.Configuration;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Tags;
-using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.Transports;
 using ThabeSoft.Triggers;
 
 namespace ThabeSoft.EdgeGateway.Configuration;

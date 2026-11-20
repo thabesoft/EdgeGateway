@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using ThabeSoft.EdgeGateway.Ethernet.Tcp;
-using ThabeSoft.EdgeGateway.Ethernet.Udp;
-using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.Transports.Ethernet.Tcp;
+using ThabeSoft.Transports.Ethernet.Udp;
+using ThabeSoft.Transports.DependencyInjection;
 
-namespace ThabeSoft.EdgeGateway.Ethernet.DependencyInjection;
+namespace ThabeSoft.Transports.Ethernet.DependencyInjection;
 
 
 public static class DependencyInjectionExtensions
@@ -12,9 +12,9 @@ public static class DependencyInjectionExtensions
     extension(IServiceCollection descriptors)
     {
         /// <summary>
-        /// 添加以太网模块
+        /// 提供以太传输能力
         /// </summary>
-        public IServiceCollection AddEdgeGatewayEthernet()
+        public IServiceCollection AddEthernetTransport()
         {
             descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportConnectionResolver, TcpTransportConnectionResolver>());
             descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportConnectionResolver, UdpTransportConnectionResolver>());
@@ -22,8 +22,10 @@ public static class DependencyInjectionExtensions
             return descriptors;
         }
 
-
-        public IServiceCollection AddEdgeGatewayEthernetConfig()
+        /// <summary>
+        /// 提供以太配置映射能力
+        /// </summary>
+        public IServiceCollection AddEthernetTransportConfig()
         {
             descriptors.AddTransportConfigMapper<IpTransportDescriptorConfigMapper>();
             return descriptors;

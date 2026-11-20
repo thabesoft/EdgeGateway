@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using ThabeSoft.Primitives.Guard;
-using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.Transports;
 
-namespace ThabeSoft.EdgeGateway.Ethernet;
+namespace ThabeSoft.Transports.Ethernet;
 
 
 public sealed record IpTransportDescriptor : TransportDescriptor

@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace ThabeSoft.EdgeGateway.Transports;
+namespace ThabeSoft.Transports;
 
 
 public sealed record class ConnectionEndpoint : IEquatable<ConnectionEndpoint>

@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Diagnostics.CodeAnalysis;
 using ThabeSoft.Configuration;
 
-namespace ThabeSoft.EdgeGateway.Transports;
+namespace ThabeSoft.Transports.DependencyInjection;
 
 
 public static class DependencyInjectionExtensions

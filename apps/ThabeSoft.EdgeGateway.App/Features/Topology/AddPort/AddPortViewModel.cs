@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using SukiUI.Dialogs;
 using SukiUI.Toasts;
 using ThabeSoft.EdgeGateway.App.Services;
-using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.Transports;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 

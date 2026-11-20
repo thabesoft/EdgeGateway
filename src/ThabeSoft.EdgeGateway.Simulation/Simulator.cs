@@ -3,7 +3,7 @@ using ThabeSoft.Lifecycles;
 using ThabeSoft.Lifecycles.Collections;
 using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Ports;
-using ThabeSoft.EdgeGateway.Transports;
+using ThabeSoft.Transports;
 using ThabeSoft.Primitives;
 
 namespace ThabeSoft.EdgeGateway.Simulation;

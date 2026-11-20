@@ -1,7 +1,7 @@
 ﻿using ThabeSoft.Lifecycles;
-using ThabeSoft.EdgeGateway.Transports.Byte;
+using ThabeSoft.Transports.Byte;
 
-namespace ThabeSoft.EdgeGateway.Transports;
+namespace ThabeSoft.Transports;
 
 
 /// <summary>

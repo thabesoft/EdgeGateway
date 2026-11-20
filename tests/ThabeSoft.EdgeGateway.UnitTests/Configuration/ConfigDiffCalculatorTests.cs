@@ -4,7 +4,7 @@ using ThabeSoft.Configuration.Models;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway.Ports;
-using ThabeSoft.EdgeGateway.Serial;
+using ThabeSoft.Transports.Serial;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.Triggers;
 

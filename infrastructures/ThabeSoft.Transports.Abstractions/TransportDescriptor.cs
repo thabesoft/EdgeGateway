@@ -2,7 +2,7 @@
 using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.Primitives.Guard;
 
-namespace ThabeSoft.EdgeGateway.Transports;
+namespace ThabeSoft.Transports;
 
 
 public abstract record class TransportDescriptor

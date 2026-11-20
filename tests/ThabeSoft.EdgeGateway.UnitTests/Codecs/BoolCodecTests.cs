@@ -1,4 +1,4 @@
-﻿using ThabeSoft.EdgeGateway.Codecs.Bytes;
+﻿using ThabeSoft.Codecs.Bytes;
 
 namespace ThabeSoft.EdgeGateway.UnitTests.Codecs;
 

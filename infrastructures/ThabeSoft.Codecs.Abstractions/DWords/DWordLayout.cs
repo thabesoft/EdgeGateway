@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Codecs.DWords;
+﻿namespace ThabeSoft.Codecs.DWords;
 
 
 public enum DWordLayout

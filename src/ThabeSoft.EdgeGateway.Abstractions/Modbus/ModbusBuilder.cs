@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using ThabeSoft.EdgeGateway.Addressing;
-using ThabeSoft.EdgeGateway.Codecs;
+using ThabeSoft.Codecs;
 using ThabeSoft.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Tags;
 

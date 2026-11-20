@@ -1,5 +1,5 @@
-﻿using ThabeSoft.EdgeGateway.Codecs.DWords;
-using ThabeSoft.EdgeGateway.Codecs.Words;
+﻿using ThabeSoft.Codecs.DWords;
+using ThabeSoft.Codecs.Words;
 
 namespace ThabeSoft.EdgeGateway.UnitTests.Codecs.Swappers;
 

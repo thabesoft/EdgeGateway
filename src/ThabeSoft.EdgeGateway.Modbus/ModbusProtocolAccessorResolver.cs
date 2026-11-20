@@ -1,6 +1,6 @@
 ﻿using NModbus;
 using NModbus.IO;
-using ThabeSoft.EdgeGateway.Codecs;
+using ThabeSoft.Codecs;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Transports.Byte;
 

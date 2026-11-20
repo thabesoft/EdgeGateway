@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Codecs.QWords;
+﻿namespace ThabeSoft.Codecs.QWords;
 
 
 public enum QWordSwap

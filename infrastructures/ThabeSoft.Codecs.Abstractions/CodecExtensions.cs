@@ -1,7 +1,7 @@
 ﻿using System.Buffers;
 using System.Buffers.Binary;
 
-namespace ThabeSoft.EdgeGateway.Codecs;
+namespace ThabeSoft.Codecs;
 
 
 public static class CodecExtensions

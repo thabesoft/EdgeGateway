@@ -3,7 +3,7 @@ using System.Collections;
 using ThabeSoft.Primitives;
 using ThabeSoft.Primitives.Guard;
 
-namespace ThabeSoft.EdgeGateway.Codecs.Bits;
+namespace ThabeSoft.Codecs.Bits;
 
 
 internal sealed class BitsCodecResolver : ICodecResolver<BitArray>

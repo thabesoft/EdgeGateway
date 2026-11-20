@@ -1,7 +1,7 @@
-﻿using ThabeSoft.EdgeGateway.Codecs.Extensions;
+﻿using ThabeSoft.Codecs.Extensions;
 using ThabeSoft.Primitives.Guard;
 
-namespace ThabeSoft.EdgeGateway.Codecs.DWords;
+namespace ThabeSoft.Codecs.DWords;
 
 
 internal sealed class Int32CodecResolver : ICodecResolver<int>

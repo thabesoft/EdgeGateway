@@ -1,5 +1,5 @@
-﻿using ThabeSoft.EdgeGateway.Codecs.Extensions;
-using ThabeSoft.EdgeGateway.Codecs.Words;
+﻿using ThabeSoft.Codecs.Extensions;
+using ThabeSoft.Codecs.Words;
 
 namespace ThabeSoft.EdgeGateway.UnitTests.Codecs;
 

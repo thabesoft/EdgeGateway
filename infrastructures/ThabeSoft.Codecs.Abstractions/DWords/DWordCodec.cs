@@ -1,6 +1,6 @@
 ﻿using ThabeSoft.Primitives.Guard;
 
-namespace ThabeSoft.EdgeGateway.Codecs.DWords;
+namespace ThabeSoft.Codecs.DWords;
 
 
 public abstract record class DWordCodecDescriptor<TDWord> : CodecDescriptor<TDWord>, IRequiredBits

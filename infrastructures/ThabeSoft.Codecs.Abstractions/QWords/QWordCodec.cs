@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace ThabeSoft.EdgeGateway.Codecs.QWords;
+namespace ThabeSoft.Codecs.QWords;
 
 
 public abstract record class QWordCodecDescriptor<TQWord> : CodecDescriptor<TQWord>, IRequiredBits

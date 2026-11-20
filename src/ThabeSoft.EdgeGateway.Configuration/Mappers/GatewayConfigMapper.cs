@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Collections;
-using ThabeSoft.EdgeGateway.Codecs;
+using ThabeSoft.Codecs;
 using ThabeSoft.Configuration.Models;
 using ThabeSoft.Configuration.Nodes;
 using ThabeSoft.EdgeGateway.Devices;

@@ -1,7 +1,7 @@
 ﻿using ThabeSoft.Primitives;
 using ThabeSoft.Primitives.Guard;
 
-namespace ThabeSoft.EdgeGateway.Codecs.Bytes;
+namespace ThabeSoft.Codecs.Bytes;
 
 
 internal sealed class BoolCodecResolver : ICodecResolver<bool>

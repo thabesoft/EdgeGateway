@@ -1,6 +1,6 @@
 ﻿using Moq;
 using System.Net;
-using ThabeSoft.EdgeGateway.Codecs;
+using ThabeSoft.Codecs;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ethernet;
 using ThabeSoft.EdgeGateway.Modbus;

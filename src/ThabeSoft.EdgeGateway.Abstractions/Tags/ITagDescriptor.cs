@@ -1,4 +1,4 @@
-﻿using ThabeSoft.EdgeGateway.Codecs;
+﻿using ThabeSoft.Codecs;
 
 namespace ThabeSoft.EdgeGateway.Tags;
 

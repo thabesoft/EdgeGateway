@@ -1,6 +1,6 @@
 ﻿using ThabeSoft.Primitives.Guard;
 
-namespace ThabeSoft.EdgeGateway.Codecs.DWords;
+namespace ThabeSoft.Codecs.DWords;
 
 
 internal sealed class UInt32CodecResolver : ICodecResolver<uint>

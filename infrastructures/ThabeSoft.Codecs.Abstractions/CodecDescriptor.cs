@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using ThabeSoft.Primitives;
 
-namespace ThabeSoft.EdgeGateway.Codecs;
+namespace ThabeSoft.Codecs;
 
 
 public abstract record class CodecDescriptor

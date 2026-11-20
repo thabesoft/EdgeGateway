@@ -1,10 +1,10 @@
-﻿using ThabeSoft.EdgeGateway.Codecs.Bits;
-using ThabeSoft.EdgeGateway.Codecs.Bytes;
-using ThabeSoft.EdgeGateway.Codecs.DWords;
-using ThabeSoft.EdgeGateway.Codecs.QWords;
-using ThabeSoft.EdgeGateway.Codecs.Words;
+﻿using ThabeSoft.Codecs.Bits;
+using ThabeSoft.Codecs.Bytes;
+using ThabeSoft.Codecs.DWords;
+using ThabeSoft.Codecs.QWords;
+using ThabeSoft.Codecs.Words;
 
-namespace ThabeSoft.EdgeGateway.Codecs;
+namespace ThabeSoft.Codecs;
 
 
 public static class CodecBuilder

@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Codecs;
+﻿namespace ThabeSoft.Codecs;
 
 
 public interface ICodec<T>

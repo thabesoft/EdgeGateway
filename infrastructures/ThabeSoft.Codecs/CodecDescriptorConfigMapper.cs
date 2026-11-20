@@ -1,15 +1,15 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections;
-using ThabeSoft.EdgeGateway.Codecs.Bits;
-using ThabeSoft.EdgeGateway.Codecs.DWords;
-using ThabeSoft.EdgeGateway.Codecs.QWords;
-using ThabeSoft.EdgeGateway.Codecs.Words;
+using ThabeSoft.Codecs.Bits;
+using ThabeSoft.Codecs.DWords;
+using ThabeSoft.Codecs.QWords;
+using ThabeSoft.Codecs.Words;
 using ThabeSoft.Configuration;
 using ThabeSoft.Configuration.Nodes;
 using ThabeSoft.Primitives;
 using ThabeSoft.Primitives.Guard;
 
-namespace ThabeSoft.EdgeGateway.Codecs;
+namespace ThabeSoft.Codecs;
 
 
 internal sealed class CodecDescriptorConfigMapper(ILogger<CodecDescriptorConfigMapper> logger) :

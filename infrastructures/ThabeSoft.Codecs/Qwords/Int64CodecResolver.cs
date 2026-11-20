@@ -1,7 +1,7 @@
-﻿using ThabeSoft.EdgeGateway.Codecs.Extensions;
+﻿using ThabeSoft.Codecs.Extensions;
 using ThabeSoft.Primitives.Guard;
 
-namespace ThabeSoft.EdgeGateway.Codecs.QWords;
+namespace ThabeSoft.Codecs.QWords;
 
 
 internal sealed class Int64CodecResolver : ICodecResolver<long>

@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace ThabeSoft.EdgeGateway.Codecs.Bits;
+namespace ThabeSoft.Codecs.Bits;
 
 
 public sealed class BitsCodec : ICodec<BitArray>

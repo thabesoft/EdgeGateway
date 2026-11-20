@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using ThabeSoft.Primitives.Guard;
 
-namespace ThabeSoft.EdgeGateway.Codecs.Bits;
+namespace ThabeSoft.Codecs.Bits;
 
 
 public sealed record class BitsCodecDescriptor : CodecDescriptor<BitArray>, IRequiredBits

@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using ThabeSoft.EdgeGateway.Codecs.Bits;
+using ThabeSoft.Codecs.Bits;
 
 namespace ThabeSoft.EdgeGateway.UnitTests.Codecs;
 

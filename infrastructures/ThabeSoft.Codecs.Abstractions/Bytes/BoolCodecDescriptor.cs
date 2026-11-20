@@ -1,7 +1,7 @@
 ﻿using ThabeSoft.EdgeGateway.Primitives;
 using ThabeSoft.Primitives.Guard;
 
-namespace ThabeSoft.EdgeGateway.Codecs.Bytes;
+namespace ThabeSoft.Codecs.Bytes;
 
 
 public sealed record class BoolCodecDescriptor : CodecDescriptor<bool>, IRequiredBits

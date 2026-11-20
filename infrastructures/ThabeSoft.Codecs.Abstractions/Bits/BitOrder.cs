@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Codecs.Bits;
+﻿namespace ThabeSoft.Codecs.Bits;
 
 
 public enum BitOrder

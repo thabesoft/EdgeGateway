@@ -1,5 +1,5 @@
 using ThabeSoft.EdgeGateway.Addressing;
-using ThabeSoft.EdgeGateway.Codecs;
+using ThabeSoft.Codecs;
 using ThabeSoft.EdgeGateway.Tags;
 
 namespace ThabeSoft.EdgeGateway.UnitTests.Modbus;

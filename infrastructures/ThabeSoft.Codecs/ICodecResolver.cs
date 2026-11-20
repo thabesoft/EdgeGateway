@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Codecs;
+﻿namespace ThabeSoft.Codecs;
 
 
 internal interface ICodecResolver<T> where T : notnull

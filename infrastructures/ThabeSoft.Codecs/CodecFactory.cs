@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Concurrent;
 
-namespace ThabeSoft.EdgeGateway.Codecs;
+namespace ThabeSoft.Codecs;
 
 
 internal sealed class CodecFactory(IServiceProvider services) : ICodecFactory

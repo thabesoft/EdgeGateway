@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Codecs.Bytes;
+﻿namespace ThabeSoft.Codecs.Bytes;
 
 
 public sealed record class ByteCodecDescriptor : CodecDescriptor<byte>, IRequiredBits

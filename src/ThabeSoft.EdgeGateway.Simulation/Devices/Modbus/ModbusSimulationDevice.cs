@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using NModbus;
 using ThabeSoft.EdgeGateway.Addressing;
-using ThabeSoft.EdgeGateway.Codecs;
+using ThabeSoft.Codecs;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Tags;

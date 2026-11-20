@@ -1,4 +1,4 @@
-﻿using ThabeSoft.EdgeGateway.Codecs.DWords;
+﻿using ThabeSoft.Codecs.DWords;
 
 namespace ThabeSoft.EdgeGateway.UnitTests.Codecs.Swappers;
 

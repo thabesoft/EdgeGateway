@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>ThabeSoft.Transports</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\ThabeSoft.Configuration.Abstractions\ThabeSoft.Configuration.Abstractions.csproj" />
+	  <ProjectReference Include="..\ThabeSoft.Lifecycles.Abstractions\ThabeSoft.Lifecycles.Abstractions.csproj" />
+	  <ProjectReference Include="..\ThabeSoft.Primitives\ThabeSoft.Primitives.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -2,12 +2,13 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Diagnostics.CodeAnalysis;
 using ThabeSoft.Codecs;
+using ThabeSoft.Configuration;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Transports;
 using ThabeSoft.Triggers;
 
-namespace ThabeSoft.Configuration;
+namespace ThabeSoft.EdgeGateway.Configuration;
 
 
 public static class ConfigDependencyInjectionExtensions

@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	
+	<ItemGroup>
+		<PackageReference Include="System.Reactive" />
+		<PackageReference Include="System.Threading.Channels" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\ThabeSoft.Configuration.Abstractions\ThabeSoft.Configuration.Abstractions.csproj" />
+		<ProjectReference Include="..\ThabeSoft.Transports.Abstractions\ThabeSoft.Transports.Abstractions.csproj" />
+	</ItemGroup>
+	
+</Project>

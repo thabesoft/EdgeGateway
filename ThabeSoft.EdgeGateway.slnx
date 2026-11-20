@@ -17,12 +17,14 @@
     <Project Path="infrastructures/ThabeSoft.Lifecycles.Abstractions/ThabeSoft.Lifecycles.Abstractions.csproj" Id="ded1c87a-a1ea-42f7-85eb-cf35f16148d6" />
     <Project Path="infrastructures/ThabeSoft.Lifecycles/ThabeSoft.Lifecycles.csproj" />
     <Project Path="infrastructures/ThabeSoft.Primitives/ThabeSoft.Primitives.csproj" Id="4695430b-a564-4139-93bd-286bb2e1fd98" />
+    <Project Path="infrastructures/ThabeSoft.Transports.Abstractions/ThabeSoft.Transports.Abstractions.csproj" Id="1f438cc8-3fa1-42a8-a426-466ad75776d0" />
+    <Project Path="infrastructures/ThabeSoft.Transports.Ethernet/ThabeSoft.Transports.Ethernet.csproj" Id="b409de6e-b4bf-45e3-8617-cfce0642d935" />
+    <Project Path="infrastructures/ThabeSoft.Transports.Serial/ThabeSoft.Transports.Serial.csproj" Id="336fd480-eae9-4892-be9f-a8fff9a565ab" />
     <Project Path="infrastructures/ThabeSoft.Triggers.Abstractions/ThabeSoft.Triggers.Abstractions.csproj" Id="a30948c2-5b64-4e38-b39a-67e216e8e8e5" />
     <Project Path="infrastructures/ThabeSoft.Triggers/ThabeSoft.Triggers.csproj" Id="e786af9c-f964-4a26-9e5d-78ad2122838b" />
   </Folder>
   <Folder Name="/Modules/">
     <Project Path="src/ThabeSoft.EdgeGateway.Simulation/ThabeSoft.EdgeGateway.Simulation.csproj" />
-    <Project Path="src/ThabeSoft.EdgeGateway.Triggers/ThabeSoft.EdgeGateway.Triggers.csproj" Id="5785c1ae-51fa-4804-b756-fa79afffa763" />
   </Folder>
   <Folder Name="/Modules/Connections/">
     <Project Path="src/ThabeSoft.EdgeGateway.Ethernet/ThabeSoft.EdgeGateway.Ethernet.csproj" Id="9293874d-7505-40a5-b5fc-1f88aa38a405" />

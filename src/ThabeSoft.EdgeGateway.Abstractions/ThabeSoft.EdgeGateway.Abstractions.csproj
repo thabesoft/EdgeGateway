@@ -15,11 +15,8 @@
 		<ProjectReference Include="..\..\infrastructures\ThabeSoft.Configuration.Abstractions\ThabeSoft.Configuration.Abstractions.csproj" />
 		<ProjectReference Include="..\..\infrastructures\ThabeSoft.Lifecycles.Abstractions\ThabeSoft.Lifecycles.Abstractions.csproj" />
 		<ProjectReference Include="..\..\infrastructures\ThabeSoft.Primitives\ThabeSoft.Primitives.csproj" />
+		<ProjectReference Include="..\..\infrastructures\ThabeSoft.Transports.Abstractions\ThabeSoft.Transports.Abstractions.csproj" />
 		<ProjectReference Include="..\..\infrastructures\ThabeSoft.Triggers.Abstractions\ThabeSoft.Triggers.Abstractions.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Triggers\" />
 	</ItemGroup>
 
 </Project>

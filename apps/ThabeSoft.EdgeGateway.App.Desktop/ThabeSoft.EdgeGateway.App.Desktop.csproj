@@ -15,11 +15,11 @@
 		<ProjectReference Include="..\..\infrastructures\ThabeSoft.Codecs\ThabeSoft.Codecs.csproj" />
 		<ProjectReference Include="..\..\infrastructures\ThabeSoft.Configuration\ThabeSoft.Configuration.csproj" />
 		<ProjectReference Include="..\..\infrastructures\ThabeSoft.Lifecycles\ThabeSoft.Lifecycles.csproj" />
+		<ProjectReference Include="..\..\infrastructures\ThabeSoft.Transports.Ethernet\ThabeSoft.Transports.Ethernet.csproj" />
+		<ProjectReference Include="..\..\infrastructures\ThabeSoft.Transports.Serial\ThabeSoft.Transports.Serial.csproj" />
 		<ProjectReference Include="..\..\infrastructures\ThabeSoft.Triggers\ThabeSoft.Triggers.csproj" />
-		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Ethernet\ThabeSoft.EdgeGateway.Ethernet.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Mitsubishi\ThabeSoft.EdgeGateway.Mitsubishi.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Modbus\ThabeSoft.EdgeGateway.Modbus.csproj" />
-		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Serial\ThabeSoft.EdgeGateway.Serial.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Simulation\ThabeSoft.EdgeGateway.Simulation.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway\ThabeSoft.EdgeGateway.csproj" />
 		<ProjectReference Include="..\ThabeSoft.EdgeGateway.App\ThabeSoft.EdgeGateway.App.csproj" />

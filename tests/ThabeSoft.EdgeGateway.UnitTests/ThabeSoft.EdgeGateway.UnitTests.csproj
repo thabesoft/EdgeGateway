@@ -6,15 +6,14 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" />
-		<PackageReference Include="Moq"/>
+		<PackageReference Include="Moq" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" />
-		<PackageReference Include="System.Reactive"  />
+		<PackageReference Include="System.Reactive" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\ThabeSoft.Configuration\ThabeSoft.Configuration.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Ethernet\ThabeSoft.EdgeGateway.Ethernet.csproj" />
-		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Lifecycles\ThabeSoft.EdgeGateway.Lifecycles.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Modbus\ThabeSoft.EdgeGateway.Modbus.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Serial\ThabeSoft.EdgeGateway.Serial.csproj" />
 		<ProjectReference Include="..\..\src\ThabeSoft.EdgeGateway.Simulation\ThabeSoft.EdgeGateway.Simulation.csproj" />

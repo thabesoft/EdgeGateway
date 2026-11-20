@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<RootNamespace>ThabeSoft.Lifecycles</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\ThabeSoft.Primitives\ThabeSoft.Primitives.csproj" />
+	</ItemGroup>
+
+</Project>

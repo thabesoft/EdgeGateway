@@ -31,11 +31,11 @@ internal sealed class BackgroundLifecycle : IDisposableLifecycle
     public ValueTask StartAsync(CancellationToken cancellationToken = default)
     {
         if (_backgroundTask is { IsCompleted: false })
-            return ValueTask.CompletedTask;
+            return default;
 
         _backgroundTaskCts = new CancellationTokenSource();
         _backgroundTask = _backgroundAction.Invoke(_backgroundTaskCts.Token);
-        return ValueTask.CompletedTask;
+        return default;
     }
     public async ValueTask StopAsync(CancellationToken cancellationToken = default)
     {

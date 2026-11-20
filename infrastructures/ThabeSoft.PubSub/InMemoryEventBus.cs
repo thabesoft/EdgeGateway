@@ -2,19 +2,19 @@
 using System.Collections.Concurrent;
 using ThabeSoft.EdgeGateway.Utilities;
 
-namespace ThabeSoft.EdgeGateway.Events;
+namespace ThabeSoft.PubSub;
 
 
-internal sealed class EventBus(ILogger<EventBus> logger) :
+internal sealed class InMemoryEventBus(ILogger<InMemoryEventBus> logger) :
     IEventPublisher, IEventSubscriber, IAsyncDisposable
 {
-    private readonly ConcurrentDictionary<Guid, Func<IEvent, CancellationToken, Task>> _handlers = [];
+    private readonly ConcurrentDictionary<Guid, Func<IMessage, CancellationToken, Task>> _handlers = [];
     private readonly CancellationTokenSource _publishTaskCts = new();
     private readonly ConcurrentDictionary<Guid, Task> _publishTasks = [];
 
 
 
-    public IDisposable Subscribe<TEvent>(Func<TEvent, CancellationToken, ValueTask> handler) where TEvent : IEvent
+    public IDisposable Subscribe<TEvent>(Func<TEvent, CancellationToken, ValueTask> handler) where TEvent : IMessage
     {
         var id = Guid.NewGuid();
         _handlers[id] = Warpper;
@@ -23,7 +23,7 @@ internal sealed class EventBus(ILogger<EventBus> logger) :
 
 
         // 事件包装
-        async Task Warpper(IEvent @event, CancellationToken cancellationToken)
+        async Task Warpper(IMessage @event, CancellationToken cancellationToken)
         {
             if (@event is not TEvent tEvent)
                 return;
@@ -43,7 +43,7 @@ internal sealed class EventBus(ILogger<EventBus> logger) :
         }
     }
 
-    public async Task PublishAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default) where TEvent : IEvent
+    public async Task PublishAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default) where TEvent : IMessage
     {
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _publishTaskCts.Token);
         var tasks = _handlers.Values.Select(x => x.Invoke(@event, cts.Token)).ToArray();

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
-using ThabeSoft.EdgeGateway.Events;
+using ThabeSoft.PubSub;
 using ThabeSoft.Lifecycles.Collections;
+using ThabeSoft.EdgeGateway.Messages;
 
 namespace ThabeSoft.EdgeGateway.Ports;
 
@@ -33,14 +34,14 @@ internal sealed class PortManager(
     public async ValueTask<IPort> AddAsync(PortDescriptor descriptor, CancellationToken cancellationToken = default)
     {
         var port = await collection.AddAsync(descriptor.Id, () => portCreator.Invoke(descriptor), cancellationToken);
-        await eventPublisher.PublishAsync(new PortAddedEvent(descriptor.Id));
+        await eventPublisher.PublishAsync(new PortAddedMessage(descriptor.Id));
 
         return port;
     }
     public async ValueTask<bool> RemoveAsync(PortId id, CancellationToken cancellationToken = default)
     {
         var result = await collection.RemoveAsync(id, cancellationToken);
-        await eventPublisher.PublishAsync(new PortRemovedEvent(id));
+        await eventPublisher.PublishAsync(new PortRemovedMessage(id));
 
         return result;
     }

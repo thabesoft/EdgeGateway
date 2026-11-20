@@ -1,15 +1,15 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Events;
+using ThabeSoft.PubSub;
 using ThabeSoft.Lifecycles;
 using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.Primitives.Guard;
-using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Readings;
 using ThabeSoft.Triggers;
 using ThabeSoft.Primitives;
 using ThabeSoft.Protocols;
+using ThabeSoft.EdgeGateway.Messages;
 
 namespace ThabeSoft.EdgeGateway.Subscription;
 
@@ -35,7 +35,7 @@ internal sealed class SubscriptionFactory(
         // 状态机
         var stateMachine = lifecycleStateMachineFactory.Create(context.SubscriptioStateMachineDescriptor);
         var subscriptionStateEventDisposable = stateMachine.StateChanged.Subscribe(x =>
-                _ = eventPublisher.PublishAsync(new SubscriptionStateChanged(portId, deviceId, subscriptionId, x.Old, x.New)));
+                _ = eventPublisher.PublishAsync(new SubscriptionStateChangedMessage(portId, deviceId, subscriptionId, x.Old, x.New)));
 
         // 数据更新
         var readingSource = new ReadingSource<T>(context.Subscription.Tag, context.ProtocolAccessor, readingSourceLogger);

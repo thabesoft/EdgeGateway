@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
-using ThabeSoft.EdgeGateway.Events;
-using ThabeSoft.Lifecycles.StateMachines;
+using ThabeSoft.EdgeGateway.Messages;
 using ThabeSoft.EdgeGateway.Ports;
+using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.Primitives;
+using ThabeSoft.PubSub;
 
 namespace ThabeSoft.EdgeGateway;
 
@@ -22,7 +23,7 @@ internal sealed class GatewayFactory(
         // 状态机
         var gatewayStateMachine = lifecycleStateMachineFactory.Create(context.GatewayStateMachine);
         var gatewayStateEventDisposable = gatewayStateMachine.StateChanged.Subscribe(x =>
-            _ = eventPublisher.PublishAsync(new GatewayStateChangedEvent(x.Old, x.New)));
+            _ = eventPublisher.PublishAsync(new GatewayStateChangedMessage(x.Old, x.New)));
 
 
         var portManager = portManagerFactory.Create(new()

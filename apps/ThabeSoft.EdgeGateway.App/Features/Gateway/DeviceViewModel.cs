@@ -4,11 +4,12 @@ using CommunityToolkit.Mvvm.Input;
 using SukiUI.Toasts;
 using ThabeSoft.EdgeGateway.App.Services;
 using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Events;
+using ThabeSoft.PubSub;
 using ThabeSoft.Lifecycles;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
+using ThabeSoft.EdgeGateway.Messages;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Gateway;
 
@@ -29,7 +30,7 @@ internal sealed partial class DeviceViewModel : ObservableObject, IDisposable
 
         _eventDisposers =
         [
-             eventSubscriber.Subscribe<SubscriptionAddedEvent>((e, _) =>
+             eventSubscriber.Subscribe<SubscriptionAddedMessage>((e, _) =>
             {
                 if(e.DeviceId != device.Id)return ValueTask.CompletedTask;
 
@@ -38,14 +39,14 @@ internal sealed partial class DeviceViewModel : ObservableObject, IDisposable
 
                 return ValueTask.CompletedTask;
             }),
-            eventSubscriber.Subscribe<SubscriptionRemovedEvent>((e, _) =>
+            eventSubscriber.Subscribe<SubscriptionRemovedMessage>((e, _) =>
             {
                 if(e.DeviceId != device.Id) return ValueTask.CompletedTask;
 
                 _viewModels.Remove(e.SubscriptionId);
                 return ValueTask.CompletedTask;
             }),
-            eventSubscriber.Subscribe<DeviceStateChangedEvent>((e, _) =>
+            eventSubscriber.Subscribe<DeviceStateChangedMessage>((e, _) =>
             {
                 if(e.DeviceId != device.Id) return ValueTask.CompletedTask;
                 

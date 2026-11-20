@@ -1,13 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Events;
+using ThabeSoft.PubSub;
 using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.Transports;
 using ThabeSoft.Primitives;
 using ThabeSoft.Protocols;
+using ThabeSoft.EdgeGateway.Messages;
 
 namespace ThabeSoft.EdgeGateway.Ports;
 
@@ -35,7 +36,7 @@ internal sealed class PortFactory(
         // 状态机
         var portStateMachine = lifecycleStateMachineFactory.Create(context.PortStateMachine);
         var deviceStateEventDisposable = portStateMachine.StateChanged.Subscribe(x =>
-            _ = eventPublisher.PublishAsync(new PortStateChangedEvent(port.Id, x.Old, x.New)));
+            _ = eventPublisher.PublishAsync(new PortStateChangedMessage(port.Id, x.Old, x.New)));
 
         // 传输器
         var transport = transportConnectionFactory.Create(context.Port.Transport);

@@ -1,14 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
-using ThabeSoft.EdgeGateway.Events;
-using ThabeSoft.Lifecycles;
-using ThabeSoft.Lifecycles.Collections;
-using ThabeSoft.Lifecycles.StateMachines;
+using ThabeSoft.EdgeGateway.Messages;
 using ThabeSoft.EdgeGateway.Ports;
-using ThabeSoft.Primitives.Guard;
-using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
+using ThabeSoft.Lifecycles;
+using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.Primitives;
+using ThabeSoft.Primitives.Guard;
 using ThabeSoft.Protocols;
+using ThabeSoft.PubSub;
 
 namespace ThabeSoft.EdgeGateway.Devices;
 
@@ -30,7 +29,7 @@ internal sealed class DeviceFactory(
         // 状态机
         var deviceStateMachine = lifecycleStateMachineFactory.Create(args.DeviceStateMachineDescriptor);
         var deviceStateEventDisposable = deviceStateMachine.StateChanged.Subscribe(x =>
-            _ = eventPublisher.PublishAsync(new DeviceStateChangedEvent(portId, deviceId, x.Old, x.New)));
+            _ = eventPublisher.PublishAsync(new DeviceStateChangedMessage(portId, deviceId, x.Old, x.New)));
 
         // 订阅创建器
         var subscriptionCreator = new SubscriptionCreator(new()

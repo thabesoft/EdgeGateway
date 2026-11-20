@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
-using ThabeSoft.EdgeGateway.Events;
-using ThabeSoft.Lifecycles.Collections;
+using ThabeSoft.EdgeGateway.Messages;
 using ThabeSoft.EdgeGateway.Ports;
+using ThabeSoft.Lifecycles.Collections;
 using ThabeSoft.Primitives;
+using ThabeSoft.PubSub;
 
 namespace ThabeSoft.EdgeGateway.Devices;
 
@@ -29,7 +30,7 @@ internal sealed class DeviceManager(
     public async ValueTask<IDevice> AddAsync(DeviceDescriptor descriptor, CancellationToken cancellationToken = default)
     {
         var device = await collection.AddAsync(descriptor.Id, () => deviceCreator.Invoke(descriptor), cancellationToken);
-        _ = eventPublisher.PublishAsync(new DeviceAddedEvent(portId, device.Id));
+        _ = eventPublisher.PublishAsync(new DeviceAddedMessage(portId, device.Id));
         return device;
     }
     public async ValueTask<bool> RemoveAsync(DeviceId deviceId, CancellationToken cancellationToken = default)
@@ -37,7 +38,7 @@ internal sealed class DeviceManager(
         var result = await collection.RemoveAsync(deviceId, cancellationToken);
         if (!result) return false;
 
-        _ = eventPublisher.PublishAsync(new DeviceRemovedEvent(portId, deviceId));
+        _ = eventPublisher.PublishAsync(new DeviceRemovedMessage(portId, deviceId));
         return true;
     }
 

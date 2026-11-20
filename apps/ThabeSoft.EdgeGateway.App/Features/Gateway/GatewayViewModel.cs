@@ -7,9 +7,10 @@ using SukiUI.Toasts;
 using System.Net;
 using ThabeSoft.EdgeGateway.App.Services;
 using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Events;
+using ThabeSoft.PubSub;
 using ThabeSoft.Lifecycles;
 using ThabeSoft.EdgeGateway.Ports;
+using ThabeSoft.EdgeGateway.Messages;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Gateway;
 
@@ -34,7 +35,7 @@ internal sealed partial class GatewayViewModel : ObservableObject, IDisposable
 
         _eventDisposers =
         [
-            eventSubscriber.Subscribe<PortAddedEvent>((e, _) =>
+            eventSubscriber.Subscribe<PortAddedMessage>((e, _) =>
             {
                 if (gateway.Ports.TryGetValue(e.PortId, out var port))
                 {
@@ -43,13 +44,13 @@ internal sealed partial class GatewayViewModel : ObservableObject, IDisposable
 
                 return ValueTask.CompletedTask;
             }),
-            eventSubscriber.Subscribe<PortRemovedEvent>((e, _) =>
+            eventSubscriber.Subscribe<PortRemovedMessage>((e, _) =>
             {
                  Dispatcher.UIThread.InvokeAsync(() =>
                     _viewModels.Remove(e.PortId));
                 return ValueTask.CompletedTask;
             }),
-            eventSubscriber.Subscribe<GatewayStateChangedEvent>((e, _) =>
+            eventSubscriber.Subscribe<GatewayStateChangedMessage>((e, _) =>
             {
                 Dispatcher.UIThread.InvokeAsync(() => State = e.New);
                 return ValueTask.CompletedTask;

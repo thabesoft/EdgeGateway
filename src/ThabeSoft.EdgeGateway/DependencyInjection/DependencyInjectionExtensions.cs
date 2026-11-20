@@ -5,7 +5,6 @@ using ThabeSoft.Configuration.Rloader;
 using ThabeSoft.EdgeGateway.Configuration.Mappers;
 using ThabeSoft.EdgeGateway.Configuration.Models;
 using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Events;
 using ThabeSoft.EdgeGateway.Hosting;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
@@ -20,11 +19,9 @@ public static class DependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {
-        public IServiceCollection AddEdgeGatewayHost()
-        {
-            return descriptors.AddHostedService<LaunchHostedService>();
-        }
-
+        /// <summary>
+        /// 提供网关和网关工厂
+        /// </summary>
         public IServiceCollection AddEdgeGateway(GatewayCreationArgs creationContext)
         {
             descriptors.TryAddSingleton<GatewayFactory>();
@@ -35,6 +32,33 @@ public static class DependencyInjectionExtensions
             });
             return descriptors;
         }
+
+        /// <summary>
+        /// 提供网关跟随Host启动能力
+        /// </summary>
+        public IServiceCollection AddEdgeGatewayHost()
+        {
+            return descriptors.AddHostedService<LaunchHostedService>();
+        }
+
+        /// <summary>
+        /// 提供网关配置解析映射能力
+        /// </summary>
+        public IServiceCollection AddEdgeGatewayConfig()
+        {
+            descriptors.TryAddSingleton<IConfigReloadApplier, GatewayConfigApplier>();
+            // Gateway
+            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigMapper<GatewayConfig>, GatewayConfigMapper>());
+            // Retry
+            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigMapper<RetryDescriptor>, RetryDescriptorConfigMapper>());
+
+            return descriptors;
+        }
+
+
+        /// <summary>
+        /// 提供网关端口管理能力
+        /// </summary>
         public IServiceCollection AddEdgeGatewayPorts()
         {
             descriptors.TryAddSingleton<PortFactory>();
@@ -42,6 +66,9 @@ public static class DependencyInjectionExtensions
 
             return descriptors;
         }
+        /// <summary>
+        /// 提供网关设备管理能力
+        /// </summary>
         public IServiceCollection AddEdgeGatewayDevices()
         {
             descriptors.TryAddSingleton<DeviceFactory>();
@@ -49,6 +76,9 @@ public static class DependencyInjectionExtensions
 
             return descriptors;
         }
+        /// <summary>
+        /// 提供网关订阅管理能力
+        /// </summary>
         public IServiceCollection AddEdgeGatewaySubscriptions()
         {
             descriptors.TryAddSingleton<SubscriptionFactory>();
@@ -56,18 +86,9 @@ public static class DependencyInjectionExtensions
 
             return descriptors;
         }
-        public IServiceCollection AddEdgeGatewayTransport()
-        {
-            descriptors.TryAddSingleton<ITransportConnectionFactory, TransportConnectionFactory>();
-            return descriptors;
-        }
-
-        public IServiceCollection AddEdgeGatewayProtocol()
-        {
-            descriptors.TryAddSingleton<ProtocolAccessorFactory>();
-            return descriptors;
-        }
-
+        /// <summary>
+        /// 提供网关数据点读取能力
+        /// </summary>
         public IServiceCollection AddEdgeGatewayReadings()
         {
             descriptors.TryAddSingleton<ReadingSinkBus>();
@@ -76,19 +97,21 @@ public static class DependencyInjectionExtensions
             return descriptors;
         }
 
+        /// <summary>
+        /// 提供网关传输管理能力
+        /// </summary>
+        public IServiceCollection AddEdgeGatewayTransports()
+        {
+            descriptors.TryAddSingleton<ITransportConnectionFactory, TransportConnectionFactory>();
+            return descriptors;
+        }
 
         /// <summary>
-        /// 提供配置解析映射能力
+        /// 提供网关协议管理能力
         /// </summary>
-        public IServiceCollection AddEdgeGatewayConfiguration()
+        public IServiceCollection AddEdgeGatewayProtocols()
         {
-            descriptors.TryAddSingleton<IConfigReloadApplier, GatewayConfigApplier>();
-
-            // Gateway
-            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigMapper<GatewayConfig>, GatewayConfigMapper>());
-            // Retry
-            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigMapper<RetryDescriptor>, RetryDescriptorConfigMapper>());
-
+            descriptors.TryAddSingleton<ProtocolAccessorFactory>();
             return descriptors;
         }
     }

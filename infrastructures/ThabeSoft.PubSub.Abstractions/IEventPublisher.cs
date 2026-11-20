@@ -1,6 +1,6 @@
-﻿namespace ThabeSoft.EdgeGateway.Events;
+﻿namespace ThabeSoft.PubSub;
 
 public interface IEventPublisher
 {
-    Task PublishAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default) where TEvent : notnull, IEvent;
+    Task PublishAsync<TMessage>(TMessage message, CancellationToken cancellationToken = default) where TMessage : notnull, IMessage;
 }

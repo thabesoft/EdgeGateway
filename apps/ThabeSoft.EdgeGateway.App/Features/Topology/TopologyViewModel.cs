@@ -6,7 +6,7 @@ using SukiUI.Dialogs;
 using SukiUI.Toasts;
 using ThabeSoft.EdgeGateway.App.Features.Gateway;
 using ThabeSoft.EdgeGateway.App.Services;
-using ThabeSoft.EdgeGateway.Events;
+using ThabeSoft.PubSub;
 using ThabeSoft.Lifecycles;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;

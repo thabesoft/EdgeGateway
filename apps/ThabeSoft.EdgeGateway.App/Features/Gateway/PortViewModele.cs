@@ -4,10 +4,11 @@ using CommunityToolkit.Mvvm.Input;
 using SukiUI.Toasts;
 using ThabeSoft.EdgeGateway.App.Services;
 using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Events;
+using ThabeSoft.PubSub;
 using ThabeSoft.Lifecycles;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.Transports;
+using ThabeSoft.EdgeGateway.Messages;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Gateway;
 
@@ -29,7 +30,7 @@ internal sealed partial class PortViewModel : ObservableObject, IDisposable
 
         _eventDisposers =
         [
-             eventSubscriber.Subscribe<DeviceAddedEvent>((e, _) =>
+             eventSubscriber.Subscribe<DeviceAddedMessage>((e, _) =>
             {
                 if(e.PortId != port.Id)return ValueTask.CompletedTask;
 
@@ -38,14 +39,14 @@ internal sealed partial class PortViewModel : ObservableObject, IDisposable
 
                 return ValueTask.CompletedTask;
             }),
-            eventSubscriber.Subscribe<DeviceRemovedEvent>((e, _) =>
+            eventSubscriber.Subscribe<DeviceRemovedMessage>((e, _) =>
             {
                 if(e.PortId != port.Id) return ValueTask.CompletedTask;
 
                 _viewModels.Remove(e.DeviceId);
                 return ValueTask.CompletedTask;
             }),
-            eventSubscriber.Subscribe<PortStateChangedEvent>((e, _) =>
+            eventSubscriber.Subscribe<PortStateChangedMessage>((e, _) =>
             {
                 if(e.PortId != port.Id) return ValueTask.CompletedTask;
 

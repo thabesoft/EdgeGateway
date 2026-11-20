@@ -1,9 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Events;
+using ThabeSoft.PubSub;
 using ThabeSoft.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.Primitives;
+using ThabeSoft.EdgeGateway.Messages;
 
 namespace ThabeSoft.EdgeGateway.Subscription;
 
@@ -43,7 +44,7 @@ internal sealed class SubscriptionManager(
         _disposeFlag.ThrowIfDisposed(this);
 
         var subscription = await collection.AddAsync(descriptor.Id, () => subscriptionCreator.Create(descriptor), cancellationToken);
-        _ = eventPublisher.PublishAsync(new SubscriptionAddedEvent(_portId, _deviceId, subscription.Id));
+        _ = eventPublisher.PublishAsync(new SubscriptionAddedMessage(_portId, _deviceId, subscription.Id));
         return (ISubscription<T>)subscription;
     }
     public async ValueTask<bool> RemoveAsync(SubscriptionId id, CancellationToken cancellationToken = default)
@@ -53,7 +54,7 @@ internal sealed class SubscriptionManager(
         var result = await collection.RemoveAsync(id, cancellationToken);
         if (!result) return false;
 
-        _ = eventPublisher.PublishAsync(new SubscriptionRemovedEvent(_portId, _deviceId, id));
+        _ = eventPublisher.PublishAsync(new SubscriptionRemovedMessage(_portId, _deviceId, id));
         return true;
     }
 

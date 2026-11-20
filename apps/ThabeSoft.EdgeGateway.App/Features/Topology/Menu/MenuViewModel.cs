@@ -2,8 +2,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using ThabeSoft.EdgeGateway.App.Features.Gateway;
 using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Events;
+using ThabeSoft.PubSub;
 using ThabeSoft.EdgeGateway.Ports;
+using ThabeSoft.EdgeGateway.Messages;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 
@@ -17,27 +18,27 @@ internal sealed class MenuViewModel : ObservableObject
         // 初始化菜单
         _items = [.. gateway.Ports.Values.Select(CreatePortItem)];
 
-        eventSubscriber.Subscribe<PortAddedEvent>((e, _) =>
+        eventSubscriber.Subscribe<PortAddedMessage>((e, _) =>
         {
             if (gateway.Ports.TryGetValue(e.PortId, out var port))
                 AddPort(port);
 
             return ValueTask.CompletedTask;
         });
-        eventSubscriber.Subscribe<PortRemovedEvent>((e, _) =>
+        eventSubscriber.Subscribe<PortRemovedMessage>((e, _) =>
         {
             RemovePort(e.PortId);
             return ValueTask.CompletedTask;
         });
 
-        eventSubscriber.Subscribe<DeviceAddedEvent>((e, _) =>
+        eventSubscriber.Subscribe<DeviceAddedMessage>((e, _) =>
         {
             if (gateway.Ports.TryGetValue(e.PortId, out var port) && port.Devices.TryGetValue(e.DeviceId, out var devide))
                 AddDevice(e.PortId, devide);
 
             return ValueTask.CompletedTask;
         });
-        eventSubscriber.Subscribe<DeviceRemovedEvent>((e, _) =>
+        eventSubscriber.Subscribe<DeviceRemovedMessage>((e, _) =>
         {
             RemoveDevice(e.PortId, e.DeviceId);
             return ValueTask.CompletedTask;

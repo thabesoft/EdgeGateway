@@ -2,7 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using SukiUI.Toasts;
 using ThabeSoft.EdgeGateway.App.Services;
-using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.Lifecycles;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Gateway;
 

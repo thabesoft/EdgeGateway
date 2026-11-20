@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Hosting;
 using ThabeSoft.EdgeGateway.DependencyInjection;
-using ThabeSoft.EdgeGateway.Lifecycles;
-using ThabeSoft.EdgeGateway.Lifecycles.Collections;
-using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.Lifecycles;
+using ThabeSoft.Lifecycles.Collections;
+using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.Primitives.Guard;
 
 namespace ThabeSoft.EdgeGateway.Hosting;

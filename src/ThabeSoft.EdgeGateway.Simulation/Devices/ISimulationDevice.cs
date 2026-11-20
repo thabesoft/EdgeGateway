@@ -1,4 +1,4 @@
-﻿using ThabeSoft.EdgeGateway.Lifecycles;
+﻿using ThabeSoft.Lifecycles;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.EdgeGateway.Triggers;
 using ThabeSoft.EdgeGateway.ValueGenerators;

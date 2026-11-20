@@ -1,6 +1,6 @@
 ﻿using ThabeSoft.Primitives.Guard;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles.Utilities;
+namespace ThabeSoft.Lifecycles.Utilities;
 
 
 internal sealed class Locker(SemaphoreSlim semaphoreSlim) : IDisposable

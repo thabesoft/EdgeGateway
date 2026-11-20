@@ -7,7 +7,7 @@ using SukiUI.Toasts;
 using ThabeSoft.EdgeGateway.App.Features.Gateway;
 using ThabeSoft.EdgeGateway.App.Services;
 using ThabeSoft.EdgeGateway.Events;
-using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.Lifecycles;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 

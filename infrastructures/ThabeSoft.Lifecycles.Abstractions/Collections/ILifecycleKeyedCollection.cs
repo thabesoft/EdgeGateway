@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Lifecycles.Collections;
+﻿namespace ThabeSoft.Lifecycles.Collections;
 
 
 /// <summary>

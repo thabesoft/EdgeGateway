@@ -15,7 +15,7 @@ public static class DependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {
-        public IServiceCollection AddEdgeGatewayCodec()
+        public IServiceCollection AddCodecs()
         {
             descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ICodecFactory, CodecFactory>());
 
@@ -45,22 +45,22 @@ public static class DependencyInjectionExtensions
             return descriptors;
         }
 
-        public IServiceCollection AddEdgeGatewayCodecConfig()
+        public IServiceCollection AddCodecsConfig()
         {
             descriptors.TryAddSingleton<CodecDescriptorConfigMapper>();
-            
+
             // byte
             descriptors.TryAddSingleton<IConfigMapper<CodecDescriptor<bool>>>(sp => sp.GetRequiredService<CodecDescriptorConfigMapper>());
             descriptors.TryAddSingleton<IConfigMapper<CodecDescriptor<byte>>>(sp => sp.GetRequiredService<CodecDescriptorConfigMapper>());
 
             // word
-            descriptors.TryAddSingleton<IConfigMapper<CodecDescriptor<ushort>>>(sp => sp.GetRequiredService<CodecDescriptorConfigMapper>()); 
+            descriptors.TryAddSingleton<IConfigMapper<CodecDescriptor<ushort>>>(sp => sp.GetRequiredService<CodecDescriptorConfigMapper>());
             descriptors.TryAddSingleton<IConfigMapper<CodecDescriptor<short>>>(sp => sp.GetRequiredService<CodecDescriptorConfigMapper>());
             descriptors.TryAddSingleton<IConfigMapper<CodecDescriptor<char>>>(sp => sp.GetRequiredService<CodecDescriptorConfigMapper>());
 
             // dword
             descriptors.TryAddSingleton<IConfigMapper<CodecDescriptor<int>>>(sp => sp.GetRequiredService<CodecDescriptorConfigMapper>());
-            descriptors.TryAddSingleton<IConfigMapper<CodecDescriptor<uint>>>(sp => sp.GetRequiredService<CodecDescriptorConfigMapper>());   
+            descriptors.TryAddSingleton<IConfigMapper<CodecDescriptor<uint>>>(sp => sp.GetRequiredService<CodecDescriptorConfigMapper>());
             descriptors.TryAddSingleton<IConfigMapper<CodecDescriptor<float>>>(sp => sp.GetRequiredService<CodecDescriptorConfigMapper>());
 
             // qword

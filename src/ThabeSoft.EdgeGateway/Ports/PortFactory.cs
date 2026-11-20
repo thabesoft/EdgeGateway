@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Events;
-using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Transports;

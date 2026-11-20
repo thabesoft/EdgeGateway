@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using ThabeSoft.Primitives;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles.Collections;
+namespace ThabeSoft.Lifecycles.Collections;
 
 
 internal sealed class LifecycleKeyedCollection<TKey, TLifecycle>(

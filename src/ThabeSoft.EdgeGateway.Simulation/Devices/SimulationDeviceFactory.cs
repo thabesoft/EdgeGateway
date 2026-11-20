@@ -1,4 +1,4 @@
-﻿using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+﻿using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.Primitives.Guard;
 
 namespace ThabeSoft.EdgeGateway.Devices;

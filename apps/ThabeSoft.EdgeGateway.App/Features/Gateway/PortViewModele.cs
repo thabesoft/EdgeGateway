@@ -5,7 +5,7 @@ using SukiUI.Toasts;
 using ThabeSoft.EdgeGateway.App.Services;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Events;
-using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.Lifecycles;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Transports;
 

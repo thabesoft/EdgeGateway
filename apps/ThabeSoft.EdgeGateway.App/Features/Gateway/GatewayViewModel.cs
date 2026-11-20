@@ -8,7 +8,7 @@ using System.Net;
 using ThabeSoft.EdgeGateway.App.Services;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Events;
-using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.Lifecycles;
 using ThabeSoft.EdgeGateway.Ports;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Gateway;

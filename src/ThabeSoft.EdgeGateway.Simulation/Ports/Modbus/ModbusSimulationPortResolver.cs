@@ -2,8 +2,8 @@
 using NModbus;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ethernet;
-using ThabeSoft.EdgeGateway.Lifecycles.Collections;
-using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.Lifecycles.Collections;
+using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway.Ports.Modbus.Ip;
 using ThabeSoft.EdgeGateway.Ports.Modbus.Serial;

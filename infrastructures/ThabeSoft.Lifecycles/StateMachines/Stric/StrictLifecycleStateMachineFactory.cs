@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
-using ThabeSoft.EdgeGateway.Lifecycles.Utilities;
+using ThabeSoft.Lifecycles.Utilities;
 using ThabeSoft.Primitives;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles.StateMachines.Stric;
+namespace ThabeSoft.Lifecycles.StateMachines.Stric;
 
 
 internal sealed class StrictLifecycleStateMachineFactory(ILoggerFactory loggerFactory) : ILifecycleStateMachineResolver

@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
-using ThabeSoft.EdgeGateway.Lifecycles.Utilities;
+using ThabeSoft.Lifecycles.Utilities;
 using ThabeSoft.Primitives;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles.StateMachines.Retryable;
+namespace ThabeSoft.Lifecycles.StateMachines.Retryable;
 
 
 internal sealed class RetryableLifecycleStateMachineResolver(

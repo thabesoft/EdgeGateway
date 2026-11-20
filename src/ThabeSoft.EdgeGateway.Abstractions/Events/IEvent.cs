@@ -1,5 +1,5 @@
 ﻿using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.Lifecycles;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Subscription;
 

@@ -1,6 +1,6 @@
 ﻿using ThabeSoft.Primitives.Guard;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles;
+namespace ThabeSoft.Lifecycles;
 
 
 public interface ILifecycleFactory

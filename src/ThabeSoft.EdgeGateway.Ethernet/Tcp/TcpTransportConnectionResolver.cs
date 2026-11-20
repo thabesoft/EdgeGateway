@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using ThabeSoft.EdgeGateway.Lifecycles;
-using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.Lifecycles;
+using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Transports;
 
 namespace ThabeSoft.EdgeGateway.Ethernet.Tcp;

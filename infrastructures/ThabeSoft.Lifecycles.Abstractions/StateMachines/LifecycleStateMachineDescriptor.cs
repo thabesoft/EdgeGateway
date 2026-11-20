@@ -1,6 +1,6 @@
 ﻿using ThabeSoft.Primitives.Guard;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+namespace ThabeSoft.Lifecycles.StateMachines;
 
 
 public abstract record class LifecycleStateMachineDescriptor

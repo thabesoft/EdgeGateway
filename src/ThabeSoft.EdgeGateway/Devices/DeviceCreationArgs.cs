@@ -1,6 +1,6 @@
-﻿using ThabeSoft.EdgeGateway.Lifecycles;
-using ThabeSoft.EdgeGateway.Lifecycles.Collections;
-using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+﻿using ThabeSoft.Lifecycles;
+using ThabeSoft.Lifecycles.Collections;
+using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Protocols;

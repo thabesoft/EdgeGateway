@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using ThabeSoft.Primitives;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles.Utilities;
+namespace ThabeSoft.Lifecycles.Utilities;
 
 
 internal sealed class ObservableLifecycleState(

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.EdgeGateway.Lifecycles.Collections;
-using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.Lifecycles.Collections;
+using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Transports;
 

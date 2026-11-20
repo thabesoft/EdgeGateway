@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Lifecycles;
+﻿namespace ThabeSoft.Lifecycles;
 
 /// <summary>
 /// 生命周期

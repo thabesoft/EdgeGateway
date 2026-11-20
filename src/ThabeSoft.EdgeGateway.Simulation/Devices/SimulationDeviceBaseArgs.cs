@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Triggers;
 using ThabeSoft.EdgeGateway.Utilities;

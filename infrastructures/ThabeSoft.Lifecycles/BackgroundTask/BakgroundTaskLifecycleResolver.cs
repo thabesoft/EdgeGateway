@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using ThabeSoft.Primitives.Guard;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles.BackgroundTask;
+namespace ThabeSoft.Lifecycles.BackgroundTask;
 
 
 internal sealed class BakgroundTaskLifecycleResolver(ILoggerFactory loggerFactory) : ILifecycleResolver

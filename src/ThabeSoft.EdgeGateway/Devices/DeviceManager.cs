@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Events;
-using ThabeSoft.EdgeGateway.Lifecycles.Collections;
+using ThabeSoft.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.Primitives;
 

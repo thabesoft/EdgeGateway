@@ -1,19 +1,22 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using ThabeSoft.EdgeGateway.Lifecycles.BackgroundTask;
-using ThabeSoft.EdgeGateway.Lifecycles.Collections;
-using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
-using ThabeSoft.EdgeGateway.Lifecycles.StateMachines.Retryable;
-using ThabeSoft.EdgeGateway.Lifecycles.StateMachines.Stric;
+using ThabeSoft.Lifecycles.BackgroundTask;
+using ThabeSoft.Lifecycles.Collections;
+using ThabeSoft.Lifecycles.StateMachines;
+using ThabeSoft.Lifecycles.StateMachines.Retryable;
+using ThabeSoft.Lifecycles.StateMachines.Stric;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles.DependencyInjection;
+namespace ThabeSoft.Lifecycles.DependencyInjection;
 
 
 public static class DependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {
-        public IServiceCollection AddEdgeGatewayLifecycles()
+        /// <summary>
+        /// 提供生命周期创建能力
+        /// </summary>
+        public IServiceCollection AddLifecycles()
         {
             // 状态机
             descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<ILifecycleStateMachineFactory, LifecycleStateMachineFactory>());

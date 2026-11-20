@@ -1,4 +1,4 @@
-﻿using ThabeSoft.EdgeGateway.Lifecycles;
+﻿using ThabeSoft.Lifecycles;
 using ThabeSoft.EdgeGateway.Readings;
 using ThabeSoft.EdgeGateway.Tags;
 

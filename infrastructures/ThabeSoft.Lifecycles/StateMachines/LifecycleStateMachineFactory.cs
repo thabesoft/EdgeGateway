@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+﻿namespace ThabeSoft.Lifecycles.StateMachines;
 
 
 internal sealed class LifecycleStateMachineFactory(

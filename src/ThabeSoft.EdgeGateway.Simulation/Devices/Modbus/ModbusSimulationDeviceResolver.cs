@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using NModbus;
 using ThabeSoft.Codecs;
-using ThabeSoft.EdgeGateway.Lifecycles.StateMachines;
+using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.EdgeGateway.Simulation.Devices.Modbus;
 using ThabeSoft.EdgeGateway.Triggers;
 

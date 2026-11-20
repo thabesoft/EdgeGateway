@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Diagnostics;
-using ThabeSoft.EdgeGateway.Lifecycles.Utilities;
+using ThabeSoft.Lifecycles.Utilities;
 using ThabeSoft.Primitives;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles.StateMachines.Retryable;
+namespace ThabeSoft.Lifecycles.StateMachines.Retryable;
 
 
 internal abstract class LifecycleStateMachineBase(

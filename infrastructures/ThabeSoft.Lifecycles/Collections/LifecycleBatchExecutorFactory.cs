@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles.Collections;
+namespace ThabeSoft.Lifecycles.Collections;
 
 
 internal sealed class LifecycleBatchExecutorFactory(ILoggerFactory loggerFactory) : ILifecycleBatchExecutorFactory

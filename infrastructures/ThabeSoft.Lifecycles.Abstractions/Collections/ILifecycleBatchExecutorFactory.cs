@@ -1,6 +1,6 @@
 ﻿using ThabeSoft.Primitives.Guard;
 
-namespace ThabeSoft.EdgeGateway.Lifecycles.Collections;
+namespace ThabeSoft.Lifecycles.Collections;
 
 
 public interface ILifecycleBatchExecutorFactory

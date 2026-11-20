@@ -9,7 +9,7 @@ using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ethernet;
 using ThabeSoft.EdgeGateway.Ethernet.DependencyInjection;
 using ThabeSoft.EdgeGateway.Hosting;
-using ThabeSoft.EdgeGateway.Lifecycles;
+using ThabeSoft.Lifecycles;
 using ThabeSoft.EdgeGateway.Modbus;
 using ThabeSoft.EdgeGateway.Modbus.DependencyInjection;
 using ThabeSoft.EdgeGateway.Ports;

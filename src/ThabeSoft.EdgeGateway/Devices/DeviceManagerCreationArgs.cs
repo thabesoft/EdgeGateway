@@ -1,5 +1,5 @@
-﻿using ThabeSoft.EdgeGateway.Lifecycles;
-using ThabeSoft.EdgeGateway.Lifecycles.Collections;
+﻿using ThabeSoft.Lifecycles;
+using ThabeSoft.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.Primitives.Guard;
 

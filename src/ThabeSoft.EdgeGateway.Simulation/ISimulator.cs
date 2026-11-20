@@ -1,4 +1,4 @@
-﻿using ThabeSoft.EdgeGateway.Lifecycles;
+﻿using ThabeSoft.Lifecycles;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Transports;
 

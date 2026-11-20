@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using ThabeSoft.EdgeGateway.Lifecycles;
-using ThabeSoft.EdgeGateway.Lifecycles.StateMachines.Retryable;
+using ThabeSoft.Lifecycles;
+using ThabeSoft.Lifecycles.StateMachines.Retryable;
 using ThabeSoft.Primitives;
 
 namespace ThabeSoft.EdgeGateway.UnitTests.Lifecycles;

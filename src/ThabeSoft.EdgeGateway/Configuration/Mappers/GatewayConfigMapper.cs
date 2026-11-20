@@ -3,7 +3,6 @@ using System.Collections;
 using ThabeSoft.Codecs;
 using ThabeSoft.Configuration;
 using ThabeSoft.Configuration.Nodes;
-using ThabeSoft.EdgeGateway.Configuration.Models;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;

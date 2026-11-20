@@ -11,10 +11,4 @@
 	  <ProjectReference Include="..\ThabeSoft.Primitives\ThabeSoft.Primitives.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<None Update="Gateway.json">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
-
 </Project>

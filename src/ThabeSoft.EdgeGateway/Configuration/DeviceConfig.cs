@@ -2,7 +2,7 @@
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.Primitives.Guard;
 
-namespace ThabeSoft.EdgeGateway.Configuration.Models;
+namespace ThabeSoft.EdgeGateway.Configuration;
 
 
 public sealed record class DeviceConfig

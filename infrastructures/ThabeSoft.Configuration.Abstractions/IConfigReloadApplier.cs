@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.Configuration.Rloader;
+﻿namespace ThabeSoft.Configuration;
 
 
 /// <summary>

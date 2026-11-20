@@ -10,4 +10,14 @@
 		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Abstractions\ThabeSoft.EdgeGateway.Abstractions.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Configuration\Models\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Gateway.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
 </Project>

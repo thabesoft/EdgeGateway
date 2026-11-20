@@ -1,8 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
-using ThabeSoft.EdgeGateway;
-using ThabeSoft.EdgeGateway.Configuration.Models;
+using ThabeSoft.Configuration;
 
-namespace ThabeSoft.Configuration.Rloader;
+namespace ThabeSoft.EdgeGateway.Configuration.Reloader;
 
 
 

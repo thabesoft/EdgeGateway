@@ -1,9 +1,8 @@
 ﻿using ThabeSoft.Configuration;
 using ThabeSoft.Configuration.Nodes;
-using ThabeSoft.EdgeGateway.Configuration.Models;
 using ThabeSoft.Primitives.Guard;
 
-namespace ThabeSoft.EdgeGateway.Configuration;
+namespace ThabeSoft.EdgeGateway.Configuration.Reloader;
 
 
 internal sealed class GatewayJsonConfigSerializer(

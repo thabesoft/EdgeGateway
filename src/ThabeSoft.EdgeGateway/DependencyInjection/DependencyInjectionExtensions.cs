@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using ThabeSoft.Configuration;
-using ThabeSoft.Configuration.Rloader;
+using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Configuration.Mappers;
-using ThabeSoft.EdgeGateway.Configuration.Models;
+using ThabeSoft.EdgeGateway.Configuration.Reloader;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Hosting;
 using ThabeSoft.EdgeGateway.Ports;

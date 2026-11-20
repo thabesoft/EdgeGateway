@@ -1,7 +1,7 @@
 ﻿using ThabeSoft.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Subscription;
 
-namespace ThabeSoft.EdgeGateway.Configuration.Models;
+namespace ThabeSoft.EdgeGateway.Configuration;
 
 
 public sealed record class SubscriptionConfig

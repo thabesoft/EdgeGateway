@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
 
-namespace ThabeSoft.Configuration.Rloader;
+namespace ThabeSoft.Configuration;
 
 
 internal sealed class ConfigFileReloadHostedService(

@@ -1,14 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net11.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\ThabeSoft.Primitives\ThabeSoft.Primitives.csproj" />
-    <ProjectReference Include="..\ThabeSoft.PubSub.Abstractions\ThabeSoft.PubSub.Abstractions.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\ThabeSoft.Primitives\ThabeSoft.Primitives.csproj" />
+	</ItemGroup>
 
 </Project>

@@ -1,7 +1,6 @@
 ﻿using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.Lifecycles;
 using ThabeSoft.EdgeGateway.Ports;
-using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.PubSub;
 
 namespace ThabeSoft.EdgeGateway.Messages;

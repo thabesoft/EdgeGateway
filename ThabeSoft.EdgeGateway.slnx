@@ -21,7 +21,6 @@
     <Project Path="infrastructures/ThabeSoft.Protocols.Abstractions/ThabeSoft.Protocols.Abstractions.csproj" Id="7ee307cf-20b8-4a6a-9a01-45335103f1af" />
     <Project Path="infrastructures/ThabeSoft.Protocols.Modbus/ThabeSoft.Protocols.Modbus.csproj" Id="cd7d7503-e423-46dc-a475-0ab02a094dbc" />
     <Project Path="infrastructures/ThabeSoft.Protocols/ThabeSoft.Protocols.csproj" Id="e337dd79-d70f-4225-b4ad-f96152ef89d4" />
-    <Project Path="infrastructures/ThabeSoft.PubSub.Abstractions/ThabeSoft.PubSub.Abstractions.csproj" Id="bedcffb1-37a8-47f3-90b8-8815ef1081b1" />
     <Project Path="infrastructures/ThabeSoft.PubSub/ThabeSoft.PubSub.csproj" Id="a939cfff-7b1a-411e-a29b-b087be6724af" />
     <Project Path="infrastructures/ThabeSoft.Transports.Abstractions/ThabeSoft.Transports.Abstractions.csproj" Id="1f438cc8-3fa1-42a8-a426-466ad75776d0" />
     <Project Path="infrastructures/ThabeSoft.Transports.Ethernet/ThabeSoft.Transports.Ethernet.csproj" Id="b409de6e-b4bf-45e3-8617-cfce0642d935" />
@@ -31,7 +30,7 @@
     <Project Path="infrastructures/ThabeSoft.Triggers/ThabeSoft.Triggers.csproj" Id="e786af9c-f964-4a26-9e5d-78ad2122838b" />
   </Folder>
   <Folder Name="/Tests/">
-    <Project Path="tests/ThabeSoft.EdgeGateway.IntegrationTests/ThabeSoft.EdgeGateway.IntegrationTests.csproj" Id="861f1cea-1f75-45c5-b940-1c2408bc5670" />
-    <Project Path="tests/ThabeSoft.EdgeGateway.UnitTests/ThabeSoft.EdgeGateway.UnitTests.csproj" />
+    <Project Path="tests/ThabeSoft.IntegrationTests/ThabeSoft.IntegrationTests.csproj" />
+    <Project Path="tests/ThabeSoft.UnitTests/ThabeSoft.UnitTests.csproj" />
   </Folder>
 </Solution>

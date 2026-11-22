@@ -17,6 +17,7 @@
 		<ProjectReference Include="..\..\infrastructures\ThabeSoft.Primitives\ThabeSoft.Primitives.csproj" />
 		<ProjectReference Include="..\..\infrastructures\ThabeSoft.Protocols.Abstractions\ThabeSoft.Protocols.Abstractions.csproj" />
 		<ProjectReference Include="..\..\infrastructures\ThabeSoft.PubSub.Abstractions\ThabeSoft.PubSub.Abstractions.csproj" />
+		<ProjectReference Include="..\..\infrastructures\ThabeSoft.PubSub\ThabeSoft.PubSub.csproj" />
 		<ProjectReference Include="..\..\infrastructures\ThabeSoft.Transports.Abstractions\ThabeSoft.Transports.Abstractions.csproj" />
 		<ProjectReference Include="..\..\infrastructures\ThabeSoft.Triggers.Abstractions\ThabeSoft.Triggers.Abstractions.csproj" />
 	</ItemGroup>

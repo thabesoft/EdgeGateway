@@ -13,6 +13,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\infrastructures\ThabeSoft.PubSub\ThabeSoft.PubSub.csproj" />
 		<ProjectReference Include="..\ThabeSoft.EdgeGateway.Abstractions\ThabeSoft.EdgeGateway.Abstractions.csproj" />
 	</ItemGroup>
 

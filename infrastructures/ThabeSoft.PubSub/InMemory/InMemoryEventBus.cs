@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using ThabeSoft.Primitives;
 
-namespace ThabeSoft.PubSub;
+namespace ThabeSoft.PubSub.InMemory;
 
 
 internal sealed class InMemoryEventBus(ILogger<InMemoryEventBus> logger) :

@@ -46,7 +46,7 @@
 
 	<!--测试内部可见-->
 	<ItemGroup>
-		<InternalsVisibleTo Include="ThabeSoft.EdgeGateway.UnitTests"></InternalsVisibleTo>
+		<InternalsVisibleTo Include="ThabeSoft.UnitTests"></InternalsVisibleTo>
 	</ItemGroup>
 
 </Project>

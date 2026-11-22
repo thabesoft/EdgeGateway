@@ -2,43 +2,39 @@
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.Lifecycles;
 using ThabeSoft.Lifecycles.StateMachines;
-using ThabeSoft.Transports;
 using ThabeSoft.Primitives;
+using ThabeSoft.Primitives.Guard;
+using ThabeSoft.Transports;
 
 namespace ThabeSoft.EdgeGateway.Ports;
 
 
-internal sealed class Port(
-        PortId portId,
-        ConnectionEndpoint connectionEndpoint,
-        ILifecycleStateable gatewayLifecycleStateable,
-        ILifecycleStateMachine stateMachine,
-        DeviceManager deviceManager,
-        ILifecycle transportConnectionLifeCycle,
-        ILogger<Port> logger,
-        Func<ValueTask> onDispose
-    ) :
-    IPort, IAsyncDisposable
+internal sealed class Port(PortDependencies dependencies) : IPort, IAsyncDisposable
 {
     private readonly DisposeFlag _disposeFlag = new();
 
 
-    public PortId Id { get; } = portId;
-    public ConnectionEndpoint Endpoint { get; } = connectionEndpoint;
-    public IReadOnlyDictionary<DeviceId, IDevice> Devices => deviceManager.Items;
-    public LifecycleState State => stateMachine.State;
+    public PortId Id { get; } = dependencies.Descriptor.Id;
+    public ConnectionEndpoint Endpoint { get; } = dependencies.Descriptor.Transport.Endpoint;
+    public IReadOnlyDictionary<DeviceId, IDevice> Devices => dependencies.DeviceManager.Items;
+    public LifecycleState State => dependencies.StateMachine.State;
 
 
 
     public ValueTask StartAsync(CancellationToken cancellationToken = default)
     {
         _disposeFlag.ThrowIfDisposed(this);
-        return stateMachine.TransitionToRunningAsync(OnStartAsync, cancellationToken);
+        return dependencies.StateMachine.TransitionToRunningAsync(OnStartAsync, cancellationToken);
     }
     public ValueTask StopAsync(CancellationToken cancellationToken = default)
     {
         _disposeFlag.ThrowIfDisposed(this);
-        return stateMachine.TransitionToStoppedAsync(OnStopAsync, cancellationToken);
+        return dependencies.StateMachine.TransitionToStoppedAsync(OnStopAsync, cancellationToken);
+    }
+    public async ValueTask DisposeAsync()
+    {
+        if (!_disposeFlag.TryMarkDisposed()) return;
+        await Safe.TryEexecuteAsync(dependencies.OnDispose, dependencies.Logger);
     }
 
 
@@ -46,32 +42,25 @@ internal sealed class Port(
     {
         _disposeFlag.ThrowIfDisposed(this);
 
-        return await stateMachine.ExecuteAsync(ct =>
-            deviceManager.AddAsync(descriptor, ct), cancellationToken);
+        return await dependencies.StateMachine.ExecuteAsync(ct =>
+            dependencies.DeviceManager.AddAsync(descriptor, ct), cancellationToken);
     }
     public ValueTask<bool> RemoveDeviceAsync(DeviceId deviceId, CancellationToken cancellationToken = default)
     {
         _disposeFlag.ThrowIfDisposed(this);
 
-        return stateMachine.ExecuteAsync(ct =>
-            deviceManager.RemoveAsync(deviceId, ct), cancellationToken);
+        return dependencies.StateMachine.ExecuteAsync(ct =>
+            dependencies.DeviceManager.RemoveAsync(deviceId, ct), cancellationToken);
     }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (!_disposeFlag.TryMarkDisposed()) return;
-        await Safe.TryEexecuteAsync(onDispose, logger);
-    }
-
 
 
     private async ValueTask OnStartAsync(CancellationToken cancellationToken)
     {
-        if (gatewayLifecycleStateable.State is not (LifecycleState.Starting or LifecycleState.Running))
+        if (dependencies.GatewayState.State is not (LifecycleState.Starting or LifecycleState.Running))
             throw new InvalidOperationException("端口启动失败, 网关未启动");
 
-        await transportConnectionLifeCycle.StartAsync(cancellationToken);
-        await deviceManager.StartAllAsync(cancellationToken);
+        await dependencies.TransportConnectionLifecycle.StartAsync(cancellationToken);
+        await dependencies.DeviceManager.StartAllAsync(cancellationToken);
     }
     private async ValueTask OnStopAsync(CancellationToken cancellationToken)
     {
@@ -79,23 +68,42 @@ internal sealed class Port(
 
         try
         {
-            await deviceManager.StopAllAsync(cancellationToken);
+            await dependencies.DeviceManager.StopAllAsync(cancellationToken);
         }
         catch (Exception ex)
         {
             errors.Add(ex);
-            logger.LogError(ex, "端口({Endpoint})设备批处理停止失败", Endpoint);
+            dependencies.Logger.LogError(ex, "端口({Endpoint})设备批处理停止失败", Endpoint);
         }
 
 
-        try { await transportConnectionLifeCycle.StopAsync(cancellationToken); }
+        try { await dependencies.TransportConnectionLifecycle.StopAsync(cancellationToken); }
         catch (Exception ex)
         {
             errors.Add(ex);
-            logger.LogError(ex, "端口传输器 {Endpoint} 停止失败", Endpoint);
+            dependencies.Logger.LogError(ex, "端口传输器 {Endpoint} 停止失败", Endpoint);
         }
 
         if (errors.Count == 0) return;
         throw new AggregateException($"端口 {Endpoint} 停止失败", errors);
     }
+}
+
+internal sealed class PortDependencies
+{
+    // Gateway
+    public required ILifecycleStateable GatewayState { get; init => field = value.Required(); }
+
+    // Port
+    public required PortDescriptor Descriptor { get; init => field = value.Required(); }
+    public required ILifecycleStateMachine StateMachine { get; init => field = value.Required(); }
+    public required ILifecycle TransportConnectionLifecycle { get; init => field = value.Required(); }
+
+    // Device
+    public required DeviceManager DeviceManager { get; init => field = value.Required(); }
+
+
+    // Services
+    public required Func<ValueTask> OnDispose { get; init => field = value.Required(); }
+    public required ILogger<Port> Logger { get; init => field = value.Required(); }
 }

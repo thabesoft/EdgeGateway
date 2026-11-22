@@ -1,14 +1,16 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.PubSub;
-using ThabeSoft.Lifecycles.StateMachines;
+using ThabeSoft.EdgeGateway.Messages;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
-using ThabeSoft.Transports;
+using ThabeSoft.Lifecycles;
+using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.Primitives;
+using ThabeSoft.Primitives.Guard;
 using ThabeSoft.Protocols;
-using ThabeSoft.EdgeGateway.Messages;
+using ThabeSoft.PubSub;
+using ThabeSoft.Transports;
 
 namespace ThabeSoft.EdgeGateway.Ports;
 
@@ -23,57 +25,50 @@ internal sealed class PortFactory(
         ILoggerFactory loggerFactory
     )
 {
-    public Port Create(in PortCreationArgs context)
+    public Port Create(PortCreationArgs args)
     {
         var logger = loggerFactory.CreateLogger<Port>();
 
-        var port = context.Port;
-        var deviceStateMachine = context.DeviceStateMachine;
-        var subscriptionBatchExecutor = context.SubscriptionBatchExecutor;
-        var subscriptionStateMachine = context.SubscriptionStateMachine;
-
-
         // 状态机
-        var portStateMachine = lifecycleStateMachineFactory.Create(context.PortStateMachine);
+        var portStateMachine = lifecycleStateMachineFactory.Create(args.Port.StateMachine);
+        // 状态变更事件
         var deviceStateEventDisposable = portStateMachine.StateChanged.Subscribe(x =>
-            _ = eventPublisher.PublishAsync(new PortStateChangedMessage(port.Id, x.Old, x.New)));
+            _ = eventPublisher.PublishAsync(new PortStateChangedMessage(args.Port.Id, x.Old, x.New)));
 
         // 传输器
-        var transport = transportConnectionFactory.Create(context.Port.Transport);
+        var transport = transportConnectionFactory.Create(args.Port.Transport);
         // 协议访问器
         var protocolAccessors = new ConcurrentDictionary<ProtocolDescriptor, IProtocolAccessor>();
 
         // 设备管理器
         var deviceManager = deviceManagerFactory.Create(new()
         {
-            Port = context.Port,
-            PortLifecycleState = portStateMachine,
-
-            DeviceBatchExecutorDescriptor = context.DeviceBatchExecutor,
+            Port = args.Port,
+            PortState = portStateMachine,
+            ProtocolAccessorProvider = protocol => protocolAccessors.GetOrAdd(protocol, x => protocolAccessorResolver.Create(x, transport)),
             DevicCreator = device => deviceFactory.Create(new()
             {
-                Port = port,
-                ProtocolAccessor = protocolAccessors.GetOrAdd(device.Protocol, protocol => protocolAccessorResolver.Create(protocol, transport)),
+                Port = args.Port,
                 PortState = portStateMachine,
+                ProtocolAccessor = protocolAccessors.GetOrAdd(device.Protocol, protocol => protocolAccessorResolver.Create(protocol, transport)),
 
                 Device = device,
-                DeviceStateMachineDescriptor = deviceStateMachine,
-
-                SubscriptionBatchExecutorDescriptor = subscriptionBatchExecutor,
-                SubscriptionStateMachineDescriptor = subscriptionStateMachine
             })
         });
 
-        return new Port
-        (
-            portId: port.Id,
-            connectionEndpoint: port.Transport.Endpoint,
-            gatewayLifecycleStateable: context.GatewayLifecycleState,
-            stateMachine: portStateMachine,
-            deviceManager: deviceManager,
-            transportConnectionLifeCycle: transport,
-            logger: logger,
-            onDispose: async () =>
+        // 端口依赖
+        var portDependencies = new PortDependencies()
+        {
+            GatewayState = args.GatewayLifecycleState,
+
+            Descriptor = args.Port,
+            StateMachine = portStateMachine,
+            TransportConnectionLifecycle = transport,
+
+            DeviceManager = deviceManager,
+
+            Logger = logger,
+            OnDispose = async () =>
             {
                 await Safe.DisposeSafelyAsync(deviceManager, logger);
                 protocolAccessors.Clear();
@@ -81,6 +76,17 @@ internal sealed class PortFactory(
                 await Safe.DisposeSafelyAsync(deviceStateEventDisposable, logger);
                 await Safe.DisposeSafelyAsync(portStateMachine, logger);
             }
-        );
+        };
+
+        return new Port(portDependencies);
     }
+}
+
+internal sealed class PortCreationArgs
+{
+    // Gateway
+    public required ILifecycleStateable GatewayLifecycleState { get; init => field = value.Required(); }
+
+    // Port
+    public required PortDescriptor Port { get; init => field = value.Required(); }
 }

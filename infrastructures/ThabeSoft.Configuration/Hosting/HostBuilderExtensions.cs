@@ -11,10 +11,10 @@ public static class HostBuilderExtensions
         {
             return builder.ConfigureServices((_, descriptors) =>
             {
-                descriptors.AddEdgeGatewayConfigPaths();
-                descriptors.AddEdgeGatewayJsonConfigProvider();
+                descriptors.AddConfigPaths();
+                descriptors.AddConfigurationReloader(optionSectionName);
 
-                descriptors.AddEdgeGatewayConfigurationReloader(optionSectionName);
+                descriptors.AddJsonConfigProvider();
             });
         }
     }

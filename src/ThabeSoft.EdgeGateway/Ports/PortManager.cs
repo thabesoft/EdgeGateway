@@ -1,48 +1,54 @@
 ﻿using Microsoft.Extensions.Logging;
-using ThabeSoft.PubSub;
-using ThabeSoft.Lifecycles.Collections;
 using ThabeSoft.EdgeGateway.Messages;
+using ThabeSoft.Lifecycles.Collections;
+using ThabeSoft.Primitives;
+using ThabeSoft.Primitives.Guard;
+using ThabeSoft.PubSub;
 
 namespace ThabeSoft.EdgeGateway.Ports;
 
 
-internal sealed class PortManager(
-        ILifecycleKeyedCollection<PortId, IPort> collection,
-        ILifecycleBatchExecutor batchExecutor,
-        Func<PortDescriptor, Port> portCreator,
-        IEventPublisher eventPublisher,
-        ILogger<PortManager> logger
-    ) : IAsyncDisposable
+internal sealed class PortManager(PortManagerDependencies dependencies) : IAsyncDisposable
 {
-    public IReadOnlyDictionary<PortId, IPort> Items => collection.Items;
+    public IReadOnlyDictionary<PortId, IPort> Items => dependencies.Collection.Items;
     public Func<ValueTask>? DisposedCallback { get; init; }
 
 
     public ValueTask StartAllAsync(CancellationToken cancellationToken = default) =>
-        batchExecutor.StartBatchAsync(collection.Values, cancellationToken);
+        dependencies.BatchExecutor.StartBatchAsync(dependencies.Collection.Values, cancellationToken);
 
     public ValueTask StopAllAsync(CancellationToken cancellationToken = default) =>
-        batchExecutor.StopBatchAsync(collection.Values, cancellationToken);
-    public async ValueTask DisposeAsync()
-    {
-        if (DisposedCallback is null) return;
-
-        try { await DisposedCallback.Invoke(); }
-        catch (Exception ex) { logger.LogError(ex, "设备管理器释放回调异常"); }
-    }
+        dependencies.BatchExecutor.StopBatchAsync(dependencies.Collection.Values, cancellationToken);
+    public ValueTask DisposeAsync() =>
+        Safe.DisposeSafelyAsync(dependencies.OnDispose, dependencies.Logger);
 
     public async ValueTask<IPort> AddAsync(PortDescriptor descriptor, CancellationToken cancellationToken = default)
     {
-        var port = await collection.AddAsync(descriptor.Id, () => portCreator.Invoke(descriptor), cancellationToken);
-        await eventPublisher.PublishAsync(new PortAddedMessage(descriptor.Id));
+        var port = await dependencies.Collection.AddAsync(descriptor.Id, () => dependencies.PortCreator.Invoke(descriptor), cancellationToken);
+        _ = dependencies.EventPublisher.PublishAsync(new PortAddedMessage(descriptor.Id), cancellationToken);
 
         return port;
     }
     public async ValueTask<bool> RemoveAsync(PortId id, CancellationToken cancellationToken = default)
     {
-        var result = await collection.RemoveAsync(id, cancellationToken);
-        await eventPublisher.PublishAsync(new PortRemovedMessage(id));
+        if (await dependencies.Collection.RemoveAsync(id, cancellationToken))
+        {
+            _ = dependencies.EventPublisher.PublishAsync(new PortRemovedMessage(id), cancellationToken);
+            return true;
+        }
 
-        return result;
+        return false;
     }
+}
+
+internal sealed class PortManagerDependencies
+{
+    public required ILifecycleKeyedCollection<PortId, IPort> Collection { get; init => field = value.Required(); }
+    public required ILifecycleBatchExecutor BatchExecutor { get; init => field = value.Required(); }
+
+    // Services
+    public required Func<ValueTask> OnDispose { get; init => field = value.Required(); }
+    public required IEventPublisher EventPublisher { get; init => field = value.Required(); }
+    public required ILogger<PortManager> Logger { get; init => field = value.Required(); }
+    public required Func<PortDescriptor, Port> PortCreator { get; init => field = value.Required(); }
 }

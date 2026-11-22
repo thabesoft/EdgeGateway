@@ -14,7 +14,7 @@ public static class DependencyInjectionExtensions
         /// <summary>
         /// 提供配置路径解析能力
         /// </summary>
-        public IServiceCollection AddEdgeGatewayConfigPaths()
+        public IServiceCollection AddConfigPaths()
         {
             descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigPathParser, ConfigPathParser>());
             descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigPathEvaluator, ConfigPathEvaluator>());
@@ -25,7 +25,7 @@ public static class DependencyInjectionExtensions
         /// <summary>
         /// 提供配置文件自动加载能力
         /// </summary>
-        public IServiceCollection AddEdgeGatewayConfigurationReloader(string optionSectionName = "Config")
+        public IServiceCollection AddConfigurationReloader(string optionSectionName = "Config")
         {
             descriptors.AddOptions<ConfigReloadOptions>()
                 .BindConfiguration(optionSectionName)
@@ -50,7 +50,7 @@ public static class DependencyInjectionExtensions
         /// <summary>
         /// 提供配置解析能力
         /// </summary>
-        public IServiceCollection AddEdgeGatewayJsonConfigProvider()
+        public IServiceCollection AddJsonConfigProvider()
         {
             descriptors.TryAddSingleton<IConfigNodeParser, JsonConfigNodeParser>();
 

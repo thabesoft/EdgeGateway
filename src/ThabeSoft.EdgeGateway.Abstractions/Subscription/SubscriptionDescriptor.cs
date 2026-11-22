@@ -1,7 +1,9 @@
 ﻿using ThabeSoft.EdgeGateway.Devices;
+using ThabeSoft.Lifecycles;
+using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.Primitives.Guard;
-using ThabeSoft.Triggers;
 using ThabeSoft.Protocols;
+using ThabeSoft.Triggers;
 
 namespace ThabeSoft.EdgeGateway.Subscription;
 
@@ -14,6 +16,7 @@ public interface ISubscriptionDescriptor
     SubscriptionId Id { get; }
     TriggerDescriptor Trigger { get; }
     IDataAccessDescriptor Tag { get; }
+    LifecycleStateMachineDescriptor StateMachine { get; }
 
     ValueTask<ISubscription> AddToDeviceAsync(IDevice device, CancellationToken cancellationToken = default);
 }
@@ -27,6 +30,8 @@ public sealed record class SubscriptionDescriptor<T> : ISubscriptionDescriptor
     public SubscriptionId Id { get; init => field = value.Required(); } = SubscriptionId.Create();
     public required DataAccessDescriptor<T> Tag { get; init => field = value.Required(); }
     public required TriggerDescriptor Trigger { get; init => field = value.Required(); }
+    public LifecycleStateMachineDescriptor StateMachine { get; init => field = value.Required(); } = LifecycleBuilder.StrictStateMachine();
+
     IDataAccessDescriptor ISubscriptionDescriptor.Tag => Tag;
 
 

@@ -7,7 +7,6 @@ using ThabeSoft.EdgeGateway.Configuration.Reloader;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Hosting;
 using ThabeSoft.EdgeGateway.Ports;
-using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Readings;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.Transports;
@@ -22,13 +21,13 @@ public static class DependencyInjectionExtensions
         /// <summary>
         /// 提供网关和网关工厂
         /// </summary>
-        public IServiceCollection AddEdgeGateway(GatewayCreationArgs creationContext)
+        public IServiceCollection AddEdgeGateway(GatewayDescriptor descriptor)
         {
             descriptors.TryAddSingleton<GatewayFactory>();
             descriptors.TryAddSingleton<IGateway>(sp =>
             {
                 var gatewayFactory = sp.GetRequiredService<GatewayFactory>();
-                return gatewayFactory.Create(creationContext);
+                return gatewayFactory.Create(descriptor);
             });
             return descriptors;
         }

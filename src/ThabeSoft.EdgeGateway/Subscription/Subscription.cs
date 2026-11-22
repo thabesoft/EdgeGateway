@@ -10,65 +10,53 @@ using ThabeSoft.Triggers;
 namespace ThabeSoft.EdgeGateway.Subscription;
 
 
-internal sealed class Subscription<T>(
-        in SubscriptionArgs<T> dependencies
-    ) : ISubscription<T>, IAsyncDisposable
+internal sealed class Subscription<T>(SubscriptionDependencies<T> dependencies) :
+    ISubscription<T>, IAsyncDisposable
     where T : notnull
 {
-
     private DisposeFlag _disposeFlag = new();
     private IDisposable? _triggerTick;
-    private readonly ILifecycleStateable _deviceState = dependencies.DeviceState;
-    private readonly ITriggerScheduler _triggerScheduler = dependencies.TriggerScheduler;
-    private readonly ILifecycleStateMachine _stateMachine = dependencies.StateMachine;
-    private readonly ReadingSource<T> _readingSource = dependencies.ReadingSource;
-    private readonly ReadingObservable<T> _readingObservable = dependencies.ReadingObservable;
-    private readonly TriggerDescriptor _triggerDescriptor = dependencies.Subscription.Trigger;
-    private readonly ILogger _logger = dependencies.Logger;
-    private readonly Func<ValueTask>? _onDisposeCallback = dependencies.DisposeCallback;
 
 
-
-    public SubscriptionId Id { get; } = dependencies.Subscription.Id;
-    public ProtocolAddress Address { get; } = dependencies.Subscription.Tag.Address;
-    public Reading<T>? Latest => _readingSource.Latest;
-    Reading? ISubscription.Latest => _readingSource.Latest;
-    public IObservable<Reading<T>> Update => _readingObservable;
-    IObservable<Reading> ISubscription.Update => _readingObservable;
-    public LifecycleState State => _stateMachine.State;
+    public SubscriptionId Id { get; } = dependencies.Descriptor.Id;
+    public ProtocolAddress Address { get; } = dependencies.Descriptor.Tag.Address;
+    public Reading<T>? Latest => dependencies.ReadingSource.Latest;
+    Reading? ISubscription.Latest => dependencies.ReadingSource.Latest;
+    public IObservable<Reading<T>> Update => dependencies.ReadingObservable;
+    IObservable<Reading> ISubscription.Update => dependencies.ReadingObservable;
+    public LifecycleState State => dependencies.StateMachine.State;
 
 
     public ValueTask StartAsync(CancellationToken cancellationToken = default)
     {
         _disposeFlag.ThrowIfDisposed(this);
-        return _stateMachine.TransitionToRunningAsync(OnStartAsync, cancellationToken);
+        return dependencies.StateMachine.TransitionToRunningAsync(OnStartAsync, cancellationToken);
     }
     public ValueTask StopAsync(CancellationToken cancellationToken = default)
     {
         _disposeFlag.ThrowIfDisposed(this);
-        return _stateMachine.TransitionToStoppedAsync(OnStopAsync, cancellationToken);
+        return dependencies.StateMachine.TransitionToStoppedAsync(OnStopAsync, cancellationToken);
     }
-
     public async ValueTask DisposeAsync()
     {
         if (!_disposeFlag.TryMarkDisposed()) return;
 
-        _triggerTick?.TryDispose(_logger);
+        _triggerTick?.TryDispose(dependencies.Logger);
 
 
-        if (_onDisposeCallback is null) return;
-        try { await _onDisposeCallback.Invoke(); }
-        catch (Exception ex) { _logger.LogError(ex, "订阅释放回调异常"); }
+        if (dependencies.OnDispose is null) return;
+        try { await dependencies.OnDispose.Invoke(); }
+        catch (Exception ex) { dependencies.Logger.LogError(ex, "订阅释放回调异常"); }
     }
 
 
     private ValueTask OnStartAsync(CancellationToken cancellationToken)
     {
-        if (_deviceState.State is not (LifecycleState.Starting or LifecycleState.Running))
+        if (dependencies.DeviceState.State is not (LifecycleState.Starting or LifecycleState.Running))
             throw new InvalidOperationException("设备未启动");
 
         _triggerTick?.Dispose();
-        _triggerTick = _triggerScheduler.Register(_triggerDescriptor, UpdateAsync);
+        _triggerTick = dependencies.TriggerScheduler.Register(dependencies.Descriptor.Trigger, ReadingUpdateAsync);
 
         return ValueTask.CompletedTask;
     }
@@ -78,45 +66,44 @@ internal sealed class Subscription<T>(
         return ValueTask.CompletedTask;
     }
 
-    private async ValueTask UpdateAsync(CancellationToken cancellationToken)
+    private async ValueTask ReadingUpdateAsync(CancellationToken cancellationToken)
     {
         if (State is not LifecycleState.Running) return;
 
         try
         {
-            var reading = await _readingSource.ReadAsync(cancellationToken);
-            _readingObservable.OnNext(reading);
+            var reading = await dependencies.ReadingSource.ReadAsync(cancellationToken);
+            dependencies.ReadingObservable.OnNext(reading);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-            _triggerTick?.TryDispose(_logger);
+            _triggerTick?.TryDispose(dependencies.Logger);
             _triggerTick = null;
         }
         catch (Exception ex)
         {
-            _readingObservable.OnError(ex);
+            dependencies.ReadingObservable.OnError(ex);
 
-            _triggerTick?.TryDispose(_logger);
+            _triggerTick?.TryDispose(dependencies.Logger);
             _triggerTick = null;
         }
     }
 }
 
-internal readonly struct SubscriptionArgs<T> where T : notnull
+internal sealed class SubscriptionDependencies<T> where T : notnull
 {
     // Device
     public required ILifecycleStateable DeviceState { get; init => field = value.Required(); }
 
-
-    public required SubscriptionDescriptor<T> Subscription { get; init => field = value.Required(); }
-
+    // Subscription
+    public required SubscriptionDescriptor<T> Descriptor { get; init => field = value.Required(); }
     public required ReadingSource<T> ReadingSource { get; init => field = value.Required(); }
     public required ReadingObservable<T> ReadingObservable { get; init => field = value.Required(); }
     public required ILifecycleStateMachine StateMachine { get; init => field = value.Required(); }
 
 
+    // Services
     public required ITriggerScheduler TriggerScheduler { get; init => field = value.Required(); }
-    public required ILogger Logger { get; init => field = value.Required(); }
-
-    public Func<ValueTask> DisposeCallback { get; init; }
+    public required Func<ValueTask> OnDispose { get; init => field = value.Required(); }
+    public required ILogger<Subscription<T>> Logger { get; init => field = value.Required(); }
 }

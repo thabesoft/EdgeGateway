@@ -1,42 +1,41 @@
 ﻿using Microsoft.Extensions.Logging;
-using ThabeSoft.Lifecycles;
-using ThabeSoft.Lifecycles.StateMachines;
+using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
+using ThabeSoft.Lifecycles;
+using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.Primitives;
+using ThabeSoft.Primitives.Guard;
 
 namespace ThabeSoft.EdgeGateway.Devices;
 
 
-internal sealed class Device(
-        DeviceId id,
-        ProtocolType protocolType,
-        ILifecycleStateMachine stateMachine,
-        SubscriptionManager subscriptionManager,
-        ILifecycleStateable portState,
-        ILogger<Device> logger,
-        Func<ValueTask> onDispose
-    ) : IDevice, IAsyncDisposable
+internal sealed class Device(DeviceDependencies dependencies) : IDevice, IAsyncDisposable
 {
     private readonly DisposeFlag _disposeFlag = new();
 
 
-    public DeviceId Id { get; } = id;
-    public ProtocolType ProtocolType { get; } = protocolType;
-    public IReadOnlyDictionary<SubscriptionId, ISubscription> Subscriptions => subscriptionManager.Items;
-    public LifecycleState State => stateMachine.State;
+    public DeviceId Id { get; } = dependencies.Descriptor.Id;
+    public ProtocolType ProtocolType { get; } = dependencies.Descriptor.Protocol.Type;
+    public IReadOnlyDictionary<SubscriptionId, ISubscription> Subscriptions => dependencies.SubscriptionManager.Items;
+    public LifecycleState State => dependencies.StateMachine.State;
 
 
 
     public ValueTask StartAsync(CancellationToken cancellationToken = default)
     {
         _disposeFlag.ThrowIfDisposed(this);
-        return stateMachine.TransitionToRunningAsync(OnStartAsync, cancellationToken);
+        return dependencies.StateMachine.TransitionToRunningAsync(OnStartAsync, cancellationToken);
     }
     public ValueTask StopAsync(CancellationToken cancellationToken = default)
     {
         _disposeFlag.ThrowIfDisposed(this);
-        return stateMachine.TransitionToStoppedAsync(OnStopAsync, cancellationToken);
+        return dependencies.StateMachine.TransitionToStoppedAsync(OnStopAsync, cancellationToken);
+    }
+    public async ValueTask DisposeAsync()
+    {
+        if (!_disposeFlag.TryMarkDisposed()) return;
+        await Safe.TryEexecuteAsync(dependencies.OnDispose, dependencies.Logger);
     }
 
 
@@ -44,34 +43,47 @@ internal sealed class Device(
         SubscriptionDescriptor<T> subscriptionDescriptor,
         CancellationToken cancellationToken) where T : notnull
     {
-        return stateMachine.ExecuteAsync(ct =>
-            subscriptionManager.AddAsync(subscriptionDescriptor, ct), cancellationToken);
+        return dependencies.StateMachine.ExecuteAsync(ct =>
+            dependencies.SubscriptionManager.AddAsync(subscriptionDescriptor, ct), cancellationToken);
     }
     public ValueTask<bool> RemoveSubscriptionAsync(
         SubscriptionId subscriptionId,
         CancellationToken cancellationToken = default)
     {
-        return stateMachine.ExecuteAsync(ct =>
-            subscriptionManager.RemoveAsync(subscriptionId, ct), cancellationToken);
+        return dependencies.StateMachine.ExecuteAsync(ct =>
+            dependencies.SubscriptionManager.RemoveAsync(subscriptionId, ct), cancellationToken);
     }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (!_disposeFlag.TryMarkDisposed()) return;
-        await Safe.TryEexecuteAsync(onDispose, logger);
-    }
-
 
 
     private ValueTask OnStartAsync(CancellationToken cancellationToken)
     {
-        if (portState.State is not (LifecycleState.Starting or LifecycleState.Running))
+        if (dependencies.PortState.State is not (LifecycleState.Starting or LifecycleState.Running))
             throw new InvalidOperationException("设备启动失败, 端口未启动");
 
-        return subscriptionManager.StartAllAsync(cancellationToken);
+        return dependencies.SubscriptionManager.StartAllAsync(cancellationToken);
     }
     private ValueTask OnStopAsync(CancellationToken cancellationToken)
     {
-        return subscriptionManager.StopAllAsync(cancellationToken);
+        return dependencies.SubscriptionManager.StopAllAsync(cancellationToken);
     }
+}
+
+
+internal sealed class DeviceDependencies
+{
+    // Port
+    public required PortDescriptor Port { get; init => field = value.Required(); }
+    public required ILifecycleStateable PortState { get; init => field = value.Required(); }
+
+    // Device
+    public required DeviceDescriptor Descriptor { get; init => field = value.Required(); }
+    public required ILifecycleStateMachine StateMachine { get; init => field = value.Required(); }
+
+    // Subscription
+    public required SubscriptionManager SubscriptionManager { get; init => field = value.Required(); }
+
+
+    // Services
+    public required ILogger<Device> Logger { get; init => field = value.Required(); }
+    public required Func<ValueTask> OnDispose { get; init => field = value.Required(); }
 }

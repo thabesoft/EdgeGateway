@@ -21,37 +21,33 @@ internal sealed class SubscriptionFactory(
         ILoggerFactory loggerFactory
     )
 {
-    public Subscription<T> Create<T>(in SubscriptionCreationArgs<T> context) where T : notnull
+    public Subscription<T> Create<T>(SubscriptionCreationArgs<T> args) where T : notnull
     {
         // 日志
         var subscriptionLogger = loggerFactory.CreateLogger<Subscription<T>>();
         var readingSourceLogger = loggerFactory.CreateLogger<ReadingSource<T>>();
         var readingObservableLogger = loggerFactory.CreateLogger<ReadingObservable<T>>();
 
-        var portId = context.Port.Id;
-        var deviceId = context.Device.Id;
-        var subscriptionId = context.Subscription.Id;
-
         // 状态机
-        var stateMachine = lifecycleStateMachineFactory.Create(context.SubscriptioStateMachineDescriptor);
+        var stateMachine = lifecycleStateMachineFactory.Create(args.Subscription.StateMachine);
         var subscriptionStateEventDisposable = stateMachine.StateChanged.Subscribe(x =>
-                _ = eventPublisher.PublishAsync(new SubscriptionStateChangedMessage(portId, deviceId, subscriptionId, x.Old, x.New)));
+                _ = eventPublisher.PublishAsync(new SubscriptionStateChangedMessage(args.Port.Id, args.Device.Id, args.Subscription.Id, x.Old, x.New)));
 
         // 数据更新
-        var readingSource = new ReadingSource<T>(context.Subscription.Tag, context.ProtocolAccessor, readingSourceLogger);
+        var readingSource = new ReadingSource<T>(args.Subscription.Tag, args.ProtocolAccessor, readingSourceLogger);
         var readingObservable = new ReadingObservable<T>(readingObservableLogger);
 
         // 构造依赖
-        var devicArgs = new SubscriptionArgs<T>()
+        var subscriptionDependencies = new SubscriptionDependencies<T>()
         {
-            DeviceState = context.DeviceState,
-            Subscription = context.Subscription,
+            DeviceState = args.DeviceState,
+            Descriptor = args.Subscription,
             StateMachine = stateMachine,
             ReadingObservable = readingObservable,
             ReadingSource = readingSource,
             TriggerScheduler = triggerScheduler,
             Logger = subscriptionLogger,
-            DisposeCallback = async ()=>
+            OnDispose = async () =>
             {
                 await Safe.DisposeSafelyAsync(subscriptionStateEventDisposable, subscriptionLogger);
                 await Safe.DisposeSafelyAsync(readingObservable, readingObservableLogger);
@@ -61,11 +57,11 @@ internal sealed class SubscriptionFactory(
         };
 
         // 创建
-        return new(devicArgs);
+        return new(subscriptionDependencies);
     }
 }
 
-internal readonly struct SubscriptionCreationArgs<T> where T : notnull
+internal sealed class SubscriptionCreationArgs<T> where T : notnull
 {
     // Port
     public required PortDescriptor Port { get; init => field = value.Required(); }
@@ -77,5 +73,4 @@ internal readonly struct SubscriptionCreationArgs<T> where T : notnull
 
     // Subscription
     public required SubscriptionDescriptor<T> Subscription { get; init => field = value.Required(); }
-    public required LifecycleStateMachineDescriptor SubscriptioStateMachineDescriptor { get; init => field = value.Required(); }
 }

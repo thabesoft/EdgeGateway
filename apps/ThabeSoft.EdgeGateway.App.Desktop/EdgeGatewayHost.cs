@@ -4,7 +4,6 @@ using ThabeSoft.EdgeGateway.App.Hosting;
 using ThabeSoft.Codecs.DependencyInjection;
 using ThabeSoft.Transports.Ethernet.DependencyInjection;
 using ThabeSoft.EdgeGateway.Hosting;
-using ThabeSoft.Lifecycles;
 using ThabeSoft.Lifecycles.DependencyInjection;
 using ThabeSoft.Protocols.Modbus.DependencyInjection;
 using ThabeSoft.Transports.Serial.DependencyInjection;
@@ -20,47 +19,26 @@ internal static class EdgeGatewayHost
     public static IHost Create()
     {
         return Host.CreateDefaultBuilder()
-            .UseEdgeGateway(x =>
-            {
-                x.WithGatewayStateMachine(LifecycleBuilder.RetryableStateMachine(x => x
-                    .WithStartTimeout(TimeSpan.FromSeconds(120))
-                    .WithStopTimeout(TimeSpan.FromSeconds(60))
-                    .WithDisposeTimeout(TimeSpan.FromSeconds(30))
-                    .WithExecuteTimeout(TimeSpan.FromSeconds(30))));
+            .UseEdgeGatewayDesktopApp()
+            .Build();
+    }
 
-                x.WithPortStateMachine(LifecycleBuilder.RetryableStateMachine(x => x
-                    .WithStartTimeout(TimeSpan.FromSeconds(60))
-                    .WithStopTimeout(TimeSpan.FromSeconds(30))
-                    .WithDisposeTimeout(TimeSpan.FromSeconds(15))
-                    .WithExecuteTimeout(TimeSpan.FromSeconds(30))));
-
-                x.WithTransportStateMachine(LifecycleBuilder.RetryableStateMachine(x => x
-                    .WithStartTimeout(TimeSpan.FromSeconds(60))
-                    .WithStopTimeout(TimeSpan.FromSeconds(30))
-                    .WithDisposeTimeout(TimeSpan.FromSeconds(15))
-                    .WithExecuteTimeout(TimeSpan.FromSeconds(30))));
-
-                x.WithDeviceStateMachine(LifecycleBuilder.RetryableStateMachine(x => x
-                    .WithStartTimeout(TimeSpan.FromSeconds(30))
-                    .WithStopTimeout(TimeSpan.FromSeconds(15))
-                    .WithDisposeTimeout(TimeSpan.FromSeconds(10))
-                    .WithExecuteTimeout(TimeSpan.FromSeconds(30))));
-
-                x.WithSubscriptionStateMachine(LifecycleBuilder.RetryableStateMachine(x => x
-                    .WithStartTimeout(TimeSpan.FromSeconds(15))
-                    .WithStopTimeout(TimeSpan.FromSeconds(10))
-                    .WithDisposeTimeout(TimeSpan.FromSeconds(5))
-                    .WithExecuteTimeout(TimeSpan.FromSeconds(30))));
-            })
+    public static IHostBuilder UseEdgeGatewayDesktopApp(this IHostBuilder hostBuilder)
+    {
+        return hostBuilder
+            .UseEdgeGateway()
             .UseJsonConfig("Gateway:Config")
             .UseEdgeGatewayApp()
             .ConfigureServices(descriptors =>
             {
+                // 生命周期
                 descriptors.AddLifecycles();
 
+                // 触发器
                 descriptors.AddTriggers();
                 descriptors.AddTriggersConfig();
 
+                // 编码器
                 descriptors.AddCodecs();
                 descriptors.AddCodecsConfig();
 
@@ -78,7 +56,6 @@ internal static class EdgeGatewayHost
 
                 descriptors.AddModbusProtocol();
                 descriptors.AddModbusProtocolConfig();
-            })
-            .Build();
+            });
     }
 }

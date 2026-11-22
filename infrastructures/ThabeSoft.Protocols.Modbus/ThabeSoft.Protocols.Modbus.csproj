@@ -5,8 +5,9 @@
 		<PackageReference Include="NModbus" />
 	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ThabeSoft.Protocols.Abstractions\ThabeSoft.Protocols.Abstractions.csproj" />
-  </ItemGroup>
+	
+	<ItemGroup>
+	  <ProjectReference Include="..\ThabeSoft.Protocols\ThabeSoft.Protocols.csproj" />
+	</ItemGroup>
 
 </Project>

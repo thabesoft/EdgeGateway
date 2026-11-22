@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
-		<ProjectReference Include="..\ThabeSoft.Transports.Abstractions\ThabeSoft.Transports.Abstractions.csproj" />
+		<PackageReference Include="RJCP.SerialPortStream" />
+		<PackageReference Include="System.IO.Ports" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="RJCP.SerialPortStream"  />
-		<PackageReference Include="System.IO.Ports" />
+	  <ProjectReference Include="..\ThabeSoft.Transports\ThabeSoft.Transports.csproj" />
 	</ItemGroup>
 
 </Project>

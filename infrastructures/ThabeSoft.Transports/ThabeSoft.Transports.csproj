@@ -1,7 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<ItemGroup>
-		<ProjectReference Include="..\ThabeSoft.Transports.Abstractions\ThabeSoft.Transports.Abstractions.csproj" />
+		<ProjectReference Include="..\ThabeSoft.Configuration.Abstractions\ThabeSoft.Configuration.Abstractions.csproj" />
+		<ProjectReference Include="..\ThabeSoft.Lifecycles.Abstractions\ThabeSoft.Lifecycles.Abstractions.csproj" />
+		<ProjectReference Include="..\ThabeSoft.Primitives\ThabeSoft.Primitives.csproj" />
 	</ItemGroup>
 
 </Project>

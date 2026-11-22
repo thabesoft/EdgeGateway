@@ -7,7 +7,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\ThabeSoft.Configuration.Abstractions\ThabeSoft.Configuration.Abstractions.csproj" />
-		<ProjectReference Include="..\ThabeSoft.Transports.Abstractions\ThabeSoft.Transports.Abstractions.csproj" />
+		<ProjectReference Include="..\ThabeSoft.Transports\ThabeSoft.Transports.csproj" />
 	</ItemGroup>
 	
 </Project>

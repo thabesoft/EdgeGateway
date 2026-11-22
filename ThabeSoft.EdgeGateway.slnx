@@ -18,11 +18,9 @@
     <Project Path="infrastructures/ThabeSoft.Lifecycles.Abstractions/ThabeSoft.Lifecycles.Abstractions.csproj" Id="ded1c87a-a1ea-42f7-85eb-cf35f16148d6" />
     <Project Path="infrastructures/ThabeSoft.Lifecycles/ThabeSoft.Lifecycles.csproj" />
     <Project Path="infrastructures/ThabeSoft.Primitives/ThabeSoft.Primitives.csproj" Id="4695430b-a564-4139-93bd-286bb2e1fd98" />
-    <Project Path="infrastructures/ThabeSoft.Protocols.Abstractions/ThabeSoft.Protocols.Abstractions.csproj" Id="7ee307cf-20b8-4a6a-9a01-45335103f1af" />
     <Project Path="infrastructures/ThabeSoft.Protocols.Modbus/ThabeSoft.Protocols.Modbus.csproj" Id="cd7d7503-e423-46dc-a475-0ab02a094dbc" />
     <Project Path="infrastructures/ThabeSoft.Protocols/ThabeSoft.Protocols.csproj" Id="e337dd79-d70f-4225-b4ad-f96152ef89d4" />
     <Project Path="infrastructures/ThabeSoft.PubSub/ThabeSoft.PubSub.csproj" Id="a939cfff-7b1a-411e-a29b-b087be6724af" />
-    <Project Path="infrastructures/ThabeSoft.Transports.Abstractions/ThabeSoft.Transports.Abstractions.csproj" Id="1f438cc8-3fa1-42a8-a426-466ad75776d0" />
     <Project Path="infrastructures/ThabeSoft.Transports.Ethernet/ThabeSoft.Transports.Ethernet.csproj" Id="b409de6e-b4bf-45e3-8617-cfce0642d935" />
     <Project Path="infrastructures/ThabeSoft.Transports.Serial/ThabeSoft.Transports.Serial.csproj" Id="336fd480-eae9-4892-be9f-a8fff9a565ab" />
     <Project Path="infrastructures/ThabeSoft.Transports/ThabeSoft.Transports.csproj" Id="feaf3ac7-85ed-491d-8c82-9b633fac4317" />

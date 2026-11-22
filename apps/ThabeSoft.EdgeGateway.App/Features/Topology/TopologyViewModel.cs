@@ -6,42 +6,22 @@ using SukiUI.Dialogs;
 using SukiUI.Toasts;
 using ThabeSoft.EdgeGateway.App.Features.Gateway;
 using ThabeSoft.EdgeGateway.App.Services;
-using ThabeSoft.PubSub;
 using ThabeSoft.Lifecycles;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 
 
-internal sealed partial class TopologyViewModel : PageViewModel
+internal sealed partial class TopologyViewModel(
+        ISukiDialogManager sukiDialogManager,
+        ISukiToastManager sukiToastManager,
+        IGateway gateway,
+        TopologyMenuViewModel menuViewModel,
+        ISerialPortNamesProvider serialPortNamesProvider,
+        GatewayViewModel gatewayViewModel
+    ) : PageViewModel("拓扑", MaterialIconKind.Dog)
 {
-    private readonly MenuViewModel _menu;
-    private readonly ISukiDialogManager _sukiDialogManager;
-    private readonly ISukiToastManager _sukiToastManager;
-    private readonly IGateway _gateway;
-    private readonly ISerialPortNamesProvider _serialPortNamesProvider;
-    private readonly GatewayViewModel _gatewayViewModel;
-
-
-    public TopologyViewModel(
-            ISukiDialogManager sukiDialogManager,
-            ISukiToastManager sukiToastManager,
-            IGateway gateway,
-            ISerialPortNamesProvider serialPortNamesProvider,
-            IEventSubscriber eventSubscriber,
-            GatewayViewModel gatewayViewModel
-    ) : base("拓扑", MaterialIconKind.Dog)
-    {
-        _sukiDialogManager = sukiDialogManager;
-        _sukiToastManager = sukiToastManager;
-        _gateway = gateway;
-        _serialPortNamesProvider = serialPortNamesProvider;
-        _gatewayViewModel = gatewayViewModel;
-
-        _menu = new MenuViewModel(gatewayViewModel, eventSubscriber);
-    }
-
-    public GatewayViewModel Gateway => _gatewayViewModel;
-    public IAvaloniaReadOnlyList<MenuItemViewModel> MenuItemsSource => _menu.Items;
+    public GatewayViewModel Gateway => gatewayViewModel;
+    public IAvaloniaReadOnlyList<MenuItemViewModel> MenuItemsSource => menuViewModel.Items;
 
 
     [ObservableProperty]
@@ -63,15 +43,15 @@ internal sealed partial class TopologyViewModel : PageViewModel
     [RelayCommand]
     private async Task ChangeGatewayAsync()
     {
-        await _sukiToastManager.ExecuteWithToastAsync(async _ =>
+        await sukiToastManager.ExecuteWithToastAsync(async _ =>
         {
-            if (_gateway.IsRunning)
+            if (gateway.IsRunning)
             {
-                await _gatewayViewModel.StopCommand.ExecuteAsync(null);
+                await gatewayViewModel.StopCommand.ExecuteAsync(null);
             }
             else
             {
-                await _gatewayViewModel.StartCommand.ExecuteAsync(null);
+                await gatewayViewModel.StartCommand.ExecuteAsync(null);
             }
         }, "切换网关状态");
     }
@@ -80,9 +60,9 @@ internal sealed partial class TopologyViewModel : PageViewModel
     [RelayCommand]
     private void ShowAddPortDialog()
     {
-        _sukiDialogManager.CreateDialog()
+        sukiDialogManager.CreateDialog()
             .WithTitle("创建端口")
-            .WithViewModel(dialog => new AddPortViewModel(dialog, _sukiToastManager, _gateway, _serialPortNamesProvider), false)
+            .WithViewModel(dialog => new AddPortViewModel(dialog, sukiToastManager, gateway, serialPortNamesProvider), false)
             .WithActionButton("取消", dialog => dialog.Dismiss(), false, "Flat")
             .WithActionButton("创建", dialog =>
             {
@@ -99,7 +79,7 @@ internal sealed partial class TopologyViewModel : PageViewModel
         if (SelectedPort is null) return;
 
         var nextItem = GetNextItem([.. Gateway.Ports.Values], SelectedPort);
-        await _gateway.RemovePortAsync(SelectedPort.Id);
+        await gateway.RemovePortAsync(SelectedPort.Id);
 
         SelectedPort = nextItem;
 

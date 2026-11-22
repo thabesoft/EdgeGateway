@@ -11,19 +11,21 @@ using ThabeSoft.PubSub;
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 
 
-internal sealed class MenuViewModel : ObservableObject
+internal sealed class TopologyMenuViewModel : ObservableObject
 {
     public readonly AvaloniaList<MenuItemViewModel> _items = [];
 
-    public MenuViewModel(GatewayViewModel gateway, IEventSubscriber eventSubscriber)
+    public TopologyMenuViewModel(IGateway gateway, PortViewModelFactory portViewModelFactory, DeviceViewModelFactory deviceViewModelFactory, IEventSubscriber eventSubscriber)
     {
         // 初始化菜单
-        _items = [.. gateway.Ports.Values.Select(CreatePortItem)];
+        _items = [.. gateway.Ports.Values.Select(x => CreatePortItem(portViewModelFactory.Create(x)))];
 
         eventSubscriber.Subscribe<PortAddedMessage>((e, _) =>
         {
             if (gateway.Ports.TryGetValue(e.PortId, out var port))
-                AddPort(port);
+            {
+                AddPort(portViewModelFactory.Create(port));
+            }
 
             return ValueTask.CompletedTask;
         });
@@ -35,8 +37,10 @@ internal sealed class MenuViewModel : ObservableObject
 
         eventSubscriber.Subscribe<DeviceAddedMessage>((e, _) =>
         {
-            if (gateway.Ports.TryGetValue(e.PortId, out var port) && port.Devices.TryGetValue(e.DeviceId, out var devide))
-                AddDevice(e.PortId, devide);
+            if (gateway.Ports.TryGetValue(e.PortId, out var port) && port.Devices.TryGetValue(e.DeviceId, out var device))
+            {
+                AddDevice(e.PortId, deviceViewModelFactory.Create(device));
+            }
 
             return ValueTask.CompletedTask;
         });

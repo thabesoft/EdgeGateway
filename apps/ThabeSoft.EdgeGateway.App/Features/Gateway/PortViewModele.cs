@@ -95,3 +95,12 @@ internal sealed partial class PortViewModel : ObservableObject, IDisposable
             i.Dispose();
     }
 }
+
+
+internal sealed class PortViewModelFactory(IEventSubscriber eventSubscriber, ISukiToastManager sukiToastManager)
+{
+    public PortViewModel Create(IPort port)
+    {
+        return new(port, eventSubscriber, sukiToastManager);
+    }
+}

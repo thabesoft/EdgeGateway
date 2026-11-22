@@ -43,6 +43,7 @@ public static class DependencyInjectionExtensions
             // Dashboard
             descriptors.AddViewMapping<DashboardView, DashboardViewModel>(ServiceLifetime.Singleton);
             // Topology
+            descriptors.AddSingleton<TopologyMenuViewModel>();
             descriptors.AddViewMapping<TopologyView, TopologyViewModel>(ServiceLifetime.Singleton);
             descriptors.AddViewMapping<AddPortView, AddPortViewModel>(ServiceLifetime.Transient);
 
@@ -56,6 +57,8 @@ public static class DependencyInjectionExtensions
             // Gateway
             descriptors.AddSingleton<GatewayViewModel>();
 
+            // Port
+            descriptors.AddSingleton<PortViewModelFactory>();
             // Device
             descriptors.AddSingleton<DeviceViewModelFactory>();
         }

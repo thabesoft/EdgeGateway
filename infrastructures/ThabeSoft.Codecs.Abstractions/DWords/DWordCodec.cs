@@ -1,4 +1,4 @@
-﻿using ThabeSoft.Primitives.Guard;
+using ThabeSoft.Primitives.Guard;
 
 namespace ThabeSoft.Codecs.DWords;
 
@@ -14,7 +14,7 @@ public abstract record class DWordCodecDescriptor<TDWord> : CodecDescriptor<TDWo
         }
     }
 
-    public int RequiredBits { get; } = 8 * 2;
+    public int RequiredBits { get; } = 8 * 4;
     public required DWordLayout Layout { get; init => field.Defined(); }
 }
 

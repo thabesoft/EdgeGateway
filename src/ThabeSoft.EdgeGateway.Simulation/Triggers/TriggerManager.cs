@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using ThabeSoft.Lifecycles;
 using ThabeSoft.EdgeGateway.Utilities;
@@ -6,7 +6,7 @@ using ThabeSoft.EdgeGateway.Utilities;
 namespace ThabeSoft.Triggers;
 
 internal sealed class TriggerManager(
-        ITriggerResolver triggerFactorySelector,
+        ITriggerFactory triggerFactory,
         ILifecycleFactory lifecycleFactory,
         ILoggerFactory loggerFactory
     )
@@ -17,7 +17,7 @@ internal sealed class TriggerManager(
     {
         var scheduler = _entries.GetOrAdd(triggerDescriptor, x =>
         {
-            var trigger = triggerFactorySelector.Resolve(x);
+            var trigger = triggerFactory.Create(x);
             return new TriggerScheduler(trigger, lifecycleFactory, loggerFactory.CreateLogger<TriggerScheduler>());
         });
 

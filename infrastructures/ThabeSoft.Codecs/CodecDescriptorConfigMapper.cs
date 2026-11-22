@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System.Collections;
 using ThabeSoft.Codecs.Bits;
 using ThabeSoft.Codecs.DWords;
@@ -24,7 +24,7 @@ internal sealed class CodecDescriptorConfigMapper(ILogger<CodecDescriptorConfigM
         if (!Enum.TryParse<DataType>(root.GetStringByPath("DataType"), true, out var enumValue))
             return false;
 
-        return enumValue is DataType.Int32 or DataType.Int32 or DataType.Float;
+        return Enum.IsDefined(enumValue);
     }
 
     CodecDescriptor<byte> IConfigMapper<CodecDescriptor<byte>>.Map(IConfigNode root) =>

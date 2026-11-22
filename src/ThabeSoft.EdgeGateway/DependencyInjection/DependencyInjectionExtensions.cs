@@ -19,16 +19,17 @@ public static class DependencyInjectionExtensions
     extension(IServiceCollection descriptors)
     {
         /// <summary>
-        /// 提供网关和网关工厂
+        /// 添加网关业务: Readings, Subscriptions, Devices, Ports, Gateway, Config
         /// </summary>
-        public IServiceCollection AddEdgeGateway(GatewayDescriptor descriptor)
+        public IServiceCollection AddEdgeGateway(GatewayDescriptor? gatewayDescriptor = null)
         {
-            descriptors.TryAddSingleton<GatewayFactory>();
-            descriptors.TryAddSingleton<IGateway>(sp =>
-            {
-                var gatewayFactory = sp.GetRequiredService<GatewayFactory>();
-                return gatewayFactory.Create(descriptor);
-            });
+            descriptors.AddEdgeGatewayReadings();
+            descriptors.AddEdgeGatewaySubscriptions();
+            descriptors.AddEdgeGatewayDevices();
+            descriptors.AddEdgeGatewayPorts();
+            descriptors.AddEdgeGatewayCore(gatewayDescriptor ?? new());
+
+            descriptors.AddEdgeGatewayConfig();
             return descriptors;
         }
 
@@ -56,9 +57,22 @@ public static class DependencyInjectionExtensions
 
 
         /// <summary>
+        /// 提供网关和网关工厂
+        /// </summary>
+        internal IServiceCollection AddEdgeGatewayCore(GatewayDescriptor descriptor)
+        {
+            descriptors.TryAddSingleton<GatewayFactory>();
+            descriptors.TryAddSingleton<IGateway>(sp =>
+            {
+                var gatewayFactory = sp.GetRequiredService<GatewayFactory>();
+                return gatewayFactory.Create(descriptor);
+            });
+            return descriptors;
+        }
+        /// <summary>
         /// 提供网关端口管理能力
         /// </summary>
-        public IServiceCollection AddEdgeGatewayPorts()
+        internal IServiceCollection AddEdgeGatewayPorts()
         {
             descriptors.TryAddSingleton<PortFactory>();
             descriptors.TryAddSingleton<PortManagerFactory>();
@@ -68,7 +82,7 @@ public static class DependencyInjectionExtensions
         /// <summary>
         /// 提供网关设备管理能力
         /// </summary>
-        public IServiceCollection AddEdgeGatewayDevices()
+        internal IServiceCollection AddEdgeGatewayDevices()
         {
             descriptors.TryAddSingleton<DeviceFactory>();
             descriptors.TryAddSingleton<DeviceManagerFactory>();
@@ -78,7 +92,7 @@ public static class DependencyInjectionExtensions
         /// <summary>
         /// 提供网关订阅管理能力
         /// </summary>
-        public IServiceCollection AddEdgeGatewaySubscriptions()
+        internal IServiceCollection AddEdgeGatewaySubscriptions()
         {
             descriptors.TryAddSingleton<SubscriptionFactory>();
             descriptors.TryAddSingleton<SubscriptionManagerFactory>();
@@ -88,7 +102,7 @@ public static class DependencyInjectionExtensions
         /// <summary>
         /// 提供网关数据点读取能力
         /// </summary>
-        public IServiceCollection AddEdgeGatewayReadings()
+        internal IServiceCollection AddEdgeGatewayReadings()
         {
             descriptors.TryAddSingleton<ReadingSinkBus>();
             descriptors.TryAddSingleton<IReadingSink, TestReadingSink>();

@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ThabeSoft.EdgeGateway.Simulation.DependencyInjection;
@@ -11,7 +11,7 @@ Console.Title = "ModbusSalveSimulator";
 await Host.CreateDefaultBuilder(args)
     .ConfigureLogging(x => x.SetMinimumLevel(LogLevel.Debug))
     .ConfigureServices(services => services
-        .AddEdgeGatewayTriggers()
+        .AddTriggers()
         // 模拟器
         .AddEdgeGatewaySimulation()
         .AddEdgeGatewaySimulationHost()

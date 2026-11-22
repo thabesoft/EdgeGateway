@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 
 namespace ThabeSoft.Codecs.QWords;
 
@@ -8,13 +8,13 @@ public abstract record class QWordCodecDescriptor<TQWord> : CodecDescriptor<TQWo
     static QWordCodecDescriptor()
     {
         var type = typeof(TQWord);
-        if (type != typeof(uint) && type != typeof(int) && type != typeof(float))
+        if (type != typeof(ulong) && type != typeof(long) && type != typeof(double))
         {
-            throw new InvalidOperationException($"类型 {type.Name} 不是有效的 DWord 类型(uint/int/float)");
+            throw new InvalidOperationException($"类型 {type.Name} 不是有效的 QWord 类型(ulong/long/double)");
         }
     }
 
-    public int RequiredBits { get; } = 8 * 2;
+    public int RequiredBits { get; } = 8 * 8;
     public required ImmutableArray<QWordSwap> Swaps { get; init; }
 }
 

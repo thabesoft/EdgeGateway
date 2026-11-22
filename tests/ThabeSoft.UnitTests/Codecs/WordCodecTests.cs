@@ -1,7 +1,7 @@
 ﻿using ThabeSoft.Codecs.Extensions;
 using ThabeSoft.Codecs.Words;
 
-namespace ThabeSoft.EdgeGateway.UnitTests.Codecs;
+namespace ThabeSoft.UnitTests.Codecs;
 
 
 [TestClass]

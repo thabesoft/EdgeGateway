@@ -1,6 +1,6 @@
 ﻿using ThabeSoft.Codecs.Bytes;
 
-namespace ThabeSoft.EdgeGateway.UnitTests.Codecs;
+namespace ThabeSoft.UnitTests.Codecs;
 
 
 [TestClass]

@@ -8,7 +8,6 @@
 		<PackageVersion Include="System.Text.Json" Version="11.0.0" />
 		<PackageVersion Include="System.Collections.Immutable" Version="11.0.0" />
 		<PackageVersion Include="System.Reactive" Version="7.0.0" />
-		<PackageVersion Include="System.Threading.Channels" Version="11.0.0" />
 		<PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
 		<!--微软-->
 		<PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="5.9.0" />

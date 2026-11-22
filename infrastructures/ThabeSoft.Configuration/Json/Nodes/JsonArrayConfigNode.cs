@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Text.Json.Nodes;
 using ThabeSoft.Configuration.Nodes;
 using ThabeSoft.Configuration.Paths;
@@ -18,6 +18,8 @@ internal sealed class JsonArrayConfigNode(
 
     public IConfigNode? GetByIndex(int index)
     {
+        if (index < 0 || index >= content.Count) return null;
+
         var jsonNode = content[index];
         if (jsonNode is null) return null;
 

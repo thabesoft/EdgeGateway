@@ -3,7 +3,7 @@ using ThabeSoft.Lifecycles;
 using ThabeSoft.Lifecycles.StateMachines.Retryable;
 using ThabeSoft.Primitives;
 
-namespace ThabeSoft.EdgeGateway.UnitTests.Lifecycles;
+namespace ThabeSoft.UnitTests.Lifecycles;
 
 
 [TestClass]

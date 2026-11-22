@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Net;
 using System.Net.Sockets;
-using ThabeSoft.EdgeGateway.DependencyInjection;
-using ThabeSoft.Transports.Ethernet;
+using ThabeSoft.Lifecycles.DependencyInjection;
+using ThabeSoft.Transports.DependencyInjection;
 using ThabeSoft.Transports.Ethernet.DependencyInjection;
-using ThabeSoft.EdgeGateway.Extensions;
+using Ethernet = ThabeSoft.Transports.Ethernet.Ethernet;
 
 namespace ThabeSoft.Transports;
 
@@ -14,43 +14,43 @@ namespace ThabeSoft.Transports;
 public class TcpTransportConnectionTests
 {
     [TestMethod]
-    public async Task Fuck()
+    public async Task StartStop_RestartIsSupported()
     {
         var app = Host.CreateDefaultBuilder()
             .ConfigureServices(x => x
                 .AddLogging()
-                .AddEdgeGatewayEthernet()
-                .AddEdgeGatewayTransport()
-            )
+                .AddLifecycles()
+                .AddEthernetTransport()
+                .AddTransports())
             .Build();
+
         var factory = app.Services.GetRequiredService<ITransportConnectionFactory>();
-
-
 
         using var listener = new TcpListener(IPAddress.Loopback, 0);
         listener.Start();
 
-        var transportDescriptor = Transport.Tcp((IPEndPoint)listener.LocalEndpoint);
-        var transpor = factory.Create(transportDescriptor);
+        var descriptor = ThabeSoft.Transports.Ethernet.Ethernet.Tcp((IPEndPoint)listener.LocalEndpoint);
+        var connection = factory.Create(descriptor);
 
-        await transpor.StartAsync(TestContext.CancellationToken);
-        await transpor.StartAsync(TestContext.CancellationToken);
-        
-        await transpor.StopAsync(TestContext.CancellationToken);
-        await transpor.StartAsync(TestContext.CancellationToken);
-
-
-        listener.Dispose();
         try
         {
-            await transpor.ReadAsync(new byte[10], TestContext.CancellationToken);
-        }
-        catch
-        {
-            
-        }
+            await connection.StartAsync(TestContext.CancellationToken);
+            await connection.StartAsync(TestContext.CancellationToken);   // 重复启动应幂等
 
-        await transpor.DisposeAsync();
+            await connection.StopAsync(TestContext.CancellationToken);
+
+            await connection.StartAsync(TestContext.CancellationToken);   // 停止后可再次启动
+
+            // 服务端关闭后读取应抛异常（否则说明连接状态未感知）
+            listener.Dispose();
+
+            await Assert.ThrowsAsync<Exception>(async () =>
+                await connection.ReadAsync(new byte[10], TestContext.CancellationToken));
+        }
+        finally
+        {
+            await connection.DisposeAsync();
+        }
     }
 
     public TestContext TestContext { get; set; }

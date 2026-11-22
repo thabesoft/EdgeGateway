@@ -1,4 +1,4 @@
-﻿using ThabeSoft.Lifecycles.Collections;
+using ThabeSoft.Lifecycles.Collections;
 using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.Primitives.Guard;
 
@@ -19,7 +19,7 @@ public static class Lifecycle
     public static LifecycleBatchExecutorDescriptor BatchExecutor(Action<LifecycleBatchExecutorDescriptorConfigurator>? builderAction = null)
     {
         var builder = new LifecycleBatchExecutorDescriptorConfigurator();
-        builder.WithItemStartTimeout(5000).WithItemStartTimeout(3000).WithItemDisposeTimeout(3000).WithMaxConcurrency(3);
+        builder.WithItemStartTimeout(5000).WithItemStopTimeout(3000).WithItemDisposeTimeout(3000).WithMaxConcurrency(3);
         builderAction?.Invoke(builder);
 
         return new LifecycleBatchExecutorDescriptor()
@@ -100,11 +100,11 @@ public sealed class LifecycleBatchExecutorDescriptorConfigurator
     public LifecycleBatchExecutorDescriptorConfigurator WithItemStartTimeout(double timeoutMs) => WithItemStartTimeout(TimeSpan.FromMilliseconds(timeoutMs));
 
 
-    public LifecycleBatchExecutorDescriptorConfigurator WithItemStopTimeout(TimeSpan timeout) { ItemStartTimeout = timeout; return this; }
+    public LifecycleBatchExecutorDescriptorConfigurator WithItemStopTimeout(TimeSpan timeout) { ItemStopTimeout = timeout; return this; }
     public LifecycleBatchExecutorDescriptorConfigurator WithItemStopTimeout(double timeoutMs) => WithItemStopTimeout(TimeSpan.FromMilliseconds(timeoutMs));
 
 
-    public LifecycleBatchExecutorDescriptorConfigurator WithItemDisposeTimeout(TimeSpan timeout) { ItemStopTimeout = timeout; return this; }
+    public LifecycleBatchExecutorDescriptorConfigurator WithItemDisposeTimeout(TimeSpan timeout) { ItemDisposeTimeout = timeout; return this; }
     public LifecycleBatchExecutorDescriptorConfigurator WithItemDisposeTimeout(double timeoutMs) => WithItemDisposeTimeout(TimeSpan.FromMilliseconds(timeoutMs));
 
 

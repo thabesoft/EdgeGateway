@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using System.Diagnostics.CodeAnalysis;
-using ThabeSoft.Configuration.Mapping;
 using ThabeSoft.Triggers.Interval;
 using ThabeSoft.Triggers.Signal;
 
@@ -12,6 +10,9 @@ public static class DependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {
+        /// <summary>
+        /// 添加触发器
+        /// </summary>
         public IServiceCollection AddTriggers()
         {
             descriptors.TryAddSingleton<ITriggerScheduler, TriggerScheduler>();
@@ -25,17 +26,12 @@ public static class DependencyInjectionExtensions
             return descriptors;
         }
 
+        /// <summary>
+        /// 添加触发器配置映射
+        /// </summary>
         public IServiceCollection AddTriggersConfig()
         {
             descriptors.AddTriggerConfigMapper<IntervalTriggerDescriptorConfigMapper>();
-            return descriptors;
-        }
-
-
-        private IServiceCollection AddTriggerConfigMapper<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMapper>()
-           where TMapper : class, IConfigMapper<TriggerDescriptor>
-        {
-            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigMapper<TriggerDescriptor>, TMapper>());
             return descriptors;
         }
     }

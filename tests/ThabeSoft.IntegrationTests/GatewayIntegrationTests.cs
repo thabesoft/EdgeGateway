@@ -1,25 +1,32 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Time.Testing;
 using System.Collections.Concurrent;
 using System.Net;
 using ThabeSoft.Codecs;
+using ThabeSoft.Codecs.DependencyInjection;
+using ThabeSoft.EdgeGateway.DependencyInjection;
 using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.Transports.Ethernet;
-using ThabeSoft.Transports.Ethernet.DependencyInjection;
 using ThabeSoft.EdgeGateway.Hosting;
-using ThabeSoft.Lifecycles;
-using ThabeSoft.Protocols.Modbus.DependencyInjection;
-using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Simulation;
 using ThabeSoft.EdgeGateway.Simulation.DependencyInjection;
 using ThabeSoft.EdgeGateway.Subscription;
-using ThabeSoft.EdgeGateway.Tags;
-using ThabeSoft.Triggers;
-using ThabeSoft.Transports;
+using ThabeSoft.Lifecycles;
+using ThabeSoft.Lifecycles.DependencyInjection;
+using ThabeSoft.PubSub.DependencyInjection;
+using ThabeSoft.Protocols;
+using ThabeSoft.Protocols.Accessor;
+using ThabeSoft.Protocols.DependencyInjection;
 using ThabeSoft.Protocols.Modbus;
+using ThabeSoft.Protocols.Modbus.DependencyInjection;
+using ThabeSoft.Transports;
+using ThabeSoft.Transports.DependencyInjection;
+using ThabeSoft.Transports.Ethernet;
+using ThabeSoft.Transports.Ethernet.DependencyInjection;
+using ThabeSoft.Triggers;
+using ThabeSoft.Triggers.DependencyInjection;
+using Ethernet = ThabeSoft.Transports.Ethernet.Ethernet;
 
 namespace ThabeSoft.EdgeGateway;
 
@@ -29,15 +36,14 @@ public class GatewayIntegrationTests
 {
     private IHost? _app;
 
-    protected FakeTimeProvider TimeProvider { get; } = new();
+    private readonly IpTransportDescriptor _transportDescriptor = Ethernet.Tcp(IPAddress.Loopback, 2334);
+    private readonly ProtocolDescriptor _protocolDescriptor = Modbus.Ip;
+    private readonly DataAccessDescriptor<double> _tag = Modbus.HoldingRegister(1, 0, Codec.DoubleBigEndian);
+    private readonly TriggerDescriptor _trigger = Trigger.Interval(500);
+
+
     protected IGateway Gateway { get; private set; } = null!;
     protected ISimulator Simulator { get; private set; } = null!;
-
-
-    private readonly IpTransportDescriptor _transportDescriptor = Transport.Tcp(IPAddress.Loopback, 2334);
-    private readonly ProtocolDescriptor _protocolDescriptor = Modbus.Ip;
-    private readonly DataAddressDescriptor<double> _tag = Modbus.HoldingRegister(1, 0, Codecs.Codec.DoubleBigEndian);
-    private readonly TriggerDescriptor _trigger = Trigger.Interval(500);
 
 
     [TestInitialize]
@@ -48,25 +54,35 @@ public class GatewayIntegrationTests
             .UseEdgeGateway()
             .ConfigureServices(x => x
 
+                // 基础设施
+                .AddLifecycles()
+                .AddCodecs()
+                .AddTriggers()
+                .AddInMemoryPubSub()
+
                 // 模拟器
                 .AddEdgeGatewaySimulation()
+                .AddEdgeGatewaySimulationDevice()
                 .AddEdgeGatewayModbusSimulation()
 
                 // 网关
-                .AddEdgeGatewayModbus()
-                .AddEdgeGatewayEthernet())
+                .AddModbusProtocol()
+                .AddProtocols()
+                .AddTransports()
+                .AddEthernetTransport())
             .Build();
 
         Gateway = _app.Services.GetRequiredService<IGateway>();
         Simulator = _app.Services.GetRequiredService<ISimulator>();
+
+        await Task.CompletedTask;
     }
 
     [TestCleanup]
-    public async Task Cleanup()
+    public void Cleanup()
     {
         _app?.Dispose();
     }
-
 
 
     [TestMethod]
@@ -84,27 +100,28 @@ public class GatewayIntegrationTests
     }
 
 
+    /// <summary>
+    /// 需要外部 Modbus 从站（127.0.0.1:2334）配合，默认不参与自动化测试。
+    /// </summary>
     [TestMethod]
+    [Ignore("需要外部 Modbus 从站监听 127.0.0.1:2334")]
     public async Task StartGateway()
     {
-        //await StartSimulator();
-        //await Task.Delay(1000);
-
-        ConcurrentQueue<double> _values = [];
+        ConcurrentQueue<double> values = [];
 
         var port = await Gateway.AddPortAsync(_transportDescriptor, TestContext.CancellationToken);
-        var device = await port.AddDeviceAsync(_protocolDescriptor, TestContext.CancellationToken);
-        var subscription = await device.AddSubscriptionAsync(_tag, _trigger, TestContext.CancellationToken);
+        var device = await port.AddDeviceAsync(new DeviceDescriptor() { Protocol = _protocolDescriptor }, TestContext.CancellationToken);
+        ISubscription<double> subscription = await device.AddSubscriptionAsync(_tag, _trigger, TestContext.CancellationToken);
         subscription.Subscribe(x =>
         {
-            _values.Enqueue(x.Value);
+            values.Enqueue(x.Value);
             TestContext.WriteLine(x.ToString());
         });
 
         await Gateway.StartAsync(TestContext.CancellationToken);
-        await Task.Delay(TimeSpan.FromMinutes(3), TestContext.CancellationToken);
+        await Task.Delay(TimeSpan.FromSeconds(5), TestContext.CancellationToken);
 
-        Assert.IsGreaterThan(1, _values.Count);
+        Assert.IsGreaterThan(0, values.Count);
     }
 
     public TestContext TestContext { get; set; }

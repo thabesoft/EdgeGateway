@@ -2,7 +2,7 @@ using Moq;
 using ThabeSoft.Protocols.Modbus;
 using ThabeSoft.Transports.Byte;
 
-namespace ThabeSoft.EdgeGateway.UnitTests.Modbus;
+namespace ThabeSoft.UnitTests.Protocols;
 
 
 [TestClass]

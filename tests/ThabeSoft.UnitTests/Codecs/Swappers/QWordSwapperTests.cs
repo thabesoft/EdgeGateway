@@ -1,7 +1,7 @@
 ﻿using ThabeSoft.Codecs.DWords;
 using ThabeSoft.Codecs.QWords;
 
-namespace ThabeSoft.EdgeGateway.UnitTests.Codecs.Swappers;
+namespace ThabeSoft.UnitTests.Codecs.Swappers;
 
 
 [TestClass]

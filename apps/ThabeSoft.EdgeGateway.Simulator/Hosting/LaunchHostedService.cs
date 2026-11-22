@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Net;
 using ThabeSoft.Codecs;
@@ -8,6 +8,7 @@ using ThabeSoft.Triggers;
 using ThabeSoft.EdgeGateway.ValueGenerators;
 using ThabeSoft.Transports;
 using ThabeSoft.Protocols.Modbus;
+using Ethernet = ThabeSoft.Transports.Ethernet.Ethernet;
 
 namespace ThabeSoft.EdgeGateway.Simulator.Hosting;
 
@@ -24,7 +25,7 @@ internal sealed class LaunchHostedService(ISimulator simulator, ILogger<LaunchHo
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var network = simulator.AddPort(SimulationBuilder.ModbusIpPort(Transport.Tcp(IPAddress.Loopback, 2333)));
+        var network = simulator.AddPort(SimulationBuilder.ModbusIpPort(Ethernet.Tcp(IPAddress.Loopback, 2333)));
         for (byte i = 1; i <= DeviceCount; i++)
             await AddDeviceAsync(i, network, cancellationToken);
 
@@ -70,7 +71,7 @@ internal sealed class LaunchHostedService(ISimulator simulator, ILogger<LaunchHo
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                var network = simulator.AddPort(SimulationBuilder.ModbusIpPort(Transport.Tcp(IPAddress.Loopback, 2334)));
+                var network = simulator.AddPort(SimulationBuilder.ModbusIpPort(Ethernet.Tcp(IPAddress.Loopback, 2334)));
 
                 for (byte i = 1; i <= DeviceCount; i++)
                     await AddDeviceAsync(i, network, cancellationToken);

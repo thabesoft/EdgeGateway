@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using ThabeSoft.Lifecycles.Utilities;
 using ThabeSoft.Primitives;
@@ -76,7 +76,7 @@ internal abstract class LifecycleStateMachineBase(
 
     public async ValueTask DisposeAsync()
     {
-        if (_disposeFlag.TryMarkDisposed()) return;
+        if (!_disposeFlag.TryMarkDisposed()) return;
 
         lifecycleState.OnTerminating();
         await Safe.TryEexecuteAsync(onDispose, logger);

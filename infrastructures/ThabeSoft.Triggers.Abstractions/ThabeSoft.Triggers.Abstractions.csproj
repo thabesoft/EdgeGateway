@@ -9,6 +9,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\ThabeSoft.Configuration.Abstractions\ThabeSoft.Configuration.Abstractions.csproj" />
 	  <ProjectReference Include="..\ThabeSoft.Primitives\ThabeSoft.Primitives.csproj" />
 	</ItemGroup>
 

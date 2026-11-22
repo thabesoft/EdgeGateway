@@ -1,10 +1,25 @@
-﻿namespace ThabeSoft.Codecs.Bytes;
+namespace ThabeSoft.Codecs.Bytes;
 
 
 public sealed class BoolCodec : ICodec<bool>
 {
-    public static ICodec<bool> BitOffset(int bitOffset) =>
-      new BoolCodec(bitOffset);
+    private static readonly ICodec<bool>[] Cache = CreateCache();
+
+    private static ICodec<bool>[] CreateCache()
+    {
+        var cache = new ICodec<bool>[8];
+        for (var i = 0; i < cache.Length; i++)
+            cache[i] = new BoolCodec(i);
+        return cache;
+    }
+
+    public static ICodec<bool> BitOffset(int bitOffset)
+    {
+        if (bitOffset is < 0 or > 7)
+            throw new ArgumentOutOfRangeException(nameof(bitOffset), "位偏移必须在 0~7。");
+
+        return Cache[bitOffset];
+    }
 
 
     private readonly int _bitOffset;

@@ -2,7 +2,7 @@ using Microsoft.Extensions.Time.Testing;
 using ThabeSoft.Triggers;
 using ThabeSoft.Triggers.Interval;
 
-namespace ThabeSoft.EdgeGateway.UnitTests.Triggers;
+namespace ThabeSoft.UnitTests.Triggers;
 
 
 [TestClass]

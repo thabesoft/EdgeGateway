@@ -22,6 +22,9 @@ public static class DependencyInjectionExtensions
         }
 
 
+        /// <summary>
+        /// 添加指定类型的协议配置映射器
+        /// </summary>
         public IServiceCollection AddProtocolConfigMapper<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMapper>()
             where TMapper : class, IConfigMapper<ProtocolDescriptor>
         {
@@ -29,7 +32,10 @@ public static class DependencyInjectionExtensions
             return descriptors;
         }
 
-        public IServiceCollection AddDataAddressMapper<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMapper>()
+        /// <summary>
+        /// 添加指定类型的协议地址配置映射器
+        /// </summary>
+        public IServiceCollection AddProtocolAddressMapper<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMapper>()
            where TMapper : class, IConfigMapper<ProtocolAddress>
         {
             descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigMapper<ProtocolAddress>, TMapper>());

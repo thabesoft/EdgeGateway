@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using ThabeSoft.Codecs.Bits;
 
-namespace ThabeSoft.EdgeGateway.UnitTests.Codecs;
+namespace ThabeSoft.UnitTests.Codecs;
 
 
 [TestClass]

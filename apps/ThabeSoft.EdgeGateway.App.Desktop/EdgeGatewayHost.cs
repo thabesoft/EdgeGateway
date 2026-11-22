@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting;
 using ThabeSoft.EdgeGateway.App.Hosting;
 using ThabeSoft.Codecs.DependencyInjection;
 using ThabeSoft.Transports.Ethernet.DependencyInjection;
@@ -11,6 +11,8 @@ using ThabeSoft.Transports.DependencyInjection;
 using ThabeSoft.Protocols.DependencyInjection;
 using ThabeSoft.Configuration.DependencyInjection;
 using ThabeSoft.EdgeGateway.Configuration;
+using ThabeSoft.PubSub.DependencyInjection;
+using ThabeSoft.EdgeGateway.DependencyInjection;
 
 namespace ThabeSoft.EdgeGateway.App.Desktop;
 
@@ -27,15 +29,20 @@ internal static class EdgeGatewayHost
     public static IHostBuilder UseEdgeGatewayDesktopApp(this IHostBuilder hostBuilder)
     {
         return hostBuilder
-            .UseEdgeGateway()
-            //.UseJsonConfig("Gateway:Config")
             .UseEdgeGatewayApp()
             .ConfigureServices(descriptors =>
             {
+                // 网关核心
+                descriptors.AddEdgeGateway();
+
+
                 descriptors.AddConfigPaths();
                 descriptors.AddConfigMonitor<GatewayConfig>();
                 descriptors.AddJsonConfigNodeParse();
 
+
+                // 事件总线
+                descriptors.AddInMemoryPubSub();
 
                 // 生命周期
                 descriptors.AddLifecycles();

@@ -1,7 +1,7 @@
 ﻿using ThabeSoft.Triggers;
 using ThabeSoft.Triggers.Signal;
 
-namespace ThabeSoft.EdgeGateway.UnitTests.Triggers;
+namespace ThabeSoft.UnitTests.Triggers;
 
 
 [TestClass]

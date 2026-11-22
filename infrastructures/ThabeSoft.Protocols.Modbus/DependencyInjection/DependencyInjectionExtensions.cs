@@ -28,7 +28,7 @@ public static class DependencyInjectionExtensions
         public IServiceCollection AddModbusProtocolConfig()
         {
             descriptors.AddProtocolConfigMapper<ModbusProtocolDescriptorConfigMapper>();
-            descriptors.AddDataAddressMapper<ModbusProtocolAddressConfigMapper>();
+            descriptors.AddProtocolAddressMapper<ModbusProtocolAddressConfigMapper>();
 
             return descriptors;
         }

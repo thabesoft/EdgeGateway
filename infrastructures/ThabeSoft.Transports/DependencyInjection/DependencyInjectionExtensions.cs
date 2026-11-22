@@ -20,6 +20,9 @@ public static class DependencyInjectionExtensions
         }
 
 
+        /// <summary>
+        /// 添加传输配置映射器
+        /// </summary>
         public IServiceCollection AddTransportConfigMapper<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMapper>()
             where TMapper : class, IConfigMapper<TransportDescriptor>
         {

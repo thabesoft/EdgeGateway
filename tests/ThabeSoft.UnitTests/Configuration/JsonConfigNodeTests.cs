@@ -1,114 +1,100 @@
 using System.Text;
-using System.Text.Json.Nodes;
-using ThabeSoft.Configuration;
-using ThabeSoft.Configuration.Json.Nodes;
+using ThabeSoft.Configuration.Json;
+using ThabeSoft.Configuration.Nodes;
 using ThabeSoft.Configuration.Paths;
 using ThabeSoft.Primitives.Guard;
-using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.Transports;
 
-namespace ThabeSoft.EdgeGateway.UnitTests.Configuration;
+namespace ThabeSoft.UnitTests.Configuration;
 
 
 [TestClass]
 public class JsonConfigNodeTests
 {
-    private JsonConfigNode Node { get; set; } = null!;
-
-    [TestInitialize]
-    public void Setup()
+    private const string Json = """
     {
-        var json = JsonNode.Parse("""
+        "Ports": [
         {
-            "Ports": [
+            "Id": "PortId",
+            "Transport": {
+                "Type": "Ethernet",
+                "ProtocolType": "Tcp",
+                "Ip": "127.0.0.1",
+                "Port": 2333
+            },
+            "Devices": [
             {
-                "Id": "PortId",
-                "Transport": {
-                    "Type": "Ethernet",
-                    "ProtocolType": "Tcp",
-                    "Ip": "127.0.0.1",
-                    "Port": 2333,
-                    "Retry": {
-                        "StartInterval": "00:00:03",
-                        "MaxInterval": "00:00:30",
-                        "BackoffMultiplier": 1.5
-                    }
-                },
-                "Devices": [
-                {
-                    "Id": "DeviceId",
-                    "Protocol": {
+                "Id": "DeviceId",
+                "Protocol": {
                     "Type": "Modbus",
                     "FrameFormat": "Ip"
-                    },
-                    "Subscriptions": [
-                    {
-                        "Id": "SubscriptionId",
-                        "Trigger": {
-                        "Type": "Interval",
-                        "Interval": "00:00:00.100"
-                        },
-                        "Codec": {
-                            "DataType": "Int32",
-                            "Layout": "ABCD"
-                        },
-                        "DataAddress": {
-                            "Kind": "Coil",
-                            "SlaveId": 1,
-                            "Address": 0,
-                            "Quantity": 0
-                        },
-                        "Slinks": [
-                        "Test"
-                        ]
-                    }
-                    ]
-                }
-                ]
-            },
-            {
-                "Id": "SerialPortid",
-                "Transport": {
-                "Type": "Serial",
-                "PortName": "Com3",
-                "BaudRate": 9600,
-                "DataBits": 8,
-                "Parity": "None",
-                "StopBits": "One",
-                "Retry": {
-                    "StartInterval": "00:00:03",
-                    "MaxInterval": "00:00:30",
-                    "BackoffMultiplier": 1.5
-                }
                 }
             }
             ]
+        },
+        {
+            "Id": "SerialPortid",
+            "Transport": {
+                "Type": "Serial",
+                "PortName": "Com3",
+                "BaudRate": 9600
+            }
         }
-        """).Required();
-
-        Node = new JsonConfigNode(json, new ConfigPathEvaluator(new ConfigPathParser()));
+        ]
     }
+    """;
 
+
+    private IConfigNode _root = null!;
+
+
+    [TestInitialize]
+    public async Task Setup()
+    {
+        var parser = new JsonConfigNodeParser(new ConfigPathEvaluator(new ConfigPathParser()));
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(Json));
+
+        _root = await parser.ParseAsync(stream, TestContext.CancellationToken);
+    }
 
 
     [TestMethod]
-    public void TestMethod1()
+    public void GetByPath_ReadsObjectAndValue()
     {
-        var id = Node.GetByPath("Ports[0].Id")?.AsString();
-        Assert.AreEqual("PortId", id);
-
-        var protocolTypeNode = Node.GetByPath("Ports[0].Devices[0].Subscriptions[0].DataAddress......Protocol.Type");
-        var protocolType = protocolTypeNode?.AsString()
-            .Required("缺失协议类型")
-            .ToEnum<ProtocolType>();
-
-        Assert.AreEqual(ProtocolType.Modbus, protocolType);
-
-
-        var transportType = protocolTypeNode?.GetByPath("$Ports[0].Transport.Type")?.AsString()
-             .Required("缺少传输类型")
-             .ToEnum<TransportType>();
-
-        Assert.AreEqual(TransportType.Ethernet, transportType);
+        Assert.AreEqual("PortId", _root.GetStringByPath("Ports[0].Id"));
+        Assert.AreEqual("Ethernet", _root.GetStringByPath("Ports[0].Transport.Type"));
+        Assert.AreEqual("2333", _root.GetStringByPath("Ports[0].Transport.Port"));
+        Assert.AreEqual("Serial", _root.GetStringByPath("Ports[1].Transport.Type"));
     }
+
+    [TestMethod]
+    public void GetByPath_SupportsRootAndParent()
+    {
+        var device = _root.GetByPath("Ports[0].Devices[0]").Required();
+
+        Assert.AreEqual("DeviceId", device.GetStringByPath("Id"));
+
+        // $ 回溯根节点
+        Assert.AreEqual("SerialPortid", device.GetStringByPath("$Ports[1].Id"));
+
+        // .. 回溯父节点（Devices 数组），再上一级到 Ports[0]
+        Assert.AreEqual("PortId", device.GetByPath("..")!.Parent!.GetStringByPath("Id"));
+    }
+
+    [TestMethod]
+    public void GetByPath_MissingPathReturnsNull()
+    {
+        Assert.IsNull(_root.GetByPath("Ports[9].Id"));
+        Assert.IsNull(_root.GetByPath("Ports[0].NotExists"));
+    }
+
+    [TestMethod]
+    public void AsArrayAndAsValue_ReportNodeType()
+    {
+        Assert.IsNotNull(_root.GetByPath("Ports").AsArray());
+        Assert.IsNotNull(_root.GetByPath("Ports[0].Id").AsValue());
+        Assert.IsNull(_root.GetByPath("Ports[0]").AsValue());
+    }
+
+
+    public TestContext TestContext { get; set; } = null!;
 }

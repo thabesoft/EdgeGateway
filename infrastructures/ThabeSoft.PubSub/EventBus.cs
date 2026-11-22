@@ -1,11 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
+using System.Linq.Expressions;
 using ThabeSoft.Primitives;
 
-namespace ThabeSoft.PubSub.InMemory;
+namespace ThabeSoft.PubSub;
 
 
-internal sealed class InMemoryEventBus(ILogger<InMemoryEventBus> logger) :
+internal sealed class EventBus(ILogger<EventBus> logger) :
     IEventPublisher, IEventSubscriber, IAsyncDisposable
 {
     private readonly ConcurrentDictionary<Guid, Func<IMessage, CancellationToken, Task>> _handlers = [];
@@ -13,8 +14,7 @@ internal sealed class InMemoryEventBus(ILogger<InMemoryEventBus> logger) :
     private readonly ConcurrentDictionary<Guid, Task> _publishTasks = [];
 
 
-
-    public IDisposable Subscribe<TEvent>(Func<TEvent, CancellationToken, ValueTask> handler) where TEvent : IMessage
+    public IDisposable Subscribe<TMessage>(Func<TMessage, CancellationToken, ValueTask> handler) where TMessage : IMessage
     {
         var id = Guid.NewGuid();
         _handlers[id] = Warpper;
@@ -23,30 +23,31 @@ internal sealed class InMemoryEventBus(ILogger<InMemoryEventBus> logger) :
 
 
         // 事件包装
-        async Task Warpper(IMessage @event, CancellationToken cancellationToken)
+        async Task Warpper(IMessage message, CancellationToken cancellationToken)
         {
-            if (@event is not TEvent tEvent)
+            if (message is not TMessage msg)
                 return;
 
             try
             {
-                await handler.Invoke(tEvent, cancellationToken);
+                logger.LogTrace("事件({Type})回调", typeof(TMessage));
+                await handler.Invoke(msg, cancellationToken);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
-                logger.LogTrace("事件({Type})取消处理", typeof(TEvent));
+                logger.LogTrace("事件({Type})取消处理", typeof(TMessage));
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "事件({Type})处理失败", typeof(TEvent));
+                logger.LogError(ex, "事件({Type})处理失败", typeof(TMessage));
             }
         }
     }
 
-    public async Task PublishAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default) where TEvent : IMessage
+    public async Task PublishAsync<TMessage>(TMessage message, CancellationToken cancellationToken = default) where TMessage : IMessage
     {
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _publishTaskCts.Token);
-        var tasks = _handlers.Values.Select(x => x.Invoke(@event, cts.Token)).ToArray();
+        var tasks = _handlers.Values.Select(x => x.Invoke(message, cts.Token)).ToArray();
 
         var publishId = Guid.NewGuid();
         var publishTask = Task.WhenAll(tasks);
@@ -54,6 +55,7 @@ internal sealed class InMemoryEventBus(ILogger<InMemoryEventBus> logger) :
 
         try
         {
+            logger.LogTrace("发布事件({Type}), Content({Content})", typeof(TMessage), message);
             await publishTask;
         }
         finally

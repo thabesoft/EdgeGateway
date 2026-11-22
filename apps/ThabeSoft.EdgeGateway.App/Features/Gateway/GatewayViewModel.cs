@@ -2,11 +2,8 @@
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ReactiveUI.Primitives.Extensions;
 using SukiUI.Toasts;
-using System.Net;
 using ThabeSoft.EdgeGateway.App.Services;
-using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.PubSub;
 using ThabeSoft.Lifecycles;
 using ThabeSoft.EdgeGateway.Ports;

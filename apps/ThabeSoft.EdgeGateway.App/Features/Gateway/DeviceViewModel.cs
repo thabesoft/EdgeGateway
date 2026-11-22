@@ -6,7 +6,6 @@ using ThabeSoft.EdgeGateway.App.Services;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.PubSub;
 using ThabeSoft.Lifecycles;
-using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Messages;
@@ -90,5 +89,13 @@ internal sealed partial class DeviceViewModel : ObservableObject, IDisposable
     {
         foreach (var i in _eventDisposers)
             i.Dispose();
+    }
+}
+
+internal sealed class DeviceViewModelFactory(IEventSubscriber eventSubscriber, ISukiToastManager sukiToastManager)
+{
+    public DeviceViewModel Create(IDevice device)
+    {
+        return new(device, eventSubscriber, sukiToastManager);
     }
 }

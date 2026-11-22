@@ -46,7 +46,7 @@ public static class DependencyInjectionExtensions
                 return new ConfigMonitor<T>(eventPublisher, eventSubscriber, configSerializer, configFileWatcher);
             });
 
-            descriptors.TryAddSingleton(monitorDescriptor);
+            descriptors.Add(monitorDescriptor);
             return descriptors;
         }
 

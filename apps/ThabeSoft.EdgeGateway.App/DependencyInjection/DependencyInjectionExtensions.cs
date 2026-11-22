@@ -35,7 +35,7 @@ public static class DependencyInjectionExtensions
 
             /*---- ViewModes ----*/
             // Gateway
-            descriptors.AddSingleton<GatewayViewModel>();
+            descriptors.AddObservableGateway();
 
             // Shell
             descriptors.AddViewMapping<MainWindow, MainWindowViewModel>(ServiceLifetime.Singleton);
@@ -48,6 +48,16 @@ public static class DependencyInjectionExtensions
 
 
             return descriptors;
+        }
+
+
+        internal void AddObservableGateway()
+        {
+            // Gateway
+            descriptors.AddSingleton<GatewayViewModel>();
+
+            // Device
+            descriptors.AddSingleton<DeviceViewModelFactory>();
         }
 
 

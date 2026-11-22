@@ -58,7 +58,18 @@ public class App : Application, IAsyncDisposable
         }
 
         // 启动 Host
-        _luanchHostTask = _host.StartAsync(_luanchHostTaskCts.Token);
+        _luanchHostTask = Task.Run(async () =>
+        {
+            try
+            {
+                await _host.StartAsync(_luanchHostTaskCts.Token);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Host启动失败");
+            }
+
+        }, _luanchHostTaskCts.Token);
     }
 
 

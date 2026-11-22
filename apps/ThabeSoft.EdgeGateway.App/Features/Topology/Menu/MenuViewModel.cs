@@ -1,10 +1,12 @@
 ﻿using Avalonia.Collections;
+using Avalonia.Controls;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using ThabeSoft.EdgeGateway.App.Features.Gateway;
 using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.PubSub;
-using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Messages;
+using ThabeSoft.EdgeGateway.Ports;
+using ThabeSoft.PubSub;
 
 namespace ThabeSoft.EdgeGateway.App.Features.Topology;
 
@@ -55,7 +57,8 @@ internal sealed class MenuViewModel : ObservableObject
             return false;
 
         var menuItem = CreatePortItem(port);
-        _items.Add(menuItem);
+
+        Dispatcher.UIThread.Invoke(() => _items.Add(menuItem));
         return true;
 
     }
@@ -64,7 +67,7 @@ internal sealed class MenuViewModel : ObservableObject
         var portMenu = FindPortMenu(_items, portId);
         if (portMenu is null) return false;
 
-        return _items.Remove(portMenu);
+        return Dispatcher.UIThread.Invoke(() => _items.Remove(portMenu));
     }
 
 

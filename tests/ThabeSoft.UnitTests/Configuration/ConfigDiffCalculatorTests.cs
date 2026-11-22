@@ -4,6 +4,7 @@ using ThabeSoft.EdgeGateway.Configuration.Diff;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Subscription;
+using ThabeSoft.Protocols.Modbus;
 using ThabeSoft.Transports;
 using ThabeSoft.Transports.Serial;
 using ThabeSoft.Triggers;

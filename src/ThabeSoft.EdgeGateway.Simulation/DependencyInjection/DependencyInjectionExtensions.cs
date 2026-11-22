@@ -15,31 +15,13 @@ public static class DependencyInjectionExtensions
 {
     extension(IServiceCollection descriptors)
     {
-        /// <summary>
-        /// 添加模拟模块
-        /// </summary>
         public IServiceCollection AddEdgeGatewaySimulation(SimulatorCreationArgs? args = default)
         {
-            descriptors.TryAddSingleton<SimulatorFactory>();
-            descriptors.TryAddSingleton<ISimulator>(sp =>
-            {
-                var factory = sp.GetRequiredService<SimulatorFactory>();
-                return factory.Create(args ?? new SimulatorCreationArgs());
-            });
+            descriptors.AddEdgeGatewaySimulationDevice();
+            descriptors.AddEdgeGatewaySimulationCore(args);
 
             return descriptors;
         }
-
-        public IServiceCollection AddEdgeGatewaySimulationDevice()
-        {
-            descriptors.TryAddSingleton<TriggerManager>();
-            descriptors.TryAddSingleton<SimulationPortFactory>();
-            descriptors.TryAddSingleton<SimulationDeviceFactory>();
-
-            return descriptors;
-        }
-
-
         public IServiceCollection AddEdgeGatewaySimulationHost()
         {
             descriptors.AddHostedService<LaunchHostedService>();
@@ -54,6 +36,32 @@ public static class DependencyInjectionExtensions
             descriptors.TryAddSingleton<IModbusFactory, ModbusFactory>();
             descriptors.TryAddSingleton<ISimulationDeviceResolver, ModbusSimulationDeviceResolver>();
             descriptors.TryAddSingleton<ISimulationPortResolver, ModbusSimulationPortResolver>();
+            return descriptors;
+        }
+
+
+
+        /// <summary>
+        /// 添加模拟模块
+        /// </summary>
+        internal IServiceCollection AddEdgeGatewaySimulationCore(SimulatorCreationArgs? args = default)
+        {
+            descriptors.TryAddSingleton<SimulatorFactory>();
+            descriptors.TryAddSingleton<ISimulator>(sp =>
+            {
+                var factory = sp.GetRequiredService<SimulatorFactory>();
+                return factory.Create(args ?? new SimulatorCreationArgs());
+            });
+
+            return descriptors;
+        }
+
+        internal IServiceCollection AddEdgeGatewaySimulationDevice()
+        {
+            descriptors.TryAddSingleton<TriggerManager>();
+            descriptors.TryAddSingleton<SimulationPortFactory>();
+            descriptors.TryAddSingleton<SimulationDeviceFactory>();
+
             return descriptors;
         }
     }

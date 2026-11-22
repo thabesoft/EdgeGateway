@@ -10,9 +10,9 @@ public static class DependencyInjectionExtensions
     extension(IServiceCollection descriptors)
     {
         /// <summary>
-        /// 提供内存版本的订阅发消息能力
+        /// 提供订阅发布消息能力
         /// </summary>
-        public IServiceCollection AddInMemoryPubSub()
+        public IServiceCollection AddPubSub()
         {
             descriptors.TryAddSingleton<InMemoryEventBus>();
             descriptors.TryAddSingleton<IEventPublisher>(sp => sp.GetRequiredService<InMemoryEventBus>());

@@ -2,7 +2,7 @@ using ThabeSoft.Codecs;
 using ThabeSoft.Protocols.Accessor;
 using ThabeSoft.Protocols.Modbus;
 
-namespace ThabeSoft.UnitTests.Modbus;
+namespace ThabeSoft.UnitTests.Protocols;
 
 
 /// <summary>

@@ -2,17 +2,16 @@ using Moq;
 using System.Net;
 using System.Reactive.Subjects;
 using ThabeSoft.Codecs;
+using ThabeSoft.EdgeGateway;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Readings;
-using ThabeSoft.Transports.Serial;
 using ThabeSoft.EdgeGateway.Subscription;
-using ThabeSoft.Transports;
-using ThabeSoft.Triggers;
 using ThabeSoft.Protocols.Modbus;
-using Ethernet = ThabeSoft.Transports.Ethernet.Ethernet;
-using Serial = ThabeSoft.Transports.Serial.Serial;
-using ThabeSoft.EdgeGateway;
+using ThabeSoft.Transports;
+using ThabeSoft.Transports.Ethernet;
+using ThabeSoft.Transports.Serial;
+using ThabeSoft.Triggers;
 
 namespace ThabeSoft.UnitTests;
 
@@ -25,7 +24,6 @@ public class SdkTests
     {
         var mockGateway = new Mock<IGateway>();
         var gateway = mockGateway.Object;
-
 
         await gateway.AddPortAsync(Ethernet.Tcp(IPAddress.Loopback, 8086), TestContext.CancellationToken);
         await gateway.AddPortAsync(Ethernet.Tcp(IPAddress.Loopback, 8086, new(TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(30)) { BackoffMultiplier = 1.5 }), TestContext.CancellationToken);

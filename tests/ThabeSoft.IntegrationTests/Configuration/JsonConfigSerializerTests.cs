@@ -5,7 +5,6 @@ using ThabeSoft.Configuration;
 using ThabeSoft.Configuration.DependencyInjection;
 using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.DependencyInjection;
-using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.Protocols.DependencyInjection;
 using ThabeSoft.Protocols.Modbus;

@@ -51,18 +51,19 @@ public class GatewayIntegrationTests
     {
         _app = Host.CreateDefaultBuilder()
             .ConfigureLogging(x => x.SetMinimumLevel(LogLevel.Trace))
-            .UseEdgeGateway()
             .ConfigureServices(x => x
+
+                // 网关
+                .AddEdgeGateway()
 
                 // 基础设施
                 .AddLifecycles()
                 .AddCodecs()
                 .AddTriggers()
-                .AddInMemoryPubSub()
+                .AddPubSub()
 
                 // 模拟器
                 .AddEdgeGatewaySimulation()
-                .AddEdgeGatewaySimulationDevice()
                 .AddEdgeGatewayModbusSimulation()
 
                 // 网关

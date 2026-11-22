@@ -3,11 +3,12 @@ using Microsoft.Extensions.Hosting;
 using System.Net;
 using System.Net.Sockets;
 using ThabeSoft.Lifecycles.DependencyInjection;
+using ThabeSoft.Transports;
 using ThabeSoft.Transports.DependencyInjection;
+using ThabeSoft.Transports.Ethernet;
 using ThabeSoft.Transports.Ethernet.DependencyInjection;
-using Ethernet = ThabeSoft.Transports.Ethernet.Ethernet;
 
-namespace ThabeSoft.Transports;
+namespace ThabeSoft.IntegrationTests.Transport;
 
 
 [TestClass]
@@ -29,7 +30,7 @@ public class TcpTransportConnectionTests
         using var listener = new TcpListener(IPAddress.Loopback, 0);
         listener.Start();
 
-        var descriptor = ThabeSoft.Transports.Ethernet.Ethernet.Tcp((IPEndPoint)listener.LocalEndpoint);
+        var descriptor = Ethernet.Tcp((IPEndPoint)listener.LocalEndpoint);
         var connection = factory.Create(descriptor);
 
         try

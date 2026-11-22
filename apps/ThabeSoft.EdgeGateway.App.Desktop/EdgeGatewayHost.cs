@@ -42,7 +42,7 @@ internal static class EdgeGatewayHost
 
 
                 // 事件总线
-                descriptors.AddInMemoryPubSub();
+                descriptors.AddPubSub();
 
                 // 生命周期
                 descriptors.AddLifecycles();

@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using ThabeSoft.Primitives;
 
 namespace ThabeSoft.Configuration.Monitor;
@@ -8,23 +7,19 @@ namespace ThabeSoft.Configuration.Monitor;
 internal sealed class ConfigFileWatcher : IDisposable
 {
     private readonly FileSystemWatcher _watcher;
-    private readonly IDisposable? _optionChangeDisposable;
     private readonly ILogger<ConfigFileWatcher> _logger;
 
-    private TimeSpan _debounce;
     private readonly SemaphoreSlim _debounceLock = new(1, 1);
     private CancellationTokenSource? _debounceCts;
 
 
-    public ConfigFileWatcher(IOptionsMonitor<ConfigFileWatcherOptions> options, ILogger<ConfigFileWatcher> logger)
+    public ConfigFileWatcher(string filePath, ILogger<ConfigFileWatcher> logger)
     {
-        var fullPath = Path.GetFullPath(options.CurrentValue.FilePath);
+        var fullPath = Path.GetFullPath(filePath);
         var dir = Path.GetDirectoryName(fullPath);
         var fileName = Path.GetFileName(fullPath);
 
         FilePath = fullPath;
-
-        _optionChangeDisposable = options.OnChange(x => _debounce = x.DebouncePeriod);
         _logger = logger;
 
         _watcher = new FileSystemWatcher(dir, fileName)
@@ -37,12 +32,14 @@ internal sealed class ConfigFileWatcher : IDisposable
         _watcher.Renamed += OnFileChanged;
     }
 
+
     public event Func<CancellationToken, Task>? Changed;
+    public TimeSpan Debounce { get; init; } = TimeSpan.FromMilliseconds(100);
     public string FilePath { get; }
+
+
     public void Dispose()
     {
-        _optionChangeDisposable?.DisposeSafely(_logger);
-
         _watcher.EnableRaisingEvents = false;
         _watcher?.DisposeSafely(_logger);
 
@@ -67,7 +64,7 @@ internal sealed class ConfigFileWatcher : IDisposable
             {
                 try
                 {
-                    await Task.Delay(_debounce, cts.Token);
+                    await Task.Delay(Debounce, cts.Token);
                     if (Changed is { } handler)
                         await handler(cts.Token);
                 }

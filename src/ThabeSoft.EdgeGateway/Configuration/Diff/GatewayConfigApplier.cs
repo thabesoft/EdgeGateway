@@ -1,8 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using ThabeSoft.Configuration.Monitor;
 
-namespace ThabeSoft.EdgeGateway.Configuration.Reloader;
-
+namespace ThabeSoft.EdgeGateway.Configuration.Diff;
 
 
 internal sealed class GatewayConfigApplier
@@ -10,6 +9,7 @@ internal sealed class GatewayConfigApplier
     private readonly IGateway _gateway;
     private readonly ILogger<GatewayConfigApplier> _logger;
     private GatewayConfig? _current;
+    private bool _isEnable;
 
 
     public GatewayConfigApplier(
@@ -24,8 +24,19 @@ internal sealed class GatewayConfigApplier
         monitor.OnChange(ApplyAsync);
     }
 
+    public void Enable()
+    {
+        _isEnable = true;
+    }
+    public void Disable()
+    {
+        _isEnable = false;
+    }
+
     private async ValueTask ApplyAsync(GatewayConfig config, CancellationToken cancellationToken = default)
     {
+        if (!_isEnable) return;
+
         if(_current is not null)
         {
             var oldPorts = _current.Ports.ToDictionary(p => p.Descriptor.Id);

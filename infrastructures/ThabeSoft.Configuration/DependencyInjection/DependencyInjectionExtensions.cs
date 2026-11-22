@@ -4,6 +4,8 @@ using ThabeSoft.Configuration.Monitor;
 using ThabeSoft.Configuration.Json;
 using ThabeSoft.Configuration.Nodes;
 using ThabeSoft.Configuration.Paths;
+using ThabeSoft.PubSub;
+using Microsoft.Extensions.Logging;
 
 namespace ThabeSoft.Configuration.DependencyInjection;
 
@@ -13,56 +15,65 @@ public static class DependencyInjectionExtensions
     extension(IServiceCollection descriptors)
     {
         /// <summary>
+        /// 提供Json动态解析能力
+        /// </summary>
+        public IServiceCollection AddJsonConfig<T>(string configFilePath, TimeSpan debouncePeriod)
+        {
+            descriptors.AddConfigPaths();
+            descriptors.AddConfigSerializer();
+            descriptors.AddJsonConfigNodeParse();
+            descriptors.AddConfigFileMonitor<T>(configFilePath, debouncePeriod);
+
+            return descriptors;
+        }
+
+
+
+        /// <summary>
+        /// 提供配置文件监视能力, 通过 <see cref="IConfigMonitor{T}"/> 拿到最新数据或者订阅更新
+        /// </summary>
+        internal IServiceCollection AddConfigFileMonitor<T>(string configFilePath, TimeSpan debouncePeriod)
+        {
+            var monitorDescriptor = ServiceDescriptor.Singleton<IConfigMonitor<T>>(sp =>
+            {
+                var eventPublisher = sp.GetRequiredService<IEventPublisher>();
+                var eventSubscriber = sp.GetRequiredService<IEventSubscriber>();
+                var configSerializer = sp.GetRequiredService<IConfigSerializer>();
+
+                var configFileWatcherLogger = sp.GetRequiredService<ILogger<ConfigFileWatcher>>();
+                var configFileWatcher = new ConfigFileWatcher(configFilePath, configFileWatcherLogger) { Debounce = debouncePeriod };
+
+                return new ConfigMonitor<T>(eventPublisher, eventSubscriber, configSerializer, configFileWatcher);
+            });
+
+            descriptors.TryAddSingleton(monitorDescriptor);
+            return descriptors;
+        }
+
+        /// <summary>
         /// 提供配置路径解析能力
         /// </summary>
-        public IServiceCollection AddConfigPaths()
+        internal IServiceCollection AddConfigPaths()
         {
             descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigPathParser, ConfigPathParser>());
             descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigPathEvaluator, ConfigPathEvaluator>());
 
             return descriptors;
         }
-
-        /// <summary>
-        /// 提供配置文件自动加载能力
-        /// </summary>
-        public IServiceCollection AddConfigMonitor<T>(string optionSectionName = "Config")
-        {
-            descriptors.AddOptions<ConfigFileWatcherOptions>()
-                .BindConfiguration(optionSectionName)
-                .Validate(opts =>
-                {
-                    if (string.IsNullOrWhiteSpace(opts.FilePath))
-                        return false;
-
-                    if (opts.DebouncePeriod.TotalMilliseconds < 10)
-                        return false;
-
-                    return true;
-                })
-                .ValidateOnStart();
-
-
-            descriptors.TryAddSingleton<ConfigFileWatcher>();
-            descriptors.TryAddSingleton<ConfigMonitor<T>>();
-            return descriptors;
-        }
-
         /// <summary>
         /// 提供配置序列化能力
         /// </summary>
-        public IServiceCollection AddConfigSerializer()
+        internal IServiceCollection AddConfigSerializer()
         {
-            descriptors.TryAddSingleton<IConfigSerializer, ConfigSerializer>();
+            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigSerializer, ConfigSerializer>());
             return descriptors;
         }
-
         /// <summary>
         /// 提供配置解析能力
         /// </summary>
-        public IServiceCollection AddJsonConfigNodeParse()
+        internal IServiceCollection AddJsonConfigNodeParse()
         {
-            descriptors.TryAddSingleton<IConfigNodeParser, JsonConfigNodeParser>();
+            descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigNodeParser, JsonConfigNodeParser>());
             return descriptors;
         }
     }

@@ -8,7 +8,7 @@ using ThabeSoft.Lifecycles;
 using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.Primitives;
 using ThabeSoft.Primitives.Guard;
-using ThabeSoft.Protocols;
+using ThabeSoft.Protocols.Accessor;
 using ThabeSoft.PubSub;
 using ThabeSoft.Transports;
 

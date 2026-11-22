@@ -13,13 +13,13 @@ public sealed record class PortDescriptor
     public required TransportDescriptor Transport { get; init => field = value.Required(); }
 
 
-    public LifecycleStateMachineDescriptor StateMachine { get; init => field = value.Required(); } = LifecycleBuilder.RetryableStateMachine(x => x
+    public LifecycleStateMachineDescriptor StateMachine { get; init => field = value.Required(); } = Lifecycle.RetryableStateMachine(x => x
         .WithStartTimeout(TimeSpan.FromSeconds(30))
         .WithStopTimeout(TimeSpan.FromSeconds(15))
         .WithDisposeTimeout(TimeSpan.FromSeconds(10))
         .WithExecuteTimeout(TimeSpan.FromSeconds(5))
     );
-    public LifecycleBatchExecutorDescriptor DeviceBatchExecutor { get; init => field = value.Required(); } = LifecycleBuilder.BatchExecutor(x => x
+    public LifecycleBatchExecutorDescriptor DeviceBatchExecutor { get; init => field = value.Required(); } = Lifecycle.BatchExecutor(x => x
         .WithItemStartTimeout(TimeSpan.FromSeconds(5))
         .WithItemStopTimeout(TimeSpan.FromSeconds(5))
         .WithItemDisposeTimeout(TimeSpan.FromSeconds(5))

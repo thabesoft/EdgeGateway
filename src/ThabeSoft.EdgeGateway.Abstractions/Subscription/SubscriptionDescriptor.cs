@@ -2,7 +2,7 @@
 using ThabeSoft.Lifecycles;
 using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.Primitives.Guard;
-using ThabeSoft.Protocols;
+using ThabeSoft.Protocols.Accessor;
 using ThabeSoft.Triggers;
 
 namespace ThabeSoft.EdgeGateway.Subscription;
@@ -30,7 +30,7 @@ public sealed record class SubscriptionDescriptor<T> : ISubscriptionDescriptor
     public SubscriptionId Id { get; init => field = value.Required(); } = SubscriptionId.Create();
     public required DataAccessDescriptor<T> Tag { get; init => field = value.Required(); }
     public required TriggerDescriptor Trigger { get; init => field = value.Required(); }
-    public LifecycleStateMachineDescriptor StateMachine { get; init => field = value.Required(); } = LifecycleBuilder.StrictStateMachine();
+    public LifecycleStateMachineDescriptor StateMachine { get; init => field = value.Required(); } = Lifecycle.StrictStateMachine();
 
     IDataAccessDescriptor ISubscriptionDescriptor.Tag => Tag;
 

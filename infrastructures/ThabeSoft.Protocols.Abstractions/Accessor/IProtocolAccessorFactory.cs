@@ -1,7 +1,7 @@
-﻿using ThabeSoft.Protocols;
+﻿using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.Transports.Byte;
 
-namespace ThabeSoft.EdgeGateway.Protocols;
+namespace ThabeSoft.Protocols.Accessor;
 
 public interface IProtocolAccessorFactory
 {

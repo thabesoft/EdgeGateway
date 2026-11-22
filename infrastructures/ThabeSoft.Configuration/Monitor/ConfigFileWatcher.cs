@@ -2,10 +2,10 @@
 using Microsoft.Extensions.Options;
 using ThabeSoft.Primitives;
 
-namespace ThabeSoft.Configuration;
+namespace ThabeSoft.Configuration.Monitor;
 
 
-public sealed class ConfigFileWatcher : IDisposable
+internal sealed class ConfigFileWatcher : IDisposable
 {
     private readonly FileSystemWatcher _watcher;
     private readonly IDisposable? _optionChangeDisposable;
@@ -16,7 +16,7 @@ public sealed class ConfigFileWatcher : IDisposable
     private CancellationTokenSource? _debounceCts;
 
 
-    public ConfigFileWatcher(IOptionsMonitor<ConfigReloadOptions> options, ILogger<ConfigFileWatcher> logger)
+    public ConfigFileWatcher(IOptionsMonitor<ConfigFileWatcherOptions> options, ILogger<ConfigFileWatcher> logger)
     {
         var fullPath = Path.GetFullPath(options.CurrentValue.FilePath);
         var dir = Path.GetDirectoryName(fullPath);
@@ -39,6 +39,18 @@ public sealed class ConfigFileWatcher : IDisposable
 
     public event Func<CancellationToken, Task>? Changed;
     public string FilePath { get; }
+    public void Dispose()
+    {
+        _optionChangeDisposable?.DisposeSafely(_logger);
+
+        _watcher.EnableRaisingEvents = false;
+        _watcher?.DisposeSafely(_logger);
+
+        _debounceCts?.Cancel();
+        _debounceCts?.DisposeSafely(_logger);
+
+        _debounceLock.DisposeSafely(_logger);
+    }
 
 
     private async void OnFileChanged(object sender, FileSystemEventArgs e)
@@ -66,16 +78,4 @@ public sealed class ConfigFileWatcher : IDisposable
         finally { _debounceLock.Release(); }
     }
 
-    public void Dispose()
-    {
-        _optionChangeDisposable?.DisposeSafely(_logger);
-
-        _watcher.EnableRaisingEvents = false;
-        _watcher?.DisposeSafely(_logger);
-
-        _debounceCts?.Cancel();
-        _debounceCts?.DisposeSafely(_logger);
-
-        _debounceLock.DisposeSafely(_logger);
-    }
 }

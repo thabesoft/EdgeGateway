@@ -5,7 +5,7 @@ using ThabeSoft.Lifecycles;
 using ThabeSoft.Lifecycles.Collections;
 using ThabeSoft.Primitives;
 using ThabeSoft.Primitives.Guard;
-using ThabeSoft.Protocols;
+using ThabeSoft.Protocols.Accessor;
 using ThabeSoft.PubSub;
 
 namespace ThabeSoft.EdgeGateway.Subscription;

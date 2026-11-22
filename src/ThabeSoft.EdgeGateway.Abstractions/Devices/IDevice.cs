@@ -2,7 +2,7 @@
 using ThabeSoft.EdgeGateway.Protocols;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.Triggers;
-using ThabeSoft.Protocols;
+using ThabeSoft.Protocols.Accessor;
 
 namespace ThabeSoft.EdgeGateway.Devices;
 

@@ -8,8 +8,8 @@ using ThabeSoft.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Readings;
 using ThabeSoft.Triggers;
 using ThabeSoft.Primitives;
-using ThabeSoft.Protocols;
 using ThabeSoft.EdgeGateway.Messages;
+using ThabeSoft.Protocols.Accessor;
 
 namespace ThabeSoft.EdgeGateway.Subscription;
 

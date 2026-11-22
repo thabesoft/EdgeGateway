@@ -10,7 +10,6 @@ using ThabeSoft.Transports.Ethernet;
 using ThabeSoft.Transports.Ethernet.DependencyInjection;
 using ThabeSoft.EdgeGateway.Hosting;
 using ThabeSoft.Lifecycles;
-using ThabeSoft.Protocols.Modbus;
 using ThabeSoft.Protocols.Modbus.DependencyInjection;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Protocols;
@@ -19,6 +18,8 @@ using ThabeSoft.EdgeGateway.Simulation.DependencyInjection;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.EdgeGateway.Tags;
 using ThabeSoft.Triggers;
+using ThabeSoft.Transports;
+using ThabeSoft.Protocols.Modbus;
 
 namespace ThabeSoft.EdgeGateway;
 
@@ -33,10 +34,10 @@ public class GatewayIntegrationTests
     protected ISimulator Simulator { get; private set; } = null!;
 
 
-    private readonly IpTransportDescriptor _transportDescriptor = EthernetBuilder.Tcp(IPAddress.Loopback, 2334);
-    private readonly ProtocolDescriptor _protocolDescriptor = ModbusBuilder.Ip;
-    private readonly DataAddressDescriptor<double> _tag = ModbusBuilder.HoldingRegister(1, 0, CodecBuilder.DoubleBigEndian);
-    private readonly TriggerDescriptor _trigger = TriggerBuilder.Interval(500);
+    private readonly IpTransportDescriptor _transportDescriptor = Transport.Tcp(IPAddress.Loopback, 2334);
+    private readonly ProtocolDescriptor _protocolDescriptor = Modbus.Ip;
+    private readonly DataAddressDescriptor<double> _tag = Modbus.HoldingRegister(1, 0, Codecs.Codec.DoubleBigEndian);
+    private readonly TriggerDescriptor _trigger = Trigger.Interval(500);
 
 
     [TestInitialize]

@@ -1,10 +1,10 @@
 ﻿using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Devices.Modbus;
 using ThabeSoft.Transports.Ethernet;
-using ThabeSoft.Protocols.Modbus;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.Transports.Serial;
 using ThabeSoft.EdgeGateway.ValueGenerators;
+using ThabeSoft.Protocols.Modbus;
 
 namespace ThabeSoft.EdgeGateway.Simulation;
 
@@ -12,11 +12,11 @@ namespace ThabeSoft.EdgeGateway.Simulation;
 public static class SimulationBuilder
 {
     public static SimulatorPortDescriptor ModbusRtuPort(SerialTransportDescriptor transportDescriptor) =>
-             new(transportDescriptor, ModbusBuilder.Rtu);
+             new(transportDescriptor, Modbus.Rtu);
     public static SimulatorPortDescriptor ModbusAsciiPort(SerialTransportDescriptor transportDescriptor) =>
-        new(transportDescriptor, ModbusBuilder.Ascii);
+        new(transportDescriptor, Modbus.Ascii);
     public static SimulatorPortDescriptor ModbusIpPort(IpTransportDescriptor transportDescriptor) =>
-        new(transportDescriptor, ModbusBuilder.Ip);
+        new(transportDescriptor, Modbus.Ip);
 
 
     public static SimulationDeviceDescriptor ModbusDevice(byte unitId) =>

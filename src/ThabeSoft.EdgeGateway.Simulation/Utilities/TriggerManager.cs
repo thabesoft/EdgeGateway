@@ -18,7 +18,7 @@ internal sealed class TriggerScheduler : ILifecycle, IAsyncDisposable
     {
         this.trigger = trigger;
         _logger = logger;
-        _background = lifecycleFactory.Create(LifecycleBuilder.Background(LoopAsync));
+        _background = lifecycleFactory.Create(Lifecycle.Background(LoopAsync));
     }
 
 

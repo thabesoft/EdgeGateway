@@ -6,7 +6,7 @@ using ThabeSoft.EdgeGateway.ValueGenerators;
 using ThabeSoft.Lifecycles;
 using ThabeSoft.Lifecycles.StateMachines;
 using ThabeSoft.Primitives;
-using ThabeSoft.Protocols;
+using ThabeSoft.Protocols.Accessor;
 using ThabeSoft.Protocols.Modbus;
 using ThabeSoft.Triggers;
 

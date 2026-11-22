@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.Protocols.Accessor;
 
 namespace ThabeSoft.Protocols.DependencyInjection;
 

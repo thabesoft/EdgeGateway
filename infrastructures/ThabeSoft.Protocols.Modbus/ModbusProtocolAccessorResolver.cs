@@ -2,7 +2,7 @@
 using NModbus.IO;
 using ThabeSoft.Codecs;
 using ThabeSoft.EdgeGateway.Protocols;
-using ThabeSoft.Protocols;
+using ThabeSoft.Protocols.Accessor;
 using ThabeSoft.Transports.Byte;
 
 namespace ThabeSoft.Protocols.Modbus;

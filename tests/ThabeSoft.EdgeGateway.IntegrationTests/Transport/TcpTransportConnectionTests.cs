@@ -30,7 +30,7 @@ public class TcpTransportConnectionTests
         using var listener = new TcpListener(IPAddress.Loopback, 0);
         listener.Start();
 
-        var transportDescriptor = EthernetBuilder.Tcp((IPEndPoint)listener.LocalEndpoint);
+        var transportDescriptor = Transport.Tcp((IPEndPoint)listener.LocalEndpoint);
         var transpor = factory.Create(transportDescriptor);
 
         await transpor.StartAsync(TestContext.CancellationToken);

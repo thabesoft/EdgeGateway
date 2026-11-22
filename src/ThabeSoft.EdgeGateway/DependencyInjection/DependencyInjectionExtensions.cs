@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using ThabeSoft.Configuration;
+using ThabeSoft.Configuration.Mapping;
 using ThabeSoft.EdgeGateway.Configuration;
 using ThabeSoft.EdgeGateway.Configuration.Mappers;
 using ThabeSoft.EdgeGateway.Configuration.Reloader;
@@ -45,7 +45,7 @@ public static class DependencyInjectionExtensions
         /// </summary>
         public IServiceCollection AddEdgeGatewayConfig()
         {
-            descriptors.TryAddSingleton<IConfigReloadApplier, GatewayConfigApplier>();
+            descriptors.TryAddSingleton<GatewayConfigApplier>();
             // Gateway
             descriptors.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigMapper<GatewayConfig>, GatewayConfigMapper>());
             // Retry

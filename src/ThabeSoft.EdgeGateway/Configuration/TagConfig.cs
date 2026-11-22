@@ -1,6 +1,6 @@
 ﻿using ThabeSoft.Primitives;
 using ThabeSoft.Primitives.Guard;
-using ThabeSoft.Protocols;
+using ThabeSoft.Protocols.Accessor;
 
 namespace ThabeSoft.EdgeGateway.Configuration;
 

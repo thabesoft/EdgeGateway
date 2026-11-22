@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NModbus;
 using ThabeSoft.EdgeGateway.Configuration;
-using ThabeSoft.Protocols;
+using ThabeSoft.Protocols.Accessor;
 
 namespace ThabeSoft.Protocols.Modbus.DependencyInjection;
 

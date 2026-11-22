@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using ThabeSoft.Configuration;
+using ThabeSoft.Configuration.Mapping;
 using ThabeSoft.Configuration.Nodes;
 using ThabeSoft.Primitives.Guard;
 using ThabeSoft.Transports;

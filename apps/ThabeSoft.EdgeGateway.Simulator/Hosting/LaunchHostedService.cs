@@ -2,12 +2,12 @@
 using Microsoft.Extensions.Logging;
 using System.Net;
 using ThabeSoft.Codecs;
-using ThabeSoft.Transports.Ethernet;
-using ThabeSoft.Protocols.Modbus;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.EdgeGateway.Simulation;
 using ThabeSoft.Triggers;
 using ThabeSoft.EdgeGateway.ValueGenerators;
+using ThabeSoft.Transports;
+using ThabeSoft.Protocols.Modbus;
 
 namespace ThabeSoft.EdgeGateway.Simulator.Hosting;
 
@@ -16,7 +16,7 @@ internal sealed class LaunchHostedService(ISimulator simulator, ILogger<LaunchHo
 {
     private const int DeviceCount = 2;
     private const int DeviceValueCount = 10;
-    private static TriggerDescriptor TriggerDescriptor { get; } = TriggerBuilder.Interval(100);
+    private static TriggerDescriptor TriggerDescriptor { get; } = Trigger.Interval(100);
 
     private Task? _flakyPortRunningTask;
     private CancellationTokenSource? _flakyPortRunningTaskCts;
@@ -24,7 +24,7 @@ internal sealed class LaunchHostedService(ISimulator simulator, ILogger<LaunchHo
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var network = simulator.AddPort(SimulationBuilder.ModbusIpPort(EthernetBuilder.Tcp(IPAddress.Loopback, 2333)));
+        var network = simulator.AddPort(SimulationBuilder.ModbusIpPort(Transport.Tcp(IPAddress.Loopback, 2333)));
         for (byte i = 1; i <= DeviceCount; i++)
             await AddDeviceAsync(i, network, cancellationToken);
 
@@ -70,7 +70,7 @@ internal sealed class LaunchHostedService(ISimulator simulator, ILogger<LaunchHo
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                var network = simulator.AddPort(SimulationBuilder.ModbusIpPort(EthernetBuilder.Tcp(IPAddress.Loopback, 2334)));
+                var network = simulator.AddPort(SimulationBuilder.ModbusIpPort(Transport.Tcp(IPAddress.Loopback, 2334)));
 
                 for (byte i = 1; i <= DeviceCount; i++)
                     await AddDeviceAsync(i, network, cancellationToken);
@@ -107,7 +107,7 @@ internal sealed class LaunchHostedService(ISimulator simulator, ILogger<LaunchHo
         for (int i = 0; i < DeviceValueCount; i++)
         {
             // Double 占 4 个寄存器，地址按 4 递增
-            var tag = ModbusBuilder.HoldingRegister(id, (ushort)(i * 4), CodecBuilder.DoubleBigEndian);
+            var tag = Modbus.HoldingRegister(id, (ushort)(i * 4), Codecs.Codec.DoubleBigEndian);
             // 模拟从站写入
             await slave.ValueAsync(tag, TriggerDescriptor, generators[i], cancellationToken);
         }

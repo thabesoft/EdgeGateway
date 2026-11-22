@@ -3,7 +3,7 @@ using NModbus;
 using ThabeSoft.Codecs;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.Primitives.Guard;
-using ThabeSoft.Protocols;
+using ThabeSoft.Protocols.Accessor;
 using ThabeSoft.Protocols.Modbus;
 
 namespace ThabeSoft.EdgeGateway.Simulation.Devices.Modbus;

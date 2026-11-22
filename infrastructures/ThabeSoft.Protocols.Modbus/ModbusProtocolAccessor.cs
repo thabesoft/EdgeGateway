@@ -1,6 +1,7 @@
 ﻿using NModbus;
 using System.Buffers.Binary;
 using ThabeSoft.Codecs;
+using ThabeSoft.Protocols.Accessor;
 
 namespace ThabeSoft.Protocols.Modbus;
 

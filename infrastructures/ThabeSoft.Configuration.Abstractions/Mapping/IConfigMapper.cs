@@ -1,6 +1,6 @@
 ﻿using ThabeSoft.Configuration.Nodes;
 
-namespace ThabeSoft.Configuration;
+namespace ThabeSoft.Configuration.Mapping;
 
 
 public interface IConfigMapper<T>

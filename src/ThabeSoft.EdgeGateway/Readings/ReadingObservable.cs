@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
-using ThabeSoft.EdgeGateway.Utilities;
+using ThabeSoft.Primitives;
 
 namespace ThabeSoft.EdgeGateway.Readings;
 

@@ -22,7 +22,7 @@ public class RetryableLifecycleStateMachineTests
     [TestMethod]
     public async Task StateTransitions()
     {
-        var lifecycle = Resolver.Resolve(LifecycleBuilder.RetryableStateMachine());
+        var lifecycle = Resolver.Resolve(Lifecycle.RetryableStateMachine());
 
         // 启动
         await lifecycle.TransitionToRunningAsync(EmptyMethod, TestContext.CancellationToken);
@@ -64,7 +64,7 @@ public class RetryableLifecycleStateMachineTests
     [TestMethod]
     public async Task Start_Exception_StateToFaulted()
     {
-        var lifecycle = Resolver.Resolve(LifecycleBuilder.RetryableStateMachine());
+        var lifecycle = Resolver.Resolve(Lifecycle.RetryableStateMachine());
 
         await Assert.ThrowsAsync<Exception>(async () =>
             await lifecycle.TransitionToRunningAsync(ExceptionMethod, TestContext.CancellationToken));
@@ -76,7 +76,7 @@ public class RetryableLifecycleStateMachineTests
     [TestMethod]
     public async Task Stop_Exception_StateToFaulted()
     {
-        var lifecycle = Resolver.Resolve(LifecycleBuilder.RetryableStateMachine());
+        var lifecycle = Resolver.Resolve(Lifecycle.RetryableStateMachine());
 
         await lifecycle.TransitionToRunningAsync(EmptyMethod, TestContext.CancellationToken);
         Assert.AreEqual(LifecycleState.Running, lifecycle.State);

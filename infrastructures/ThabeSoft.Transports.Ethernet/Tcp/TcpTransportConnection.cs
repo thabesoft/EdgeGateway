@@ -33,7 +33,7 @@ internal sealed class TcpTransportConnection : ITransportConnection
         _descriptor = descriptor;
         _retryBackoff = new(descriptor.Retry);
         _stateMachine = lifecycleStateMachineFactory.Create(descriptor.StateMachine);
-        _reconnectBackgroundLifecycle = lifecycleFactory.Create(LifecycleBuilder.Background(ReconnectLoopAsync));
+        _reconnectBackgroundLifecycle = lifecycleFactory.Create(Lifecycle.Background(ReconnectLoopAsync));
     }
 
     public ConnectionEndpoint Endpoint => _descriptor.Endpoint;

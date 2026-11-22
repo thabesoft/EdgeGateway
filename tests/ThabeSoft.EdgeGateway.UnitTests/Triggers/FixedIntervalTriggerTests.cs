@@ -13,7 +13,7 @@ public class FixedIntervalTriggerTests
     {
         var fakeTime = new FakeTimeProvider();
         var factory = new IntervalTriggerResolver(fakeTime);
-        var trigger = factory.Resolve(TriggerBuilder.Interval(100));
+        var trigger = factory.Resolve(Trigger.Interval(100));
 
         // 1. 先发起等待（注册监听），拿到未完成的 Task
         var waitTask = trigger.WaitForNextTickAsync(TestContext.CancellationToken);

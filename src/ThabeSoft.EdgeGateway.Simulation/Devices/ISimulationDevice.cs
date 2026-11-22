@@ -1,6 +1,6 @@
 ﻿using ThabeSoft.EdgeGateway.ValueGenerators;
 using ThabeSoft.Lifecycles;
-using ThabeSoft.Protocols;
+using ThabeSoft.Protocols.Accessor;
 using ThabeSoft.Triggers;
 
 namespace ThabeSoft.EdgeGateway.Devices;

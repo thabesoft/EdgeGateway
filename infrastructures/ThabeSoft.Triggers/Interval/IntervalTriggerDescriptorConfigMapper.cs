@@ -1,4 +1,4 @@
-﻿using ThabeSoft.Configuration;
+﻿using ThabeSoft.Configuration.Mapping;
 using ThabeSoft.Configuration.Nodes;
 using ThabeSoft.Primitives.Guard;
 
@@ -20,6 +20,6 @@ internal sealed class IntervalTriggerDescriptorConfigMapper : IConfigMapper<Trig
         var timespan = root.GetStringByPath("Interval").Required("缺少间隔时间")
                 .ToTimeSpan();
 
-        return TriggerBuilder.Interval(timespan);
+        return Trigger.Interval(timespan);
     }
 }

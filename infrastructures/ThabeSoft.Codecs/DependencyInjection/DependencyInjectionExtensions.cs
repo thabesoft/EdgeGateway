@@ -6,7 +6,7 @@ using ThabeSoft.Codecs.Bytes;
 using ThabeSoft.Codecs.DWords;
 using ThabeSoft.Codecs.QWords;
 using ThabeSoft.Codecs.Words;
-using ThabeSoft.Configuration;
+using ThabeSoft.Configuration.Mapping;
 
 namespace ThabeSoft.Codecs.DependencyInjection;
 

@@ -1,4 +1,4 @@
-﻿using ThabeSoft.Protocols;
+﻿using ThabeSoft.Protocols.Accessor;
 using ThabeSoft.Transports.Byte;
 
 namespace ThabeSoft.EdgeGateway.Protocols;

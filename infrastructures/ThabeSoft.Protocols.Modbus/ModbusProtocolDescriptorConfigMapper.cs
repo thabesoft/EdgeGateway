@@ -1,7 +1,7 @@
-﻿using ThabeSoft.Configuration;
-using ThabeSoft.Configuration.Nodes;
+﻿using ThabeSoft.Configuration.Nodes;
 using ThabeSoft.Primitives.Guard;
 using ThabeSoft.EdgeGateway.Protocols;
+using ThabeSoft.Configuration.Mapping;
 
 namespace ThabeSoft.Protocols.Modbus;
 

@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Collections;
 using ThabeSoft.Codecs;
-using ThabeSoft.Configuration;
+using ThabeSoft.Configuration.Mapping;
 using ThabeSoft.Configuration.Nodes;
 using ThabeSoft.EdgeGateway.Devices;
 using ThabeSoft.EdgeGateway.Ports;

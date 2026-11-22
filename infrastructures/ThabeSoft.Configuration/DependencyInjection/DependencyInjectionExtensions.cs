@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using ThabeSoft.Configuration.Monitor;
 using ThabeSoft.Configuration.Json;
 using ThabeSoft.Configuration.Nodes;
 using ThabeSoft.Configuration.Paths;
@@ -25,9 +26,9 @@ public static class DependencyInjectionExtensions
         /// <summary>
         /// 提供配置文件自动加载能力
         /// </summary>
-        public IServiceCollection AddConfigurationReloader(string optionSectionName = "Config")
+        public IServiceCollection AddConfigMonitor<T>(string optionSectionName = "Config")
         {
-            descriptors.AddOptions<ConfigReloadOptions>()
+            descriptors.AddOptions<ConfigFileWatcherOptions>()
                 .BindConfiguration(optionSectionName)
                 .Validate(opts =>
                 {
@@ -43,17 +44,25 @@ public static class DependencyInjectionExtensions
 
 
             descriptors.TryAddSingleton<ConfigFileWatcher>();
-            descriptors.AddHostedService<ConfigFileReloadHostedService>();
+            descriptors.TryAddSingleton<ConfigMonitor<T>>();
+            return descriptors;
+        }
+
+        /// <summary>
+        /// 提供配置序列化能力
+        /// </summary>
+        public IServiceCollection AddConfigSerializer()
+        {
+            descriptors.TryAddSingleton<IConfigSerializer, ConfigSerializer>();
             return descriptors;
         }
 
         /// <summary>
         /// 提供配置解析能力
         /// </summary>
-        public IServiceCollection AddJsonConfigProvider()
+        public IServiceCollection AddJsonConfigNodeParse()
         {
             descriptors.TryAddSingleton<IConfigNodeParser, JsonConfigNodeParser>();
-
             return descriptors;
         }
     }

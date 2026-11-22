@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using ThabeSoft.Protocols;
+using ThabeSoft.Protocols.Accessor;
 
 namespace ThabeSoft.EdgeGateway.Readings;
 

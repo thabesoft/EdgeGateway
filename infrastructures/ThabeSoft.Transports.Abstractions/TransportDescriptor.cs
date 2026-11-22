@@ -9,5 +9,5 @@ public abstract record class TransportDescriptor
 {
     public abstract ConnectionEndpoint Endpoint { get; }
     public RetryDescriptor Retry { get; init => field = value.Required(); } = RetryBuilder.Default;
-    public LifecycleStateMachineDescriptor StateMachine { get; init => field = value.Required(); } = LifecycleBuilder.StrictStateMachine();
+    public LifecycleStateMachineDescriptor StateMachine { get; init => field = value.Required(); } = Lifecycle.StrictStateMachine();
 }

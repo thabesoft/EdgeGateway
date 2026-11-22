@@ -7,7 +7,7 @@ using ThabeSoft.Codecs.Words;
 namespace ThabeSoft.Codecs;
 
 
-public static class CodecBuilder
+public static class Codec
 {
     public static BitsCodecDescriptor BitsLsbFirst(int bitCount) => Bits(bitCount, BitOrder.LsbFirst);
     public static BitsCodecDescriptor BitsMsbFirst(int bitCount) => Bits(bitCount, BitOrder.MsbFirst);

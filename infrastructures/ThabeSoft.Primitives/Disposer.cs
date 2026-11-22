@@ -1,4 +1,4 @@
-﻿namespace ThabeSoft.EdgeGateway.Utilities;
+﻿namespace ThabeSoft.Primitives;
 
 
 public sealed class Disposer : IDisposable

@@ -1,67 +1,78 @@
 ﻿using Microsoft.Extensions.Logging;
-using ThabeSoft.Configuration;
+using ThabeSoft.Configuration.Monitor;
 
 namespace ThabeSoft.EdgeGateway.Configuration.Reloader;
 
 
 
-internal sealed class GatewayConfigApplier(
-        IGateway gateway,
-        ILogger<GatewayConfigApplier> logger
-    ) : IConfigReloadApplier
+internal sealed class GatewayConfigApplier
 {
-    private GatewayConfig _current = new();
+    private readonly IGateway _gateway;
+    private readonly ILogger<GatewayConfigApplier> _logger;
+    private GatewayConfig? _current;
 
 
-    public async Task ApplyAsync(object config, CancellationToken cancellationToken = default)
+    public GatewayConfigApplier(
+            IGateway gateway,
+            IConfigMonitor<GatewayConfig> monitor,
+            ILogger<GatewayConfigApplier> logger
+    )
     {
-        if (config is not GatewayConfig newConfig) return;
+        _gateway = gateway;
+        _logger = logger;
 
-        var oldPorts = _current.Ports.ToDictionary(p => p.Descriptor.Id);
-        var newPorts = newConfig.Ports.ToDictionary(p => p.Descriptor.Id);
+        monitor.OnChange(ApplyAsync);
+    }
 
-
-        // 删除：旧的有，新的没有
-        foreach (var (id, _) in oldPorts)
+    private async ValueTask ApplyAsync(GatewayConfig config, CancellationToken cancellationToken = default)
+    {
+        if(_current is not null)
         {
-            if (!newPorts.ContainsKey(id))
-            {
-                try { await gateway.RemovePortAsync(id, cancellationToken); }
-                catch (Exception ex) { logger.LogError(ex, "移除端口 {Id} 失败", id); }
-            }
-        }
+            var oldPorts = _current.Ports.ToDictionary(p => p.Descriptor.Id);
+            var newPorts = config.Ports.ToDictionary(p => p.Descriptor.Id);
 
-        // 新增：新的有，旧的没有
-        foreach (var (id, portCfg) in newPorts)
-        {
-            if (!oldPorts.ContainsKey(id))
-            {
-                try { await AddPortRecursiveAsync(portCfg, cancellationToken); }
-                catch (Exception ex) { logger.LogError(ex, "新增端口 {Id} 失败", id); }
-            }
-        }
 
-        // 修改：两边都有，但内容不同
-        foreach (var (id, newPortCfg) in newPorts)
-        {
-            if (oldPorts.TryGetValue(id, out var oldPortCfg) && oldPortCfg != newPortCfg)
+            // 删除：旧的有，新的没有
+            foreach (var (id, _) in oldPorts)
             {
-                try
+                if (!newPorts.ContainsKey(id))
                 {
-                    await gateway.RemovePortAsync(id, cancellationToken);
-                    await AddPortRecursiveAsync(newPortCfg, cancellationToken);
+                    try { await _gateway.RemovePortAsync(id, cancellationToken); }
+                    catch (Exception ex) { _logger.LogError(ex, "移除端口 {Id} 失败", id); }
                 }
-                catch (Exception ex) { logger.LogError(ex, "重建端口 {Id} 失败", id); }
+            }
+
+            // 新增：新的有，旧的没有
+            foreach (var (id, portCfg) in newPorts)
+            {
+                if (!oldPorts.ContainsKey(id))
+                {
+                    try { await AddPortRecursiveAsync(portCfg, cancellationToken); }
+                    catch (Exception ex) { _logger.LogError(ex, "新增端口 {Id} 失败", id); }
+                }
+            }
+
+            // 修改：两边都有，但内容不同
+            foreach (var (id, newPortCfg) in newPorts)
+            {
+                if (oldPorts.TryGetValue(id, out var oldPortCfg) && oldPortCfg != newPortCfg)
+                {
+                    try
+                    {
+                        await _gateway.RemovePortAsync(id, cancellationToken);
+                        await AddPortRecursiveAsync(newPortCfg, cancellationToken);
+                    }
+                    catch (Exception ex) { _logger.LogError(ex, "重建端口 {Id} 失败", id); }
+                }
             }
         }
 
-        // 4. 全部成功后，更新快照
-        _current = newConfig;
+        _current = config;
     }
 
     private async Task AddPortRecursiveAsync(PortConfig portConfig, CancellationToken cancellationToken)
     {
-        var port = await gateway.AddPortAsync(portConfig.Descriptor, cancellationToken);
+        var port = await _gateway.AddPortAsync(portConfig.Descriptor, cancellationToken);
 
         foreach (var deviceConfig in portConfig.Devices)
         {

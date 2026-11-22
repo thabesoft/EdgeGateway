@@ -12,7 +12,7 @@ public class ModbusTagTests
     public async Task Create_BitsLength()
     {
         var ex = Assert.Throws<InvalidOperationException>(() =>
-                    TagDescriptor.Create(ModbusDataAddress.Coil(1, 0, 1), CodecBuilder.Byte)
+                    TagDescriptor.Create(ModbusDataAddress.Coil(1, 0, 1), ThabeSoft.Codecs.Codec.Byte)
                 );
 
         TestContext.WriteLine(ex.Message);
@@ -21,7 +21,7 @@ public class ModbusTagTests
     [TestMethod]
     public async Task Create()
     {
-        TagDescriptor.Create(ModbusDataAddress.Coil(1, 0, 8), CodecBuilder.Byte);
+        TagDescriptor.Create(ModbusDataAddress.Coil(1, 0, 8), ThabeSoft.Codecs.Codec.Byte);
     }
 
 

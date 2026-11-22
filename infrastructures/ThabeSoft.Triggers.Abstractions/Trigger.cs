@@ -4,7 +4,7 @@ using ThabeSoft.Triggers.Signal;
 namespace ThabeSoft.Triggers;
 
 
-public static class TriggerBuilder
+public static class Trigger
 {
     public static TriggerDescriptor Signal(out ITriggerSignal signal)
     {

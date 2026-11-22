@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Diagnostics.CodeAnalysis;
-using ThabeSoft.Configuration;
+using ThabeSoft.Configuration.Mapping;
 
 namespace ThabeSoft.Transports.DependencyInjection;
 

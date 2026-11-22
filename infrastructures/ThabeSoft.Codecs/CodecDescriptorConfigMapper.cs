@@ -4,7 +4,7 @@ using ThabeSoft.Codecs.Bits;
 using ThabeSoft.Codecs.DWords;
 using ThabeSoft.Codecs.QWords;
 using ThabeSoft.Codecs.Words;
-using ThabeSoft.Configuration;
+using ThabeSoft.Configuration.Mapping;
 using ThabeSoft.Configuration.Nodes;
 using ThabeSoft.Primitives;
 using ThabeSoft.Primitives.Guard;
@@ -28,36 +28,36 @@ internal sealed class CodecDescriptorConfigMapper(ILogger<CodecDescriptorConfigM
     }
 
     CodecDescriptor<byte> IConfigMapper<CodecDescriptor<byte>>.Map(IConfigNode root) =>
-        CodecBuilder.Byte;
+        Codec.Byte;
     CodecDescriptor<bool> IConfigMapper<CodecDescriptor<bool>>.Map(IConfigNode root) =>
-       CodecBuilder.Bool(GetBoolBitOffset(root));
+       Codec.Bool(GetBoolBitOffset(root));
 
     CodecDescriptor<ushort> IConfigMapper<CodecDescriptor<ushort>>.Map(IConfigNode root) =>
-      CodecBuilder.UInt16(GetWordEndianess(root));
+      Codec.UInt16(GetWordEndianess(root));
     CodecDescriptor<short> IConfigMapper<CodecDescriptor<short>>.Map(IConfigNode root) =>
-       CodecBuilder.Int16(GetWordEndianess(root));
+       Codec.Int16(GetWordEndianess(root));
     CodecDescriptor<char> IConfigMapper<CodecDescriptor<char>>.Map(IConfigNode root) =>
-       CodecBuilder.Char(GetWordEndianess(root));
+       Codec.Char(GetWordEndianess(root));
 
 
     CodecDescriptor<uint> IConfigMapper<CodecDescriptor<uint>>.Map(IConfigNode root) =>
-       CodecBuilder.UInt32(GetDWordEndianess(root));
+       Codec.UInt32(GetDWordEndianess(root));
     CodecDescriptor<int> IConfigMapper<CodecDescriptor<int>>.Map(IConfigNode root) =>
-       CodecBuilder.Int32(GetDWordEndianess(root));
+       Codec.Int32(GetDWordEndianess(root));
     CodecDescriptor<float> IConfigMapper<CodecDescriptor<float>>.Map(IConfigNode root) =>
-       CodecBuilder.Float(GetDWordEndianess(root));
+       Codec.Float(GetDWordEndianess(root));
 
 
     CodecDescriptor<ulong> IConfigMapper<CodecDescriptor<ulong>>.Map(IConfigNode root) =>
-      CodecBuilder.UInt64(GetQWordEndianess(root));
+      Codec.UInt64(GetQWordEndianess(root));
     CodecDescriptor<long> IConfigMapper<CodecDescriptor<long>>.Map(IConfigNode root) =>
-       CodecBuilder.Int64(GetQWordEndianess(root));
+       Codec.Int64(GetQWordEndianess(root));
     CodecDescriptor<double> IConfigMapper<CodecDescriptor<double>>.Map(IConfigNode root) =>
-       CodecBuilder.Double(GetQWordEndianess(root));
+       Codec.Double(GetQWordEndianess(root));
 
 
     CodecDescriptor<BitArray> IConfigMapper<CodecDescriptor<BitArray>>.Map(IConfigNode root) =>
-       CodecBuilder.Bits(GetBitCount(root), GetBitOrder(root));
+       Codec.Bits(GetBitCount(root), GetBitOrder(root));
 
 
 

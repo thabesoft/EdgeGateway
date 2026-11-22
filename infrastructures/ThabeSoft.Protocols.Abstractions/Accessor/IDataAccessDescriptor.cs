@@ -1,6 +1,6 @@
 ﻿using ThabeSoft.Codecs;
 
-namespace ThabeSoft.Protocols;
+namespace ThabeSoft.Protocols.Accessor;
 
 
 /// <summary>

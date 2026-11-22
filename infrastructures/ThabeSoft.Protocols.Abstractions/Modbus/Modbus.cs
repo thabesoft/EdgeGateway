@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using ThabeSoft.Codecs;
 using ThabeSoft.Primitives.Guard;
+using ThabeSoft.Protocols.Accessor;
 
 namespace ThabeSoft.Protocols.Modbus;
 
 
-public static class ModbusBuilder
+public static class Modbus
 {
     #region --协议--
 
@@ -18,19 +19,19 @@ public static class ModbusBuilder
     #region --标签--
 
     public static DataAccessDescriptor<bool> Coil(byte slaveId, ushort address, int bitOffset = 0) =>
-        DataAccessDescriptor.Create(ModbusProtocolAddress.Coil(slaveId, address, 1), CodecBuilder.Bool(bitOffset));
+        DataAccessDescriptor.Create(ModbusProtocolAddress.Coil(slaveId, address, 1), Codec.Bool(bitOffset));
     public static DataAccessDescriptor<bool> DiscreteInput(byte slaveId, ushort address, int bitOffset = 0) =>
-        DataAccessDescriptor.Create(ModbusProtocolAddress.DiscreteInput(slaveId, address, 1), CodecBuilder.Bool(bitOffset));
+        DataAccessDescriptor.Create(ModbusProtocolAddress.DiscreteInput(slaveId, address, 1), Codec.Bool(bitOffset));
 
     public static DataAccessDescriptor<BitArray> Coils(byte slaveId, ushort address, ushort quantity)
     {
         ValidateCoilQuantity(quantity);
-        return DataAccessDescriptor.Create(ModbusProtocolAddress.Coil(slaveId, address, quantity), CodecBuilder.BitsLsbFirst(quantity));
+        return DataAccessDescriptor.Create(ModbusProtocolAddress.Coil(slaveId, address, quantity), Codec.BitsLsbFirst(quantity));
     }
     public static DataAccessDescriptor<BitArray> DiscreteInputs(byte slaveId, ushort address, ushort quantity)
     {
         ValidateDiscreteInputQuantity(quantity);
-        return DataAccessDescriptor.Create(ModbusProtocolAddress.DiscreteInput(slaveId, address, quantity), CodecBuilder.BitsLsbFirst(quantity));
+        return DataAccessDescriptor.Create(ModbusProtocolAddress.DiscreteInput(slaveId, address, quantity), Codec.BitsLsbFirst(quantity));
     }
 
 

@@ -2,11 +2,11 @@ using ThabeSoft.Codecs;
 using ThabeSoft.Configuration.Diff;
 using ThabeSoft.Configuration.Models;
 using ThabeSoft.EdgeGateway.Devices;
-using ThabeSoft.Protocols.Modbus;
 using ThabeSoft.EdgeGateway.Ports;
 using ThabeSoft.Transports.Serial;
 using ThabeSoft.EdgeGateway.Subscription;
 using ThabeSoft.Triggers;
+using ThabeSoft.Protocols.Modbus;
 
 namespace ThabeSoft.EdgeGateway.IntegrationTests;
 
@@ -42,7 +42,7 @@ public class ConfigDiffCalculatorTests
                              Descriptor =new()
                              {
                                  Id = DeviceId.From("DeviceId"),
-                                 Protocol = ModbusBuilder.Rtu
+                                 Protocol = Modbus.Rtu
                              },
                              Subscriptions  =
                              [
@@ -51,8 +51,8 @@ public class ConfigDiffCalculatorTests
                                       Descriptor = new SubscriptionDescriptor<int>()
                                       {
                                           Id = SubscriptionId.From("SubscriptionId"),
-                                          Tag = ModbusBuilder.HoldingRegister(1, 0, CodecBuilder.Int32Abcd),
-                                          Trigger = TriggerBuilder.Interval(100)
+                                          Tag = Modbus.HoldingRegister(1, 0, Codecs.Codec.Int32Abcd),
+                                          Trigger = Trigger.Interval(100)
                                       }
                                  }
                              ]

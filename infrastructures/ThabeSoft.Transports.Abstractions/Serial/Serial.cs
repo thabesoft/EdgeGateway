@@ -1,9 +1,7 @@
-﻿using ThabeSoft.Transports;
-
-namespace ThabeSoft.Transports.Serial;
+﻿namespace ThabeSoft.Transports.Serial;
 
 
-public static class SerialBuilder
+public static class Serial
 {
     public static SerialTransportDescriptor Port(string portName,
             int baudRate = 9600,

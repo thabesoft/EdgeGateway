@@ -11,6 +11,6 @@ public sealed record class DeviceDescriptor
 {
     public DeviceId Id { get; init => field = value.Required(); } = DeviceId.Create();
     public required ProtocolDescriptor Protocol { get; init => field = value.Required(); }
-    public LifecycleStateMachineDescriptor StateMachine { get; init => field = value.Required(); } = LifecycleBuilder.RetryableStateMachine();
-    public LifecycleBatchExecutorDescriptor SubscriptionBatchExecutor { get; init; } = LifecycleBuilder.BatchExecutor();
+    public LifecycleStateMachineDescriptor StateMachine { get; init => field = value.Required(); } = Lifecycle.RetryableStateMachine();
+    public LifecycleBatchExecutorDescriptor SubscriptionBatchExecutor { get; init; } = Lifecycle.BatchExecutor();
 }
